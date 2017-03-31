@@ -114,7 +114,7 @@ install {
         pom.project {
             name 'wrld Android SDK'
             description 'Android library for beautiful 3D maps'
-            url 'https://github.com/eegeo/android-sdk'
+            url 'https://github.com/eegeo/android-api'
             inceptionYear '2017'
 
             packaging 'aar'
@@ -128,8 +128,8 @@ install {
                 }
             }
             scm {
-                connection 'https://github.com/eegeo/android-sdk.git'
-                url 'https://github.com/eegeo/android-sdk'
+                connection 'https://github.com/eegeo/android-api.git'
+                url 'https://github.com/eegeo/android-api'
 
             }
             developers {
@@ -151,6 +151,6 @@ bintray {
         name = 'android-sdk'
         userOrg = 'eegeo'
         licenses = ['BSD Simplified']
-        vcsUrl = 'https://github.com/eegeo/android-sdk.git'
+        vcsUrl = 'https://github.com/eegeo/android-api.git'
     }
 }
