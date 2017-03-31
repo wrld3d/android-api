@@ -1,44 +1,42 @@
-# android-sdk
+# eeGeo Android Java Api
+
+A library for displaying beautiful, interactive 3D maps on Android devices. 
+
+This repository contains source code for the Java library, intended for developers contributing to the library itself.
+
+If you want to use the library in your Android application, then see our [documentation](https://docs.eegeo.com/android/latest/docs/api/) for guidance on how to add eeGeo maps to your Android app. Our [samples github repository](https://github.com/eegeo/android-api-samples) contains example apps to help get you started.
+
+The library is available as a Maven package on [Bintray](https://bintray.com/eegeo/maven/android-sdk).
 
 [ ![Download](https://api.bintray.com/packages/eegeo/maven/android-sdk/images/download.svg) ](https://bintray.com/eegeo/maven/android-sdk/_latestVersion)
 
-Welcome to the eeGeo Android SDK, a Java library for eegeo maps on Android devices. 
 
-This repository contains source code for building the Java library from the eeGeo C++ SDK, and is intended
-for developers working on the library itself.
-If you just want to use the library in your Android application, see our [documentation](https://docs.eegeo.com/android/latest/docs/api/) and [examples](https://github.com/eegeo/android-sdk-example) for instructions.
+## Status
+This library is currently in alpha, and is undergoing active development. We plan to add further features in the near future. Got something you want to do in your app? Let us know via the [issues](https://github.com/eegeo/android-api/issues) page.
 
-Requirements
-------------
+## Building the library with Android Studio
+
+### Requirements
+
 * [Android Studio](https://developer.android.com/studio/index.html), together with the Android SDK, NDK and supporting libraries.
 * Prebuilt C++ libraries and headers for the eeGeo C++ SDK.  Download the latest by running ```./update.platform.sh```.
 
-Getting started
----------------
+### Setup
 
-In Android Studio, select "Open..." and then select the top level android-sdk folder.  If Android Studio is missing supporting libraries or components, you may be prompted to install these. 
+In Android Studio, select "Open..." and then select the top level android-api folder.  If Android Studio is missing supporting libraries or components, you may be prompted to install these. 
 
-You should then see two modules in the project: [sdk](https://github.com/eegeo/android-sdk/tree/master/sdk) and [sdkdoclet](https://github.com/eegeo/android-sdk/tree/master/sdk).
+You should then see two modules in the project: [sdk](https://github.com/eegeo/android-api/tree/master/sdk) and [sdkdoclet](https://github.com/eegeo/android-api/tree/master/sdkdoclet).
 
 
-Building the SDK
-----------------
+### Build
 
-The ```assemble``` task will create an Android archive (.aar) file suitable for use in an application.  To speed up build times, you can reduce the number of build platforms by editing the list of ABI filters in the sdk's [build.gradle](https://github.com/eegeo/android-sdk/blob/master/sdk/build.gradle) file.
+The ```assemble``` task will create an Android archive (.aar) file suitable for use in an application.  To speed up build times, you can reduce the number of build platforms by editing the list of ABI filters in the sdk's [build.gradle](https://github.com/eegeo/android-api/blob/master/sdk/build.gradle) file.
 
-Building the docs
------------------
 
-The ```assemble``` task will build standard javadocs, but we also have a [sdkdoclet](https://github.com/eegeo/android-sdk/tree/master/sdkdoclet) module for generating markdown as an input to the documentation website build process.  The gradle task for building this documentation is ```apidoc```; see [the documentation repo](https://github.com/eegeo/android-sdk-docs) for full instructions.
- 
+## Further information
+See our [api samples](https://github.com/eegeo/android-api-samples) for complete applications using the SDK, and our [documentation](https://docs.eegeo.com/android/latest/docs/api/) for additional information.
 
-Further information
--------------------
-See our [example code](https://github.com/eegeo/android-sdk-example) for complete applications using the SDK, and our [documentation](https://github.com/eegeo/android-sdk-example) for additional information.
+Questions, comments, or problems? All feedback is welcome -- just [create an issue](https://github.com/eegeo/android-api/issues).
 
-Questions, comments, or problems? All feedback is welcome -- just [create an issue](https://github.com/eegeo/android-sdk/issues).
-
-License
--------
-
-The Android SDK is released under the Simplified BSD License. See the [LICENSE.md](https://github.com/eegeo/android-sdk/blob/master/LICENSE.md) file for details.
+## License
+The Android SDK is released under the Simplified BSD License. See the [LICENSE.md](https://github.com/eegeo/android-api/blob/master/LICENSE.md) file for details.
