@@ -20,6 +20,7 @@ This library is currently in alpha, and is undergoing active development. We pla
 
 * [Android Studio](https://developer.android.com/studio/index.html), together with the Android SDK, NDK and supporting libraries.
 * Prebuilt C++ libraries and headers for the eeGeo C++ SDK.  Download the latest by running ```./update.platform.sh```.
+* For running on Android devices, the library requires Android 4.0.3 (API level 15) or higher.
 
 ### Setup
 
