@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="eegeo_MapView">
+
+        <attr name="camera_target_latitude" format="float"/>
+        <attr name="camera_target_longitude" format="float"/>
+        <attr name="camera_target_altitude" format="float"/>
+        <attr name="camera_distance" format="float"/>
+        <attr name="camera_zoom" format="float"/>
+        <attr name="camera_bearing" format="float"/>
+        <attr name="camera_tilt" format="float"/>
+
+    </declare-styleable>
+</resources>

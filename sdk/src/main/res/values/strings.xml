@@ -1,0 +1,7 @@
+<resources>
+    <string name="default_floor_label">BG</string>
+    <string name="eegeo_map_placeholder">eeGeo map displayed here</string>
+    <string name="indoor_map_exit">exit indoor map</string>
+    <string name="indoor_map_floor_up">floor up</string>
+    <string name="indoor_map_floor_down">floor down</string>
+</resources>

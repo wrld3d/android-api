@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp">
+
+    <View
+        android:id="@+id/interiors_explorer_floor_list_item_centerline"
+        android:layout_width="25dp"
+        android:layout_height="2dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:background="@color/white"/>
+
+    <View
+        android:id="@+id/interiors_explorer_floor_list_item_topline"
+        android:layout_width="2dp"
+        android:layout_height="25dp"
+        android:layout_centerHorizontal="true"
+        android:background="@color/white"/>
+
+    <View
+        android:id="@+id/interiors_explorer_floor_list_item_bottomline"
+        android:layout_width="2dp"
+        android:layout_height="25dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:background="@color/white"/>
+
+    <TextView
+        android:id="@+id/floor_name"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/interiors_explorer_floor_list_item_centerline"
+        android:layout_toStartOf="@+id/interiors_explorer_floor_list_item_centerline"
+        android:alpha="0.5"
+        android:gravity="end|center_vertical"
+        android:maxLength="2"
+        android:maxLines="1"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:text="@string/default_floor_label"
+        android:textColor="@color/white"
+        android:textSize="15sp"/>
+
+</RelativeLayout>

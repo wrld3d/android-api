@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/interiors_floor_list_container"
+                android:layout_width="70dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center_horizontal"
+                android:cacheColorHint="@android:color/transparent"
+                android:clipChildren="false"
+                android:clipToPadding="false">
+
+    <RelativeLayout
+        android:id="@+id/interiors_floor_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/interiors_elevator_up_arrow"
+            android:layout_width="20dp"
+            android:layout_height="14dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/arrow3_up"
+            android:baselineAlignBottom="true"
+            android:contentDescription="@string/indoor_map_floor_up">
+        </ImageView>
+
+        <ImageView
+            android:id="@+id/interiors_elevator_down_arrow"
+            android:layout_width="20dp"
+            android:layout_height="14dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/arrow3_down"
+            android:baselineAlignBottom="true"
+            android:contentDescription="@string/indoor_map_floor_down">
+        </ImageView>
+
+        <com.eegeo.indoors.BackwardsCompatibleListView
+            android:id="@+id/interiors_floor_item_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@android:color/transparent"
+            android:cacheColorHint="@android:color/transparent"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:listSelector="@android:color/transparent"
+            android:overScrollMode="never"
+            android:scrollbars="none"/>
+    </RelativeLayout>
+
+    <!--  Draggable floor button -->
+
+    <RelativeLayout
+        android:id="@+id/interiors_floor_list_button"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/floor_button_states"
+        android:clickable="true">
+
+        <TextView
+            android:id="@+id/interiors_floor_list_button_text"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:clickable="false"
+            android:gravity="center"
+            android:maxLength="2"
+            android:paddingTop="5dp"
+            android:text="@string/default_floor_label"
+            android:textColor="@color/white"
+            android:textSize="12sp"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

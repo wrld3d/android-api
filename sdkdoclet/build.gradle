@@ -1,0 +1,20 @@
+apply plugin: 'java'
+
+task apidoc(type: Javadoc, dependsOn: ('jar')) {
+    source = project(':sdk').fileTree(include: ['**/*.java'], dir: 'src/main/java')
+    executable = project(':sdk').javadoc.executable
+    destinationDir = new File(rootDir, "android-sdk-docs/docs/api");
+    classpath = project(':sdk').javadoc.classpath
+    classpath += project.files(project(':sdk').android.getBootClasspath().join(File.pathSeparator))
+    classpath += project(':sdk').configurations.compile
+    options.docletpath(new File(project(':sdkdoclet').buildDir, 'libs/sdkdoclet.jar'))
+    options.doclet = "com.eegeo.SourceProcessor"
+}
+
+dependencies {
+    compile fileTree(include: ['**/*.java'], dir: 'src')
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile files(project(':sdk').android.sourceSets.main.java.srcDirs)
+}
+
+

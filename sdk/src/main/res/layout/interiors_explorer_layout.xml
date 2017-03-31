@@ -1,0 +1,57 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/interiors_explorer_view"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:clipChildren="false"
+                android:clipToPadding="false">
+
+    <LinearLayout
+        android:id="@+id/top_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/floor_name"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:alpha="0.5"
+            android:background="@color/black"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="18sp">
+        </TextView>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/right_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="45dp"
+        android:layout_marginTop="100dp"
+        android:clipChildren="false"
+        android:clipToPadding="false">
+
+        <ImageView
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="@drawable/button_pressed_colour_change"
+            android:baselineAlignBottom="true"
+            android:contentDescription="@string/indoor_map_exit"
+            android:src="@drawable/button_exit_interior_states">
+        </ImageView>
+
+        <include
+            layout="@layout/interiors_floor_list_container_layout"
+            android:layout_width="70dp"
+            android:layout_height="150dp"
+            android:layout_below="@+id/back_button"
+            android:layout_marginTop="15dp"
+            android:visibility="visible"/>
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,4 @@
+include ':sdk'
+include ':sdkdoclet'
+project(':sdk').projectDir = new File('sdk')
+

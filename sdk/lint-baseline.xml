@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="4" by="lint 2.3.0">
+
+    <issue
+        id="StaticFieldLeak"
+        message="Do not place Android context classes in static fields; this is a memory leak (and also breaks Instant Run)"
+        errorLine1=" private static View m_targetView;"
+        errorLine2=" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\main\java\com\eegeo\ui\nativeinput\KeyboardInput.java"
+            line="14"
+            column="2"/>
+    </issue>
+
+    <issue
+        id="StaticFieldLeak"
+        message="Do not place Android context classes in static fields; this is a memory leak (and also breaks Instant Run)"
+        errorLine1=" static Activity activity;"
+        errorLine2=" ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\main\java\com\eegeo\location\LocationService.java"
+            line="23"
+            column="2"/>
+    </issue>
+
+    <issue
+        id="ClickableViewAccessibility"
+        message="`com/eegeo/indoors/IndoorMapView#onTouch` should call `View#performClick` when a click is detected"
+        errorLine1="    public boolean onTouch(View view, MotionEvent event) {"
+        errorLine2="                   ~~~~~~~">
+        <location
+            file="src\main\java\com\eegeo\indoors\IndoorMapView.java"
+            line="270"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="ClickableViewAccessibility"
+        message="`com/eegeo/indoors/IndoorMapView$PropagateToViewTouchListener#onTouch` should call `View#performClick` when a click is detected"
+        errorLine1="        public boolean onTouch(View view, MotionEvent event) {"
+        errorLine2="                       ~~~~~~~">
+        <location
+            file="src\main\java\com\eegeo\indoors\IndoorMapView.java"
+            line="483"
+            column="24"/>
+    </issue>
+
+</issues>

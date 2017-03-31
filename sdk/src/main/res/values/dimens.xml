@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="elevator_side_margin">25dp</dimen>
+    <dimen name="elevator_list_item_height">50dp</dimen>
+    <dimen name="elevator_top_margin">20dp</dimen>
+    <dimen name="elevator_max_scroll_speed">22dp</dimen>
+</resources>
