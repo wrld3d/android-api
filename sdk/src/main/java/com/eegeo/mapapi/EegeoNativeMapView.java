@@ -172,6 +172,10 @@ public class EegeoNativeMapView implements INativeMessageRunner {
                 nativeProcessPointerUp(m_jniApiRunnerPtr, primaryActionIndex, primaryActionIdentifier, pointerCount, x, y, pointerIdentity, pointerIndex);
             }
         });
+        if (m_eeGeoMap == null) {
+            Log.d("eegeo-android-sdk", "skipping input event -- map not ready");
+            return;
+        }
         if (x.length > 0) { // TODO: remove this and promote to native ITouchController
             Point mouseUpPoint = new Point((int) x[0], (int) y[0]);
             double distSquared = Math.pow(mouseUpPoint.x - m_mouseDownPoint.x, 2) + Math.pow(mouseUpPoint.y - m_mouseDownPoint.y, 2);
