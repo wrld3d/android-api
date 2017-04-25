@@ -1,5 +1,6 @@
 package com.eegeo.indoors;
 
+import android.graphics.Color;
 import android.os.Handler;
 import android.support.annotation.UiThread;
 import android.view.LayoutInflater;
@@ -58,6 +59,9 @@ public class IndoorMapView implements OnIndoorEnteredListener, OnIndoorExitedLis
     private IndoorMap m_indoorMap = null;
     private int m_currentFloorIndex = -1;
 
+    private final int TextColorNormal = Color.parseColor("#1256BE");
+    private final int TextColorDown = Color.parseColor("#CDFC0D");
+
     public IndoorMapView(MapView mapView, final RelativeLayout uiContainer, EegeoMap eegeoMap) {
         m_eegeoMap = eegeoMap;
         m_uiContainer = uiContainer;
@@ -86,6 +90,7 @@ public class IndoorMapView implements OnIndoorEnteredListener, OnIndoorExitedLis
 
         m_floorButton = (RelativeLayout) m_uiRootView.findViewById(R.id.interiors_floor_list_button);
         m_floorButtonText = (TextView) m_uiRootView.findViewById(R.id.interiors_floor_list_button_text);
+        m_floorButtonText.setTextColor(TextColorNormal);
         m_draggingFloorButton = false;
 
         m_floorButton.setOnTouchListener(this);
@@ -284,6 +289,7 @@ public class IndoorMapView implements OnIndoorEnteredListener, OnIndoorExitedLis
     private void startDraggingButton(float initialYCoordinate) {
         showFloorLabels();
         m_floorButton.getBackground().setState(new int[]{android.R.attr.state_pressed});
+        m_floorButtonText.setTextColor(TextColorDown);
         m_previousYCoordinate = initialYCoordinate;
         m_draggingFloorButton = true;
         m_isButtonInitialJumpRemoved = false;
@@ -305,6 +311,7 @@ public class IndoorMapView implements OnIndoorEnteredListener, OnIndoorExitedLis
         hideFloorLabels();
         m_draggingFloorButton = false;
         m_floorButton.getBackground().setState(new int[]{});
+        m_floorButtonText.setTextColor(TextColorNormal);
 
         View firstVisibleChild = m_floorList.getChildAt(0);
         float topY = (m_floorList.getFirstVisiblePosition() * ListItemHeight) - firstVisibleChild.getTop();
@@ -455,6 +462,10 @@ public class IndoorMapView implements OnIndoorEnteredListener, OnIndoorExitedLis
             float dragParameter = 1.0f - ((topY + newY) / (getListViewHeight(m_floorList.getCount() - 1)));
             float floorParam = dragParameter * (m_floorList.getCount() - 1);
             m_eegeoMap.setIndoorFloorInterpolation(floorParam);
+
+            int nearestFloorIndex = Math.round(floorParam);
+            setFloorName(m_indoorMap.floorNames[nearestFloorIndex]);
+            refreshFloorIndicator(nearestFloorIndex);
 
             int floorCount = m_floorList.getCount();
             if (floorCount > m_maxFloorsViewableCount) {
