@@ -148,7 +148,7 @@ bintray {
     publish = true
     pkg {
         repo = 'maven'
-        name = 'android-sdk'
+        name = 'wrld-android-sdk'
         userOrg = 'wrld'
         licenses = ['BSD 2-Clause']
         vcsUrl = 'https://github.com/wrld3d/android-api.git'
