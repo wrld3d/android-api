@@ -149,8 +149,8 @@ bintray {
     pkg {
         repo = 'maven'
         name = 'android-sdk'
-        userOrg = 'eegeo'
-        licenses = ['BSD Simplified']
-        vcsUrl = 'https://github.com/eegeo/android-api.git'
+        userOrg = 'wrld'
+        licenses = ['BSD 2-Clause']
+        vcsUrl = 'https://github.com/wrld3d/android-api.git'
     }
 }
