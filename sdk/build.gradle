@@ -19,7 +19,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 25
         publishNonDefault rootProject.hasProperty('useLocalSdkBuild') ? rootProject.getProperty('useLocalSdkBuild').toBoolean() : false
-        archivesBaseName = 'android-sdk'
+        archivesBaseName = 'wrld-android-sdk'
 
         versionCode = project.hasProperty('build.number') ? project.ext['build.number'] as Integer : 0
         versionName = version
@@ -112,14 +112,14 @@ artifacts {
 install {
     repositories.mavenInstaller {
         pom.project {
-            name 'wrld Android SDK'
+            name 'WRLD Android SDK'
             description 'Android library for beautiful 3D maps'
-            url 'https://github.com/eegeo/android-api'
+            url 'https://github.com/wrld3d/android-api'
             inceptionYear '2017'
 
             packaging 'aar'
             groupId 'com.wrld'
-            artifactId 'android-sdk'
+            artifactId 'wrld-android-sdk'
             licenses {
                 license {
                     name 'BSD Simplified'
@@ -134,7 +134,7 @@ install {
             }
             developers {
                 developer {
-                    name 'wrld'
+                    name 'WRLD'
                 }
             }
         }
