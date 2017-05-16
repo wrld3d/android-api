@@ -8,7 +8,7 @@ If you want to use the library in your Android application, then see our [docume
 
 The library is available as a Maven package on [Bintray](https://bintray.com/wrld/maven/android-sdk).
 
-[ ![Download](https://api.bintray.com/packages/wrld/maven/android-sdk/images/download.svg) ](https://bintray.com/wrld/maven/android-sdk/_latestVersion)
+[ ![Download](https://api.bintray.com/packages/wrld/maven/wrld-android-sdk/images/download.svg) ](https://bintray.com/wrld/maven/android-sdk/_latestVersion)
 
 
 ## Status
