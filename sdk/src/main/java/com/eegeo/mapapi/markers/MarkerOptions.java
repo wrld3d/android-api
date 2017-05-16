@@ -117,9 +117,7 @@ public final class MarkerOptions {
      *
      * @param indoorMapId   the identifier of the indoor map on which the marker should be displayed
      * @param indoorFloorId the identifier of the indoor map floor on which the marker should be
-     *                      displayed. This is a zero-based index of floors in the building ordered
-     *                      by ascending height. The lowest floor has indoorFloorId 0, the next
-     *                      highest 1, and so on.
+     *                      displayed
      * @return The MarkerOptions object on which the method was called, with the new indoor map
      * properties set.
      */
