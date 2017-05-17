@@ -117,7 +117,8 @@ public final class MarkerOptions {
      *
      * @param indoorMapId   the identifier of the indoor map on which the marker should be displayed
      * @param indoorFloorId the identifier of the indoor map floor on which the marker should be
-     *                      displayed
+     *                      displayed. In the WRLD Indoor Map Format, this corresponds to the
+     *                      'z_order' field of the Level object.
      * @return The MarkerOptions object on which the method was called, with the new indoor map
      * properties set.
      */
