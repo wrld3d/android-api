@@ -19,6 +19,7 @@
 #include "EegeoCameraApi.h"
 #include "AndroidInputProcessor.h"
 #include "AndroidSdkInputHandler.h"
+#include "EegeoApiHostPlatformConfigOptions.h"
 
 namespace
 {
@@ -200,19 +201,28 @@ JNIEXPORT void JNICALL Java_com_eegeo_mapapi_EegeoNativeMapView_nativeSetSurface
     }
 }
 
-JNIEXPORT jlong JNICALL Java_com_eegeo_mapapi_EegeoNativeMapView_nativeCreateEegeoMapApi(JNIEnv* jenv, jobject obj, jlong jniApiRunnerPtr, jstring apiKey, jobject eegeoMap)
+JNIEXPORT jlong JNICALL Java_com_eegeo_mapapi_EegeoNativeMapView_nativeCreateEegeoMapApi(JNIEnv* jenv, jobject obj, jlong jniApiRunnerPtr, jobject eegeoMap,
+                                                                                         jstring apiKey, jstring coverageTreeManifest, jstring environmentThemesManifest)
 {
     Eegeo_ASSERT(jniApiRunnerPtr != 0);
     auto pAndroidApiRunner = reinterpret_cast<Eegeo::ApiHost::Android::AndroidApiRunner*>(jniApiRunnerPtr);
 
     const char* pApiKey = jenv->GetStringUTFChars( apiKey, NULL ) ;
+    const char* pCoverageTreeManifest = jenv->GetStringUTFChars( coverageTreeManifest, NULL ) ;
+    const char* pEnvironmentThemesManifest = jenv->GetStringUTFChars( environmentThemesManifest, NULL ) ;
 
-    pAndroidApiRunner->CreatePlatform(std::string(pApiKey), eegeoMap);
+    std::string apiKeyStr(pApiKey);
+    std::string coverageTreeManifestStr(pCoverageTreeManifest);
+    std::string environmentThemesManifestStr(pEnvironmentThemesManifest);
+    Eegeo::ApiHost::EegeoApiHostPlatformConfigOptions configOptions(apiKeyStr, coverageTreeManifestStr, environmentThemesManifestStr);
+    pAndroidApiRunner->CreatePlatform(configOptions, eegeoMap);
     Eegeo::ApiHost::IEegeoApiHostModule* pEegeoApiHostModule = pAndroidApiRunner->GetEegeoApiHostModule();
 
     Eegeo::Api::EegeoMapApi* pEegeoMapApi = &(pEegeoApiHostModule->GetEegeoMapApi());
 
     jenv->ReleaseStringUTFChars(apiKey, pApiKey);
+    jenv->ReleaseStringUTFChars(coverageTreeManifest, pCoverageTreeManifest);
+    jenv->ReleaseStringUTFChars(environmentThemesManifest, pEnvironmentThemesManifest);
 
     return reinterpret_cast<jlong>(pEegeoMapApi);
 }

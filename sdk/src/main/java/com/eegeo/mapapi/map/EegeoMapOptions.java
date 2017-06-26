@@ -14,6 +14,8 @@ public class EegeoMapOptions {
 
     private CameraPosition m_camera;
     private float m_targetFrameRate = 30.f;
+    private String m_coverageTreeManifest = "";
+    private String m_environmentThemesManifest = "";
 
     /**
      * Specifies configuration for creating an EegeoMap. If you add an eeGeo MapView using XML, you
@@ -60,6 +62,28 @@ public class EegeoMapOptions {
     }
 
     /**
+     * Defines the coverage tree manifest url for the map
+     *
+     * @param coverageTreeManifest A String, specifying the coverage tree manifest url for the map.
+     * @return this EegeoMapOptions object updated with the specified coverage tree manifest.
+     */
+    public EegeoMapOptions coverageTreeManifest(String coverageTreeManifest) {
+        this.m_coverageTreeManifest = coverageTreeManifest;
+        return this;
+    }
+
+    /**
+     * Defines the environment themes manifest url for the map
+     *
+     * @param environmentThemesManifest A String, specifying the environment themes manifest url for the map.
+     * @return this EegeoMapOptions object updated with the specified environment themes manifest.
+     */
+    public EegeoMapOptions environmentThemesManifest(String environmentThemesManifest) {
+        this.m_environmentThemesManifest = environmentThemesManifest;
+        return this;
+    }
+
+    /**
      * @return the camera option
      */
     public CameraPosition getCamera() {
@@ -72,4 +96,14 @@ public class EegeoMapOptions {
     public float getTargetFrameRate() {
         return m_targetFrameRate;
     }
+
+    /**
+     * @return the coverage tree manifest option
+     */
+    public String getCoverageTreeManifest() { return m_coverageTreeManifest; }
+
+    /**
+     * @return the environment themes manifest option
+     */
+    public String getEnvironmentThemesManifest() { return m_environmentThemesManifest; }
 }

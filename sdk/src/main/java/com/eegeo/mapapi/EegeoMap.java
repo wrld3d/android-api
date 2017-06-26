@@ -58,11 +58,12 @@ public final class EegeoMap {
     @WorkerThread
     EegeoMap(INativeMessageRunner nativeRunner,
              IUiMessageRunner uiRunner,
-             EegeoNativeMapView.ICreateEegeoMapApi createNativeEegeoMapApi
+             EegeoNativeMapView.ICreateEegeoMapApi createNativeEegeoMapApi,
+             EegeoMapOptions eegeoMapOptions
     ) {
         this.m_uiRunner = uiRunner;
         this.m_nativeRunner = nativeRunner;
-        this.m_eegeoMapApiPtr = createNativeEegeoMapApi.create(this);
+        this.m_eegeoMapApiPtr = createNativeEegeoMapApi.create(this, eegeoMapOptions);
         this.m_projection = new Projection(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_markerApi = new MarkerApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }

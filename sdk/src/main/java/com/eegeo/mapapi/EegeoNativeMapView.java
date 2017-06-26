@@ -50,7 +50,7 @@ public class EegeoNativeMapView implements INativeMessageRunner {
             @WorkerThread
             @Override
             public EegeoMap call() throws Exception {
-                EegeoMap eeGeoMap = new EegeoMap(EegeoNativeMapView.this, m_uiRunner, new CreateEegeoMapApiImpl());
+                EegeoMap eeGeoMap = new EegeoMap(EegeoNativeMapView.this, m_uiRunner, new CreateEegeoMapApiImpl(), eegeoMapOptions);
                 eeGeoMap.initialise(eegeoMapOptions);
 
                 return eeGeoMap;
@@ -297,7 +297,7 @@ public class EegeoNativeMapView implements INativeMessageRunner {
     private native void nativeSetSurface(long jniApiRunnerPtr, Surface surface);
 
     @WorkerThread
-    private native long nativeCreateEegeoMapApi(long jniApiRunnerPtr, String apiKey, EegeoMap eegeoMap);
+    private native long nativeCreateEegeoMapApi(long jniApiRunnerPtr, EegeoMap eegeoMap, String apiKey, String coverageTreeManifest, String environmentThemesManifest);
 
     @WorkerThread
     private native void nativeUpdateApiRunner(long jniApiRunnerPtr, float deltaTimeSeconds);
@@ -313,14 +313,16 @@ public class EegeoNativeMapView implements INativeMessageRunner {
 
     interface ICreateEegeoMapApi {
         @WorkerThread
-        long create(EegeoMap eegeoMap);
+        long create(EegeoMap eegeoMap, EegeoMapOptions eegeoMapOptions);
     }
 
     private class CreateEegeoMapApiImpl implements ICreateEegeoMapApi {
         @WorkerThread
-        public long create(EegeoMap eegeoMap) {
+        public long create(EegeoMap eegeoMap, EegeoMapOptions eegeoMapOptions) {
             String apiKey = EegeoApi.getInstance().getApiKey();
-            long jniEegeoMapApiPtr = nativeCreateEegeoMapApi(m_jniApiRunnerPtr, apiKey, eegeoMap);
+            String coverageTreeManifest = eegeoMapOptions.getCoverageTreeManifest();
+            String environmentThemesManifest = eegeoMapOptions.getEnvironmentThemesManifest();
+            long jniEegeoMapApiPtr = nativeCreateEegeoMapApi(m_jniApiRunnerPtr, eegeoMap, apiKey, coverageTreeManifest, environmentThemesManifest);
             return jniEegeoMapApiPtr;
         }
     }
