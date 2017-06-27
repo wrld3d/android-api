@@ -321,7 +321,13 @@ public class EegeoNativeMapView implements INativeMessageRunner {
         public long create(EegeoMap eegeoMap, EegeoMapOptions eegeoMapOptions) {
             String apiKey = EegeoApi.getInstance().getApiKey();
             String coverageTreeManifest = eegeoMapOptions.getCoverageTreeManifest();
+            if (coverageTreeManifest == null) {
+                coverageTreeManifest = "";
+            }
             String environmentThemesManifest = eegeoMapOptions.getEnvironmentThemesManifest();
+            if (environmentThemesManifest == null) {
+                environmentThemesManifest = "";
+            }
             long jniEegeoMapApiPtr = nativeCreateEegeoMapApi(m_jniApiRunnerPtr, eegeoMap, apiKey, coverageTreeManifest, environmentThemesManifest);
             return jniEegeoMapApiPtr;
         }

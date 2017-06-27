@@ -14,8 +14,8 @@ public class EegeoMapOptions {
 
     private CameraPosition m_camera;
     private float m_targetFrameRate = 30.f;
-    private String m_coverageTreeManifest = "";
-    private String m_environmentThemesManifest = "";
+    private String m_coverageTreeManifest = null;
+    private String m_environmentThemesManifest = null;
 
     /**
      * Specifies configuration for creating an EegeoMap. If you add an eeGeo MapView using XML, you
@@ -42,6 +42,8 @@ public class EegeoMapOptions {
 
         try {
             eegeoMapOptions.camera(new CameraPosition.Builder(styledAttributes).build());
+            eegeoMapOptions.coverageTreeManifest(styledAttributes.getString(R.styleable.eegeo_MapView_coverage_tree_manifest));
+            eegeoMapOptions.environmentThemesManifest(styledAttributes.getString(R.styleable.eegeo_MapView_environment_themes_manifest));
         } finally {
             styledAttributes.recycle();
         }
