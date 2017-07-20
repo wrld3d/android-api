@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 /**
  * Singleton container for the eeGeo API key and application context.
  *
- * @eegeo.examples BasicMapActivity
  */
 public final class EegeoApi {
     private static EegeoApi ms_instance;
