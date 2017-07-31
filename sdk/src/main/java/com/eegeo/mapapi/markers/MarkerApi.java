@@ -11,7 +11,6 @@ import com.eegeo.mapapi.geometry.LatLng;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class MarkerApi {
     private INativeMessageRunner m_nativeRunner;

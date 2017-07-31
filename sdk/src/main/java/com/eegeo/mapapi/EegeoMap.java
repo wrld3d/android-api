@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 
+import com.eegeo.mapapi.bluesphere.BlueSphereApi;
 import com.eegeo.mapapi.camera.CameraApiJniCalls;
 import com.eegeo.mapapi.camera.CameraPosition;
 import com.eegeo.mapapi.camera.CameraUpdate;
@@ -24,6 +25,7 @@ import com.eegeo.mapapi.markers.Marker;
 import com.eegeo.mapapi.markers.MarkerApi;
 import com.eegeo.mapapi.markers.MarkerOptions;
 import com.eegeo.mapapi.markers.OnMarkerClickListener;
+import com.eegeo.mapapi.bluesphere.BlueSphere;
 import com.eegeo.mapapi.util.Callbacks;
 import com.eegeo.mapapi.util.Ready;
 
@@ -54,6 +56,8 @@ public final class EegeoMap {
     private int m_currentIndoorFloor = -1;
     private Projection m_projection;
     private MarkerApi m_markerApi;
+    private BlueSphereApi m_blueSphereApi;
+    private BlueSphere m_blueSphere = null;
 
     @WorkerThread
     EegeoMap(INativeMessageRunner nativeRunner,
@@ -66,6 +70,7 @@ public final class EegeoMap {
         this.m_eegeoMapApiPtr = createNativeEegeoMapApi.create(this, eegeoMapOptions);
         this.m_projection = new Projection(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_markerApi = new MarkerApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_blueSphereApi = new BlueSphereApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
 
     @WorkerThread
@@ -568,6 +573,7 @@ public final class EegeoMap {
         return new Marker(m_markerApi, markerOptions);
     }
 
+
     /**
      * Remove a marker from the map and destroy it.
      *
@@ -577,6 +583,21 @@ public final class EegeoMap {
     public void removeMarker(@NonNull final Marker marker) {
 
         marker.destroy();
+    }
+
+    /**
+     * Gets the BlueSphere
+     *
+     * @return  The BlueSphere.
+     */
+    @UiThread
+    public BlueSphere getBlueSphere() {
+        if(m_blueSphere == null)
+        {
+            m_blueSphere = new BlueSphere(m_blueSphereApi);
+        }
+
+        return m_blueSphere;
     }
 
     /**
