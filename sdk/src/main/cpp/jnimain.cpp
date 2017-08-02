@@ -319,10 +319,3 @@ JNIEXPORT void JNICALL Java_com_eegeo_mapapi_NativeJniCalls_setView(JNIEnv*, job
                                          allowInterruption);
 }
 
-extern "C"
-{
-    void eegeoMapInitializedCallback(int mapId, Eegeo::Api::EegeoMapApi* mapApi)
-    {
-        Eegeo_TTY("Received eegeoMapInitializedCallback, mapId = %d", mapId);
-    }
-}
