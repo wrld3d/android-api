@@ -20,7 +20,7 @@ import java.util.concurrent.Callable;
  * want to move the bluesphere.
  * <br>
  * <br>
- * <b>Heading</b><br>
+ * <b>Direction</b><br>
  * The direction the bluesphere is facing in degrees from north.
  *
  * <br>
@@ -60,7 +60,7 @@ public class BlueSphere extends NativeApiObject {
     private String m_indoorMapId;
     private int m_indoorFloorId;
     private LatLng m_position;
-    private double m_heading;
+    private double m_direction;
     private double m_elevation;
     private boolean m_enabled;
 
@@ -104,24 +104,24 @@ public class BlueSphere extends NativeApiObject {
     }
 
     /**
-     * Returns the heading of the bluesphere.
+     * Returns the direction of the bluesphere.
      *
-     * @return A double representing the heading of the bluesphere.
+     * @return A double representing the direction of the bluesphere.
      */
     @UiThread
-    public double getHeading() {
-        return m_heading;
+    public double getDirection() {
+        return m_direction;
     }
 
     /**
-     * Sets the heading of this bluesphere.
+     * Sets the direction of this bluesphere.
      *
-     * @param heading A double heading in degrees.
+     * @param direction A double direction in degrees.
      */
     @UiThread
-    public void setHeading(@NonNull double heading) {
-        m_heading = heading;
-        updateHeading();
+    public void setDirection(@NonNull double direction) {
+        m_direction = direction;
+        updateDirection();
     }
 
     /**
@@ -226,13 +226,13 @@ public class BlueSphere extends NativeApiObject {
     }
 
     @UiThread
-    private void updateHeading() {
-        final double heading = m_heading;
+    private void updateDirection() {
+        final double direction = m_direction;
 
         submit(new Runnable() {
             @WorkerThread
             public void run() {
-                m_bluesphereApi.setHeading(BlueSphere.m_allowHandleAccess, heading);
+                m_bluesphereApi.setDirection(BlueSphere.m_allowHandleAccess, direction);
             }
         });
     }
