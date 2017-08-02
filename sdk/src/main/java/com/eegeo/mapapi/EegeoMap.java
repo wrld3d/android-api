@@ -179,7 +179,7 @@ public final class EegeoMap {
             public void run() {
                 CameraApiJniCalls.setViewToBounds(m_eegeoMapApiPtr, true, latLngBounds.northeast.latitude, latLngBounds.northeast.longitude,
                         latLngBounds.southwest.latitude, latLngBounds.southwest.longitude,
-                        false);
+                        true);
             }
         });
     }
