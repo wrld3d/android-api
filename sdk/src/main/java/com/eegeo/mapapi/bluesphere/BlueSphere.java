@@ -20,8 +20,8 @@ import java.util.concurrent.Callable;
  * want to move the bluesphere.
  * <br>
  * <br>
- * <b>Direction</b><br>
- * The direction the bluesphere is facing in degrees from north.
+ * <b>Bearing</b><br>
+ * The bearing the bluesphere is facing in degrees from north.
  *
  * <br>
  * <br>
@@ -60,7 +60,7 @@ public class BlueSphere extends NativeApiObject {
     private String m_indoorMapId;
     private int m_indoorFloorId;
     private LatLng m_position;
-    private double m_direction;
+    private double m_bearing;
     private double m_elevation;
     private boolean m_enabled;
 
@@ -104,24 +104,24 @@ public class BlueSphere extends NativeApiObject {
     }
 
     /**
-     * Returns the direction of the bluesphere.
+     * Returns the bearing of the bluesphere.
      *
-     * @return A double representing the direction of the bluesphere.
+     * @return A double representing the bearing of the bluesphere.
      */
     @UiThread
-    public double getDirection() {
-        return m_direction;
+    public double getBearing() {
+        return m_bearing;
     }
 
     /**
-     * Sets the direction of this bluesphere.
+     * Sets the bearing of this bluesphere.
      *
-     * @param direction A double direction in degrees.
+     * @param bearing A double bearing in degrees.
      */
     @UiThread
-    public void setDirection(@NonNull double direction) {
-        m_direction = direction;
-        updateDirection();
+    public void setBearing(@NonNull double bearing) {
+        m_bearing = bearing;
+        updateBearing();
     }
 
     /**
@@ -226,13 +226,13 @@ public class BlueSphere extends NativeApiObject {
     }
 
     @UiThread
-    private void updateDirection() {
-        final double direction = m_direction;
+    private void updateBearing() {
+        final double bearing = m_bearing;
 
         submit(new Runnable() {
             @WorkerThread
             public void run() {
-                m_bluesphereApi.setDirection(BlueSphere.m_allowHandleAccess, direction);
+                m_bluesphereApi.setBearing(BlueSphere.m_allowHandleAccess, bearing);
             }
         });
     }
