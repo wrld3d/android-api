@@ -13,6 +13,7 @@ import java.util.concurrent.Callable;
  * A BlueSphere is a model that can be used for GPS and indoor positioning systems to show the users positon and oritentation.
  * <br>
  * BlueSphere has the following properties:
+ *
  * <br>
  * <br>
  * <b>Position</b><br>
@@ -64,6 +65,11 @@ public class BlueSphere extends NativeApiObject {
     private double m_elevation;
     private boolean m_enabled;
 
+    /**
+     * This constructor is for internal SDK use only -- use EegeoMap.GetBlueSphere() to access the blue sphere
+     *
+     * @eegeo.internal
+     */
     @UiThread
     public BlueSphere(@NonNull final BlueSphereApi bluesphereApi) {
         super(bluesphereApi.getNativeRunner(), bluesphereApi.getUiRunner(),
@@ -136,7 +142,7 @@ public class BlueSphere extends NativeApiObject {
     }
 
     /**
-     * Sets the elevation of this bluesphere
+     * Sets the elevation of this bluesphere.
      *
      * @param elevation A height in meters. Interpretation depends on the current
      *                  BlueSphereOptions.BlueSphereElevationMode
@@ -159,7 +165,7 @@ public class BlueSphere extends NativeApiObject {
     }
 
     /**
-     * Sets the indoor map and floor id of this bluesphere
+     * Sets the indoor map and floor id of this bluesphere.
      *
      * @param indoorMapId For a bluesphere on an indoor map, the string identifier of the indoor map; otherwise an
      * empty string.
