@@ -35,7 +35,8 @@ public class SourceProcessor extends Doclet {
             "LatLngBounds",
             "Projection",
             "Promise",
-            "Ready"
+            "Ready",
+            "BlueSphere"
     );
     // Would be nicer to extract this list automatically, but that would require two passes
     private static List<String> subClasses = Arrays.asList(
