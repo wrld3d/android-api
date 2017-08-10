@@ -120,8 +120,6 @@ public class Polyline extends NativeApiObject {
     /**
      * Sets the identifier of an indoor map on which this polyline should be displayed, if any.
      *
-     * @return For a polyline on an indoor map, the string identifier of the indoor map; otherwise an
-     * empty string.
      */
     @UiThread
     public void setIndoorMapId(String indoorMapId) {

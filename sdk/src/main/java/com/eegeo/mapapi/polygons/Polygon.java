@@ -120,8 +120,6 @@ public class Polygon extends NativeApiObject {
     /**
      * Sets the identifier of an indoor map on which this polygon should be displayed, if any.
      *
-     * @return For a polygon on an indoor map, the string identifier of the indoor map; otherwise an
-     * empty string.
      */
     @UiThread
     public void setIndoorMapId(String indoorMapId) {
