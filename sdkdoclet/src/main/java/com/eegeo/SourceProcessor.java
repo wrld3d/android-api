@@ -22,6 +22,11 @@ public class SourceProcessor extends Doclet {
             "OnMapReadyCallback",
             "Marker",
             "MarkerOptions",
+            "ElevationMode",
+            "Polygon",
+            "PolygonOptions",
+            "Polyline",
+            "PolylineOptions",
             "OnMarkerClickListener",
             "CameraPosition",
             "CameraUpdate",
@@ -176,6 +181,10 @@ public class SourceProcessor extends Doclet {
                 file.write("### Fields\n\n");
                 printFields(file, classDoc.fields());
             }
+            if (classDoc.isEnum()) {
+                file.write("### enum " + classDoc.name() + "\n\n");
+                printEnum(file, classDoc);
+            } else {
             if (hasPublicItems(classDoc.constructors())) {
                 file.write("### Constructors\n\n");
                 printConstructors(file, classDoc.constructors());
@@ -183,6 +192,7 @@ public class SourceProcessor extends Doclet {
             if (hasPublicItems(classDoc.methods())) {
                 file.write("### Methods\n\n");
                 printMembers(file, classDoc.methods());
+            }
             }
             if (hasPublicItems(classDoc.innerClasses())) {
                 for (ClassDoc cd : classDoc.innerClasses()) {
@@ -243,6 +253,7 @@ public class SourceProcessor extends Doclet {
             System.out.println("Failed to write fields");
         }
     }
+
     private static void printConstructors(FileWriter file, ConstructorDoc[] constructorDocs) {
         try {
             for (ConstructorDoc cd : constructorDocs) {
@@ -256,6 +267,7 @@ public class SourceProcessor extends Doclet {
             System.out.println("Failed to write constructors");
         }
     }
+
     private static void printMembers(FileWriter file, MethodDoc[] mems) {
         try {
             for (MethodDoc methodDoc : mems) {

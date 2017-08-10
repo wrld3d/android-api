@@ -26,6 +26,12 @@ import com.eegeo.mapapi.markers.MarkerApi;
 import com.eegeo.mapapi.markers.MarkerOptions;
 import com.eegeo.mapapi.markers.OnMarkerClickListener;
 import com.eegeo.mapapi.bluesphere.BlueSphere;
+import com.eegeo.mapapi.polygons.Polygon;
+import com.eegeo.mapapi.polygons.PolygonApi;
+import com.eegeo.mapapi.polygons.PolygonOptions;
+import com.eegeo.mapapi.polylines.Polyline;
+import com.eegeo.mapapi.polylines.PolylineApi;
+import com.eegeo.mapapi.polylines.PolylineOptions;
 import com.eegeo.mapapi.util.Callbacks;
 import com.eegeo.mapapi.util.Ready;
 
@@ -56,6 +62,8 @@ public final class EegeoMap {
     private int m_currentIndoorFloor = -1;
     private Projection m_projection;
     private MarkerApi m_markerApi;
+    private PolygonApi m_polygonApi;
+    private PolylineApi m_polylineApi;
     private BlueSphereApi m_blueSphereApi;
     private BlueSphere m_blueSphere = null;
 
@@ -70,6 +78,8 @@ public final class EegeoMap {
         this.m_eegeoMapApiPtr = createNativeEegeoMapApi.create(this, eegeoMapOptions);
         this.m_projection = new Projection(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_markerApi = new MarkerApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_polygonApi = new PolygonApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_polylineApi = new PolylineApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_blueSphereApi = new BlueSphereApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
 
@@ -612,6 +622,54 @@ public final class EegeoMap {
     public void removeMarker(@NonNull final Marker marker) {
 
         marker.destroy();
+    }
+
+    /**
+     * Create a polygon and add it to the map.
+     *
+     * @param polygonOptions Creation parameters for the marker
+     * @return The Polygon that was added
+     */
+    @UiThread
+    public Polygon addPolygon(@NonNull final PolygonOptions polygonOptions) {
+
+        return new Polygon(m_polygonApi, polygonOptions);
+    }
+
+
+    /**
+     * Remove a polygon from the map and destroy it.
+     *
+     * @param polygon The Polygon to remove.
+     */
+    @UiThread
+    public void removePolygon(@NonNull final Polygon polygon) {
+
+        polygon.destroy();
+    }
+
+    /**
+     * Create a polyline and add it to the map.
+     *
+     * @param polylineOptions Creation parameters for the marker
+     * @return The Polyline that was added
+     */
+    @UiThread
+    public Polyline addPolyline(@NonNull final PolylineOptions polylineOptions) {
+
+        return new Polyline(m_polylineApi, polylineOptions);
+    }
+
+
+    /**
+     * Remove a polyline from the map and destroy it.
+     *
+     * @param polyline The Polyline to remove.
+     */
+    @UiThread
+    public void removePolyline(@NonNull final Polyline polyline) {
+
+        polyline.destroy();
     }
 
     /**
