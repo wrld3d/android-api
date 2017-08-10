@@ -17,4 +17,7 @@ public class IndoorsApiJniCalls {
 
     @WorkerThread
     public static native void floorSelectionDragged(long jniEegeoMapApiPtr, float dragParam);
+
+    @WorkerThread
+    public static native void enterIndoorMap(long jniEegeoMapApiPtr, String mapId);
 }

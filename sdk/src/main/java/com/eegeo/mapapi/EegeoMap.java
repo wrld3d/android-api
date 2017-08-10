@@ -430,10 +430,39 @@ public final class EegeoMap {
      * Exits the current indoor map.
      */
     @UiThread
+    @Deprecated
     public void onExitIndoorClicked() {
         m_nativeRunner.runOnNativeThread(new Runnable() {
             public void run() {
                 IndoorsApiJniCalls.exitIndoorMap(m_eegeoMapApiPtr);
+            }
+        });
+    }
+
+    /**
+     * Exits the current indoor map.
+     */
+    @UiThread
+    public void exitIndoorMap() {
+        m_nativeRunner.runOnNativeThread(new Runnable() {
+            public void run() {
+                IndoorsApiJniCalls.exitIndoorMap(m_eegeoMapApiPtr);
+            }
+        });
+    }
+
+    /**
+     * Enters the specified indoor map.
+     * @param indoorMapId The id of the indoor map to enter
+     */
+    @UiThread
+    public void enterIndoorMap(final String indoorMapId) {
+        m_nativeRunner.runOnNativeThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                IndoorsApiJniCalls.enterIndoorMap(m_eegeoMapApiPtr, indoorMapId);
             }
         });
     }
