@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 
+import com.eegeo.mapapi.geometry.ElevationMode;
 import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.util.NativeApiObject;
 
@@ -101,7 +102,7 @@ public class Marker extends NativeApiObject {
     private final int m_indoorFloorId;
     private LatLng m_position;
     private double m_elevation;
-    private MarkerOptions.MarkerElevationMode m_elevationMode;
+    private ElevationMode m_elevationMode;
     private String m_title;
     private String m_iconKey;
     private int m_drawOrder;
@@ -195,7 +196,7 @@ public class Marker extends NativeApiObject {
      * terrain, or an absolute altitude above sea level.
      */
     @UiThread
-    public MarkerOptions.MarkerElevationMode getElevationMode() {
+    public ElevationMode getElevationMode() {
         return m_elevationMode;
     }
 
@@ -205,7 +206,7 @@ public class Marker extends NativeApiObject {
      * @param elevationMode The mode specifying how to interpret the Elevation property
      */
     @UiThread
-    public void setElevationMode(MarkerOptions.MarkerElevationMode elevationMode) {
+    public void setElevationMode(ElevationMode elevationMode) {
         m_elevationMode = elevationMode;
         updateLocation();
     }
@@ -338,7 +339,7 @@ public class Marker extends NativeApiObject {
     private void updateLocation() {
         final LatLng position = m_position;
         final double elevation = m_elevation;
-        final MarkerOptions.MarkerElevationMode elevationMode = m_elevationMode;
+        final ElevationMode elevationMode = m_elevationMode;
 
         submit(new Runnable() {
             @WorkerThread

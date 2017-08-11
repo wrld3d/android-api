@@ -1,5 +1,6 @@
 package com.eegeo.mapapi.markers;
 
+import com.eegeo.mapapi.geometry.ElevationMode;
 import com.eegeo.mapapi.geometry.LatLng;
 
 
@@ -13,7 +14,7 @@ public final class MarkerOptions {
 
     private LatLng m_position;
     private double m_elevation;
-    private MarkerElevationMode m_elevationMode = MarkerElevationMode.HeightAboveGround;
+    private ElevationMode m_elevationMode = ElevationMode.HeightAboveGround;
     private int m_drawOrder;
     private String m_title = "";
     private String m_styleName = "marker_default";
@@ -52,17 +53,31 @@ public final class MarkerOptions {
     }
 
     /**
-     * Sets the MarkerElevationMode for the marker. If this method is not called, MarkerOptions will be
-     * initialised to create a Marker with MarkerElevationMode.HeightAboveGround.
+     * Sets the ElevationMode for the marker. If this method is not called, MarkerOptions will be
+     * initialised to create a Marker with ElevationMode.HeightAboveGround.
      *
+     * @param elevationMode
+     * @return The MarkerOptions object on which the method was called, with the new elevation mode set.
+     */
+    public MarkerOptions elevationMode(ElevationMode elevationMode) {
+        m_elevationMode = elevationMode;
+        return this;
+    }
+
+    /**
+     * [Deprecated - use elevationMode(ElevationMode elevationMode).]
+     * <br>
+     * Sets the ElevationMode for the marker. If this method is not called, MarkerOptions will be
+     * initialised to create a Marker with ElevationMode.HeightAboveGround.
+     *
+     * @deprecated
      * @param markerElevationMode
      * @return The MarkerOptions object on which the method was called, with the new elevation mode set.
      */
     public MarkerOptions elevationMode(MarkerElevationMode markerElevationMode) {
-        m_elevationMode = markerElevationMode;
+        m_elevationMode = fromMarkerElevationMode(markerElevationMode);
         return this;
     }
-
     /**
      * Sets the title for the marker. If this method is not called, MarkerOptions will be
      * initialised to create a Marker with no title.
@@ -161,9 +176,9 @@ public final class MarkerOptions {
     /**
      * Returns the elevation mode set for this MarkerOptions object.
      *
-     * @return The MarkerElevationMode, indicating how elevation is interpreted.
+     * @return The ElevationMode, indicating how elevation is interpreted.
      */
-    public MarkerElevationMode getElevationMode() {
+    public ElevationMode getElevationMode() {
         return m_elevationMode;
     }
 
@@ -232,6 +247,8 @@ public final class MarkerOptions {
 
     /**
      * Specifies how a Marker's elevation property is interpreted
+     * @deprecated in favor of mapapi.geometry.ElevationMode . To ease migration, conversion methods
+     * fromMarkerElevationMode and toMarkerElevationMode have been provided.
      */
     public enum MarkerElevationMode {
         /**
@@ -246,4 +263,29 @@ public final class MarkerOptions {
          */
         HeightAboveGround
     }
+
+    /**
+     * Provided for migration from deprecated type MarkerElevationMode to ElevationMode only
+     * @deprecated
+     * @return markerElevationMode as an equivalent ElevationMode
+     */
+    public static ElevationMode fromMarkerElevationMode(MarkerElevationMode markerElevationMode) {
+        if (markerElevationMode == MarkerElevationMode.HeightAboveGround) {
+            return ElevationMode.HeightAboveGround;
+        }
+        return ElevationMode.HeightAboveSeaLevel;
+    }
+
+    /**
+     * Provided for migration from deprecated type MarkerElevationMode to ElevationMode only
+     * @deprecated
+     * @return elevationMode as an equivalent MarkerElevationMode
+     */
+    public static MarkerElevationMode toMarkerElevationMode(ElevationMode elevationMode) {
+        if (elevationMode == ElevationMode.HeightAboveGround) {
+            return MarkerElevationMode.HeightAboveGround;
+        }
+        return MarkerElevationMode.HeightAboveSeaLevel;
+    }
+
 }

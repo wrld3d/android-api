@@ -7,6 +7,7 @@ import android.util.SparseArray;
 
 import com.eegeo.mapapi.INativeMessageRunner;
 import com.eegeo.mapapi.IUiMessageRunner;
+import com.eegeo.mapapi.geometry.ElevationMode;
 import com.eegeo.mapapi.geometry.LatLng;
 
 import java.security.InvalidParameterException;
@@ -93,7 +94,7 @@ public class MarkerApi {
     }
 
     @WorkerThread
-    public void updateLocation(int markerNativeHandle, Marker.AllowHandleAccess allowHandleAccess, LatLng position, double elevation, MarkerOptions.MarkerElevationMode elevationMode) {
+    public void updateLocation(int markerNativeHandle, Marker.AllowHandleAccess allowHandleAccess, LatLng position, double elevation, ElevationMode elevationMode) {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Marker");
 
