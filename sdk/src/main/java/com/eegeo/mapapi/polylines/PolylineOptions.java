@@ -19,8 +19,9 @@ public final class PolylineOptions {
     private String m_indoorMapId = "";
     private int m_indoorFloorId;
     private List<LatLng> m_points = new ArrayList<>();
-    private float m_width = 10;
+    private float m_width = 10.f;
     private int m_colorARGB = 0xff000000;
+    private float m_miterLimit = 10.f;
 
     /**
      * Default constructor for polyline creation parameters.
@@ -121,6 +122,19 @@ public final class PolylineOptions {
     }
 
     /**
+     * Sets the miter limit of the polyline, the maximum allowed ratio between the length of a miter
+     * diagonal at a join, and the line width.
+     *
+     * @param miterLimit
+     * @return The PolylineOptions object on which the method was called, with the new miter limit set.
+     */
+    @SuppressWarnings("JavaDoc")
+    public PolylineOptions miterLimit(float miterLimit) {
+        m_miterLimit = miterLimit;
+        return this;
+    }
+
+    /**
      * Returns the elevation set for this PolylineOptions object.
      *
      * @return A height, in meters.
@@ -181,6 +195,17 @@ public final class PolylineOptions {
      */
     public int getColor() {
         return m_colorARGB;
+    }
+
+    /**
+     * Returns the line miter limit set for this PolylineOptions object. The default value is 10,
+     * which would result in a polyline created from these options clamping the length of a join
+     * diagonal for join angles less than approximately 11 degrees.
+     *
+     * @return The miter limit ratio used for miter joins.
+     */
+    public float getMiterLimit() {
+        return m_miterLimit;
     }
 
 }

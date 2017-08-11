@@ -75,7 +75,8 @@ public class PolylineApi {
                 polylineOptions.getElevationMode().ordinal(),
                 latLongs,
                 polylineOptions.getWidth(),
-                polylineOptions.getColor()
+                polylineOptions.getColor(),
+                polylineOptions.getMiterLimit()
         );
     }
 
@@ -123,7 +124,8 @@ public class PolylineApi {
     void setStyleAttributes(int nativeHandle,
                             Polyline.AllowHandleAccess allowHandleAccess,
                             float width,
-                            int colorARGB) {
+                            int colorARGB,
+                            float miterLimit) {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Polyline");
 
@@ -131,7 +133,8 @@ public class PolylineApi {
                 m_jniEegeoMapApiPtr,
                 nativeHandle,
                 width,
-                colorARGB);
+                colorARGB,
+                miterLimit);
     }
 
     @WorkerThread
@@ -143,7 +146,8 @@ public class PolylineApi {
             int elevationMode,
             double[] points,
             float width,
-            int colorARGB
+            int colorARGB,
+            float miterLimit
     );
 
     @WorkerThread
@@ -171,7 +175,8 @@ public class PolylineApi {
             long jniEegeoMapApiPtr,
             int nativeHandle,
             float width,
-            int colorARGB);
+            int colorARGB,
+            float miterLimit);
 
 }
 

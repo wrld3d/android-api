@@ -24,6 +24,7 @@ public class Polyline extends NativeApiObject {
     private List<LatLng> m_points;
     private float m_width;
     private int m_colorARGB;
+    private float m_miterLimit;
 
 
     /**
@@ -51,6 +52,7 @@ public class Polyline extends NativeApiObject {
         m_points = polylineOptions.getPoints();
         m_width = polylineOptions.getWidth();
         m_colorARGB = polylineOptions.getColor();
+        m_miterLimit = polylineOptions.getMiterLimit();
 
         submit(new Runnable() {
             @WorkerThread
@@ -191,6 +193,29 @@ public class Polyline extends NativeApiObject {
     }
 
     /**
+     * Gets the miter limit of the polyline.
+     *
+     * @return The miter limit, as a ratio between maximum allowed miter join diagonal length and
+     * the line width.
+     */
+    @UiThread
+    public float getMiterLimit() {
+        return m_miterLimit;
+    }
+
+    /**
+     * Sets the miter limit of this polyline.
+     *
+     * @param miterLimit the miter limit, as a ratio between maximum allowed miter join diagonal
+     *                   length and the line width.
+     */
+    @UiThread
+    public void setMiterLimit(float miterLimit) {
+        m_miterLimit = miterLimit;
+        updateNativeStyleAttributes();
+    }
+
+    /**
      * Gets the points of the polyline.
      *
      * @return The vertices of this polyline.
@@ -256,6 +281,7 @@ public class Polyline extends NativeApiObject {
     private void updateNativeStyleAttributes() {
         final float width = m_width;
         final int colorARGB = m_colorARGB;
+        final float miterLimit = m_miterLimit;
 
         submit(new Runnable() {
             @WorkerThread
@@ -264,7 +290,8 @@ public class Polyline extends NativeApiObject {
                         getNativeHandle(),
                         Polyline.m_allowHandleAccess,
                         width,
-                        colorARGB);
+                        colorARGB,
+                        miterLimit);
             }
         });
     }
