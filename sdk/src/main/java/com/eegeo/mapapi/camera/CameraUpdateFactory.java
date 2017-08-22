@@ -37,7 +37,7 @@ public final class CameraUpdateFactory {
      * Creates a CameraUpdate object from a LatLngBounds area.
      *
      * @param bounds  The bounds to be displayed.
-     * @param padding
+     * @param padding Unused. For future expansion.
      * @return A CameraUpdate object which displays the specified area.
      */
     public static CameraUpdate newLatLngBounds(@NonNull LatLngBounds bounds, int padding) {

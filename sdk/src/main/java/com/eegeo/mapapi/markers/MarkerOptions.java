@@ -32,7 +32,7 @@ public final class MarkerOptions {
     /**
      * Sets the position for the marker.
      *
-     * @param position
+     * @param position The new position for the marker.
      * @return The MarkerOptions object on which the method was called, with the new position set.
      */
     public MarkerOptions position(LatLng position) {
@@ -44,7 +44,7 @@ public final class MarkerOptions {
      * Sets the elevation for the marker. If this method is not called, MarkerOptions will be
      * initialised to create a Marker with an elevation of 0.
      *
-     * @param elevation
+     * @param elevation The elevation, in meters.
      * @return The MarkerOptions object on which the method was called, with the new elevation set.
      */
     public MarkerOptions elevation(double elevation) {
@@ -56,7 +56,7 @@ public final class MarkerOptions {
      * Sets the ElevationMode for the marker. If this method is not called, MarkerOptions will be
      * initialised to create a Marker with ElevationMode.HeightAboveGround.
      *
-     * @param elevationMode
+     * @param elevationMode The ElevationMode used to interpret the elevation of the marker.
      * @return The MarkerOptions object on which the method was called, with the new elevation mode set.
      */
     public MarkerOptions elevationMode(ElevationMode elevationMode) {
@@ -71,7 +71,7 @@ public final class MarkerOptions {
      * initialised to create a Marker with ElevationMode.HeightAboveGround.
      *
      * @deprecated
-     * @param markerElevationMode
+     * @param markerElevationMode The MarkerOptions.MarkerElevationMode used to interpret the elevation of the marker.
      * @return The MarkerOptions object on which the method was called, with the new elevation mode set.
      */
     public MarkerOptions elevationMode(MarkerElevationMode markerElevationMode) {
@@ -82,7 +82,7 @@ public final class MarkerOptions {
      * Sets the title for the marker. If this method is not called, MarkerOptions will be
      * initialised to create a Marker with no title.
      *
-     * @param title
+     * @param title The title for the marker.
      * @return The MarkerOptions object on which the method was called, with the new title set.
      */
     public MarkerOptions labelText(String title) {
@@ -94,7 +94,7 @@ public final class MarkerOptions {
      * Set the style name for the marker. If this method is not called, MarkerOptions will be
      * initialised to create a Marker with a default style.
      *
-     * @param styleName
+     * @param styleName The style for the marker.
      * @return The MarkerOptions object on which the method was called, with the new style name set.
      */
     public MarkerOptions styleName(String styleName) {
@@ -106,7 +106,7 @@ public final class MarkerOptions {
      * Sets the user data for the marker. If this method is not called, MarkerOptions will be
      * initialised to create a Marker with an empty string as user data.
      *
-     * @param userData
+     * @param userData The user data for the marker.
      * @return The MarkerOptions object on which the method was called, with the new user data set.
      */
     public MarkerOptions userData(String userData) {
@@ -118,7 +118,7 @@ public final class MarkerOptions {
      * Sets the icon key for the marker. If this method is not called, MarkerOptions will be
      * initialised to create a Marker with a default icon.
      *
-     * @param iconKey
+     * @param iconKey The icon key for the marker.
      * @return The MarkerOptions object on which the method was called, with the new icon key set.
      */
     public MarkerOptions iconKey(String iconKey) {
@@ -130,8 +130,8 @@ public final class MarkerOptions {
      * Sets the indoor map properties for the marker. If this method is not called,
      * MarkerOptions is initialised to create a marker for display on an outdoor map.
      *
-     * @param indoorMapId   the identifier of the indoor map on which the marker should be displayed
-     * @param indoorFloorId the identifier of the indoor map floor on which the marker should be
+     * @param indoorMapId   The identifier of the indoor map on which the marker should be displayed.
+     * @param indoorFloorId The identifier of the indoor map floor on which the marker should be
      *                      displayed. In the WRLD Indoor Map Format, this corresponds to the
      *                      'z_order' field of the Level object.
      * @return The MarkerOptions object on which the method was called, with the new indoor map
@@ -147,7 +147,7 @@ public final class MarkerOptions {
      * Sets the draw order for the marker. If this method is not called, MarkerOptions is
      * initialised to create a marker with a drawOrder of 0.
      *
-     * @param drawOrder
+     * @param drawOrder The draw order for the marker. Higher values are drawn after lower values.
      * @return The MarkerOptions object on which the method was called, with the draw order set
      */
     public MarkerOptions drawOrder(int drawOrder) {

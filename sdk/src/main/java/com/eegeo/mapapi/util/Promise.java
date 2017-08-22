@@ -10,7 +10,7 @@ public class Promise<T> {
 
     /**
      * Called by the operation which has computed the value requested.
-     * @param t
+     * @param t The computed value.
      */
     public void ready(T t) {
         if (m_func != null) {

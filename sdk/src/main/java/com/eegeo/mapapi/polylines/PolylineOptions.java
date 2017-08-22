@@ -33,7 +33,7 @@ public final class PolylineOptions {
     /**
      * Adds vertices to the end of the polyline.
      *
-     * @param points
+     * @param points The points to add.
      * @return The PolylineOptions object on which the method was called, with the new points added.
      */
     @SuppressWarnings("JavaDoc")
@@ -45,7 +45,7 @@ public final class PolylineOptions {
     /**
      * Adds a vertex to the end of the polyline.
      *
-     * @param point
+     * @param point The point to add.
      * @return The PolylineOptions object on which the method was called, with the new point added.
      */
     @SuppressWarnings("JavaDoc")
@@ -58,7 +58,7 @@ public final class PolylineOptions {
      * Sets the elevation for the polyline. If this method is not called, PolylineOptions will be
      * initialised to create a Polyline with an elevation of 0.
      *
-     * @param elevation
+     * @param elevation The elevation, in meters.
      * @return The PolylineOptions object on which the method was called, with the new elevation set.
      */
     @SuppressWarnings("JavaDoc")
@@ -71,7 +71,7 @@ public final class PolylineOptions {
      * Sets the ElevationMode for the polyline. If this method is not called, PolylineOptions will be
      * initialised to create a Polyline with ElevationMode.HeightAboveGround.
      *
-     * @param ElevationMode
+     * @param ElevationMode The ElevationMode used to interpret the elevation of the polyline.
      * @return The PolylineOptions object on which the method was called, with the new elevation mode set.
      */
     @SuppressWarnings("JavaDoc")
@@ -100,7 +100,7 @@ public final class PolylineOptions {
     /**
      * Sets the width of the polyline in screen pixels.
      *
-     * @param width
+     * @param width The width in screen pixels.
      * @return The PolylineOptions object on which the method was called, with the new width set.
      */
     @SuppressWarnings("JavaDoc")
@@ -112,7 +112,7 @@ public final class PolylineOptions {
     /**
      * Sets the color of the polyline as a 32-bit ARGB color. The default value is opaque black (0xff000000).
      *
-     * @param color
+     * @param color The color to use.
      * @return The PolylineOptions object on which the method was called, with the new color set.
      */
     @SuppressWarnings("JavaDoc")
@@ -125,7 +125,7 @@ public final class PolylineOptions {
      * Sets the miter limit of the polyline, the maximum allowed ratio between the length of a miter
      * diagonal at a join, and the line width.
      *
-     * @param miterLimit
+     * @param miterLimit The miter limit.
      * @return The PolylineOptions object on which the method was called, with the new miter limit set.
      */
     @SuppressWarnings("JavaDoc")

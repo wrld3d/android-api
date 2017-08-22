@@ -32,7 +32,7 @@ public final class PolygonOptions {
     /**
      * Adds vertices to the end of the polygon.
      *
-     * @param points
+     * @param points The points to add.
      * @return The PolygonOptions object on which the method was called, with the new points added.
      */
     @SuppressWarnings("JavaDoc")
@@ -44,7 +44,7 @@ public final class PolygonOptions {
     /**
      * Adds a vertex to the end of the polygon.
      *
-     * @param point
+     * @param point The point to add.
      * @return The PolygonOptions object on which the method was called, with the new point added.
      */
     @SuppressWarnings("JavaDoc")
@@ -56,7 +56,7 @@ public final class PolygonOptions {
     /**
      * Adds a hole to the polygon being built.
      *
-     * @param points
+     * @param points The points which form the hole.
      * @return The PolygonOptions object on which the method was called, with the new hole added.
      */
     @SuppressWarnings("JavaDoc")
@@ -73,7 +73,7 @@ public final class PolygonOptions {
      * Sets the elevation for the polygon. If this method is not called, PolygonOptions will be
      * initialised to create a Polygon with an elevation of 0.
      *
-     * @param elevation
+     * @param elevation The elevation, in meters.
      * @return The PolygonOptions object on which the method was called, with the new elevation set.
      */
     @SuppressWarnings("JavaDoc")
@@ -86,7 +86,7 @@ public final class PolygonOptions {
      * Sets the ElevationMode for the polygon. If this method is not called, PolygonOptions will be
      * initialised to create a Polygon with ElevationMode.HeightAboveGround.
      *
-     * @param ElevationMode
+     * @param ElevationMode The ElevationMode used to interpret the elevation of the polygon.
      * @return The PolygonOptions object on which the method was called, with the new elevation mode set.
      */
     @SuppressWarnings("JavaDoc")
@@ -99,8 +99,8 @@ public final class PolygonOptions {
      * Sets the indoor map properties for the polygon. If this method is not called,
      * PolygonOptions is initialised to create a polygon for display on an outdoor map.
      *
-     * @param indoorMapId   the identifier of the indoor map on which the polygon should be displayed
-     * @param indoorFloorId the identifier of the indoor map floor on which the polygon should be
+     * @param indoorMapId   The identifier of the indoor map on which the polygon should be displayed.
+     * @param indoorFloorId The identifier of the indoor map floor on which the polygon should be
      *                      displayed. In the WRLD Indoor Map Format, this corresponds to the
      *                      'z_order' field of the Level object.
      * @return The PolygonOptions object on which the method was called, with the new indoor map
@@ -115,7 +115,7 @@ public final class PolygonOptions {
     /**
      * Sets the fill color of the polygon as a 32-bit ARGB color. The default value is opaque black (0xff000000).
      *
-     * @param fillColor
+     * @param fillColor The fill color to use.
      * @return The PolygonOptions object on which the method was called, with the new color set.
      */
     @SuppressWarnings("JavaDoc")
