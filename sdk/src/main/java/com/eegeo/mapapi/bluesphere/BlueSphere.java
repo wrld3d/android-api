@@ -17,38 +17,35 @@ import java.util.concurrent.Callable;
  * <br>
  * <br>
  * <b>Position</b><br>
- * The LatLng location of the bluesphere on the map. The position can be changed at any point if you
- * want to move the bluesphere.
+ * The LatLng location of the blue sphere on the map. The position can be changed at any point if you
+ * want to move the blue sphere.
  * <br>
  * <br>
  * <b>Bearing</b><br>
- * The bearing the bluesphere is facing in degrees from north.
+ * The bearing the blue sphere is facing in degrees from north.
  *
  * <br>
  * <br>
  * <b>Elevation</b><br>
- * The height above the map at which the bluesphere is located, in meters. Elevation can be specified as
- * height above the terrain.
- *
+ * For outdoor maps, the height above ground of the sphere model's center, in meters.
+ * For indoor maps, the height above the floor of the base of the leader-line, in meters.
  * <br>
  * <br>
  * <b>IndoorMapId</b><br>
- * BlueSpheres can be displayed on indoor maps. This property stores the string identifier of the
- * indoor map on which the bluesphere is to be displayed. For outdoor bluespheres, this property is empty.
- * The property cannot be changed after construction - a BlueSphere must be created as either an outdoor
- * bluesphere (the default) or an indoor bluesphere.
+ * Blue spheres can be displayed on indoor maps. This property stores the string identifier of the
+ * indoor map on which the blue sphere is to be displayed. For outdoor blue spheres, this property is empty.
  * When setting an IndoorMapId the IndoorFloorId must also be specified.
  *
  * <br>
  * <br>
  * <b>IndoorFloorId</b><br>
- * For a bluesphere displayed on an indoor map, the identifier of the floor on which the bluesphere is to be
+ * For a blue sphere displayed on an indoor map, the identifier of the floor on which the blue sphere is to be
  * displayed.
  *
  * <br>
  * <br>
  * <b>Enabled</b><br>
- * The bluesphere is disabled by default and must be set to enabled via this method.
+ * The blue sphere is disabled by default and can be set to enabled via this method.
  *
  * <br>
  * <br>
@@ -90,16 +87,16 @@ public class BlueSphere extends NativeApiObject {
     }
 
     /**
-     * Returns the position of the bluesphere.
+     * Returns the position of the blue sphere.
      *
-     * @return A LatLng object representing the location of the bluesphere on the map's surface.
+     * @return A LatLng object representing the location of the blue sphere on the map's surface.
      */
     @UiThread
     public LatLng getPosition() {
         return m_position;
     }
     /**
-     * Sets the location of this bluesphere.
+     * Sets the location of this blue sphere.
      *
      * @param position A LatLng coordinate.
      */
@@ -110,9 +107,9 @@ public class BlueSphere extends NativeApiObject {
     }
 
     /**
-     * Returns the bearing of the bluesphere.
+     * Returns the bearing of the blue sphere.
      *
-     * @return A double representing the bearing of the bluesphere.
+     * @return A double representing the bearing of the blue sphere.
      */
     @UiThread
     public double getBearing() {
@@ -120,7 +117,7 @@ public class BlueSphere extends NativeApiObject {
     }
 
     /**
-     * Sets the bearing of this bluesphere.
+     * Sets the bearing of this blue sphere.
      *
      * @param bearing A double bearing in degrees.
      */
@@ -131,8 +128,8 @@ public class BlueSphere extends NativeApiObject {
     }
 
     /**
-     * Returns the current elevation of the bluesphere. The property is interpreted differently,
-     * depending on the ElevationMode property.
+     * For outdoor maps, the height above ground of the sphere model's center, in meters.
+     * For indoor maps, the height above the floor of the base of the leader-line, in meters.
      *
      * @return A height, in meters.
      */
@@ -142,10 +139,10 @@ public class BlueSphere extends NativeApiObject {
     }
 
     /**
-     * Sets the elevation of this bluesphere.
+     * Sets the elevation of this blue sphere.
      *
-     * @param elevation A height in meters. Interpretation depends on the current
-     *                  BlueSphereOptions.BlueSphereElevationMode
+     * @param elevation For outdoor maps, the height above ground of the sphere model's center, in meters.
+     *                  For indoor maps, the height above the floor of the base of the leader-line, in meters.
      */
     @UiThread
     public void setElevation(double elevation) {
@@ -154,9 +151,9 @@ public class BlueSphere extends NativeApiObject {
     }
 
     /**
-     * Gets the identifier of an indoor map on which this bluesphere should be displayed, if any.
+     * Gets the identifier of an indoor map on which this blue sphere should be displayed, if any.
      *
-     * @return For a bluesphere on an indoor map, the string identifier of the indoor map; otherwise an
+     * @return For a blue sphere on an indoor map, the string identifier of the indoor map; otherwise an
      * empty string.
      */
     @UiThread
@@ -165,11 +162,11 @@ public class BlueSphere extends NativeApiObject {
     }
 
     /**
-     * Sets the indoor map and floor id of this bluesphere.
+     * Sets the indoor map and floor id of this blue sphere.
      *
-     * @param indoorMapId For a bluesphere on an indoor map, the string identifier of the indoor map; otherwise an
+     * @param indoorMapId For a blue sphere on an indoor map, the string identifier of the indoor map; otherwise an
      * empty string.
-     * @param floorId For a bluesphere on an indoor map, the identifier of the floor; otherwise 0.
+     * @param floorId For a blue sphere on an indoor map, the identifier of the floor; otherwise 0.
      */
     @UiThread
     public void setIndoorMap(String indoorMapId, int floorId) {
@@ -179,9 +176,9 @@ public class BlueSphere extends NativeApiObject {
     }
 
     /**
-     * Gets the identifier of an indoor map floor on which this bluesphere should be displayed, if any.
+     * Gets the identifier of an indoor map floor on which this blue sphere should be displayed, if any.
      *
-     * @return For a bluesphere on an indoor map, the identifier of the floor; otherwise 0.
+     * @return For a blue sphere on an indoor map, the identifier of the floor; otherwise 0.
      */
     @UiThread
     public int getIndoorFloorId() {
@@ -189,9 +186,9 @@ public class BlueSphere extends NativeApiObject {
     }
 
     /**
-     * Sets the identifier of an indoor map floor on which this bluesphere should be displayed, if any.
+     * Sets the identifier of an indoor map floor on which this blue sphere should be displayed, if any.
      *
-     * @param floorId For a bluesphere on an indoor map, the identifier of the floor; otherwise 0.
+     * @param floorId For a blue sphere on an indoor map, the identifier of the floor; otherwise 0.
      */
     @UiThread
     public void setIndoorFloorId(int floorId) {
@@ -199,9 +196,9 @@ public class BlueSphere extends NativeApiObject {
     }
 
     /**
-     * Gets the boolean which indicates if the bluesphere is enabled.
+     * Gets the boolean which indicates if the blue sphere is enabled.
      *
-     * @return A boolean that enables the bluesphere.
+     * @return A boolean that enables the blue sphere.
      */
     @UiThread
     public boolean getEnabled() {
@@ -209,9 +206,9 @@ public class BlueSphere extends NativeApiObject {
     }
 
     /**
-     * Sets the boolean which enables the bluesphere to display.
+     * Sets the boolean which enables the blue sphere to display.
      *
-     * @param enabled A boolean that enables the bluesphere.
+     * @param enabled A boolean that enables the blue sphere.
      */
     @UiThread
     public void setEnabled(boolean enabled) {
