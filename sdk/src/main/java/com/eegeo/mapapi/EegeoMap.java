@@ -5,14 +5,21 @@ import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 
+import com.eegeo.mapapi.bluesphere.BlueSphere;
 import com.eegeo.mapapi.bluesphere.BlueSphereApi;
+import com.eegeo.mapapi.buildings.BuildingHighlight;
+import com.eegeo.mapapi.buildings.BuildingsApi;
+import com.eegeo.mapapi.buildings.BuildingHighlightOptions;
 import com.eegeo.mapapi.camera.CameraApiJniCalls;
 import com.eegeo.mapapi.camera.CameraPosition;
 import com.eegeo.mapapi.camera.CameraUpdate;
 import com.eegeo.mapapi.camera.CameraUpdateFactory;
 import com.eegeo.mapapi.camera.Projection;
+import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.geometry.LatLngAlt;
 import com.eegeo.mapapi.geometry.LatLngBounds;
+import com.eegeo.mapapi.geometry.MapFeatureType;
+import com.eegeo.mapapi.picking.PickResult;
 import com.eegeo.mapapi.indoors.ExpandFloorsJniCalls;
 import com.eegeo.mapapi.indoors.IndoorMap;
 import com.eegeo.mapapi.indoors.IndoorsApiJniCalls;
@@ -25,7 +32,7 @@ import com.eegeo.mapapi.markers.Marker;
 import com.eegeo.mapapi.markers.MarkerApi;
 import com.eegeo.mapapi.markers.MarkerOptions;
 import com.eegeo.mapapi.markers.OnMarkerClickListener;
-import com.eegeo.mapapi.bluesphere.BlueSphere;
+import com.eegeo.mapapi.picking.PickingApi;
 import com.eegeo.mapapi.polygons.Polygon;
 import com.eegeo.mapapi.polygons.PolygonApi;
 import com.eegeo.mapapi.polygons.PolygonOptions;
@@ -33,6 +40,7 @@ import com.eegeo.mapapi.polylines.Polyline;
 import com.eegeo.mapapi.polylines.PolylineApi;
 import com.eegeo.mapapi.polylines.PolylineOptions;
 import com.eegeo.mapapi.util.Callbacks;
+import com.eegeo.mapapi.util.Promise;
 import com.eegeo.mapapi.util.Ready;
 
 import java.util.ArrayList;
@@ -65,6 +73,8 @@ public final class EegeoMap {
     private PolygonApi m_polygonApi;
     private PolylineApi m_polylineApi;
     private BlueSphereApi m_blueSphereApi;
+    private BuildingsApi m_buildingsApi;
+    private PickingApi m_pickingApi;
     private BlueSphere m_blueSphere = null;
 
     @WorkerThread
@@ -81,6 +91,8 @@ public final class EegeoMap {
         this.m_polygonApi = new PolygonApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_polylineApi = new PolylineApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_blueSphereApi = new BlueSphereApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_buildingsApi = new BuildingsApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_pickingApi = new PickingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
 
     @WorkerThread
@@ -651,7 +663,7 @@ public final class EegeoMap {
     /**
      * Create a polyline and add it to the map.
      *
-     * @param polylineOptions Creation parameters for the marker
+     * @param polylineOptions Creation parameters for the polyline
      * @return The Polyline that was added
      */
     @UiThread
@@ -670,6 +682,40 @@ public final class EegeoMap {
     public void removePolyline(@NonNull final Polyline polyline) {
 
         polyline.destroy();
+    }
+
+    /**
+     * Create a building highlight and add it to the map.
+     *
+     * @param buildingHighlightOptions Creation parameters for the building highlight
+     * @return The BuildingHighlight that was added
+     */
+    @UiThread
+    public BuildingHighlight addBuildingHighlight(@NonNull final BuildingHighlightOptions buildingHighlightOptions) {
+
+        return new BuildingHighlight(m_buildingsApi, buildingHighlightOptions);
+    }
+
+
+    /**
+     * Remove a BuildingHighlight from the map and destroy it.
+     *
+     * @param buildingHighlight The BuildingHighlight to remove.
+     */
+    @UiThread
+    public void removeBuildingHighlight(@NonNull final BuildingHighlight buildingHighlight) {
+
+        buildingHighlight.destroy();
+    }
+
+    @UiThread
+    public Promise<PickResult> pickFeatureAtScreenPoint(@NonNull final Point point) {
+        return m_pickingApi.pickFeatureAtScreenPoint(point);
+    }
+
+    @UiThread
+    public Promise<PickResult> pickFeatureAtLatLng(@NonNull final LatLng latLng) {
+        return m_pickingApi.pickFeatureAtLatLng(latLng);
     }
 
     /**
@@ -711,6 +757,12 @@ public final class EegeoMap {
     private void jniOnMarkerClicked(final int markerId) {
         m_markerApi.notifyMarkerClicked(markerId);
     }
+
+    @WorkerThread
+    private void jniOnBuildingInformationReceived(final int buildingHighlightId) {
+        m_buildingsApi.notifyBuildingInformationReceived(buildingHighlightId);
+    }
+
 
     /**
      * Registers a listener to an event raised when the initial map scene has completed streaming all resources
