@@ -6,11 +6,14 @@ import com.eegeo.mapapi.geometry.LatLng;
 
 
 /**
- * Defines creation parameters for a BuildingHighlight.
+ * Options used to construct a BuildingHighlight object.
  */
 @SuppressWarnings("WeakerAccess")
 public final class BuildingHighlightOptions {
 
+    /**
+     * @eegeo.internal
+     */
     enum SelectionMode {
         SelectAtLocation,
         SelectAtScreenPoint
@@ -31,7 +34,7 @@ public final class BuildingHighlightOptions {
     }
 
     /**
-     * Set options to create a highlight for the building closest to a LatLong location
+     * Sets options to attempt to highlight any building present at the given latLng location.
      *
      * @param location The location
      * @return The BuildingHighlightOptions object on which the method was called
@@ -44,7 +47,8 @@ public final class BuildingHighlightOptions {
     }
 
     /**
-     * Set options to create a highlight for the building at a screen point
+     * Sets options to attempt to highlight any building present at the given screen point for the
+     * current map view.
      *
      * @param screenPoint The screen-space point
      * @return The BuildingHighlightOptions object on which the method was called
@@ -69,39 +73,66 @@ public final class BuildingHighlightOptions {
         return this;
     }
 
+    /**
+     * Sets options such that, if a BuildingHighlight object is created with these options and added
+     * to a map, it will not result in any visual highlight overlay being displayed. In this case,
+     * the BuildingHighlight object is used only for the purpose of retrieving BuildingInformation.
+     *
+     * @return The BuildingHighlightOptions object on which the method was called, with the option set.
+     */
     public BuildingHighlightOptions informationOnly() {
         m_shouldCreateView = false;
         return this;
     }
 
-    public BuildingHighlightOptions buildingInformationReceivedListener(OnBuildingInformationReceivedListener listener) {
+    /**
+     * BuildingInformation for a BuildingHighlight that is created and added to the map is fetched
+     * asynchronously. This method sets a listener object to obtain notification when
+     * BuildingInformation for a BuildingHighlight created with these options is received.
+     *
+     * @return The BuildingHighlightOptions object on which the method was called, with the option set.
+     */
+     public BuildingHighlightOptions buildingInformationReceivedListener(OnBuildingInformationReceivedListener listener) {
         m_onBuildingInformationReceivedListener = listener;
         return this;
     }
 
+    /**
+     * @eegeo.internal
+     */
     public SelectionMode getSelectionMode() {
         return m_selectionMode;
     }
 
+    /**
+     * @eegeo.internal
+     */
     public LatLng getSelectionLocation() {
         return m_selectionLocation;
     }
 
+    /**
+     * @eegeo.internal
+     */
     public Point getSelectionScreenPoint() {
         return m_selectionScreenPoint;
     }
 
     /**
-     * Returns the color set for this BuildingHighlightOptions object.
-     *
-     * @return The highlight color as a 32-bit ARGB color.
+     * @eegeo.internal
      */
     public int getColor() {
         return m_colorARGB;
     }
 
+    /**
+     * @eegeo.internal
+     */
     public boolean getShouldCreateView() { return m_shouldCreateView; }
 
+    /**
+     * @eegeo.internal
+     */
     public OnBuildingInformationReceivedListener getOnBuildingInformationReceivedListener() { return m_onBuildingInformationReceivedListener; }
 
 }

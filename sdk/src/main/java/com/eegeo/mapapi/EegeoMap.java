@@ -708,11 +708,47 @@ public final class EegeoMap {
         buildingHighlight.destroy();
     }
 
+    /**
+     * Attempts to find a map feature at the given screen point. A ray is constructed from the
+     * camera location and passing through the screen point. The first intersection of the ray with
+     * any of the currently streamed map features is found, if any.
+     * See PickResult for details of information returned.
+     *
+     * @param point A screen space point, in units of pixels with the origin at the top left
+     *              corner of the screen.
+     * @return A promise to provide information about the map feature intersected with, if any.
+     * @eegeo.codeintro The value of the promise can be accessed through an object implementing the Ready interface, for example:
+     * @eegeo.code <pre>
+     * map.pickFeatureAtScreenPoint(point)
+     *           .then(new Ready&lt;PickResult&gt;() {
+     *               public void ready(PickResult pickResult) {
+     *                   // use value of pickResult here
+     *               }
+     *           }
+     * );
+     * </pre>
+     */
     @UiThread
     public Promise<PickResult> pickFeatureAtScreenPoint(@NonNull final Point point) {
         return m_pickingApi.pickFeatureAtScreenPoint(point);
     }
 
+    /**
+     * Attempts to find a map feature at the given LatLng location.
+     * See PickResult for details of information returned.
+     * @param latLng A LatLng coordinate.
+     * @return A promise to provide information about the map feature intersected with, if any.
+     * @eegeo.codeintro The value of the promise can be accessed through an object implementing the Ready interface, for example:
+     * @eegeo.code <pre>
+     * map.pickFeatureAtLatLng(point)
+     *           .then(new Ready&lt;PickResult&gt;() {
+     *               public void ready(PickResult pickResult) {
+     *                   // use value of pickResult here
+     *               }
+     *           }
+     * );
+     * </pre>
+     */
     @UiThread
     public Promise<PickResult> pickFeatureAtLatLng(@NonNull final LatLng latLng) {
         return m_pickingApi.pickFeatureAtLatLng(latLng);

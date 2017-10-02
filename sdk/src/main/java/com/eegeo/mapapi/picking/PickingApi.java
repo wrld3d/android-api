@@ -11,11 +11,17 @@ import com.eegeo.mapapi.IUiMessageRunner;
 import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.util.Promise;
 
+/**
+ * @eegeo.internal
+ */
 public class PickingApi {
     private INativeMessageRunner m_nativeRunner;
     private IUiMessageRunner m_uiRunner;
     private long m_jniEegeoMapApiPtr;
 
+    /**
+     * @eegeo.internal
+     */
     public PickingApi(INativeMessageRunner nativeRunner,
                         IUiMessageRunner uiRunner,
                         long jniEegeoMapApiPtr) {
@@ -24,6 +30,9 @@ public class PickingApi {
         this.m_jniEegeoMapApiPtr = jniEegeoMapApiPtr;
     }
 
+    /**
+     * @eegeo.internal
+     */
     @UiThread
     public Promise<PickResult> pickFeatureAtScreenPoint(@NonNull final Point point) {
         final Promise<PickResult> p = new Promise<>();
@@ -42,6 +51,9 @@ public class PickingApi {
         return p;
     }
 
+    /**
+     * @eegeo.internal
+     */
     @UiThread
     public Promise<PickResult> pickFeatureAtLatLng(@NonNull final LatLng latLng) {
         final Promise<PickResult> p = new Promise<>();

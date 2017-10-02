@@ -41,7 +41,16 @@ public class SourceProcessor extends Doclet {
             "Projection",
             "Promise",
             "Ready",
-            "BlueSphere"
+            "BlueSphere",
+            "BuildingHighlight",
+            "BuildingHighlightOptions",
+            "BuildingInformation",
+            "BuildingDimensions",
+            "BuildingContour",
+            "OnBuildingInformationReceivedListener",
+            "PickResult",
+            "MapFeatureType",
+            "Vector3"
     );
     // Would be nicer to extract this list automatically, but that would require two passes
     private static List<String> subClasses = Arrays.asList(

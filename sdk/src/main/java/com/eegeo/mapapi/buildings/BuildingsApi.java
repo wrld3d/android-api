@@ -11,6 +11,9 @@ import com.eegeo.mapapi.geometry.LatLng;
 
 import java.security.InvalidParameterException;
 
+/**
+ * @eegeo.internal
+ */
 public class BuildingsApi {
     private INativeMessageRunner m_nativeRunner;
     private IUiMessageRunner m_uiRunner;

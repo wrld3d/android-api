@@ -9,13 +9,21 @@ import com.eegeo.mapapi.util.NativeApiObject;
 
 import java.util.concurrent.Callable;
 
+/**
+ * Represents a single selected building on the map,
+ * for displaying a graphical overlay to highlight the building, or for obtaining information about
+ * the building.
+ *
+ * <br>
+ * <br>
+ * Public methods in this class must be called on the Android UI thread.
+ */
 public class BuildingHighlight extends NativeApiObject {
 
     private static final AllowHandleAccess m_allowHandleAccess = new AllowHandleAccess();
     private final BuildingsApi m_buildingsApi;
 
     private int m_colorARGB;
-    private boolean m_shouldCreateView;
     private BuildingInformation m_buildingInformation = null;
     private OnBuildingInformationReceivedListener m_onBuildingInformationReceivedListener;
 
@@ -39,7 +47,6 @@ public class BuildingHighlight extends NativeApiObject {
 
         m_buildingsApi = buildingsApi;
         m_colorARGB = buildingHighlightOptions.getColor();
-        m_shouldCreateView = buildingHighlightOptions.getShouldCreateView();
         m_onBuildingInformationReceivedListener = buildingHighlightOptions.getOnBuildingInformationReceivedListener();
 
         submit(new Runnable() {
@@ -98,6 +105,15 @@ public class BuildingHighlight extends NativeApiObject {
         }
     }
 
+    /**
+     * Returns building information for the map building associated with this highlight, if available.
+     * Returns null if the request for building information is still pending (internally, building
+     * information may be fetched asynchronously).
+     * Also returns null if no building information was successfully retrieved for this building
+     * highlight. This may be either because no building exists at the query location supplied in
+     * the BuildingHighlightOptions construction parameters, or because an internal web request failed.
+     * @return the BuildingInformation associated with this highlight, or null.
+     */
     @UiThread
     public BuildingInformation getBuildingInformation() {
         return this.m_buildingInformation;
