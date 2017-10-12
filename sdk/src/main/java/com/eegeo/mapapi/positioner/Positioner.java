@@ -1,5 +1,6 @@
 package com.eegeo.mapapi.positioner;
 
+import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
@@ -7,6 +8,7 @@ import android.support.annotation.WorkerThread;
 import com.eegeo.mapapi.geometry.ElevationMode;
 import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.util.NativeApiObject;
+import com.eegeo.mapapi.util.Promise;
 
 import java.util.concurrent.Callable;
 
@@ -138,6 +140,24 @@ public class Positioner extends NativeApiObject {
     @UiThread
     public int getIndoorFloorId() {
         return m_indoorFloorId;
+    }
+
+    @UiThread
+    public Promise<Point> getScreenPoint() {
+        final Promise<Point> p = new Promise<>();
+        m_nativeRunner.runOnNativeThread(new Runnable() {
+            @Override
+            public void run() {
+                final Point screenPoint = m_positionerApi.getScreenPoint(getNativeHandle(), Positioner.m_allowHandleAccess);
+                m_uiRunner.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        p.ready(screenPoint);
+                    }
+                });
+            }
+        });
+        return p;
     }
 
     /**

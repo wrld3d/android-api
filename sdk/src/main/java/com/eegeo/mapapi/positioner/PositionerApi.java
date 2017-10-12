@@ -1,5 +1,6 @@
 package com.eegeo.mapapi.positioner;
 
+import android.graphics.Point;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 import android.util.SparseArray;
@@ -93,6 +94,21 @@ public class PositionerApi {
     }
 
     @WorkerThread
+    public Point getScreenPoint(
+        int positionerNativeHandle,
+        Positioner.AllowHandleAccess allowHandleAccess
+    ){
+        if (allowHandleAccess == null)
+            throw new NullPointerException("Null access token. Method is intended for internal use by Positioner");
+
+
+        return nativeGetScreenPoint(
+                m_jniEegeoMapApiPtr,
+                positionerNativeHandle
+                );
+    }
+
+    @WorkerThread
     private native int nativeCreatePositioner(
             long jniEegeoMapApiPtr,
             double latitudeDegrees,
@@ -116,4 +132,9 @@ public class PositionerApi {
             double longitudeDegrees,
             double elevation,
             int elevationMode);
+
+    @WorkerThread
+    private native Point nativeGetScreenPoint(
+            long jniEegeoMapApiPtr,
+            int positionerHandle);
 }
