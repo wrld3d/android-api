@@ -32,6 +32,9 @@ import com.eegeo.mapapi.markers.Marker;
 import com.eegeo.mapapi.markers.MarkerApi;
 import com.eegeo.mapapi.markers.MarkerOptions;
 import com.eegeo.mapapi.markers.OnMarkerClickListener;
+import com.eegeo.mapapi.positioner.Positioner;
+import com.eegeo.mapapi.positioner.PositionerApi;
+import com.eegeo.mapapi.positioner.PositionerOptions;
 import com.eegeo.mapapi.picking.PickingApi;
 import com.eegeo.mapapi.polygons.Polygon;
 import com.eegeo.mapapi.polygons.PolygonApi;
@@ -70,6 +73,7 @@ public final class EegeoMap {
     private int m_currentIndoorFloor = -1;
     private Projection m_projection;
     private MarkerApi m_markerApi;
+    private PositionerApi m_positionerApi;
     private PolygonApi m_polygonApi;
     private PolylineApi m_polylineApi;
     private BlueSphereApi m_blueSphereApi;
@@ -88,6 +92,7 @@ public final class EegeoMap {
         this.m_eegeoMapApiPtr = createNativeEegeoMapApi.create(this, eegeoMapOptions);
         this.m_projection = new Projection(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_markerApi = new MarkerApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_positionerApi = new PositionerApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_polygonApi = new PolygonApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_polylineApi = new PolylineApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_blueSphereApi = new BlueSphereApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
@@ -624,7 +629,6 @@ public final class EegeoMap {
         return new Marker(m_markerApi, markerOptions);
     }
 
-
     /**
      * Remove a marker from the map and destroy it.
      *
@@ -634,6 +638,29 @@ public final class EegeoMap {
     public void removeMarker(@NonNull final Marker marker) {
 
         marker.destroy();
+    }
+
+    /**
+     * Create a positioner and add it to the map.
+     *
+     * @param positionerOptions Creation parameters for the positioner
+     * @return The Positioner that was added
+     */
+    @UiThread
+    public Positioner addPositioner(@NonNull final PositionerOptions positionerOptions) {
+
+        return new Positioner(m_positionerApi, positionerOptions);
+    }
+
+    /**
+     * Remove a positioner from the map and destroy it.
+     *
+     * @param marker The Positioner to remove.
+     */
+    @UiThread
+    public void removePositioner(@NonNull final Positioner positioner) {
+
+        positioner.destroy();
     }
 
     /**

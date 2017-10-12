@@ -1,5 +1,4 @@
-package com.eegeo.mapapi.positioning;
-
+package com.eegeo.mapapi.positioner;
 
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
@@ -13,14 +12,14 @@ import com.eegeo.mapapi.geometry.LatLng;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 
-public class PointOnMapApi {
+public class PositionerApi {
     private INativeMessageRunner m_nativeRunner;
     private IUiMessageRunner m_uiRunner;
     private long m_jniEegeoMapApiPtr;
-    private SparseArray<PointOnMap> m_nativeHandleToPointOnMap = new SparseArray<PointOnMap>();
+    private SparseArray<Positioner> m_nativeHandleToPositioner = new SparseArray<Positioner>();
 
 
-    public PointOnMapApi(INativeMessageRunner nativeRunner,
+    public PositionerApi(INativeMessageRunner nativeRunner,
                      IUiMessageRunner uiRunner,
                      long jniEegeoMapApiPtr) {
         this.m_nativeRunner = nativeRunner;
@@ -39,54 +38,54 @@ public class PointOnMapApi {
     }
 
     @WorkerThread
-    public void registerPointOnMap(PointOnMap pointOnMap, PointOnMap.AllowHandleAccess allowHandleAccess) {
-        m_nativeHandleToPointOnMap.put(pointOnMap.getNativeHandle(allowHandleAccess), pointOnMap);
+    public void registerPositioner(Positioner positioner, Positioner.AllowHandleAccess allowHandleAccess) {
+        m_nativeHandleToPositioner.put(positioner.getNativeHandle(allowHandleAccess), positioner);
     }
 
     @WorkerThread
-    public void unregisterPointOnMap(PointOnMap pointOnMap, PointOnMap.AllowHandleAccess allowHandleAccess) {
-        m_nativeHandleToPointOnMap.remove(pointOnMap.getNativeHandle(allowHandleAccess));
+    public void unregisterPositioner(Positioner positioner, Positioner.AllowHandleAccess allowHandleAccess) {
+        m_nativeHandleToPositioner.remove(positioner.getNativeHandle(allowHandleAccess));
     }
 
     @WorkerThread
-    public int createPointOnMap(PointOnMapOptions pointOnMapOptions, PointOnMap.AllowHandleAccess allowHandleAccess) throws InvalidParameterException {
+    public int createPositioner(PositionerOptions positionerOptions, Positioner.AllowHandleAccess allowHandleAccess) throws InvalidParameterException {
         if (allowHandleAccess == null)
-            throw new NullPointerException("Null access token. Method is intended for internal use by PointOnMap");
+            throw new NullPointerException("Null access token. Method is intended for internal use by Positioner");
 
-        LatLng location = pointOnMapOptions.getPosition();
+        LatLng location = positionerOptions.getPosition();
         if (location == null)
-            throw new InvalidParameterException("PointOnMapOptions position must be set");
+            throw new InvalidParameterException("PositionerOptions position must be set");
 
-        return nativeCreatePointOnMap(
+        return nativeCreatePositioner(
                 m_jniEegeoMapApiPtr,
                 location.latitude,
                 location.longitude,
-                pointOnMapOptions.getElevation(),
-                pointOnMapOptions.getElevationMode().ordinal(),
-                pointOnMapOptions.getIndoorMapId(),
-                pointOnMapOptions.getIndoorFloorId()
+                positionerOptions.getElevation(),
+                positionerOptions.getElevationMode().ordinal(),
+                positionerOptions.getIndoorMapId(),
+                positionerOptions.getIndoorFloorId()
         );
     }
 
     @WorkerThread
-    public void destroy(PointOnMap pointOnMap, PointOnMap.AllowHandleAccess allowHandleAccess) {
+    public void destroy(Positioner positioner, Positioner.AllowHandleAccess allowHandleAccess) {
         if (allowHandleAccess == null)
-            throw new NullPointerException("Null access token. Method is intended for internal use by PointOnMap");
+            throw new NullPointerException("Null access token. Method is intended for internal use by Positioner");
 
-        nativeDestroyPointOnMap(
+        nativeDestroyPositioner(
                 m_jniEegeoMapApiPtr,
-                pointOnMap.getNativeHandle(allowHandleAccess));
+                positioner.getNativeHandle(allowHandleAccess));
     }
 
     @WorkerThread
-    public void updateLocation(int pointOnMapNativeHandle, PointOnMap.AllowHandleAccess allowHandleAccess, LatLng position, double elevation, ElevationMode elevationMode) {
+    public void updateLocation(int positionerNativeHandle, Positioner.AllowHandleAccess allowHandleAccess, LatLng position, double elevation, ElevationMode elevationMode) {
         if (allowHandleAccess == null)
-            throw new NullPointerException("Null access token. Method is intended for internal use by PointOnMap");
+            throw new NullPointerException("Null access token. Method is intended for internal use by Positioner");
 
 
         nativeUpdateLocation(
                 m_jniEegeoMapApiPtr,
-                pointOnMapNativeHandle,
+                positionerNativeHandle,
                 position.latitude,
                 position.longitude,
                 elevation,
@@ -94,7 +93,7 @@ public class PointOnMapApi {
     }
 
     @WorkerThread
-    private native int nativeCreatePointOnMap(
+    private native int nativeCreatePositioner(
             long jniEegeoMapApiPtr,
             double latitudeDegrees,
             double longitudeDegrees,
@@ -104,19 +103,17 @@ public class PointOnMapApi {
             int interiorFloorId);
 
     @WorkerThread
-    private native void nativeDestroyPointOnMap(
+    private native void nativeDestroyPositioner(
             long jniEegeoMapApiPtr,
-            int pointOnMapHandle
+            int positionerHandle
     );
 
     @WorkerThread
     private native void nativeUpdateLocation(
             long jniEegeoMapApiPtr,
-            int pointOnMapHandle,
+            int positionerHandle,
             double latitudeDegrees,
             double longitudeDegrees,
             double elevation,
             int elevationMode);
 }
-
-
