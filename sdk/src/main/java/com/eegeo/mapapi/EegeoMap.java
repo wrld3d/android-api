@@ -42,6 +42,8 @@ import com.eegeo.mapapi.polygons.PolygonOptions;
 import com.eegeo.mapapi.polylines.Polyline;
 import com.eegeo.mapapi.polylines.PolylineApi;
 import com.eegeo.mapapi.polylines.PolylineOptions;
+import com.eegeo.mapapi.rendering.RenderingApi;
+import com.eegeo.mapapi.rendering.RenderingState;
 import com.eegeo.mapapi.util.Callbacks;
 import com.eegeo.mapapi.util.Promise;
 import com.eegeo.mapapi.util.Ready;
@@ -79,7 +81,13 @@ public final class EegeoMap {
     private BlueSphereApi m_blueSphereApi;
     private BuildingsApi m_buildingsApi;
     private PickingApi m_pickingApi;
+    private RenderingApi m_renderingApi;
+    private RenderingState m_renderingState;
     private BlueSphere m_blueSphere = null;
+
+
+
+    private static final AllowApiAccess m_allowApiAccess = new AllowApiAccess();
 
     @WorkerThread
     EegeoMap(INativeMessageRunner nativeRunner,
@@ -98,6 +106,9 @@ public final class EegeoMap {
         this.m_blueSphereApi = new BlueSphereApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_buildingsApi = new BuildingsApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_pickingApi = new PickingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_renderingApi = new RenderingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        boolean mapCollapsed = false;
+        this.m_renderingState = new RenderingState(m_renderingApi, m_allowApiAccess, mapCollapsed);
     }
 
     @WorkerThread
@@ -655,7 +666,7 @@ public final class EegeoMap {
     /**
      * Remove a positioner from the map and destroy it.
      *
-     * @param marker The Positioner to remove.
+     * @param positioner The Positioner to remove.
      */
     @UiThread
     public void removePositioner(@NonNull final Positioner positioner) {
@@ -797,6 +808,20 @@ public final class EegeoMap {
     }
 
     /**
+     * Sets whether the map view should display with vertical scaling applied so that terrain and
+     * other map features appear flattened.
+     */
+    @UiThread
+    public void setMapCollapsed(final boolean isCollapsed) {
+        m_renderingState.setMapCollapsed(isCollapsed);
+    }
+
+    @UiThread
+    public boolean isMapCollapsed() {
+        return m_renderingState.isMapCollapsed();
+    }
+
+    /**
      * Register a listener to an event raised when a marker is tapped by the user.
      *
      * @param listener the listener to add
@@ -887,6 +912,12 @@ public final class EegeoMap {
         @UiThread
         public void onCallback() {
             m_listener.onCameraMove();
+        }
+    }
+
+    public static final class AllowApiAccess {
+        @WorkerThread
+        private AllowApiAccess() {
         }
     }
 
