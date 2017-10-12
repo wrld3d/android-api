@@ -21,6 +21,7 @@ public class Positioner extends NativeApiObject {
     private LatLng m_position;
     private double m_elevation;
     private ElevationMode m_elevationMode;
+    private Point m_screenPoint = new Point();
 
     /**
      * This constructor is for internal SDK use only -- use EegeoMap.addPositioner to create a positioner
@@ -122,6 +123,28 @@ public class Positioner extends NativeApiObject {
     }
 
     /**
+     private Point m_screenPoint = new Point();
+     * Returns the mode specifying how the Elevation property is interpreted.
+     *
+     * @return An enumerated value indicating whether Elevation is specified as a height above
+     * terrain, or an absolute altitude above sea level.
+     */
+    @UiThread
+    public Point getScreenPoint() {
+        return m_screenPoint;
+    }
+
+    /**
+     * Sets the elevation mode for this positioner
+     *
+     * @param screenPoint The mode specifying how to interpret the Elevation property
+     */
+    @UiThread
+    public void setScreenPoint(Point screenPoint) {
+        m_screenPoint = screenPoint;
+    }
+
+    /**
      * Gets the identifier of an indoor map on which this positioner should be displayed, if any.
      *
      * @return For a positioner on an indoor map, the string identifier of the indoor map; otherwise an
@@ -142,23 +165,23 @@ public class Positioner extends NativeApiObject {
         return m_indoorFloorId;
     }
 
-    @UiThread
-    public Promise<Point> getScreenPoint() {
-        final Promise<Point> p = new Promise<>();
-        m_nativeRunner.runOnNativeThread(new Runnable() {
-            @Override
-            public void run() {
-                final Point screenPoint = m_positionerApi.getScreenPoint(getNativeHandle(), Positioner.m_allowHandleAccess);
-                m_uiRunner.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        p.ready(screenPoint);
-                    }
-                });
-            }
-        });
-        return p;
-    }
+//    @UiThread
+//    public Promise<Point> getScreenPoint() {
+//        final Promise<Point> p = new Promise<>();
+//        m_nativeRunner.runOnNativeThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                final Point screenPoint = m_positionerApi.getScreenPoint(getNativeHandle(), Positioner.m_allowHandleAccess);
+//                m_uiRunner.runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        p.ready(screenPoint);
+//                    }
+//                });
+//            }
+//        });
+//        return p;
+//    }
 
     /**
      * Removes this positioner from the map and destroys the positioner. Use EegeoMap.removePositioner

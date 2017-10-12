@@ -4,6 +4,7 @@ import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
+import android.util.Log;
 
 import com.eegeo.mapapi.bluesphere.BlueSphere;
 import com.eegeo.mapapi.bluesphere.BlueSphereApi;
@@ -851,6 +852,10 @@ public final class EegeoMap {
         m_buildingsApi.notifyBuildingInformationReceived(buildingHighlightId);
     }
 
+    @WorkerThread
+    private void jniOnPositionerProjectionChanged() {
+        m_positionerApi.notifyProjectionChanged();
+    }
 
     /**
      * Registers a listener to an event raised when the initial map scene has completed streaming all resources

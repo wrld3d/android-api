@@ -3,6 +3,7 @@ package com.eegeo.mapapi.positioner;
 import android.graphics.Point;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.eegeo.mapapi.INativeMessageRunner;
@@ -106,6 +107,22 @@ public class PositionerApi {
                 m_jniEegeoMapApiPtr,
                 positionerNativeHandle
                 );
+    }
+
+    @WorkerThread
+    public void notifyProjectionChanged() {
+        for(int i = 0; i < m_nativeHandleToPositioner.size(); i++)
+        {
+            final int positionerNativeHandle = m_nativeHandleToPositioner.keyAt(i);
+            final Point screenPoint = nativeGetScreenPoint(m_jniEegeoMapApiPtr, positionerNativeHandle);
+            final Positioner positioner = m_nativeHandleToPositioner.get(positionerNativeHandle);
+            m_uiRunner.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    positioner.setScreenPoint(screenPoint);
+                }
+            });
+        }
     }
 
     @WorkerThread
