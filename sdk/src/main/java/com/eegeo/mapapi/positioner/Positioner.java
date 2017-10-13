@@ -21,6 +21,7 @@ public class Positioner extends NativeApiObject {
     private LatLng m_position;
     private double m_elevation;
     private ElevationMode m_elevationMode;
+    private OnPositionerChangedListener m_positionerChangedListener;
     private Point m_screenPoint = new Point();
 
     /**
@@ -46,6 +47,7 @@ public class Positioner extends NativeApiObject {
         m_elevationMode = positionerOptions.getElevationMode();
         m_indoorMapId = positionerOptions.getIndoorMapId();
         m_indoorFloorId = positionerOptions.getIndoorFloorId();
+        m_positionerChangedListener = positionerOptions.getPositionerChangedListener();
 
         submit(new Runnable() {
             @WorkerThread
@@ -123,26 +125,12 @@ public class Positioner extends NativeApiObject {
     }
 
     /**
-     private Point m_screenPoint = new Point();
-     * Returns the mode specifying how the Elevation property is interpreted.
-     *
-     * @return An enumerated value indicating whether Elevation is specified as a height above
-     * terrain, or an absolute altitude above sea level.
      */
     @UiThread
     public Point getScreenPoint() {
         return m_screenPoint;
     }
 
-    /**
-     * Sets the elevation mode for this positioner
-     *
-     * @param screenPoint The mode specifying how to interpret the Elevation property
-     */
-    @UiThread
-    public void setScreenPoint(Point screenPoint) {
-        m_screenPoint = screenPoint;
-    }
 
     /**
      * Gets the identifier of an indoor map on which this positioner should be displayed, if any.
@@ -165,23 +153,6 @@ public class Positioner extends NativeApiObject {
         return m_indoorFloorId;
     }
 
-//    @UiThread
-//    public Promise<Point> getScreenPoint() {
-//        final Promise<Point> p = new Promise<>();
-//        m_nativeRunner.runOnNativeThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                final Point screenPoint = m_positionerApi.getScreenPoint(getNativeHandle(), Positioner.m_allowHandleAccess);
-//                m_uiRunner.runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        p.ready(screenPoint);
-//                    }
-//                });
-//            }
-//        });
-//        return p;
-//    }
 
     /**
      * Removes this positioner from the map and destroys the positioner. Use EegeoMap.removePositioner
@@ -224,6 +195,19 @@ public class Positioner extends NativeApiObject {
             throw new IllegalStateException("Native handle not available");
 
         return getNativeHandle();
+    }
+
+    /**
+     * @eegeo.internal
+     */
+    @UiThread
+    void setScreenPoint(Point screenPoint) {
+        if (!m_screenPoint.equals(screenPoint)) {
+            m_screenPoint = screenPoint;
+            if (m_positionerChangedListener != null) {
+                m_positionerChangedListener.onPositionerChanged(this);
+            }
+        }
     }
 
     static final class AllowHandleAccess {

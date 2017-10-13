@@ -16,6 +16,8 @@ public final class PositionerOptions {
     private ElevationMode m_elevationMode = ElevationMode.HeightAboveGround;
     private String m_indoorMapId = "";
     private int m_indoorFloorId;
+    private OnPositionerChangedListener m_onPositionerChangedListener = null;
+
     /**
      * Instantiate a new set of positioner options
      */
@@ -76,47 +78,54 @@ public final class PositionerOptions {
     }
 
     /**
-     * Returns the position set for this PositionerOptions object.
+     * This method sets a listener object to obtain notification that a Positioner object created
+     * from these options has changed position.
      *
-     * @return A LatLng object specifying the positioner's location
+     * @return The PositionerOptions object on which the method was called, with the option set.
+     */
+    public PositionerOptions positionerChangedListener(OnPositionerChangedListener listener) {
+        m_onPositionerChangedListener = listener;
+        return this;
+    }
+
+
+    /**
+     * @eegeo.internal
      */
     public LatLng getPosition() {
         return m_position;
     }
 
     /**
-     * Returns the elevation set for this PositionerOptions object.
-     *
-     * @return A height, in meters.
+     * @eegeo.internal
      */
     public double getElevation() {
         return m_elevation;
     }
 
     /**
-     * Returns the elevation mode set for this PositionerOptions object.
-     *
-     * @return The ElevationMode, indicating how elevation is interpreted.
+     * @eegeo.internal
      */
     public ElevationMode getElevationMode() {
         return m_elevationMode;
     }
 
     /**
-     * Returns the indoor map identifier for this PositionerOptions object.
-     *
-     * @return A string containing the indoor map identifier
+     * @eegeo.internal
      */
     public String getIndoorMapId() {
         return m_indoorMapId;
     }
 
     /**
-     * Returns the indoor map floor identifier for this PositionerOptions object.
-     *
-     * @return The indoor map floor id.
+     * @eegeo.internal
      */
     public int getIndoorFloorId() {
         return m_indoorFloorId;
     }
+
+    /**
+     * @eegeo.internal
+     */
+    public OnPositionerChangedListener getPositionerChangedListener() { return m_onPositionerChangedListener; }
 }
