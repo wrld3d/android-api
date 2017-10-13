@@ -92,40 +92,40 @@ public final class PositionerOptions {
     /**
      * @eegeo.internal
      */
-    public LatLng getPosition() {
+    LatLng getPosition() {
         return m_position;
     }
 
     /**
      * @eegeo.internal
      */
-    public double getElevation() {
+    double getElevation() {
         return m_elevation;
     }
 
     /**
      * @eegeo.internal
      */
-    public ElevationMode getElevationMode() {
+    ElevationMode getElevationMode() {
         return m_elevationMode;
     }
 
     /**
      * @eegeo.internal
      */
-    public String getIndoorMapId() {
+    String getIndoorMapId() {
         return m_indoorMapId;
     }
 
     /**
      * @eegeo.internal
      */
-    public int getIndoorFloorId() {
+    int getIndoorFloorId() {
         return m_indoorFloorId;
     }
 
     /**
      * @eegeo.internal
      */
-    public OnPositionerChangedListener getPositionerChangedListener() { return m_onPositionerChangedListener; }
+    OnPositionerChangedListener getPositionerChangedListener() { return m_onPositionerChangedListener; }
 }

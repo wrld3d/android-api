@@ -8,7 +8,6 @@ import android.support.annotation.WorkerThread;
 import com.eegeo.mapapi.geometry.ElevationMode;
 import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.util.NativeApiObject;
-import com.eegeo.mapapi.util.Promise;
 
 import java.util.concurrent.Callable;
 

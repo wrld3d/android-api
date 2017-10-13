@@ -3,8 +3,8 @@ package com.eegeo.mapapi.positioner;
 import android.graphics.Point;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
-import android.util.Log;
 import android.util.SparseArray;
+
 
 import com.eegeo.mapapi.INativeMessageRunner;
 import com.eegeo.mapapi.IUiMessageRunner;
@@ -12,13 +12,12 @@ import com.eegeo.mapapi.geometry.ElevationMode;
 import com.eegeo.mapapi.geometry.LatLng;
 
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
 
 public class PositionerApi {
     private INativeMessageRunner m_nativeRunner;
     private IUiMessageRunner m_uiRunner;
     private long m_jniEegeoMapApiPtr;
-    private SparseArray<Positioner> m_nativeHandleToPositioner = new SparseArray<Positioner>();
+    private SparseArray<Positioner> m_nativeHandleToPositioner = new SparseArray<>();
 
 
     public PositionerApi(INativeMessageRunner nativeRunner,
@@ -40,17 +39,17 @@ public class PositionerApi {
     }
 
     @WorkerThread
-    public void registerPositioner(Positioner positioner, Positioner.AllowHandleAccess allowHandleAccess) {
+    void registerPositioner(Positioner positioner, Positioner.AllowHandleAccess allowHandleAccess) {
         m_nativeHandleToPositioner.put(positioner.getNativeHandle(allowHandleAccess), positioner);
     }
 
     @WorkerThread
-    public void unregisterPositioner(Positioner positioner, Positioner.AllowHandleAccess allowHandleAccess) {
+    void unregisterPositioner(Positioner positioner, Positioner.AllowHandleAccess allowHandleAccess) {
         m_nativeHandleToPositioner.remove(positioner.getNativeHandle(allowHandleAccess));
     }
 
     @WorkerThread
-    public int createPositioner(PositionerOptions positionerOptions, Positioner.AllowHandleAccess allowHandleAccess) throws InvalidParameterException {
+    int createPositioner(PositionerOptions positionerOptions, Positioner.AllowHandleAccess allowHandleAccess) throws InvalidParameterException {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Positioner");
 
@@ -80,7 +79,7 @@ public class PositionerApi {
     }
 
     @WorkerThread
-    public void updateLocation(int positionerNativeHandle, Positioner.AllowHandleAccess allowHandleAccess, LatLng position, double elevation, ElevationMode elevationMode) {
+    void updateLocation(int positionerNativeHandle, Positioner.AllowHandleAccess allowHandleAccess, LatLng position, double elevation, ElevationMode elevationMode) {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Positioner");
 
