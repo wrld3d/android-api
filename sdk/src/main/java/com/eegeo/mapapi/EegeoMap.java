@@ -39,6 +39,7 @@ import com.eegeo.mapapi.polygons.PolygonOptions;
 import com.eegeo.mapapi.polylines.Polyline;
 import com.eegeo.mapapi.polylines.PolylineApi;
 import com.eegeo.mapapi.polylines.PolylineOptions;
+import com.eegeo.mapapi.services.PoiService;
 import com.eegeo.mapapi.util.Callbacks;
 import com.eegeo.mapapi.util.Promise;
 import com.eegeo.mapapi.util.Ready;
@@ -767,6 +768,15 @@ public final class EegeoMap {
         }
 
         return m_blueSphere;
+    }
+
+    /**
+     * Creates and returns a PoiService for this map.
+     */
+    @UiThread
+    public PoiService createPoiService() {
+        PoiService poiService = new PoiService(m_nativeRunner, m_eegeoMapApiPtr);
+        return poiService;
     }
 
     /**
