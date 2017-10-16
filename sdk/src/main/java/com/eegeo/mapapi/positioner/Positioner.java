@@ -22,6 +22,7 @@ public class Positioner extends NativeApiObject {
     private ElevationMode m_elevationMode;
     private OnPositionerChangedListener m_positionerChangedListener;
     private Point m_screenPoint = new Point();
+    private boolean m_isBehindGlobeHorizon = false;
 
     /**
      * This constructor is for internal SDK use only -- use EegeoMap.addPositioner to create a positioner
@@ -130,6 +131,8 @@ public class Positioner extends NativeApiObject {
         return m_screenPoint;
     }
 
+    @UiThread
+    public boolean isBehindGlobeHorizon() { return m_isBehindGlobeHorizon; }
 
     /**
      * Gets the identifier of an indoor map on which this positioner should be displayed, if any.
@@ -200,9 +203,14 @@ public class Positioner extends NativeApiObject {
      * @eegeo.internal
      */
     @UiThread
-    void setScreenPoint(Point screenPoint) {
-        if (!m_screenPoint.equals(screenPoint)) {
+    void setProjectedState(
+            Point screenPoint,
+            boolean isBehindGlobeHorizon
+    ) {
+        if (!m_screenPoint.equals(screenPoint) ||
+                m_isBehindGlobeHorizon != isBehindGlobeHorizon) {
             m_screenPoint = screenPoint;
+            m_isBehindGlobeHorizon = isBehindGlobeHorizon;
             if (m_positionerChangedListener != null) {
                 m_positionerChangedListener.onPositionerChanged(this);
             }

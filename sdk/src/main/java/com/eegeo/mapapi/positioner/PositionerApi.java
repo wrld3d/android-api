@@ -94,31 +94,17 @@ public class PositionerApi {
     }
 
     @WorkerThread
-    public Point getScreenPoint(
-        int positionerNativeHandle,
-        Positioner.AllowHandleAccess allowHandleAccess
-    ){
-        if (allowHandleAccess == null)
-            throw new NullPointerException("Null access token. Method is intended for internal use by Positioner");
-
-
-        return nativeGetScreenPoint(
-                m_jniEegeoMapApiPtr,
-                positionerNativeHandle
-                );
-    }
-
-    @WorkerThread
     public void notifyProjectionChanged() {
         for(int i = 0; i < m_nativeHandleToPositioner.size(); i++)
         {
             final int positionerNativeHandle = m_nativeHandleToPositioner.keyAt(i);
             final Point screenPoint = nativeGetScreenPoint(m_jniEegeoMapApiPtr, positionerNativeHandle);
+            final Boolean isBehindGlobeHorizon = nativeGetIsBehindGlobeHorizon(m_jniEegeoMapApiPtr, positionerNativeHandle);
             final Positioner positioner = m_nativeHandleToPositioner.get(positionerNativeHandle);
             m_uiRunner.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    positioner.setScreenPoint(screenPoint);
+                    positioner.setProjectedState(screenPoint, isBehindGlobeHorizon);
                 }
             });
         }
@@ -151,6 +137,11 @@ public class PositionerApi {
 
     @WorkerThread
     private native Point nativeGetScreenPoint(
+            long jniEegeoMapApiPtr,
+            int positionerHandle);
+
+    @WorkerThread
+    private native boolean nativeGetIsBehindGlobeHorizon(
             long jniEegeoMapApiPtr,
             int positionerHandle);
 }
