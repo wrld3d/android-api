@@ -10,7 +10,55 @@ import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.util.NativeApiObject;
 
 import java.util.concurrent.Callable;
-
+/**
+ * A Positioner represents a single point on the map. The primary purpose of a positioner is to
+ * expose a point on the map as a 2D coordinate in screen space. A positioner is not drawn however
+ * it can be used to position a View.
+ * <br>
+ * <br>
+ * To create a Positioner and add it to the map, use EegeoMap.addPositioner()
+ * <br>
+ * <br>
+ * Positioner has the following properties:
+ * <br>
+ * <br>
+ * <b>Position</b><br>
+ * The LatLng location of the positioner on the map. The position can be changed at any point if you
+ * want to move the positioner.
+ * <br>
+ * <br>
+ * <b>Elevation</b><br>
+ * The height above the map at which the positioner is located, in meters. Elevation can be
+ * specified as either a height above terrain, or as an absolute altitude - see ElevationMode below.
+ * <br>
+ * <br>
+ * <b>ElevationMode</b><br>
+ * Specifies how the Elevation property is interpreted, as either:
+ * <br>
+ * A height above the terrain (ground), in meters.
+ * <br>
+ * An absolute altitude (height above mean sea level), in meters.
+ * <br>
+ * <br>
+ * <b>IndoorMapId</b><br>
+ * Positioners can be displayed on indoor maps. This property stores the string identifier of the
+ * indoor map on which the positioner is to be located. For outdoor positioners, this property is
+ * empty. The property cannot be changed after construction - a positioner must be created as either
+ * an outdoor positioner (the default) or an indoor positioner.
+ * <br>
+ * <br>
+ * <b>IndoorFloorId</b><br>
+ * For a positioner displayed on an indoor map, the identifier of the floor on which the positioner
+ * is to be displayed.
+ * <br>
+ * <br>
+ * <b>PositionerChangedListener</b><br>
+ * Each time the screen space coordinate of the positioner changes the PositionerChangedListener
+ * will be called.
+ * <br>
+ * <br>
+ * Public methods in this class must be called on the Android UI thread.
+ */
 public class Positioner extends NativeApiObject {
 
     private static final AllowHandleAccess m_allowHandleAccess = new AllowHandleAccess();
