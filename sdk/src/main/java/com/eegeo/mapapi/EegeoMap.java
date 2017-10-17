@@ -39,6 +39,7 @@ import com.eegeo.mapapi.polygons.PolygonOptions;
 import com.eegeo.mapapi.polylines.Polyline;
 import com.eegeo.mapapi.polylines.PolylineApi;
 import com.eegeo.mapapi.polylines.PolylineOptions;
+import com.eegeo.mapapi.services.PoiApi;
 import com.eegeo.mapapi.services.PoiService;
 import com.eegeo.mapapi.util.Callbacks;
 import com.eegeo.mapapi.util.Promise;
@@ -76,6 +77,7 @@ public final class EegeoMap {
     private BlueSphereApi m_blueSphereApi;
     private BuildingsApi m_buildingsApi;
     private PickingApi m_pickingApi;
+    private PoiApi m_poiApi;
     private BlueSphere m_blueSphere = null;
 
     @WorkerThread
@@ -94,6 +96,7 @@ public final class EegeoMap {
         this.m_blueSphereApi = new BlueSphereApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_buildingsApi = new BuildingsApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_pickingApi = new PickingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_poiApi = new PoiApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
 
     @WorkerThread
@@ -775,7 +778,7 @@ public final class EegeoMap {
      */
     @UiThread
     public PoiService createPoiService() {
-        PoiService poiService = new PoiService(m_nativeRunner, m_eegeoMapApiPtr);
+        PoiService poiService = new PoiService(m_poiApi);
         return poiService;
     }
 
@@ -807,6 +810,11 @@ public final class EegeoMap {
     @WorkerThread
     private void jniOnBuildingInformationReceived(final int buildingHighlightId) {
         m_buildingsApi.notifyBuildingInformationReceived(buildingHighlightId);
+    }
+
+    @WorkerThread
+    private void jniOnPoiSearchCompleted(final int poiSearchId, final String searchResults) {
+        m_poiApi.notifySearchComplete(poiSearchId, searchResults);
     }
 
 
