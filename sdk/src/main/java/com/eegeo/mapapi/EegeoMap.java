@@ -46,6 +46,7 @@ import com.eegeo.mapapi.polylines.PolylineApi;
 import com.eegeo.mapapi.polylines.PolylineOptions;
 import com.eegeo.mapapi.rendering.RenderingApi;
 import com.eegeo.mapapi.rendering.RenderingState;
+import com.eegeo.mapapi.services.PoiApi;
 import com.eegeo.mapapi.services.PoiService;
 import com.eegeo.mapapi.util.Callbacks;
 import com.eegeo.mapapi.util.Promise;
@@ -86,6 +87,7 @@ public final class EegeoMap {
     private PickingApi m_pickingApi;
     private RenderingApi m_renderingApi;
     private RenderingState m_renderingState;
+    private PoiApi m_poiApi;
     private BlueSphere m_blueSphere = null;
 
 
@@ -112,6 +114,7 @@ public final class EegeoMap {
         this.m_renderingApi = new RenderingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         boolean mapCollapsed = false;
         this.m_renderingState = new RenderingState(m_renderingApi, m_allowApiAccess, mapCollapsed);
+        this.m_poiApi = new PoiApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
 
     @WorkerThread
@@ -829,7 +832,7 @@ public final class EegeoMap {
      */
     @UiThread
     public PoiService createPoiService() {
-        PoiService poiService = new PoiService(m_nativeRunner, m_eegeoMapApiPtr);
+        PoiService poiService = new PoiService(m_poiApi);
         return poiService;
     }
 
@@ -887,6 +890,12 @@ public final class EegeoMap {
     private void jniOnPositionerProjectionChanged() {
         m_positionerApi.notifyProjectionChanged();
     }
+
+    @WorkerThread
+    private void jniOnPoiSearchCompleted(final int poiSearchId, final String searchResults) {
+        m_poiApi.notifySearchComplete(poiSearchId, searchResults);
+    }
+
 
     /**
      * Registers a listener to an event raised when the initial map scene has completed streaming all resources
