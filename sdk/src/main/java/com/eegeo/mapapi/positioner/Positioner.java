@@ -12,8 +12,8 @@ import com.eegeo.mapapi.util.NativeApiObject;
 import java.util.concurrent.Callable;
 /**
  * A Positioner represents a single point on the map. The primary purpose of a positioner is to
- * expose a point on the map as a 2D coordinate in screen space. A positioner is not drawn however
- * it can be used to position a View.
+ * expose a point on the map as a 2D coordinate in screen space. This could be used for example to
+ * position a View.
  * <br>
  * <br>
  * To create a Positioner and add it to the map, use EegeoMap.addPositioner()
@@ -43,8 +43,7 @@ import java.util.concurrent.Callable;
  * <b>IndoorMapId</b><br>
  * Positioners can be displayed on indoor maps. This property stores the string identifier of the
  * indoor map on which the positioner is to be located. For outdoor positioners, this property is
- * empty. The property cannot be changed after construction - a positioner must be created as either
- * an outdoor positioner (the default) or an indoor positioner.
+ * empty.
  * <br>
  * <br>
  * <b>IndoorFloorId</b><br>
@@ -63,13 +62,14 @@ public class Positioner extends NativeApiObject {
 
     private static final AllowHandleAccess m_allowHandleAccess = new AllowHandleAccess();
     private final PositionerApi m_positionerApi;
-    private final String m_indoorMapId;
-    private final int m_indoorFloorId;
+    private String m_indoorMapId;
+    private int m_indoorFloorId;
     private LatLng m_position;
     private double m_elevation;
     private ElevationMode m_elevationMode;
     private OnPositionerChangedListener m_positionerChangedListener;
     private Point m_screenPoint = new Point();
+    private boolean m_isScreenPointValid = false;
     private boolean m_isBehindGlobeHorizon = false;
 
     /**
@@ -173,16 +173,6 @@ public class Positioner extends NativeApiObject {
     }
 
     /**
-     */
-    @UiThread
-    public Point getScreenPoint() {
-        return m_screenPoint;
-    }
-
-    @UiThread
-    public boolean isBehindGlobeHorizon() { return m_isBehindGlobeHorizon; }
-
-    /**
      * Gets the identifier of an indoor map on which this positioner should be displayed, if any.
      *
      * @return For a positioner on an indoor map, the string identifier of the indoor map; otherwise an
@@ -191,6 +181,17 @@ public class Positioner extends NativeApiObject {
     @UiThread
     public String getIndoorMapId() {
         return m_indoorMapId;
+    }
+
+    /**
+     * Sets the indoor map ID.
+     *
+     * @param indoorMapId The map ID.
+     */
+    @UiThread
+    public void setIndoorMapId(String indoorMapId) {
+        m_indoorMapId = indoorMapId;
+        updateLocation();
     }
 
     /**
@@ -203,6 +204,37 @@ public class Positioner extends NativeApiObject {
         return m_indoorFloorId;
     }
 
+    /**
+     * Sets the indoor floor ID.
+     *
+     * @param indoorFloorId The floor ID.
+     */
+    @UiThread
+    public void setIndoorFloorId(int indoorFloorId) {
+        m_indoorFloorId = indoorFloorId;
+        updateLocation();
+    }
+
+    /**
+     * Returns the screen point if available or null. For a Positioner placed on an indoor map
+     * floor, returns null unless that floor is the current focus of the indoor map.
+     *
+     * @return Returns the screen point if available or null.
+     */
+    @UiThread
+    public Point tryGetScreenPoint() {
+        return m_isScreenPointValid?m_screenPoint:null;
+    }
+
+    /**
+     * Returns true if the positioner is over the horizon. When the positioner is on the far side of
+     * the world it may still be within the screen area but should not be visible. In those
+     * situations this can be used to hide views.
+     *
+     * @return True if the positioner is beyond the horizon.
+     */
+    @UiThread
+    public boolean isBehindGlobeHorizon() { return m_isBehindGlobeHorizon; }
 
     /**
      * Removes this positioner from the map and destroys the positioner. Use EegeoMap.removePositioner
@@ -227,11 +259,13 @@ public class Positioner extends NativeApiObject {
         final LatLng position = m_position;
         final double elevation = m_elevation;
         final ElevationMode elevationMode = m_elevationMode;
+        final String indoorMapId = m_indoorMapId;
+        final int indoorFloorId = m_indoorFloorId;
 
         submit(new Runnable() {
             @WorkerThread
             public void run() {
-                m_positionerApi.updateLocation(getNativeHandle(), Positioner.m_allowHandleAccess, position, elevation, elevationMode);
+                m_positionerApi.updateLocation(getNativeHandle(), Positioner.m_allowHandleAccess, position, elevation, elevationMode, indoorMapId, indoorFloorId);
             }
         });
     }
@@ -253,11 +287,18 @@ public class Positioner extends NativeApiObject {
     @UiThread
     void setProjectedState(
             Point screenPoint,
+            boolean isScreenPointValid,
             boolean isBehindGlobeHorizon
     ) {
         if (!m_screenPoint.equals(screenPoint) ||
+                m_isScreenPointValid != isScreenPointValid ||
                 m_isBehindGlobeHorizon != isBehindGlobeHorizon) {
-            m_screenPoint = screenPoint;
+
+            if(screenPoint!=null) {
+                m_screenPoint.set(screenPoint.x, screenPoint.y);
+            }
+
+            m_isScreenPointValid = isScreenPointValid;
             m_isBehindGlobeHorizon = isBehindGlobeHorizon;
             if (m_positionerChangedListener != null) {
                 m_positionerChangedListener.onPositionerChanged(this);

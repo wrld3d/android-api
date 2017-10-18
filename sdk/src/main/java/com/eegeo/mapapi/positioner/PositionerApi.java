@@ -79,10 +79,15 @@ public class PositionerApi {
     }
 
     @WorkerThread
-    void updateLocation(int positionerNativeHandle, Positioner.AllowHandleAccess allowHandleAccess, LatLng position, double elevation, ElevationMode elevationMode) {
+    void updateLocation(int positionerNativeHandle,
+                        Positioner.AllowHandleAccess allowHandleAccess,
+                        LatLng position,
+                        double elevation,
+                        ElevationMode elevationMode,
+                        String indoorMapId,
+                        int indoorFloorId) {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Positioner");
-
 
         nativeUpdateLocation(
                 m_jniEegeoMapApiPtr,
@@ -90,7 +95,9 @@ public class PositionerApi {
                 position.latitude,
                 position.longitude,
                 elevation,
-                elevationMode.ordinal());
+                elevationMode.ordinal(),
+                indoorMapId,
+                indoorFloorId);
     }
 
     @WorkerThread
@@ -104,7 +111,7 @@ public class PositionerApi {
             m_uiRunner.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    positioner.setProjectedState(screenPoint, isBehindGlobeHorizon);
+                    positioner.setProjectedState(screenPoint, (screenPoint!=null), isBehindGlobeHorizon);
                 }
             });
         }
@@ -133,7 +140,9 @@ public class PositionerApi {
             double latitudeDegrees,
             double longitudeDegrees,
             double elevation,
-            int elevationMode);
+            int elevationMode,
+            String indoorMapId,
+            int indoorFloorId);
 
     @WorkerThread
     private native Point nativeGetScreenPoint(
