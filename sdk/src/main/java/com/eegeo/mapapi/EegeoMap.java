@@ -4,6 +4,7 @@ import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
+import android.util.Log;
 
 import com.eegeo.mapapi.bluesphere.BlueSphere;
 import com.eegeo.mapapi.bluesphere.BlueSphereApi;
@@ -32,6 +33,9 @@ import com.eegeo.mapapi.markers.Marker;
 import com.eegeo.mapapi.markers.MarkerApi;
 import com.eegeo.mapapi.markers.MarkerOptions;
 import com.eegeo.mapapi.markers.OnMarkerClickListener;
+import com.eegeo.mapapi.positioner.Positioner;
+import com.eegeo.mapapi.positioner.PositionerApi;
+import com.eegeo.mapapi.positioner.PositionerOptions;
 import com.eegeo.mapapi.picking.PickingApi;
 import com.eegeo.mapapi.polygons.Polygon;
 import com.eegeo.mapapi.polygons.PolygonApi;
@@ -39,6 +43,8 @@ import com.eegeo.mapapi.polygons.PolygonOptions;
 import com.eegeo.mapapi.polylines.Polyline;
 import com.eegeo.mapapi.polylines.PolylineApi;
 import com.eegeo.mapapi.polylines.PolylineOptions;
+import com.eegeo.mapapi.rendering.RenderingApi;
+import com.eegeo.mapapi.rendering.RenderingState;
 import com.eegeo.mapapi.util.Callbacks;
 import com.eegeo.mapapi.util.Promise;
 import com.eegeo.mapapi.util.Ready;
@@ -70,12 +76,19 @@ public final class EegeoMap {
     private int m_currentIndoorFloor = -1;
     private Projection m_projection;
     private MarkerApi m_markerApi;
+    private PositionerApi m_positionerApi;
     private PolygonApi m_polygonApi;
     private PolylineApi m_polylineApi;
     private BlueSphereApi m_blueSphereApi;
     private BuildingsApi m_buildingsApi;
     private PickingApi m_pickingApi;
+    private RenderingApi m_renderingApi;
+    private RenderingState m_renderingState;
     private BlueSphere m_blueSphere = null;
+
+
+
+    private static final AllowApiAccess m_allowApiAccess = new AllowApiAccess();
 
     @WorkerThread
     EegeoMap(INativeMessageRunner nativeRunner,
@@ -88,11 +101,15 @@ public final class EegeoMap {
         this.m_eegeoMapApiPtr = createNativeEegeoMapApi.create(this, eegeoMapOptions);
         this.m_projection = new Projection(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_markerApi = new MarkerApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_positionerApi = new PositionerApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_polygonApi = new PolygonApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_polylineApi = new PolylineApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_blueSphereApi = new BlueSphereApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_buildingsApi = new BuildingsApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_pickingApi = new PickingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_renderingApi = new RenderingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        boolean mapCollapsed = false;
+        this.m_renderingState = new RenderingState(m_renderingApi, m_allowApiAccess, mapCollapsed);
     }
 
     @WorkerThread
@@ -624,7 +641,6 @@ public final class EegeoMap {
         return new Marker(m_markerApi, markerOptions);
     }
 
-
     /**
      * Remove a marker from the map and destroy it.
      *
@@ -634,6 +650,29 @@ public final class EegeoMap {
     public void removeMarker(@NonNull final Marker marker) {
 
         marker.destroy();
+    }
+
+    /**
+     * Create a positioner and add it to the map.
+     *
+     * @param positionerOptions Creation parameters for the positioner
+     * @return The Positioner that was added
+     */
+    @UiThread
+    public Positioner addPositioner(@NonNull final PositionerOptions positionerOptions) {
+
+        return new Positioner(m_positionerApi, positionerOptions);
+    }
+
+    /**
+     * Remove a positioner from the map and destroy it.
+     *
+     * @param positioner The Positioner to remove.
+     */
+    @UiThread
+    public void removePositioner(@NonNull final Positioner positioner) {
+
+        positioner.destroy();
     }
 
     /**
@@ -770,6 +809,20 @@ public final class EegeoMap {
     }
 
     /**
+     * Sets whether the map view should display with vertical scaling applied so that terrain and
+     * other map features appear flattened.
+     */
+    @UiThread
+    public void setMapCollapsed(final boolean isCollapsed) {
+        m_renderingState.setMapCollapsed(isCollapsed);
+    }
+
+    @UiThread
+    public boolean isMapCollapsed() {
+        return m_renderingState.isMapCollapsed();
+    }
+
+    /**
      * Register a listener to an event raised when a marker is tapped by the user.
      *
      * @param listener the listener to add
@@ -799,6 +852,10 @@ public final class EegeoMap {
         m_buildingsApi.notifyBuildingInformationReceived(buildingHighlightId);
     }
 
+    @WorkerThread
+    private void jniOnPositionerProjectionChanged() {
+        m_positionerApi.notifyProjectionChanged();
+    }
 
     /**
      * Registers a listener to an event raised when the initial map scene has completed streaming all resources
@@ -860,6 +917,12 @@ public final class EegeoMap {
         @UiThread
         public void onCallback() {
             m_listener.onCameraMove();
+        }
+    }
+
+    public static final class AllowApiAccess {
+        @WorkerThread
+        private AllowApiAccess() {
         }
     }
 
