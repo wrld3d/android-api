@@ -39,6 +39,11 @@ public class PoiApi {
         return searchId;
     }
 
+    void cancelSearch(final int nativeHandle) {
+        nativeCancelSearch(m_jniEegeoMapApiPtr, nativeHandle);
+        m_nativeHandleToPoiSearch.remove(nativeHandle);
+    }
+
     @WorkerThread
     public void register(PoiSearch poiSearch) {
         int nativeHandle = poiSearch.getNativeHandleUrgh();
@@ -90,5 +95,7 @@ public class PoiApi {
             boolean useIndoorId, String indoorId,
             boolean useFloor, int floor,
             boolean useFloorDropoff, int floorDropoff);
+
+    private native void nativeCancelSearch(long jniEegeoMapApiPtr, int nativeHandle);
 }
 
