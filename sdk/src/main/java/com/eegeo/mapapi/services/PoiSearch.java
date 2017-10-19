@@ -34,6 +34,16 @@ public class PoiSearch extends NativeApiObject {
         m_options = options;
     }
 
+//     @UiThread
+//     public void cancel() {
+//         submit(new Runnable() {
+//             @WorkerThread
+//             public void run() {
+//                 m_poiApi.cancelSearch(getNativeHandle());
+//             }
+//         });
+//     }
+
     @WorkerThread
     int getNativeHandleUrgh() {
         if (!hasNativeHandle())
