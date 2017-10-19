@@ -813,8 +813,8 @@ public final class EegeoMap {
     }
 
     @WorkerThread
-    private void jniOnPoiSearchCompleted(final int poiSearchId, final String searchResults) {
-        m_poiApi.notifySearchComplete(poiSearchId, searchResults);
+    private void jniOnPoiSearchCompleted(final int poiSearchId, final boolean succeeded, final String searchResults) {
+        m_poiApi.notifySearchComplete(poiSearchId, succeeded, searchResults);
     }
 
 
