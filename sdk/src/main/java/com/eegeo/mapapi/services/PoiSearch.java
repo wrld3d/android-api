@@ -60,7 +60,7 @@ public class PoiSearch extends NativeApiObject {
         return getNativeHandle();
     }
 
-    void returnSearchResults(String searchResults) {
+    void returnSearchResults(PoiSearchResult searchResults) {
         m_options.getOnPoiSearchCompletedListener().onPoiSearchCompleted(searchResults);
     }
 }

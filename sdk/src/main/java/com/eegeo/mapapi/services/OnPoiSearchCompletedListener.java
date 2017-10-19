@@ -6,6 +6,6 @@ import android.support.annotation.UiThread;
 public interface OnPoiSearchCompletedListener {
 
     @UiThread
-    void onPoiSearchCompleted(String response);
+    void onPoiSearchCompleted(PoiSearchResult response);
 
 }
