@@ -7,6 +7,7 @@ import android.support.annotation.WorkerThread;
 
 import com.eegeo.mapapi.geometry.ElevationMode;
 import com.eegeo.mapapi.geometry.LatLng;
+import com.eegeo.mapapi.geometry.LatLngAlt;
 import com.eegeo.mapapi.util.NativeApiObject;
 
 import java.util.concurrent.Callable;
@@ -69,6 +70,7 @@ public class Positioner extends NativeApiObject {
     private ElevationMode m_elevationMode;
     private OnPositionerChangedListener m_positionerChangedListener;
     private Point m_screenPoint = new Point();
+    private LatLngAlt m_transformedPoint = new LatLngAlt(0, 0, 0);
     private boolean m_isScreenPointValid = false;
     private boolean m_isBehindGlobeHorizon = false;
 
@@ -216,14 +218,25 @@ public class Positioner extends NativeApiObject {
     }
 
     /**
-     * Returns the screen point if available or null. For a Positioner placed on an indoor map
-     * floor, returns null unless that floor is the current focus of the indoor map.
+     * Returns the screen point. Use isScreenPointValid() to check that this point is valid.
      *
-     * @return Returns the screen point if available or null.
+     * @return The screen point.
      */
     @UiThread
-    public Point tryGetScreenPoint() {
-        return m_isScreenPointValid?m_screenPoint:null;
+    public Point getScreenPoint() {
+        return m_screenPoint;
+    }
+
+    /**
+     * Returns the transformed world coordinate. Use isScreenPointValid() to check that this point
+     * is valid.
+     *
+     * @return The transformed world coordinate.
+     */
+    @UiThread
+    public LatLngAlt getTransformedPoint()
+    {
+        return m_transformedPoint;
     }
 
     /**
@@ -235,6 +248,16 @@ public class Positioner extends NativeApiObject {
      */
     @UiThread
     public boolean isBehindGlobeHorizon() { return m_isBehindGlobeHorizon; }
+
+    /**
+     * Returns true if the screen point is valid. The screen point may be outwith the screen area
+     * but still valid.
+     *
+     * @return True if the screen point is valid.
+     */
+    @UiThread
+    public boolean isScreenPointValid() { return m_isScreenPointValid && (!m_isBehindGlobeHorizon); }
+
 
     /**
      * Removes this positioner from the map and destroys the positioner. Use EegeoMap.removePositioner
@@ -287,15 +310,21 @@ public class Positioner extends NativeApiObject {
     @UiThread
     void setProjectedState(
             Point screenPoint,
+            LatLngAlt transformedPoint,
             boolean isScreenPointValid,
             boolean isBehindGlobeHorizon
     ) {
-        if (!m_screenPoint.equals(screenPoint) ||
+        if ((!m_screenPoint.equals(screenPoint)) ||
+                m_transformedPoint.equals(transformedPoint) ||
                 m_isScreenPointValid != isScreenPointValid ||
                 m_isBehindGlobeHorizon != isBehindGlobeHorizon) {
 
             if(screenPoint!=null) {
                 m_screenPoint.set(screenPoint.x, screenPoint.y);
+            }
+
+            if(transformedPoint!=null) {
+                m_transformedPoint = transformedPoint;
             }
 
             m_isScreenPointValid = isScreenPointValid;

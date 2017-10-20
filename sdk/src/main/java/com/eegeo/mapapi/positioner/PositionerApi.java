@@ -10,6 +10,7 @@ import com.eegeo.mapapi.INativeMessageRunner;
 import com.eegeo.mapapi.IUiMessageRunner;
 import com.eegeo.mapapi.geometry.ElevationMode;
 import com.eegeo.mapapi.geometry.LatLng;
+import com.eegeo.mapapi.geometry.LatLngAlt;
 
 import java.security.InvalidParameterException;
 
@@ -106,12 +107,13 @@ public class PositionerApi {
         {
             final int positionerNativeHandle = m_nativeHandleToPositioner.keyAt(i);
             final Point screenPoint = nativeGetScreenPoint(m_jniEegeoMapApiPtr, positionerNativeHandle);
+            final LatLngAlt transformedPoint = nativeGetTransformedPoint(m_jniEegeoMapApiPtr, positionerNativeHandle);
             final Boolean isBehindGlobeHorizon = nativeGetIsBehindGlobeHorizon(m_jniEegeoMapApiPtr, positionerNativeHandle);
             final Positioner positioner = m_nativeHandleToPositioner.get(positionerNativeHandle);
             m_uiRunner.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    positioner.setProjectedState(screenPoint, (screenPoint!=null), isBehindGlobeHorizon);
+                    positioner.setProjectedState(screenPoint, transformedPoint, (screenPoint!=null), isBehindGlobeHorizon);
                 }
             });
         }
@@ -146,6 +148,11 @@ public class PositionerApi {
 
     @WorkerThread
     private native Point nativeGetScreenPoint(
+            long jniEegeoMapApiPtr,
+            int positionerHandle);
+
+    @WorkerThread
+    private native LatLngAlt nativeGetTransformedPoint(
             long jniEegeoMapApiPtr,
             int positionerHandle);
 
