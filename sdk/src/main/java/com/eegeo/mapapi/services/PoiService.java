@@ -5,8 +5,6 @@ import android.support.annotation.WorkerThread;
 
 import com.eegeo.mapapi.INativeMessageRunner;
 import com.eegeo.mapapi.geometry.LatLng;
-import com.eegeo.mapapi.services.PoiSearch;
-import com.eegeo.mapapi.services.PoiApi;
 
 
 public class PoiService {
@@ -19,10 +17,17 @@ public class PoiService {
     }
 
     @UiThread
-    public PoiSearch search(final String query, final LatLng center, final PoiSearchOptions options) {
-        PoiSearch search = new PoiSearch(m_poiApi, query, center, options);
+    public PoiSearch searchText(final String query, final LatLng center, final PoiSearchOptions options) {
+        PoiSearch search = new PoiSearch(m_poiApi);
+        search.beginTextSearch(query, center, options);
         return search;
     }
 
+    @UiThread
+    public PoiSearch searchTag(final String tag, final LatLng center, final TagSearchOptions options) {
+        PoiSearch search = new PoiSearch(m_poiApi);
+        search.beginTagSearch(tag, center, options);
+        return search;
+    }
 }
 

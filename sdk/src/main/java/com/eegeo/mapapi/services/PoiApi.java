@@ -23,9 +23,17 @@ public class PoiApi {
         this.m_jniEegeoMapApiPtr = jniEegeoMapApiPtr;
     }
 
-    int createSearch(String query, LatLng center, PoiSearchOptions options) {
-        int searchId = nativeSearch(
+    @WorkerThread
+    int createSearch() {
+        int searchId = nativeCreateSearch(m_jniEegeoMapApiPtr);
+        return searchId;
+    }
+
+    @WorkerThread
+    void beginTextSearch(final int searchNativeHandle, final String query, final LatLng center, final PoiSearchOptions options) {
+        nativeBeginTextSearch(
                 m_jniEegeoMapApiPtr,
+                searchNativeHandle,
                 query,
                 center.latitude,
                 center.longitude,
@@ -35,24 +43,34 @@ public class PoiApi {
                 options.usesIndoorId(), options.getIndoorId(),
                 options.usesFloorNumber(), options.getFloorNumber(),
                 options.usesFloorDropoff(), options.getFloorDropoff());
-
-        return searchId;
-    }
-
-    void cancelSearch(final int nativeHandle) {
-        nativeCancelSearch(m_jniEegeoMapApiPtr, nativeHandle);
-        m_nativeHandleToPoiSearch.remove(nativeHandle);
     }
 
     @WorkerThread
-    public void register(PoiSearch poiSearch) {
-        int nativeHandle = poiSearch.getNativeHandleUrgh();
+    void beginTagSearch(final int searchNativeHandle, final String tag, final LatLng center, final TagSearchOptions options) {
+        nativeBeginTagSearch(
+                m_jniEegeoMapApiPtr,
+                searchNativeHandle,
+                tag,
+                center.latitude,
+                center.longitude,
+                options.usesRadius(), options.getRadius(),
+                options.usesNumber(), options.getNumber());
+    }
+
+    @WorkerThread
+    void cancelSearch(final int searchNativeHandle) {
+        nativeCancelSearch(m_jniEegeoMapApiPtr, searchNativeHandle);
+        m_nativeHandleToPoiSearch.remove(searchNativeHandle);
+    }
+
+    @WorkerThread
+    void register(PoiSearch poiSearch, int nativeHandle) {
         m_nativeHandleToPoiSearch.put(nativeHandle, poiSearch);
     }
 
     @WorkerThread
-    public void unregister(PoiSearch poiSearch) {
-        m_nativeHandleToPoiSearch.remove(poiSearch.getNativeHandleUrgh());
+    void unregister(int nativeHandle) {
+        m_nativeHandleToPoiSearch.remove(nativeHandle);
     }
 
 
@@ -65,7 +83,7 @@ public class PoiApi {
     }
 
     @WorkerThread
-    public void returnSearchResults(final int nativeHandle, final PoiSearchResult searchResults) {
+    void returnSearchResults(final int nativeHandle, final PoiSearchResult searchResults) {
         final PoiSearch poiSearch = m_nativeHandleToPoiSearch.get(nativeHandle);
 
         if (poiSearch == null)
@@ -85,8 +103,11 @@ public class PoiApi {
         return m_uiRunner;
     }
 
-    private native int nativeSearch(
+    private native int nativeCreateSearch(long jniEegeoMapApiPtr);
+
+    private native void nativeBeginTextSearch(
             long jniEegeoMapApiPtr,
+            int searchNativeHandle,
             String query,
             double latitude,
             double longitude,
@@ -97,6 +118,15 @@ public class PoiApi {
             boolean useFloor, int floor,
             boolean useFloorDropoff, int floorDropoff);
 
-    private native void nativeCancelSearch(long jniEegeoMapApiPtr, int nativeHandle);
+    private native void nativeBeginTagSearch(
+            long jniEegeoMapApiPtr,
+            int searchNativeHandle,
+            String query,
+            double latitude,
+            double longitude,
+            boolean useRadius, double radius,
+            boolean useNumber, int number);
+
+    private native void nativeCancelSearch(long jniEegeoMapApiPtr, int searchNativeHandle);
 }
 

@@ -1,6 +1,7 @@
 package com.eegeo.mapapi.services;
 
 
+// TODO: Rename to FreeTextSearchOptions?
 public final class PoiSearchOptions {
 
     private boolean m_useRadius = false;
