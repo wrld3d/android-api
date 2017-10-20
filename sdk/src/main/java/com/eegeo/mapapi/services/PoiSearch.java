@@ -68,6 +68,17 @@ public class PoiSearch extends NativeApiObject {
         });
     }
 
+    @UiThread
+    void beginAutocompleteSearch(final String query, final LatLng center, final AutocompleteOptions options) {
+        this.m_callback = options.getOnPoiSearchCompletedListener();
+        submit(new Runnable() {
+            @WorkerThread
+            public void run() {
+                m_poiApi.beginAutocompleteSearch(getNativeHandle(), query, center, options);
+            }
+        });
+    }
+
     void returnSearchResults(PoiSearchResult searchResults) {
         m_callback.onPoiSearchCompleted(searchResults);
     }
