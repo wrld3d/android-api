@@ -29,5 +29,12 @@ public class PoiService {
         search.beginTagSearch(tag, center, options);
         return search;
     }
+
+    @UiThread
+    public PoiSearch searchAutocomplete(final String query, final LatLng center, final AutocompleteOptions options) {
+        PoiSearch search = new PoiSearch(m_poiApi);
+        search.beginAutocompleteSearch(query, center, options);
+        return search;
+    }
 }
 

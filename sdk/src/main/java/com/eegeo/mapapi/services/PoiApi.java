@@ -58,6 +58,17 @@ public class PoiApi {
     }
 
     @WorkerThread
+    void beginAutocompleteSearch(final int searchNativeHandle, final String query, final LatLng center, final AutocompleteOptions options) {
+        nativeBeginAutocompleteSearch(
+                m_jniEegeoMapApiPtr,
+                searchNativeHandle,
+                query,
+                center.latitude,
+                center.longitude,
+                options.usesNumber(), options.getNumber());
+    }
+
+    @WorkerThread
     void cancelSearch(final int searchNativeHandle) {
         nativeCancelSearch(m_jniEegeoMapApiPtr, searchNativeHandle);
         m_nativeHandleToPoiSearch.remove(searchNativeHandle);
@@ -125,6 +136,14 @@ public class PoiApi {
             double latitude,
             double longitude,
             boolean useRadius, double radius,
+            boolean useNumber, int number);
+
+    private native void nativeBeginAutocompleteSearch(
+            long jniEegeoMapApiPtr,
+            int searchNativeHandle,
+            String query,
+            double latitude,
+            double longitude,
             boolean useNumber, int number);
 
     private native void nativeCancelSearch(long jniEegeoMapApiPtr, int searchNativeHandle);
