@@ -72,56 +72,56 @@ public final class PoiSearchOptions {
     }
 
 
-    public double getRadius() {
+    double getRadius() {
         return m_radius;
     }
 
-    public int getNumber() {
+    int getNumber() {
         return m_number;
     }
 
-    public double getMinScore() {
+    double getMinScore() {
         return m_minScore;
     }
 
-    public String getIndoorId() {
+    String getIndoorId() {
         return m_indoorId;
     }
 
-    public int getFloorNumber() {
+    int getFloorNumber() {
         return m_floorNumber;
     }
 
-    public int getFloorDropoff() {
+    int getFloorDropoff() {
         return m_floorDropoff;
     }
 
-    public OnPoiSearchCompletedListener getOnPoiSearchCompletedListener() {
+    OnPoiSearchCompletedListener getOnPoiSearchCompletedListener() {
         return m_onPoiSearchCompletedListener;
     }
 
 
-    public boolean usesRadius() {
+    boolean usesRadius() {
         return m_useRadius;
     }
 
-    public boolean usesNumber() {
+    boolean usesNumber() {
         return m_useNumber;
     }
 
-    public boolean usesMinScore() {
+    boolean usesMinScore() {
         return m_useMinScore;
     }
 
-    public boolean usesIndoorId() {
+    boolean usesIndoorId() {
         return m_useIndoorId;
     }
 
-    public boolean usesFloorNumber() {
+    boolean usesFloorNumber() {
         return m_useFloorNumber;
     }
 
-    public boolean usesFloorDropoff() {
+    boolean usesFloorDropoff() {
         return m_useFloorDropoff;
     }
 }

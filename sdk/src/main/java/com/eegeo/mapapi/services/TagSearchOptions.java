@@ -35,24 +35,24 @@ public final class TagSearchOptions {
     }
 
 
-    public double getRadius() {
+    double getRadius() {
         return m_radius;
     }
 
-    public int getNumber() {
+    int getNumber() {
         return m_number;
     }
 
-    public OnPoiSearchCompletedListener getOnPoiSearchCompletedListener() {
+    OnPoiSearchCompletedListener getOnPoiSearchCompletedListener() {
         return m_onPoiSearchCompletedListener;
     }
 
 
-    public boolean usesRadius() {
+    boolean usesRadius() {
         return m_useRadius;
     }
 
-    public boolean usesNumber() {
+    boolean usesNumber() {
         return m_useNumber;
     }
 }
