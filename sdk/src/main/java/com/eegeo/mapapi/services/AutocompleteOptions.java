@@ -26,16 +26,16 @@ public final class AutocompleteOptions {
     }
 
 
-    public int getNumber() {
+    int getNumber() {
         return m_number;
     }
 
-    public OnPoiSearchCompletedListener getOnPoiSearchCompletedListener() {
+    OnPoiSearchCompletedListener getOnPoiSearchCompletedListener() {
         return m_onPoiSearchCompletedListener;
     }
 
 
-    public boolean usesNumber() {
+    boolean usesNumber() {
         return m_useNumber;
     }
 }
