@@ -12,32 +12,26 @@ import com.eegeo.mapapi.util.NativeApiObject;
 public class PoiSearch extends NativeApiObject {
 
     private PoiApi m_poiApi;
-    private PoiSearchOptions m_options;
+    private OnPoiSearchCompletedListener m_callback = null;
 
     @UiThread
-    PoiSearch(
-            final PoiApi poiApi,
-            final String query,
-            final LatLng center,
-            final PoiSearchOptions options) {
-
+    PoiSearch(final PoiApi poiApi) {
         super(poiApi.getNativeRunner(), poiApi.getUiRunner(),
                 new Callable<Integer>() {
                     @WorkerThread
                     @Override
                     public Integer call() throws Exception {
-                        return poiApi.createSearch(query, center, options);
+                        return poiApi.createSearch();
                     }
                 });
 
         m_poiApi = poiApi;
-        m_options = options;
 
         submit(new Runnable() {
             @WorkerThread
             @Override
             public void run() {
-                m_poiApi.register(PoiSearch.this);
+                m_poiApi.register(PoiSearch.this, getNativeHandle());
             }
         });
     }
@@ -52,15 +46,29 @@ public class PoiSearch extends NativeApiObject {
         });
     }
 
-    @WorkerThread
-    int getNativeHandleUrgh() {
-        if (!hasNativeHandle())
-            throw new IllegalStateException("Native handle not available");
+    @UiThread
+    void beginTextSearch(final String query, final LatLng center, final PoiSearchOptions options) {
+        this.m_callback = options.getOnPoiSearchCompletedListener();
+        submit(new Runnable() {
+            @WorkerThread
+            public void run() {
+                m_poiApi.beginTextSearch(getNativeHandle(), query, center, options);
+            }
+        });
+    }
 
-        return getNativeHandle();
+    @UiThread
+    void beginTagSearch(final String tag, final LatLng center, final TagSearchOptions options) {
+        this.m_callback = options.getOnPoiSearchCompletedListener();
+        submit(new Runnable() {
+            @WorkerThread
+            public void run() {
+                m_poiApi.beginTagSearch(getNativeHandle(), tag, center, options);
+            }
+        });
     }
 
     void returnSearchResults(PoiSearchResult searchResults) {
-        m_options.getOnPoiSearchCompletedListener().onPoiSearchCompleted(searchResults);
+        m_callback.onPoiSearchCompleted(searchResults);
     }
 }
