@@ -65,7 +65,7 @@ public class PositionerApi {
                 positionerOptions.getElevation(),
                 positionerOptions.getElevationMode().ordinal(),
                 positionerOptions.getIndoorMapId(),
-                positionerOptions.getIndoorFloorId()
+                positionerOptions.getIndoorMapFloorId()
         );
     }
 
@@ -113,7 +113,7 @@ public class PositionerApi {
             m_uiRunner.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    positioner.setProjectedState(screenPoint, transformedPoint, (screenPoint!=null), isBehindGlobeHorizon);
+                    positioner.setProjectedState(screenPoint, transformedPoint, isBehindGlobeHorizon);
                 }
             });
         }

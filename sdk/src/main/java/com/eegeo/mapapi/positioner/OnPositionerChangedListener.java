@@ -10,7 +10,7 @@ import android.support.annotation.UiThread;
 public interface OnPositionerChangedListener {
     /**
      * Called when a Positioner object has changed. Its updated position may be obtained with
-     * positioner.getScreenPoint()
+     * positioner.getScreenPointOrNull()
      * @param positioner The Positioner object that has changed.
      */
     @UiThread

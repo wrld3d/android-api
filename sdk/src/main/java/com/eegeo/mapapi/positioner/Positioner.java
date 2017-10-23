@@ -2,6 +2,7 @@ package com.eegeo.mapapi.positioner;
 
 import android.graphics.Point;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 
@@ -64,7 +65,7 @@ public class Positioner extends NativeApiObject {
     private static final AllowHandleAccess m_allowHandleAccess = new AllowHandleAccess();
     private final PositionerApi m_positionerApi;
     private String m_indoorMapId;
-    private int m_indoorFloorId;
+    private int m_indoorMapFloorId;
     private LatLng m_position;
     private double m_elevation;
     private ElevationMode m_elevationMode;
@@ -72,6 +73,7 @@ public class Positioner extends NativeApiObject {
     private Point m_screenPoint = new Point();
     private LatLngAlt m_transformedPoint = new LatLngAlt(0, 0, 0);
     private boolean m_isScreenPointValid = false;
+    private boolean m_isTransformedPointValid = false;
     private boolean m_isBehindGlobeHorizon = false;
 
     /**
@@ -96,7 +98,7 @@ public class Positioner extends NativeApiObject {
         m_elevation = positionerOptions.getElevation();
         m_elevationMode = positionerOptions.getElevationMode();
         m_indoorMapId = positionerOptions.getIndoorMapId();
-        m_indoorFloorId = positionerOptions.getIndoorFloorId();
+        m_indoorMapFloorId = positionerOptions.getIndoorMapFloorId();
         m_positionerChangedListener = positionerOptions.getPositionerChangedListener();
 
         submit(new Runnable() {
@@ -202,47 +204,51 @@ public class Positioner extends NativeApiObject {
      * @return For a positioner on an indoor map, the identifier of the floor; otherwise 0.
      */
     @UiThread
-    public int getIndoorFloorId() {
-        return m_indoorFloorId;
+    public int getIndoorMapFloorId() {
+        return m_indoorMapFloorId;
     }
 
     /**
      * Sets the indoor floor ID.
      *
-     * @param indoorFloorId The floor ID.
+     * @param indoorMapFloorId The floor ID.
      */
     @UiThread
-    public void setIndoorFloorId(int indoorFloorId) {
-        m_indoorFloorId = indoorFloorId;
+    public void setIndoorMapFloorId(int indoorMapFloorId) {
+        m_indoorMapFloorId = indoorMapFloorId;
         updateLocation();
     }
 
     /**
-     * Returns the screen point. Use isScreenPointValid() to check that this point is valid.
+     * Returns the screen point. Use isScreenPointProjectionDefined() to check that this point is
+     * valid and not over the horizon.
      *
-     * @return The screen point.
+     * @return The screen point or null if the point is not valid.
      */
     @UiThread
-    public Point getScreenPoint() {
-        return m_screenPoint;
+    @Nullable
+    public Point getScreenPointOrNull() {
+        return m_isScreenPointValid?m_screenPoint:null;
     }
 
     /**
-     * Returns the transformed world coordinate. Use isScreenPointValid() to check that this point
-     * is valid.
+     * Returns the geographical coordinate that is used to derive the screen-projected point that is
+     * accessed with getScreenPointOrNull. The coordinate may change depending on the animated state
+     * of the map - for example, when displaying in collapsed mode.
      *
      * @return The transformed world coordinate.
      */
     @UiThread
-    public LatLngAlt getTransformedPoint()
-    {
-        return m_transformedPoint;
+    @Nullable
+    public LatLngAlt getTransformedPointOrNull() {
+        return m_isTransformedPointValid?m_transformedPoint:null;
     }
 
     /**
-     * Returns true if the positioner is over the horizon. When the positioner is on the far side of
-     * the world it may still be within the screen area but should not be visible. In those
-     * situations this can be used to hide views.
+     * Returns true if the screen projection of this Positioner would appear beyond the horizon for
+     * the current viewpoint. For example, when viewing the map zommed out so that the entire globe
+     * is visible, calling this method on a Positioner instance located on the opposite side of the
+     * Earth to the camera location will return true.
      *
      * @return True if the positioner is beyond the horizon.
      */
@@ -250,13 +256,13 @@ public class Positioner extends NativeApiObject {
     public boolean isBehindGlobeHorizon() { return m_isBehindGlobeHorizon; }
 
     /**
-     * Returns true if the screen point is valid. The screen point may be outwith the screen area
-     * but still valid.
+     * Returns true if the screen point is valid for drawing. This returns true if the screen point
+     * is valid and is on this side of the horizon. The screen point may be outwith the screen area.
      *
-     * @return True if the screen point is valid.
+     * @return True if the screen point is valid for drawing.
      */
-    @UiThread
-    public boolean isScreenPointValid() { return m_isScreenPointValid && (!m_isBehindGlobeHorizon); }
+    @UiThread    
+    public boolean isScreenPointProjectionDefined() { return m_isScreenPointValid && (!m_isBehindGlobeHorizon); }
 
 
     /**
@@ -283,7 +289,7 @@ public class Positioner extends NativeApiObject {
         final double elevation = m_elevation;
         final ElevationMode elevationMode = m_elevationMode;
         final String indoorMapId = m_indoorMapId;
-        final int indoorFloorId = m_indoorFloorId;
+        final int indoorFloorId = m_indoorMapFloorId;
 
         submit(new Runnable() {
             @WorkerThread
@@ -311,27 +317,40 @@ public class Positioner extends NativeApiObject {
     void setProjectedState(
             Point screenPoint,
             LatLngAlt transformedPoint,
-            boolean isScreenPointValid,
             boolean isBehindGlobeHorizon
     ) {
-        if ((!m_screenPoint.equals(screenPoint)) ||
-                m_transformedPoint.equals(transformedPoint) ||
-                m_isScreenPointValid != isScreenPointValid ||
-                m_isBehindGlobeHorizon != isBehindGlobeHorizon) {
+        boolean changed=false;
+        boolean isScreenPointValid = (screenPoint != null);
+        boolean isTransformedPointValid = (transformedPoint != null);
 
-            if(screenPoint!=null) {
-                m_screenPoint.set(screenPoint.x, screenPoint.y);
-            }
-
-            if(transformedPoint!=null) {
-                m_transformedPoint = transformedPoint;
-            }
-
+        if (isScreenPointValid != m_isScreenPointValid) {
             m_isScreenPointValid = isScreenPointValid;
+            changed = true;
+        }
+
+        if (isScreenPointValid && !m_screenPoint.equals(screenPoint)) {
+            m_screenPoint.set(screenPoint.x, screenPoint.y);
+            changed = true;
+        }
+
+
+        if (isTransformedPointValid != m_isTransformedPointValid) {
+            m_isTransformedPointValid = isTransformedPointValid;
+            changed = true;
+        }
+
+        if (isTransformedPointValid && !m_transformedPoint.equals(transformedPoint)) {
+            m_transformedPoint = transformedPoint;
+            changed = true;
+        }
+
+        if (m_isBehindGlobeHorizon != isBehindGlobeHorizon) {
             m_isBehindGlobeHorizon = isBehindGlobeHorizon;
-            if (m_positionerChangedListener != null) {
-                m_positionerChangedListener.onPositionerChanged(this);
-            }
+            changed = true;
+        }
+
+        if (changed && m_positionerChangedListener != null) {
+            m_positionerChangedListener.onPositionerChanged(this);
         }
     }
 

@@ -15,7 +15,7 @@ public final class PositionerOptions {
     private double m_elevation;
     private ElevationMode m_elevationMode = ElevationMode.HeightAboveGround;
     private String m_indoorMapId = "";
-    private int m_indoorFloorId;
+    private int m_indoorMapFloorId;
     private OnPositionerChangedListener m_onPositionerChangedListener = null;
 
     /**
@@ -65,15 +65,15 @@ public final class PositionerOptions {
      * PositionerOptions is initialised to create a positioner for display on an outdoor map.
      *
      * @param indoorMapId   The identifier of the indoor map on which the positioner should be displayed.
-     * @param indoorFloorId The identifier of the indoor map floor on which the positioner should be
+     * @param indoorMapFloorId The identifier of the indoor map floor on which the positioner should be
      *                      displayed. In the WRLD Indoor Map Format, this corresponds to the
      *                      'z_order' field of the Level object.
      * @return The PositionerOptions object on which the method was called, with the new indoor map
      * properties set.
      */
-    public PositionerOptions indoor(String indoorMapId, int indoorFloorId) {
+    public PositionerOptions indoor(String indoorMapId, int indoorMapFloorId) {
         m_indoorMapId = indoorMapId;
-        m_indoorFloorId = indoorFloorId;
+        m_indoorMapFloorId = indoorMapFloorId;
         return this;
     }
 
@@ -120,8 +120,8 @@ public final class PositionerOptions {
     /**
      * @eegeo.internal
      */
-    int getIndoorFloorId() {
-        return m_indoorFloorId;
+    int getIndoorMapFloorId() {
+        return m_indoorMapFloorId;
     }
 
     /**
