@@ -1,8 +1,12 @@
 package com.eegeo.mapapi.services;
 
+import com.eegeo.mapapi.geometry.LatLng;
 
-// TODO: Rename to FreeTextSearchOptions?
-public final class PoiSearchOptions {
+
+public final class TextSearchOptions {
+
+    private String m_query;
+    private LatLng m_center;
 
     private boolean m_useRadius = false;
     private double m_radius = 0.0;
@@ -25,52 +29,61 @@ public final class PoiSearchOptions {
     private OnPoiSearchCompletedListener m_onPoiSearchCompletedListener = null;
 
 
-    public PoiSearchOptions() {
-
+    public TextSearchOptions(String query, LatLng center) {
+        this.m_query = query;
+        this.m_center = center;
     }
 
 
-    public PoiSearchOptions radius(double radius) {
+    public TextSearchOptions radius(double radius) {
         this.m_radius = radius;
         this.m_useRadius = true;
         return this;
     }
 
-    public PoiSearchOptions number(int number) {
+    public TextSearchOptions number(int number) {
         this.m_number = number;
         this.m_useNumber = true;
         return this;
     }
 
-    public PoiSearchOptions minScore(double minScore) {
+    public TextSearchOptions minScore(double minScore) {
         this.m_minScore = minScore;
         this.m_useMinScore = true;
         return this;
     }
 
-    public PoiSearchOptions indoorId(String indoorId) {
+    public TextSearchOptions indoorId(String indoorId) {
         this.m_indoorId = indoorId;
         this.m_useIndoorId = true;
         return this;
     }
 
-    public PoiSearchOptions floorNumber(int floorNumber) {
+    public TextSearchOptions floorNumber(int floorNumber) {
         this.m_floorNumber = floorNumber;
         this.m_useFloorNumber = true;
         return this;
     }
 
-    public PoiSearchOptions floorDropoff(int floorDropoff) {
+    public TextSearchOptions floorDropoff(int floorDropoff) {
         this.m_floorDropoff = floorDropoff;
         this.m_useFloorDropoff = true;
         return this;
     }
 
-    public PoiSearchOptions onPoiSearchCompletedListener(OnPoiSearchCompletedListener onPoiSearchCompletedListener) {
+    public TextSearchOptions onPoiSearchCompletedListener(OnPoiSearchCompletedListener onPoiSearchCompletedListener) {
         this.m_onPoiSearchCompletedListener = onPoiSearchCompletedListener;
         return this;
     }
 
+    
+    String getQuery() {
+        return m_query;
+    }
+
+    LatLng getCenter() {
+        return m_center;
+    }
 
     double getRadius() {
         return m_radius;

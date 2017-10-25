@@ -4,7 +4,6 @@ import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 
 import com.eegeo.mapapi.INativeMessageRunner;
-import com.eegeo.mapapi.geometry.LatLng;
 
 
 public class PoiService {
@@ -17,23 +16,23 @@ public class PoiService {
     }
 
     @UiThread
-    public PoiSearch searchText(final String query, final LatLng center, final PoiSearchOptions options) {
+    public PoiSearch searchText(final TextSearchOptions options) {
         PoiSearch search = new PoiSearch(m_poiApi);
-        search.beginTextSearch(query, center, options);
+        search.beginTextSearch(options);
         return search;
     }
 
     @UiThread
-    public PoiSearch searchTag(final String tag, final LatLng center, final TagSearchOptions options) {
+    public PoiSearch searchTag(final TagSearchOptions options) {
         PoiSearch search = new PoiSearch(m_poiApi);
-        search.beginTagSearch(tag, center, options);
+        search.beginTagSearch(options);
         return search;
     }
 
     @UiThread
-    public PoiSearch searchAutocomplete(final String query, final LatLng center, final AutocompleteOptions options) {
+    public PoiSearch searchAutocomplete(final AutocompleteOptions options) {
         PoiSearch search = new PoiSearch(m_poiApi);
-        search.beginAutocompleteSearch(query, center, options);
+        search.beginAutocompleteSearch(options);
         return search;
     }
 }
