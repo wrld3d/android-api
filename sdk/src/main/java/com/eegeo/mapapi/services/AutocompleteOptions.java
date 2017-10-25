@@ -1,7 +1,12 @@
 package com.eegeo.mapapi.services;
 
+import com.eegeo.mapapi.geometry.LatLng;
+
 
 public final class AutocompleteOptions {
+
+    private String m_query;
+    private LatLng m_center;
 
     private boolean m_useNumber = false;
     private int m_number = 0;
@@ -9,8 +14,9 @@ public final class AutocompleteOptions {
     private OnPoiSearchCompletedListener m_onPoiSearchCompletedListener = null;
 
 
-    public AutocompleteOptions() {
-
+    public AutocompleteOptions(String query, LatLng center) {
+        this.m_query = query;
+        this.m_center = center;
     }
 
 
@@ -25,6 +31,14 @@ public final class AutocompleteOptions {
         return this;
     }
 
+
+    String getQuery() {
+        return m_query;
+    }
+
+    LatLng getCenter() {
+        return m_center;
+    }
 
     int getNumber() {
         return m_number;

@@ -5,7 +5,6 @@ import java.util.concurrent.Callable;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 
-import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.util.NativeApiObject;
 
 
@@ -47,34 +46,34 @@ public class PoiSearch extends NativeApiObject {
     }
 
     @UiThread
-    void beginTextSearch(final String query, final LatLng center, final PoiSearchOptions options) {
+    void beginTextSearch(final TextSearchOptions options) {
         this.m_callback = options.getOnPoiSearchCompletedListener();
         submit(new Runnable() {
             @WorkerThread
             public void run() {
-                m_poiApi.beginTextSearch(getNativeHandle(), query, center, options);
+                m_poiApi.beginTextSearch(getNativeHandle(), options);
             }
         });
     }
 
     @UiThread
-    void beginTagSearch(final String tag, final LatLng center, final TagSearchOptions options) {
+    void beginTagSearch(final TagSearchOptions options) {
         this.m_callback = options.getOnPoiSearchCompletedListener();
         submit(new Runnable() {
             @WorkerThread
             public void run() {
-                m_poiApi.beginTagSearch(getNativeHandle(), tag, center, options);
+                m_poiApi.beginTagSearch(getNativeHandle(), options);
             }
         });
     }
 
     @UiThread
-    void beginAutocompleteSearch(final String query, final LatLng center, final AutocompleteOptions options) {
+    void beginAutocompleteSearch(final AutocompleteOptions options) {
         this.m_callback = options.getOnPoiSearchCompletedListener();
         submit(new Runnable() {
             @WorkerThread
             public void run() {
-                m_poiApi.beginAutocompleteSearch(getNativeHandle(), query, center, options);
+                m_poiApi.beginAutocompleteSearch(getNativeHandle(), options);
             }
         });
     }

@@ -30,13 +30,13 @@ public class PoiApi {
     }
 
     @WorkerThread
-    void beginTextSearch(final int searchNativeHandle, final String query, final LatLng center, final PoiSearchOptions options) {
+    void beginTextSearch(final int searchNativeHandle, final TextSearchOptions options) {
         nativeBeginTextSearch(
                 m_jniEegeoMapApiPtr,
                 searchNativeHandle,
-                query,
-                center.latitude,
-                center.longitude,
+                options.getQuery(),
+                options.getCenter().latitude,
+                options.getCenter().longitude,
                 options.usesRadius(), options.getRadius(),
                 options.usesNumber(), options.getNumber(),
                 options.usesMinScore(), options.getMinScore(),
@@ -46,25 +46,25 @@ public class PoiApi {
     }
 
     @WorkerThread
-    void beginTagSearch(final int searchNativeHandle, final String tag, final LatLng center, final TagSearchOptions options) {
+    void beginTagSearch(final int searchNativeHandle, final TagSearchOptions options) {
         nativeBeginTagSearch(
                 m_jniEegeoMapApiPtr,
                 searchNativeHandle,
-                tag,
-                center.latitude,
-                center.longitude,
+                options.getQuery(),
+                options.getCenter().latitude,
+                options.getCenter().longitude,
                 options.usesRadius(), options.getRadius(),
                 options.usesNumber(), options.getNumber());
     }
 
     @WorkerThread
-    void beginAutocompleteSearch(final int searchNativeHandle, final String query, final LatLng center, final AutocompleteOptions options) {
+    void beginAutocompleteSearch(final int searchNativeHandle, final AutocompleteOptions options) {
         nativeBeginAutocompleteSearch(
                 m_jniEegeoMapApiPtr,
                 searchNativeHandle,
-                query,
-                center.latitude,
-                center.longitude,
+                options.getQuery(),
+                options.getCenter().latitude,
+                options.getCenter().longitude,
                 options.usesNumber(), options.getNumber());
     }
 
