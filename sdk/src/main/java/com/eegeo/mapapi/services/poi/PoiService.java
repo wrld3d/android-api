@@ -1,4 +1,4 @@
-package com.eegeo.mapapi.services;
+package com.eegeo.mapapi.services.poi;
 
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
