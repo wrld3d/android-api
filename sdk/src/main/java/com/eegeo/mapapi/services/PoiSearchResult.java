@@ -1,29 +1,47 @@
 package com.eegeo.mapapi.services;
 
 
+import android.support.annotation.UiThread;
+
+import com.eegeo.mapapi.geometry.LatLng;
+
+
 public class PoiSearchResult {
 
-    boolean m_succeeded;
-    String m_resultJson;
-    String m_errorString;
+    public final int id;
+    public final String title;
+    public final String subtitle;
+    public final String tags;
+    public final LatLng latLng;
+    public final double heightOffset;
+    public final boolean indoor;
+    public final String indoorId;
+    public final int floorId;
+    public final String userData;
 
-
-    PoiSearchResult(boolean succeeded, String results) {
-        this.m_succeeded = succeeded;
-        this.m_resultJson = (succeeded) ? results : null;
-        this.m_errorString = (succeeded) ? null : results;
-    }
-
-    public boolean succeeded() {
-        return m_succeeded;
-    }
-
-    public String getResultJson() {
-        return m_resultJson;
-    }
-
-    public String getErrorString() {
-        return m_errorString;
+    @UiThread
+    PoiSearchResult(
+            int id,
+            String title,
+            String subtitle,
+            String tags,
+            LatLng latLng,
+            double heightOffset,
+            boolean indoor,
+            String indoorId,
+            int floorId,
+            String userData)
+    {
+        this.id = id;
+        this.title = title;
+        this.subtitle = subtitle;
+        this.tags = tags;
+        this.latLng = latLng;
+        this.heightOffset = heightOffset;
+        this.indoor = indoor;
+        this.indoorId = indoorId;
+        this.floorId = floorId;
+        this.userData = userData;
     }
 }
 

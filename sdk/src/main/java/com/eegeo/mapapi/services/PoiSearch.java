@@ -78,7 +78,7 @@ public class PoiSearch extends NativeApiObject {
         });
     }
 
-    void returnSearchResults(PoiSearchResult searchResults) {
+    void returnSearchResults(PoiSearchResults searchResults) {
         m_callback.onPoiSearchCompleted(searchResults);
     }
 }

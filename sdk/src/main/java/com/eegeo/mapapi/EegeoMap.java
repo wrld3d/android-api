@@ -48,6 +48,7 @@ import com.eegeo.mapapi.rendering.RenderingApi;
 import com.eegeo.mapapi.rendering.RenderingState;
 import com.eegeo.mapapi.services.PoiApi;
 import com.eegeo.mapapi.services.PoiService;
+import com.eegeo.mapapi.services.PoiSearchResult;
 import com.eegeo.mapapi.util.Callbacks;
 import com.eegeo.mapapi.util.Promise;
 import com.eegeo.mapapi.util.Ready;
@@ -892,7 +893,7 @@ public final class EegeoMap {
     }
 
     @WorkerThread
-    private void jniOnPoiSearchCompleted(final int poiSearchId, final boolean succeeded, final String searchResults) {
+    private void jniOnPoiSearchCompleted(final int poiSearchId, final boolean succeeded, final List<PoiSearchResult> searchResults) {
         m_poiApi.notifySearchComplete(poiSearchId, succeeded, searchResults);
     }
 
