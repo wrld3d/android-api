@@ -1,4 +1,4 @@
-package com.eegeo.mapapi.services;
+package com.eegeo.mapapi.services.poi;
 
 import com.eegeo.mapapi.geometry.LatLng;
 
