@@ -8,12 +8,24 @@
     android:paddingTop="10dp"
     android:paddingLeft="10dp">
 
+    <Button
+        android:id="@+id/button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:text="Button"
+        android:layout_toRightOf="@+id/search_box" />/>
+
     <SearchView
+        android:id="@+id/search_box"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:id="@+id/search_box"
         android:background="#FFFFFF"
-        android:layout_marginBottom="8dp"/>
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+    </SearchView>
 
     <LinearLayout
         android:id="@+id/search_tags"

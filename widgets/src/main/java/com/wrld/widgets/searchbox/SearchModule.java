@@ -6,6 +6,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -13,6 +15,9 @@ import com.wrld.widgets.R;
 import java.util.ArrayList;
 
 public class SearchModule implements SearchModuleFacade {
+
+    private boolean m_isExpanded = true;
+    private Button m_button;
 
     private SearchResultsContainer m_searchResultsContainer;
     private ViewGroup m_searchboxRootContainer;
@@ -107,5 +112,38 @@ public class SearchModule implements SearchModuleFacade {
     @Override
     public void addConsumer(SearchResultConsumer consumer) {
 
+    }
+
+    public void setButton(Button button){
+
+
+        m_button = button;
+
+        m_button.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                setIsExpanded(!m_isExpanded);
+            }
+        });
+    }
+
+    public void setIsExpanded(boolean expand){
+        m_isExpanded = expand;
+
+        TranslateAnimation animation;
+
+        if(expand){
+            animation = buildTranslationXAnimation(-m_searchboxRootContainer.getWidth(), 0);
+        }
+        else {
+            animation = buildTranslationXAnimation(0, -m_searchboxRootContainer.getWidth());
+        }
+        animation.setDuration(1000);
+        animation.setFillAfter(true);
+
+        m_searchboxRootContainer.startAnimation(animation);
+    }
+
+    private TranslateAnimation buildTranslationXAnimation(float startX,float endX){
+        return new TranslateAnimation(startX, endX, 0, 0);
     }
 }
