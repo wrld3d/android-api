@@ -1,4 +1,6 @@
-include ':sdk', ':widgets'
+include ':sdk'
+include ':widgets'
 include ':sdkdoclet'
 project(':sdk').projectDir = new File('sdk')
+project(':widgets').projectDir = new File('widgets')
 

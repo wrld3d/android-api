@@ -2,8 +2,6 @@
 
 package com.wrld.widgets.searchbox;
 
-import com.eegeo.mapapi.geometry.LatLng;
-
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;

@@ -131,9 +131,4 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
     private void addSpacer() {
         m_searchResultViewModels.add(new SearchResultViewModel(m_spacerViewModel));
     }
-
-    @Override
-    public void expandResultsSet(int resultSetIndex) {
-        throw new java.lang.RuntimeException("Not Implemented");
-    }
 }

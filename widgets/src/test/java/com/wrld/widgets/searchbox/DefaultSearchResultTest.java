@@ -2,8 +2,6 @@
 
 package com.wrld.widgets.searchbox;
 
-import com.eegeo.mapapi.geometry.LatLng;
-
 public class DefaultSearchResultTest extends SearchResultTest {
     @Override
     SearchResult CreateSearchResult(String title, String description, SearchResultProperty... additionalProperties) {
