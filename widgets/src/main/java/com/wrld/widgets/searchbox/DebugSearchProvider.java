@@ -5,7 +5,7 @@ package com.wrld.widgets.searchbox;
 /**
  * Returns a random number of results for any query
  */
-class DebugSearchProvider implements SearchProvider {
+public class DebugSearchProvider implements SearchProvider {
     private final String LOREM_IPSUM =
             "Lorem ipsum dolor sit amet, ex vis nusquam tincidunt.";
 

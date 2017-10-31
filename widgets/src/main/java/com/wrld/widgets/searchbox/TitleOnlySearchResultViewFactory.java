@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.wrld.widgets.R;
 
-class TitleOnlySearchResultViewFactory implements SearchResultViewFactory {
+public class TitleOnlySearchResultViewFactory implements SearchResultViewFactory {
 
     private int m_layoutId;
 

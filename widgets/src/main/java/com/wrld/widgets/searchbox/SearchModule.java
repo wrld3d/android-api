@@ -61,10 +61,6 @@ public class SearchModule implements SearchModuleFacade {
 
         m_searchProviders = new ArrayList<ProviderResultSetPair>();
 
-        //TODO MOD REMOVE 2
-        addSearchProvider(new DebugSearchProvider("Set 1"));
-        addSearchProvider(new DebugSearchProvider("Set 2"), new TitleOnlySearchResultViewFactory(R.layout.title_only_search_result));
-
         configureTags(R.id.search_tags);
     }
 
