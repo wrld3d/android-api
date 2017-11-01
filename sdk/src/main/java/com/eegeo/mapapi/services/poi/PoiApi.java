@@ -89,14 +89,14 @@ public class PoiApi {
 
     @WorkerThread
     public void notifySearchComplete(final int nativeHandle, final boolean succeeded, final List<PoiSearchResult> searchResults) {
-        PoiSearchResults result = new PoiSearchResults(succeeded, searchResults);
+        PoiSearchResponse result = new PoiSearchResponse(succeeded, searchResults);
         if (m_nativeHandleToPoiSearch.get(nativeHandle) != null) {
             returnSearchResults(nativeHandle, result);
         }
     }
 
     @WorkerThread
-    void returnSearchResults(final int nativeHandle, final PoiSearchResults searchResults) {
+    void returnSearchResults(final int nativeHandle, final PoiSearchResponse searchResults) {
         final PoiSearch poiSearch = m_nativeHandleToPoiSearch.get(nativeHandle);
 
         if (poiSearch == null)
