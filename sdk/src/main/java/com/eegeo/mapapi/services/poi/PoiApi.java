@@ -1,5 +1,6 @@
 package com.eegeo.mapapi.services.poi;
 
+import java.util.concurrent.Callable;
 import java.util.List;
 
 import android.support.annotation.UiThread;
@@ -25,56 +26,46 @@ public class PoiApi {
         this.m_jniEegeoMapApiPtr = jniEegeoMapApiPtr;
     }
 
-    @WorkerThread
-    int createSearch() {
-        int searchId = nativeCreateSearch(m_jniEegeoMapApiPtr);
-        return searchId;
+
+    @UiThread
+    public PoiSearch searchText(final TextSearchOptions options) {
+        PoiSearch search = new PoiSearch(this, options.getOnPoiSearchCompletedListener(),
+                new Callable<Integer>() {
+                    @WorkerThread
+                    @Override
+                    public Integer call() throws Exception {
+                        return beginTextSearch(options);
+                    }
+                });
+        return search;
     }
 
-    @WorkerThread
-    void beginTextSearch(final int searchNativeHandle, final TextSearchOptions options) {
-        nativeBeginTextSearch(
-                m_jniEegeoMapApiPtr,
-                searchNativeHandle,
-                options.getQuery(),
-                options.getCenter().latitude,
-                options.getCenter().longitude,
-                options.usesRadius(), options.getRadius(),
-                options.usesNumber(), options.getNumber(),
-                options.usesMinScore(), options.getMinScore(),
-                options.usesIndoorId(), options.getIndoorId(),
-                options.usesFloorNumber(), options.getFloorNumber(),
-                options.usesFloorDropoff(), options.getFloorDropoff());
+    @UiThread
+    public PoiSearch searchTag(final TagSearchOptions options) {
+        PoiSearch search = new PoiSearch(this, options.getOnPoiSearchCompletedListener(),
+                new Callable<Integer>() {
+                    @WorkerThread
+                    @Override
+                    public Integer call() throws Exception {
+                        return beginTagSearch(options);
+                    }
+                });
+        return search;
     }
 
-    @WorkerThread
-    void beginTagSearch(final int searchNativeHandle, final TagSearchOptions options) {
-        nativeBeginTagSearch(
-                m_jniEegeoMapApiPtr,
-                searchNativeHandle,
-                options.getQuery(),
-                options.getCenter().latitude,
-                options.getCenter().longitude,
-                options.usesRadius(), options.getRadius(),
-                options.usesNumber(), options.getNumber());
+    @UiThread
+    public PoiSearch searchAutocomplete(final AutocompleteOptions options) {
+        PoiSearch search = new PoiSearch(this, options.getOnPoiSearchCompletedListener(),
+                new Callable<Integer>() {
+                    @WorkerThread
+                    @Override
+                    public Integer call() throws Exception {
+                        return beginAutocompleteSearch(options);
+                    }
+                });
+        return search;
     }
 
-    @WorkerThread
-    void beginAutocompleteSearch(final int searchNativeHandle, final AutocompleteOptions options) {
-        nativeBeginAutocompleteSearch(
-                m_jniEegeoMapApiPtr,
-                searchNativeHandle,
-                options.getQuery(),
-                options.getCenter().latitude,
-                options.getCenter().longitude,
-                options.usesNumber(), options.getNumber());
-    }
-
-    @WorkerThread
-    void cancelSearch(final int searchNativeHandle) {
-        nativeCancelSearch(m_jniEegeoMapApiPtr, searchNativeHandle);
-        m_nativeHandleToPoiSearch.remove(searchNativeHandle);
-    }
 
     @WorkerThread
     void register(PoiSearch poiSearch, int nativeHandle) {
@@ -106,6 +97,7 @@ public class PoiApi {
         m_nativeHandleToPoiSearch.remove(nativeHandle);
     }
 
+
     @UiThread
     INativeMessageRunner getNativeRunner() {
         return m_nativeRunner;
@@ -116,11 +108,52 @@ public class PoiApi {
         return m_uiRunner;
     }
 
-    private native int nativeCreateSearch(long jniEegeoMapApiPtr);
 
-    private native void nativeBeginTextSearch(
+    @WorkerThread
+    int beginTextSearch(final TextSearchOptions options) {
+        return nativeBeginTextSearch(
+                m_jniEegeoMapApiPtr,
+                options.getQuery(),
+                options.getCenter().latitude,
+                options.getCenter().longitude,
+                options.usesRadius(), options.getRadius(),
+                options.usesNumber(), options.getNumber(),
+                options.usesMinScore(), options.getMinScore(),
+                options.usesIndoorId(), options.getIndoorId(),
+                options.usesFloorNumber(), options.getFloorNumber(),
+                options.usesFloorDropoff(), options.getFloorDropoff());
+    }
+
+    @WorkerThread
+    int beginTagSearch(final TagSearchOptions options) {
+        return nativeBeginTagSearch(
+                m_jniEegeoMapApiPtr,
+                options.getQuery(),
+                options.getCenter().latitude,
+                options.getCenter().longitude,
+                options.usesRadius(), options.getRadius(),
+                options.usesNumber(), options.getNumber());
+    }
+
+    @WorkerThread
+    int beginAutocompleteSearch(final AutocompleteOptions options) {
+        return nativeBeginAutocompleteSearch(
+                m_jniEegeoMapApiPtr,
+                options.getQuery(),
+                options.getCenter().latitude,
+                options.getCenter().longitude,
+                options.usesNumber(), options.getNumber());
+    }
+
+    @WorkerThread
+    void cancelSearch(final int searchNativeHandle) {
+        nativeCancelSearch(m_jniEegeoMapApiPtr, searchNativeHandle);
+        m_nativeHandleToPoiSearch.remove(searchNativeHandle);
+    }
+
+
+    private native int nativeBeginTextSearch(
             long jniEegeoMapApiPtr,
-            int searchNativeHandle,
             String query,
             double latitude,
             double longitude,
@@ -131,18 +164,16 @@ public class PoiApi {
             boolean useFloor, int floor,
             boolean useFloorDropoff, int floorDropoff);
 
-    private native void nativeBeginTagSearch(
+    private native int nativeBeginTagSearch(
             long jniEegeoMapApiPtr,
-            int searchNativeHandle,
             String query,
             double latitude,
             double longitude,
             boolean useRadius, double radius,
             boolean useNumber, int number);
 
-    private native void nativeBeginAutocompleteSearch(
+    private native int nativeBeginAutocompleteSearch(
             long jniEegeoMapApiPtr,
-            int searchNativeHandle,
             String query,
             double latitude,
             double longitude,
