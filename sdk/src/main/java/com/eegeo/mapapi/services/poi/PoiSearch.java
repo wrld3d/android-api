@@ -14,17 +14,11 @@ public class PoiSearch extends NativeApiObject {
     private OnPoiSearchCompletedListener m_callback = null;
 
     @UiThread
-    PoiSearch(final PoiApi poiApi) {
-        super(poiApi.getNativeRunner(), poiApi.getUiRunner(),
-                new Callable<Integer>() {
-                    @WorkerThread
-                    @Override
-                    public Integer call() throws Exception {
-                        return poiApi.createSearch();
-                    }
-                });
+    PoiSearch(final PoiApi poiApi, OnPoiSearchCompletedListener callback, Callable<Integer> beginSearchCallable) {
+        super(poiApi.getNativeRunner(), poiApi.getUiRunner(), beginSearchCallable);
 
         m_poiApi = poiApi;
+        m_callback = callback;
 
         submit(new Runnable() {
             @WorkerThread
@@ -41,39 +35,6 @@ public class PoiSearch extends NativeApiObject {
             @WorkerThread
             public void run() {
                 m_poiApi.cancelSearch(getNativeHandle());
-            }
-        });
-    }
-
-    @UiThread
-    void beginTextSearch(final TextSearchOptions options) {
-        this.m_callback = options.getOnPoiSearchCompletedListener();
-        submit(new Runnable() {
-            @WorkerThread
-            public void run() {
-                m_poiApi.beginTextSearch(getNativeHandle(), options);
-            }
-        });
-    }
-
-    @UiThread
-    void beginTagSearch(final TagSearchOptions options) {
-        this.m_callback = options.getOnPoiSearchCompletedListener();
-        submit(new Runnable() {
-            @WorkerThread
-            public void run() {
-                m_poiApi.beginTagSearch(getNativeHandle(), options);
-            }
-        });
-    }
-
-    @UiThread
-    void beginAutocompleteSearch(final AutocompleteOptions options) {
-        this.m_callback = options.getOnPoiSearchCompletedListener();
-        submit(new Runnable() {
-            @WorkerThread
-            public void run() {
-                m_poiApi.beginAutocompleteSearch(getNativeHandle(), options);
             }
         });
     }

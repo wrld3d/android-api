@@ -15,25 +15,20 @@ public class PoiService {
         this.m_poiApi = poiApi;
     }
 
+
     @UiThread
     public PoiSearch searchText(final TextSearchOptions options) {
-        PoiSearch search = new PoiSearch(m_poiApi);
-        search.beginTextSearch(options);
-        return search;
+        return m_poiApi.searchText(options);
     }
 
     @UiThread
     public PoiSearch searchTag(final TagSearchOptions options) {
-        PoiSearch search = new PoiSearch(m_poiApi);
-        search.beginTagSearch(options);
-        return search;
+        return m_poiApi.searchTag(options);
     }
 
     @UiThread
     public PoiSearch searchAutocomplete(final AutocompleteOptions options) {
-        PoiSearch search = new PoiSearch(m_poiApi);
-        search.beginAutocompleteSearch(options);
-        return search;
+        return m_poiApi.searchAutocomplete(options);
     }
 }
 
