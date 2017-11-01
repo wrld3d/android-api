@@ -19,7 +19,7 @@ public class SearchModule implements SearchModuleFacade {
     private boolean m_isExpanded = true;
     private Button m_button;
 
-    private SearchResultsContainer m_searchResultsContainer;
+    private DefaultSearchResultSetsContainer m_searchResultsContainer;
     private ViewGroup m_searchboxRootContainer;
     private LayoutInflater m_inflater;
 
@@ -42,11 +42,14 @@ public class SearchModule implements SearchModuleFacade {
         }
     }
 
-    public SearchModule(ViewGroup appSearchAreaView, Context context) {
+    public SearchModule(ViewGroup appSearchAreaView) {
         m_inflater = LayoutInflater.from(appSearchAreaView.getContext());
-        m_searchboxRootContainer = (ViewGroup) m_inflater.inflate(R.layout.search_layout, appSearchAreaView, true);
+        m_searchboxRootContainer = (ViewGroup) m_inflater.inflate(R.layout.search_layout_test, appSearchAreaView, true);
 
-        m_searchResultsContainer = new DefaultSearchResultsContainer((ListView)m_searchboxRootContainer.findViewById(R.id.search_result_sets_container));
+
+
+//        (ListView)m_searchboxRootContainer.findViewById(R.id.search_result_sets_container)
+        m_searchResultsContainer = new DefaultSearchResultSetsContainer((ViewGroup) m_searchboxRootContainer.findViewById(R.id.search_result_sets_container));
 
         m_searchboxController = new SearchBoxController(m_searchboxRootContainer);
 
@@ -95,7 +98,7 @@ public class SearchModule implements SearchModuleFacade {
 
     @Override
     public void addSearchProvider(SearchProvider provider, SearchResultViewFactory factory) {
-        DefaultSearchResultSet resultSet = new DefaultSearchResultSet(m_searchResultsContainer);
+        DefaultSearchResultSet resultSet = new DefaultSearchResultSet();
         m_searchResultsContainer.addSearchResultSet(resultSet, factory);
         m_searchProviders.add(new ProviderResultSetPair(provider, resultSet));
     }

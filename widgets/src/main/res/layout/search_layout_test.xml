@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/search_box_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="10dp"
+    android:paddingLeft="10dp">
+
+    <LinearLayout
+        android:id="@+id/search_box_container"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+        #
+
+        <Button
+            android:id="@+id/options"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.23"
+            android:text="options_text"
+            tools:text="Options" />
+
+        <SearchView
+            android:id="@+id/search_box"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.23"
+
+            android:background="#FFFFFF"/>
+
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.22"
+            android:text="search_txt"
+            tools:text="Search" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/search_tags"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/search_box_container"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/button_a"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="A" />
+        <Button
+            android:id="@+id/button_b"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="B" />
+        <Button
+            android:id="@+id/button_c"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="C" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/search_result_sets_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/search_box_container"
+        android:layout_toEndOf="@+id/search_tags"
+        android:layout_toRightOf="@+id/search_tags"
+        android:orientation="vertical"></LinearLayout>
+
+</RelativeLayout>

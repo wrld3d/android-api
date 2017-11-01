@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1"
+    android:orientation="vertical">
+
+    <ListView
+        android:id="@+id/search_set_content_view"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_weight="0.99"
+        android:footerDividersEnabled="false"
+        android:headerDividersEnabled="false" />
+
+    <LinearLayout
+        android:id="@+id/set_page_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_previous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/set_page_text"
+            android:text="Button" />
+
+        <TextView
+            android:id="@+id/set_page_text"
+            android:layout_width="135dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="TextView" />
+
+        <Button
+            android:id="@+id/btn_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/set_page_text"
+            android:text="Button" />/>
+    </LinearLayout>
+
+</LinearLayout>

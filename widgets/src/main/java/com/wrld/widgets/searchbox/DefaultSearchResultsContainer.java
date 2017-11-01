@@ -22,22 +22,16 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
 
     private Vector<SearchResultSetViewModel> m_searchResultSets;
 
-    private SearchResultSetViewModel m_spacerViewModel;
-
     public DefaultSearchResultsContainer(ListView container) {
         m_inflater = LayoutInflater.from(container.getContext());
 
         m_viewFactories = new Vector<SearchResultViewFactory>();
-
-        m_viewFactories.add(new SpacerFactory(R.layout.search_result_spacer));
 
         m_searchResultViewModels = new Vector<SearchResultViewModel>();
 
         m_container = container;
 
         m_container.setAdapter(this);
-
-        m_spacerViewModel = new SearchResultSetViewModel(0);
 
         m_searchResultSets = new Vector<SearchResultSetViewModel>();
     }
@@ -100,10 +94,6 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
             factoryIndex = m_viewFactories.indexOf(factory);
         }
 
-        if(m_searchResultViewModels.size()> 0) {
-            addSpacer();
-        }
-
         SearchResultSetViewModel setViewModel = new SearchResultSetViewModel(searchResultSet, factoryIndex);
 
         m_searchResultSets.add(setViewModel);
@@ -118,17 +108,12 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
         m_searchResultViewModels.clear();
 
         // TODO MOD optimise this
-        for(SearchResultSetViewModel setViewModel : m_searchResultSets) {
-            for(SearchResult result : setViewModel.getSearchResultSet().getAllResults()){
+        for (SearchResultSetViewModel setViewModel : m_searchResultSets) {
+            for (SearchResult result : setViewModel.getSearchResultSet().getAllResults()) {
                 m_searchResultViewModels.add(new SearchResultViewModel(result, setViewModel));
             }
-            addSpacer();
         }
 
         notifyDataSetChanged();
-    }
-
-    private void addSpacer() {
-        m_searchResultViewModels.add(new SearchResultViewModel(m_spacerViewModel));
     }
 }

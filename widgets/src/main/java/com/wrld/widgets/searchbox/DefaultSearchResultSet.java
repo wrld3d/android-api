@@ -9,23 +9,19 @@ class DefaultSearchResultSet implements SearchResultSet {
 
     private ArrayList<SearchResult> m_results;
 
-    private class UpdateResultsView implements OnSearchResultsReceivedCallback {
+    private class UpdateResults implements OnSearchResultsReceivedCallback {
         public void onResultsReceived(SearchResult[] results) {
             m_results.clear();
             m_results.addAll(Arrays.asList(results));
-            m_container.refresh();
         }
     }
 
-    private UpdateResultsView m_updateResulteCallback = new UpdateResultsView();
-
-    private SearchResultsContainer m_container;
+    private UpdateResults m_updateResulteCallback = new UpdateResults();
 
     public OnSearchResultsReceivedCallback updateResultsViewCallback() {return m_updateResulteCallback; }
 
-    public DefaultSearchResultSet(SearchResultsContainer container) {
+    public DefaultSearchResultSet() {
         m_results = new ArrayList<SearchResult>();
-        m_container = container;
     }
 
     @Override
