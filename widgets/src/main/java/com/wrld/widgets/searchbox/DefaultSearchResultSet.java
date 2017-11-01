@@ -8,11 +8,16 @@ import java.util.Comparator;
 class DefaultSearchResultSet implements SearchResultSet {
 
     private ArrayList<SearchResult> m_results;
+    private ArrayList<OnResultChanged> m_onResultChangedCallbackList;
 
     private class UpdateResults implements OnSearchResultsReceivedCallback {
         public void onResultsReceived(SearchResult[] results) {
             m_results.clear();
             m_results.addAll(Arrays.asList(results));
+
+            for(OnResultChanged callback:m_onResultChangedCallbackList){
+                callback.invoke();
+            }
         }
     }
 
@@ -22,16 +27,12 @@ class DefaultSearchResultSet implements SearchResultSet {
 
     public DefaultSearchResultSet() {
         m_results = new ArrayList<SearchResult>();
+        m_onResultChangedCallbackList = new ArrayList<OnResultChanged>();
     }
 
     @Override
     public void addResult(SearchResult result) {
         m_results.add(result);
-    }
-
-    public void updateResultsView(SearchResult[] results) {
-        m_results.clear();
-        m_results.addAll(Arrays.asList(results));
     }
 
     @Override
@@ -139,5 +140,10 @@ class DefaultSearchResultSet implements SearchResultSet {
     @Override
     public void clear() {
         m_results.clear();
+    }
+
+    @Override
+    public void addOnResultChangedHandler(OnResultChanged callback) {
+        m_onResultChangedCallbackList.add(callback);
     }
 }

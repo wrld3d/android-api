@@ -14,6 +14,13 @@ interface SearchResultSet {
     void removeResult(int resultIndex);
     void clear();
 
+    void addOnResultChangedHandler(OnResultChanged callback);
+
+    interface OnResultChanged{
+        void invoke();
+    }
+
+
     // Phase 2
     SearchResult[] getResultsInRange(int min, int max);	// if not enough results in range only returns available
 }

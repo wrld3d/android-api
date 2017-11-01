@@ -21,5 +21,17 @@ class DefaultSearchResultSetsContainer {
 
         m_inflater.inflate(R.layout.search_set,m_resultSetsContainer,true);
 
+        model.addOnResultChangedHandler(new SearchResultSet.OnResultChanged() {
+            @Override
+            public void invoke() {
+                UpdateView();
+            }
+        });
+
+    }
+
+    private void UpdateView() {
+        //TODO: Update View
+        android.util.Log.v("SA ","View Updated ");
     }
 }
