@@ -3,5 +3,5 @@
 package com.wrld.widgets.searchbox;
 
 public interface SearchProvider {
-    void getSearchResults(String query, OnSearchResultsReceivedCallback callback);
+    void getSearchResults(String query, OnResultsReceivedCallback callback);
 }

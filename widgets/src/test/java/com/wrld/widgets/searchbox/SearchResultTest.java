@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 public abstract class SearchResultTest {
 
     // create a concrete instance
-    abstract SearchResult CreateSearchResult(String title, String description, SearchResultProperty... additionalProperties);
+    abstract SearchResult CreateSearchResult(String title, SearchResultProperty... additionalProperties);
 
     final String DefaultTitle = "Search Result Title";
     final String LoremIpsum =
@@ -22,7 +22,7 @@ public abstract class SearchResultTest {
     protected SearchResult m_searchResult;
 
     public SearchResultTest(){
-        m_searchResult = CreateSearchResult(DefaultTitle, LoremIpsum);
+        m_searchResult = CreateSearchResult(DefaultTitle, new SearchResultStringProperty("Description",LoremIpsum));
     }
 
     @Test
@@ -32,15 +32,15 @@ public abstract class SearchResultTest {
     }
 
     @Test
-    public void checkDescriptionAssignmentKeyWhenCreated()
+    public void checkPropertyAssignmentKeyWhenCreated()
     {
-        assertEquals("Description", m_searchResult.getDescription().getKey());
+        assertEquals("Description", m_searchResult.getProperty("Description").getKey());
     }
 
     @Test
-    public void checkDescriptionAssignmentValueWhenCreated()
+    public void checkPropertyAssignmentValueWhenCreated()
     {
-        assertEquals(LoremIpsum, m_searchResult.getDescription().getValue());
+        assertEquals(LoremIpsum, m_searchResult.getProperty("Description").getValue());
     }
 
     @Test
@@ -52,7 +52,7 @@ public abstract class SearchResultTest {
         when(mockProperty.getKey()).thenReturn(propKey);
         when(mockProperty.getValue()).thenReturn(propValue);
 
-        SearchResult searchResult = CreateSearchResult(DefaultTitle, LoremIpsum, mockProperty);
+        SearchResult searchResult = CreateSearchResult(DefaultTitle, new SearchResultStringProperty("Description",LoremIpsum), mockProperty);
         assertEquals(propValue, searchResult.getProperty(propKey).getValue());
     }
 

@@ -8,7 +8,7 @@ public class DefaultSearchResultSetTest extends SearchResultSetTest {
     DefaultSearchResultSet m_Default_searchResultSet;
 
     public SearchResultSet CreateSearchResultSet(){
-        m_Default_searchResultSet = new DefaultSearchResultSet(mock(SearchResultsContainer.class));
+        m_Default_searchResultSet = new DefaultSearchResultSet();
         return m_Default_searchResultSet;
     }
 

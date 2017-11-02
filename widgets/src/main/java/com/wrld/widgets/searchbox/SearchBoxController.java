@@ -11,9 +11,13 @@ class SearchBoxController {
 
     private SearchView m_view;
 
+    public ArrayList<OnSearchQueryUpdatedCallback> m_onQueryUpdatedCallbacks;
+    public ArrayList<OnSearchQueryUpdatedCallback> m_onQuerySubmitedCallbacks;
+
     SearchBoxController(ViewGroup searchboxRootContainer) {
         m_view = (SearchView) searchboxRootContainer.findViewById(R.id.search_box);
-        m_onSearchResultsReceivedCallbacks = new ArrayList<OnSearchResultsReceivedCallback>();
+        m_onQueryUpdatedCallbacks = new ArrayList<OnSearchQueryUpdatedCallback>();
+        m_onQuerySubmitedCallbacks = new ArrayList<OnSearchQueryUpdatedCallback>();
 
         m_view.setOnQueryTextListener(
             new SearchView.OnQueryTextListener() {
@@ -21,10 +25,10 @@ class SearchBoxController {
                 public boolean onQueryTextChange(String newText) {
                     if (newText != null && !TextUtils.isEmpty(newText.trim())) {
                         // Limited (Auto) Query call
-                        for(OnSearchResultsReceivedCallback callback : m_onSearchResultsReceivedCallbacks){
+                        for(OnSearchQueryUpdatedCallback callback : m_onQueryUpdatedCallbacks){
 
                             // Full Query call + More stuff (POIs, Close keypad )
-                            callback.performSearch(newText);
+                            callback.performQuery(newText);
                         }
                     }
                     else {
@@ -38,10 +42,10 @@ class SearchBoxController {
 
                 @Override
                 public boolean onQueryTextSubmit(String query) {
-                    for(OnSearchResultsReceivedCallback callback : m_onSearchResultsReceivedCallbacks){
+                    for(OnSearchQueryUpdatedCallback callback : m_onQuerySubmitedCallbacks){
 
                         // Full Query call + More stuff (POIs, Close keypad )
-                        callback.performSearch(query);
+                        callback.performQuery(query);
                     }
                     return true;
                 }
@@ -53,18 +57,21 @@ class SearchBoxController {
      * Defines the signature for a method that is called when the EegeoMap object has been created and
      * is ready to call.
      */
-    public interface OnSearchResultsReceivedCallback {
+    public interface OnSearchQueryUpdatedCallback {
         /**
          * Called when search results are returned from a SearchProvider
          ***/
         @UiThread
-        void performSearch(String query);
+        void performQuery(String query);
     }
 
-    public ArrayList<OnSearchResultsReceivedCallback> m_onSearchResultsReceivedCallbacks;
 
-    public void addSearchResultSubmissionCallback(OnSearchResultsReceivedCallback callback) {
-        m_onSearchResultsReceivedCallbacks.add(callback);
+    public void addQueryUpdatedCallback(OnSearchQueryUpdatedCallback callback) {
+        m_onQueryUpdatedCallbacks.add(callback);
+    }
+
+    public void addQuerySubmittedCallback(OnSearchQueryUpdatedCallback callback) {
+        m_onQuerySubmitedCallbacks.add(callback);
     }
 
 

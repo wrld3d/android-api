@@ -9,5 +9,6 @@ interface SearchModuleFacade {
     void addSearchProvider(SearchProvider provider, SearchResultViewFactory customFactory);
 
     void addAutoCompleteProvider(AutocompleteProvider provider);
+    void addAutoCompleteProvider(AutocompleteProvider provider, SearchResultViewFactory customFactory);
     void addConsumer(SearchResultConsumer consumer);
 }

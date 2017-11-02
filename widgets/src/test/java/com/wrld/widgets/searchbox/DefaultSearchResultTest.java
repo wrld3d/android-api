@@ -4,7 +4,7 @@ package com.wrld.widgets.searchbox;
 
 public class DefaultSearchResultTest extends SearchResultTest {
     @Override
-    SearchResult CreateSearchResult(String title, String description, SearchResultProperty... additionalProperties) {
-        return new DefaultSearchResult(title, description, additionalProperties);
+    SearchResult CreateSearchResult(String title, SearchResultProperty... additionalProperties) {
+        return new DefaultSearchResult(title, additionalProperties);
     }
 }

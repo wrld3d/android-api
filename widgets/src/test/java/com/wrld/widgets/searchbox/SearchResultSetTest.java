@@ -182,7 +182,7 @@ public abstract class SearchResultSetTest {
             SearchResultProperty<String> description = mock(SearchResultProperty.class);
             when(description.getKey()).thenReturn("Description");
             when(description.getValue()).thenReturn("Description " + i);
-            when(mockResults[i].getDescription()).thenReturn(description);
+            when(mockResults[i].getProperty("Description")).thenReturn(description);
         }
 
         return mockResults;

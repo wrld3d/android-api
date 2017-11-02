@@ -6,8 +6,6 @@ import android.graphics.drawable.Icon;
 
 public interface SearchResult {
     String getTitle();
-    SearchResultProperty<String> getDescription();
-    SearchResultProperty<Icon> getIcon();
 
     SearchResultProperty getProperty(String PropertyKey);
 }

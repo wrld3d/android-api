@@ -3,5 +3,5 @@
 package com.wrld.widgets.searchbox;
 
 public interface AutocompleteProvider {
-    void getSuggestions(String text, OnAutocompleteSuggestionsReceivedCallback callback);
+    void getSuggestions(String text, OnResultsReceivedCallback callback);
 }
