@@ -8,4 +8,5 @@ public interface SuggestionProvider extends SearchProvider {
     void addOnSuggestionsRecievedCallback(OnResultsReceivedCallback callback);
 
     void setSuggestionViewFactory(SearchResultViewFactory factory);
+    SearchResultViewFactory getSuggestionViewFactory();
 }

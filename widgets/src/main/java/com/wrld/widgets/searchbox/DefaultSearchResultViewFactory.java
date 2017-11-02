@@ -34,7 +34,7 @@ class DefaultSearchResultViewFactory implements SearchResultViewFactory {
 
         public void populate(SearchResult result) {
             m_title.setText(result.getTitle());
-            m_description.setText((String)result.getProperty("discription").getValue());
+            m_description.setText((String)result.getProperty("Description").getValue());
         }
     }
 

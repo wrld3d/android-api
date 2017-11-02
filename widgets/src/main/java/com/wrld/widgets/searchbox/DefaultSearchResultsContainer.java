@@ -22,10 +22,12 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
 
     private Vector<SearchResultSetViewModel> m_searchResultSets;
 
-    public DefaultSearchResultsContainer(ListView container) {
+    public DefaultSearchResultsContainer(ListView container, SearchResultViewFactory viewFactory) {
+
         m_inflater = LayoutInflater.from(container.getContext());
 
         m_viewFactories = new Vector<SearchResultViewFactory>();
+        m_viewFactories.add(viewFactory);
 
         m_searchResultViewModels = new Vector<SearchResultViewModel>();
 
@@ -82,16 +84,21 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
 
     @Override
     public void addSearchResultSet(SearchResultSet searchResultSet, SearchResultViewFactory factory) {
-
         int factoryIndex = 0;
-        if(!m_viewFactories.contains(factory)) {
-            factoryIndex = m_viewFactories.size();
-            m_viewFactories.add(factory);
-            // required to update number of views
-            m_container.setAdapter(this);
+
+        if(factory == null) {
+            factory = m_viewFactories.get(0);
         }
         else {
-            factoryIndex = m_viewFactories.indexOf(factory);
+
+            if (!m_viewFactories.contains(factory)) {
+                factoryIndex = m_viewFactories.size();
+                m_viewFactories.add(factory);
+                // required to update number of views
+                m_container.setAdapter(this);
+            } else {
+                factoryIndex = m_viewFactories.indexOf(factory);
+            }
         }
 
         SearchResultSetViewModel setViewModel = new SearchResultSetViewModel(searchResultSet, factoryIndex);

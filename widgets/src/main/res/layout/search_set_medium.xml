@@ -9,7 +9,7 @@
     <ListView
         android:id="@+id/search_set_content_view"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_weight="0.99"
         android:footerDividersEnabled="false"
         android:headerDividersEnabled="false" />

@@ -45,6 +45,11 @@ public class DebugSearchProvider implements SearchProvider {
         m_resultViewFactory = factory;
     }
 
+    @Override
+    public SearchResultViewFactory getResultViewFactory() {
+        return m_resultViewFactory;
+    }
+
     private SearchResult generateDebugResult(int id)
     {
         return new DefaultSearchResult(m_uid + ": " + id, new SearchResultStringProperty("Description", LOREM_IPSUM));

@@ -24,8 +24,6 @@ public class SearchModule implements SearchModuleFacade {
     private ArrayList<SearchProvider> m_searchProviders;
     private ArrayList<SuggestionProvider> m_suggestionProviders;
 
-    private SearchResultViewFactory m_defaultFactory;
-
     public SearchModule(ViewGroup appSearchAreaView) {
         m_inflater = LayoutInflater.from(appSearchAreaView.getContext());
         m_searchboxRootContainer = (ViewGroup) m_inflater.inflate(R.layout.search_layout_test, appSearchAreaView, true);
@@ -48,8 +46,6 @@ public class SearchModule implements SearchModuleFacade {
             }
         });
 
-        m_defaultFactory = new DefaultSearchResultViewFactory(R.layout.search_result);
-
         m_searchProviders = new ArrayList<SearchProvider>();
         m_suggestionProviders = new ArrayList<SuggestionProvider>();
 
@@ -71,18 +67,28 @@ public class SearchModule implements SearchModuleFacade {
 
     @Override
     public void setDefaultSearchResultViewFactory(SearchResultViewFactory factory) {
-        m_defaultFactory = factory;
+        m_searchResultsContainer.setViewFactory(factory);
     }
 
     @Override
-    public void addSearchProvider(SearchProvider provider) {
+    public void addSearchProvider(SearchProvider provider, boolean doSuggestions) {
         // Create a set
         final DefaultSearchResultSet set = new DefaultSearchResultSet();
 
         addSearchProvider(provider,set);
-        if(provider instanceof SuggestionProvider){
-            addSuggestionProvider((SuggestionProvider)provider,set);
+
+        if(doSuggestions) {
+            if (provider instanceof SuggestionProvider) {
+                addSuggestionProvider((SuggestionProvider) provider, set);
+            }
+            else
+            {
+                doSuggestions = false;
+                android.util.Log.e("Search Widget: ", "Tried to add a Suggestion Provider that doesn't implement the SuggestionProvider Interface");
+            }
         }
+
+        m_searchResultsContainer.addSearchResultSet(set, provider, doSuggestions);
 
     }
 

@@ -39,8 +39,10 @@ public class DebugSuggestionProvider extends DebugSearchProvider implements Sugg
         m_suggestionViewFactory = factory;
     }
 
-
-
+    @Override
+    public SearchResultViewFactory getSuggestionViewFactory() {
+        return m_suggestionViewFactory;
+    }
 
     private SearchResult generateDebugSuggestion(int id)
     {

@@ -8,4 +8,5 @@ public interface SearchProvider {
     void addOnResultsRecievedCallback(OnResultsReceivedCallback callback);
 
     void setResultViewFactory(SearchResultViewFactory factory);
+    SearchResultViewFactory getResultViewFactory();
 }

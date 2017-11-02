@@ -31,8 +31,6 @@ class DefaultSearchResultSet implements SearchResultSet {
                 callback.invoke();
             }
         }
-
-
     }
 
     public DefaultSearchResultSet() {
