@@ -8,55 +8,53 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import com.wrld.widgets.R;
-import java.util.Vector;
 
 class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, SearchResultsContainer {
 
-    private Vector<SearchResultViewFactory> m_viewFactories;
     private LayoutInflater m_inflater;
 
     private ListView m_container;
+    private SearchResultSet m_resultsModel;
+    private SearchResultSet m_suggestionsModel;
+    private SearchResultViewFactory m_resultsViewFactory;
+    private SearchResultViewFactory m_suggestionsViewFactory;
 
-    private Vector<SearchResultViewModel> m_searchResultViewModels;
+    private boolean m_suggestionsOn;
 
-    private Vector<SearchResultSetViewModel> m_searchResultSets;
-
-    public DefaultSearchResultsContainer(ListView container, SearchResultViewFactory viewFactory) {
+    public DefaultSearchResultsContainer(ListView container, SearchResultSet resultsModel, SearchResultViewFactory viewFactoryResults , SearchResultSet suggestionsModel , SearchResultViewFactory factorySuggestions) {
 
         m_inflater = LayoutInflater.from(container.getContext());
 
-        m_viewFactories = new Vector<SearchResultViewFactory>();
-        m_viewFactories.add(viewFactory);
+        m_resultsModel = resultsModel;
+        m_suggestionsModel = suggestionsModel;
+        m_suggestionsViewFactory = factorySuggestions;
+        m_resultsViewFactory = viewFactoryResults;
 
-        m_searchResultViewModels = new Vector<SearchResultViewModel>();
+        m_suggestionsOn = true;
 
         m_container = container;
-
         m_container.setAdapter(this);
 
-        m_searchResultSets = new Vector<SearchResultSetViewModel>();
     }
 
     @Override
     public int getCount() {
-        return m_searchResultViewModels.size();
+        return (m_suggestionsOn ? m_suggestionsModel.getResultCount() :m_resultsModel.getResultCount());
     }
 
     @Override
     public int getViewTypeCount(){
-        return m_viewFactories.size();
+        return 2;
     }
 
     @Override
     public int getItemViewType(int position) {
-        int type = m_searchResultViewModels.get(position).getFactoryIndex();
-        return type;
+        return m_suggestionsOn ? 1 : 0;
     }
 
     @Override
     public Object getItem(int position) {
-        return m_searchResultViewModels.get(position).getData();
+        return  getResultForState(position);
     }
 
     @Override
@@ -66,61 +64,39 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        SearchResultViewModel viewModel = m_searchResultViewModels.get(position);
 
         if(convertView == null) {
-            SearchResultViewFactory factory = m_viewFactories.get(viewModel.getFactoryIndex());
-            convertView = factory.makeSearchResultView(m_inflater, viewModel.getData(), parent);
+
+            SearchResultViewFactory factory = (m_suggestionsOn ? m_suggestionsViewFactory : m_resultsViewFactory);
+
+            convertView = factory.makeSearchResultView(m_inflater, getResultForState(position), parent);
 
             SearchResultViewHolder viewHolder = factory.makeSearchResultViewHolder();
             viewHolder.initialise(convertView);
             convertView.setTag(viewHolder);
         }
 
-        ((SearchResultViewHolder)convertView.getTag()).populate(viewModel.getData());
+        ((SearchResultViewHolder)convertView.getTag()).populate(  getResultForState(position));
 
         return convertView;
     }
 
-    @Override
-    public void addSearchResultSet(SearchResultSet searchResultSet, SearchResultViewFactory factory) {
-        int factoryIndex = 0;
-
-        if(factory == null) {
-            factory = m_viewFactories.get(0);
-        }
-        else {
-
-            if (!m_viewFactories.contains(factory)) {
-                factoryIndex = m_viewFactories.size();
-                m_viewFactories.add(factory);
-                // required to update number of views
-                m_container.setAdapter(this);
-            } else {
-                factoryIndex = m_viewFactories.indexOf(factory);
-            }
-        }
-
-        SearchResultSetViewModel setViewModel = new SearchResultSetViewModel(searchResultSet, factoryIndex);
-
-        m_searchResultSets.add(setViewModel);
-
-        for(SearchResult result : searchResultSet.getAllResults()) {
-            m_searchResultViewModels.add(new SearchResultViewModel(result, setViewModel));
-        }
+    private SearchResult getResultForState(int position){
+        return (m_suggestionsOn ? m_suggestionsModel.getResult(position) :m_resultsModel.getResult(position));
     }
 
     @Override
     public void refresh() {
-        m_searchResultViewModels.clear();
+        notifyDataSetChanged();
+    }
 
-        // TODO MOD optimise this
-        for (SearchResultSetViewModel setViewModel : m_searchResultSets) {
-            for (SearchResult result : setViewModel.getSearchResultSet().getAllResults()) {
-                m_searchResultViewModels.add(new SearchResultViewModel(result, setViewModel));
-            }
+    public void showSuggestions(boolean flag){
+        if(m_suggestionsOn != flag)
+        {
+            m_suggestionsOn = flag;
+            refresh();
         }
 
-        notifyDataSetChanged();
+
     }
 }

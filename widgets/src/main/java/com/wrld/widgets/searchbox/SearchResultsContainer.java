@@ -3,6 +3,5 @@
 package com.wrld.widgets.searchbox;
 
 interface SearchResultsContainer {
-    void addSearchResultSet(SearchResultSet searchResultSet, SearchResultViewFactory factory);
     void refresh();
 }

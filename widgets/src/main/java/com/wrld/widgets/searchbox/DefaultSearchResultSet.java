@@ -8,7 +8,6 @@ import java.util.Comparator;
 class DefaultSearchResultSet implements SearchResultSet {
 
     private ArrayList<SearchResult> m_results;
-    private ArrayList<SearchResult> m_suggestions;
     private ArrayList<OnResultChanged> m_onResultChangedCallbackList;
 
 
@@ -21,21 +20,8 @@ class DefaultSearchResultSet implements SearchResultSet {
         }
     }
 
-    public void updateSetSuggestions(SearchResult[] results) {
-
-        if(m_results.isEmpty()) {
-            m_suggestions.clear();
-            m_suggestions.addAll(Arrays.asList(results));
-
-            for(OnResultChanged callback:m_onResultChangedCallbackList){
-                callback.invoke();
-            }
-        }
-    }
-
     public DefaultSearchResultSet() {
         m_results = new ArrayList<SearchResult>();
-        m_suggestions = new ArrayList<SearchResult>();
         m_onResultChangedCallbackList = new ArrayList<OnResultChanged>();
     }
 

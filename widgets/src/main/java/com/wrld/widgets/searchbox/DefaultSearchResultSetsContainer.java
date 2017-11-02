@@ -8,6 +8,8 @@ import android.widget.ListView;
 
 import com.wrld.widgets.R;
 
+import java.util.ArrayList;
+
 
 class DefaultSearchResultSetsContainer {
 
@@ -15,35 +17,49 @@ class DefaultSearchResultSetsContainer {
     private LayoutInflater m_inflater;
     private ViewGroup m_setMedium;
 
+    private ArrayList<DefaultSearchResultsContainer> m_searchResultsContainer;
+
     private SearchResultViewFactory m_defualtViewFactory;
 
     DefaultSearchResultSetsContainer(ViewGroup resultSetsContainer){
         m_resultSetsContainer = resultSetsContainer;
         m_inflater = LayoutInflater.from(m_resultSetsContainer.getContext());
-        setViewFactory(new DefaultSearchResultViewFactory(R.layout.search_result));
+        m_searchResultsContainer = new ArrayList<DefaultSearchResultsContainer>();
     }
 
-    public void addSearchResultSet(SearchResultSet model, SearchProvider provider, boolean doSuggestion){
+    public void addSearchResultSet(SearchResultSet resultsSet, SearchResultSet suggestionsSet, SearchResultViewFactory factoryResults , SearchResultViewFactory factorySuggestions){
+
+
 
         m_inflater.inflate(R.layout.search_set, m_resultSetsContainer,true);
 
         ViewGroup setContent = (ViewGroup)m_resultSetsContainer.findViewById(R.id.set_content);
         m_setMedium = (ViewGroup)m_inflater.inflate(R.layout.search_set_medium, setContent,true);
 
-        final DefaultSearchResultsContainer resultList = new DefaultSearchResultsContainer((ListView)m_setMedium.findViewById(R.id.search_set_content_view), m_defualtViewFactory);
+        final DefaultSearchResultsContainer resultList = new DefaultSearchResultsContainer((ListView)m_setMedium.findViewById(R.id.search_set_content_view),resultsSet , factoryResults, suggestionsSet, factorySuggestions);
 
-        resultList.addSearchResultSet(model,  provider.getResultViewFactory());
-
-        model.addOnResultChangedHandler(new SearchResultSet.OnResultChanged() {
+        resultsSet.addOnResultChangedHandler(new SearchResultSet.OnResultChanged() {
             @Override
             public void invoke() {
                 resultList.refresh();
             }
         });
 
+
+        suggestionsSet.addOnResultChangedHandler(new SearchResultSet.OnResultChanged() {
+            @Override
+            public void invoke() {
+                resultList.refresh();
+            }
+        });
+
+        m_searchResultsContainer.add(resultList);
+
     }
 
-    public void setViewFactory(SearchResultViewFactory factory){
-        m_defualtViewFactory = factory;
+    public void showSuggestions(boolean flag){
+        for(DefaultSearchResultsContainer container: m_searchResultsContainer){
+            container.showSuggestions(flag);
+        }
     }
 }

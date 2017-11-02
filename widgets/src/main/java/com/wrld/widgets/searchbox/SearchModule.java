@@ -24,6 +24,8 @@ public class SearchModule implements SearchModuleFacade {
     private ArrayList<SearchProvider> m_searchProviders;
     private ArrayList<SuggestionProvider> m_suggestionProviders;
 
+    private SearchResultViewFactory m_defualtViewFactory;
+
     public SearchModule(ViewGroup appSearchAreaView) {
         m_inflater = LayoutInflater.from(appSearchAreaView.getContext());
         m_searchboxRootContainer = (ViewGroup) m_inflater.inflate(R.layout.search_layout_test, appSearchAreaView, true);
@@ -49,6 +51,8 @@ public class SearchModule implements SearchModuleFacade {
         m_searchProviders = new ArrayList<SearchProvider>();
         m_suggestionProviders = new ArrayList<SuggestionProvider>();
 
+        setDefaultSearchResultViewFactory(new DefaultSearchResultViewFactory(R.layout.search_result));
+
         configureTags(R.id.search_tags);
     }
 
@@ -67,28 +71,42 @@ public class SearchModule implements SearchModuleFacade {
 
     @Override
     public void setDefaultSearchResultViewFactory(SearchResultViewFactory factory) {
-        m_searchResultsContainer.setViewFactory(factory);
+        m_defualtViewFactory = factory;
     }
 
     @Override
     public void addSearchProvider(SearchProvider provider, boolean doSuggestions) {
         // Create a set
-        final DefaultSearchResultSet set = new DefaultSearchResultSet();
+        final DefaultSearchResultSet setResults = new DefaultSearchResultSet();
+        final DefaultSearchResultSet setSuggestions = new DefaultSearchResultSet();
 
-        addSearchProvider(provider,set);
 
+        SearchResultViewFactory factoryResults = provider.getResultViewFactory();
+        if(factoryResults == null) {
+            factoryResults = m_defualtViewFactory;
+        }
+
+        addSearchProvider(provider,setResults);
+
+        SearchResultViewFactory factorySuggestions = m_defualtViewFactory;
         if(doSuggestions) {
+
             if (provider instanceof SuggestionProvider) {
-                addSuggestionProvider((SuggestionProvider) provider, set);
+                SuggestionProvider providerSuggestion = (SuggestionProvider)provider;
+                factorySuggestions = providerSuggestion.getSuggestionViewFactory();
+                if(factorySuggestions == null) {
+                    factorySuggestions = m_defualtViewFactory;
+                }
+
+                addSuggestionProvider(providerSuggestion, setSuggestions);
             }
             else
             {
-                doSuggestions = false;
                 android.util.Log.e("Search Widget: ", "Tried to add a Suggestion Provider that doesn't implement the SuggestionProvider Interface");
             }
         }
 
-        m_searchResultsContainer.addSearchResultSet(set, provider, doSuggestions);
+        m_searchResultsContainer.addSearchResultSet(setResults, setSuggestions, factoryResults ,factorySuggestions );
 
     }
 
@@ -108,7 +126,7 @@ public class SearchModule implements SearchModuleFacade {
         provider.addOnSuggestionsRecievedCallback(new OnResultsReceivedCallback() {
             @Override
             public void onResultsReceived(SearchResult[] results) {
-                suggestionSet.updateSetSuggestions(results);
+                suggestionSet.updateSetResults(results);
             }
         });
 
@@ -116,12 +134,16 @@ public class SearchModule implements SearchModuleFacade {
     }
 
     private void doSearch(String query) {
+        m_searchResultsContainer.showSuggestions(false);
+
         for(SearchProvider provider:m_searchProviders){
             provider.getSearchResults(query);
         }
     }
 
     private void doAutoCompleteQuery(String query) {
+        m_searchResultsContainer.showSuggestions(true);
+
         for(SuggestionProvider provider:m_suggestionProviders){
             provider.getSuggestions(query);
         }
