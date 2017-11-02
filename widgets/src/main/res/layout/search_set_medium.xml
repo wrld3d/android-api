@@ -10,8 +10,14 @@
         android:id="@+id/search_set_content_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.99"
+        android:layout_weight="0.82"
         android:footerDividersEnabled="false"
         android:headerDividersEnabled="false" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Button" />
 
 </LinearLayout>

@@ -36,7 +36,12 @@ class DefaultSearchResultSetsContainer {
         ViewGroup setContent = (ViewGroup)m_resultSetsContainer.findViewById(R.id.set_content);
         m_setMedium = (ViewGroup)m_inflater.inflate(R.layout.search_set_medium, setContent,true);
 
-        final DefaultSearchResultsContainer resultList = new DefaultSearchResultsContainer((ListView)m_setMedium.findViewById(R.id.search_set_content_view),resultsSet , factoryResults, suggestionsSet, factorySuggestions);
+        ListView mediumListView =(ListView)m_setMedium.findViewById(R.id.search_set_content_view);
+
+        LayoutInflater inflator =LayoutInflater.from(mediumListView.getContext());
+        final DefaultSearchResultsContainer resultList = new DefaultSearchResultsContainer(inflator,resultsSet , factoryResults, suggestionsSet, factorySuggestions);
+
+        mediumListView.setAdapter(resultList);
 
         resultsSet.addOnResultChangedHandler(new SearchResultSet.OnResultChanged() {
             @Override

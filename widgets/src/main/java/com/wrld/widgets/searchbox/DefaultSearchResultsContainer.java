@@ -13,7 +13,6 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
 
     private LayoutInflater m_inflater;
 
-    private ListView m_container;
     private SearchResultSet m_resultsModel;
     private SearchResultSet m_suggestionsModel;
     private SearchResultViewFactory m_resultsViewFactory;
@@ -21,9 +20,9 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
 
     private boolean m_suggestionsOn;
 
-    public DefaultSearchResultsContainer(ListView container, SearchResultSet resultsModel, SearchResultViewFactory viewFactoryResults , SearchResultSet suggestionsModel , SearchResultViewFactory factorySuggestions) {
+    public DefaultSearchResultsContainer(LayoutInflater inflator, SearchResultSet resultsModel, SearchResultViewFactory viewFactoryResults , SearchResultSet suggestionsModel , SearchResultViewFactory factorySuggestions) {
 
-        m_inflater = LayoutInflater.from(container.getContext());
+        m_inflater =inflator;
 
         m_resultsModel = resultsModel;
         m_suggestionsModel = suggestionsModel;
@@ -31,10 +30,6 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
         m_resultsViewFactory = viewFactoryResults;
 
         m_suggestionsOn = true;
-
-        m_container = container;
-        m_container.setAdapter(this);
-
     }
 
     @Override
