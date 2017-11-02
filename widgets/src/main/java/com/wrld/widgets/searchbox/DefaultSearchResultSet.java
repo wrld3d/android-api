@@ -10,20 +10,15 @@ class DefaultSearchResultSet implements SearchResultSet {
     private ArrayList<SearchResult> m_results;
     private ArrayList<OnResultChanged> m_onResultChangedCallbackList;
 
-    private class UpdateResults implements OnResultsReceivedCallback {
-        public void onResultsReceived(SearchResult[] results) {
-            m_results.clear();
-            m_results.addAll(Arrays.asList(results));
 
-            for(OnResultChanged callback:m_onResultChangedCallbackList){
-                callback.invoke();
-            }
+    public void updateSetResults(SearchResult[] results) {
+        m_results.clear();
+        m_results.addAll(Arrays.asList(results));
+
+        for(OnResultChanged callback:m_onResultChangedCallbackList){
+            callback.invoke();
         }
     }
-
-    private UpdateResults m_updateResulteCallback = new UpdateResults();
-
-    public OnResultsReceivedCallback updateResultsViewCallback() {return m_updateResulteCallback; }
 
     public DefaultSearchResultSet() {
         m_results = new ArrayList<SearchResult>();

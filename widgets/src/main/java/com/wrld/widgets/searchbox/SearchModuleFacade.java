@@ -6,9 +6,6 @@ interface SearchModuleFacade {
     void setDefaultSearchResultViewFactory(SearchResultViewFactory factory);
 
     void addSearchProvider(SearchProvider provider);
-    void addSearchProvider(SearchProvider provider, SearchResultViewFactory customFactory);
 
-    void addAutoCompleteProvider(AutocompleteProvider provider);
-    void addAutoCompleteProvider(AutocompleteProvider provider, SearchResultViewFactory customFactory);
     void addConsumer(SearchResultConsumer consumer);
 }

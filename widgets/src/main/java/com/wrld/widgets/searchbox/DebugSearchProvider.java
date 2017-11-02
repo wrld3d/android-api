@@ -2,6 +2,8 @@
 
 package com.wrld.widgets.searchbox;
 
+import java.util.ArrayList;
+
 /**
  * Returns a random number of results for any query
  */
@@ -9,15 +11,18 @@ public class DebugSearchProvider implements SearchProvider {
     private final String LOREM_IPSUM =
             "Lorem ipsum dolor sit amet, ex vis nusquam tincidunt.";
 
-    private String m_uid;
+    protected String m_uid;
+    private SearchResultViewFactory m_resultViewFactory;
+    private ArrayList<OnResultsReceivedCallback> m_onResultsReceivedCallback;
 
     public DebugSearchProvider(String uid)
     {
         m_uid = uid;
+        m_onResultsReceivedCallback = new ArrayList<OnResultsReceivedCallback>();
     }
 
     @Override
-    public void getSearchResults(String query, OnResultsReceivedCallback callback) {
+    public void getSearchResults(String query) {
         int numResults = 5;
         SearchResult[] results = new SearchResult[numResults];
         results[0] = new DefaultSearchResult(m_uid + ": " + query, new SearchResultStringProperty("Description", LOREM_IPSUM));
@@ -25,7 +30,19 @@ public class DebugSearchProvider implements SearchProvider {
             results[i] = generateDebugResult(i);
         }
 
-        callback.onResultsReceived(results);
+        for(OnResultsReceivedCallback callback: m_onResultsReceivedCallback) {
+            callback.onResultsReceived(results);
+        }
+    }
+
+    @Override
+    public void addOnResultsRecievedCallback(OnResultsReceivedCallback callback) {
+        m_onResultsReceivedCallback.add(callback);
+    }
+
+    @Override
+    public void setResultViewFactory(SearchResultViewFactory factory){
+        m_resultViewFactory = factory;
     }
 
     private SearchResult generateDebugResult(int id)

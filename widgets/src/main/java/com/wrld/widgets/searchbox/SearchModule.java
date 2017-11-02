@@ -2,15 +2,11 @@
 
 package com.wrld.widgets.searchbox;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.SearchView;
 import com.wrld.widgets.R;
 import java.util.ArrayList;
 
@@ -25,44 +21,14 @@ public class SearchModule implements SearchModuleFacade {
 
     private SearchBoxController m_searchboxController;
 
-    private ArrayList<ProviderResultSetPair> m_searchProviders;
-    private ArrayList<AutoCompleteProviderResultSetPair> m_autocompleteProviders;
+    private ArrayList<SearchProvider> m_searchProviders;
 
     private SearchResultViewFactory m_defaultFactory;
-
-    private class ProviderResultSetPair {
-        private SearchProvider m_searchProvider;
-        private DefaultSearchResultSet m_resultSet;
-
-        public SearchProvider getSearchProvider() {return m_searchProvider;}
-        public DefaultSearchResultSet getResultSet() {return m_resultSet;}
-
-        public ProviderResultSetPair(SearchProvider provider, DefaultSearchResultSet results){
-            m_searchProvider = provider;
-            m_resultSet = results;
-        }
-    }
-
-    private class AutoCompleteProviderResultSetPair {
-        private AutocompleteProvider m_autocompleteProvider;
-        private DefaultSearchResultSet m_resultSet;
-
-        public AutocompleteProvider getautocompleteProvider() {return m_autocompleteProvider;}
-        public DefaultSearchResultSet getResultSet() {return m_resultSet;}
-
-        public AutoCompleteProviderResultSetPair(AutocompleteProvider provider, DefaultSearchResultSet results){
-            m_autocompleteProvider = provider;
-            m_resultSet = results;
-        }
-    }
 
     public SearchModule(ViewGroup appSearchAreaView) {
         m_inflater = LayoutInflater.from(appSearchAreaView.getContext());
         m_searchboxRootContainer = (ViewGroup) m_inflater.inflate(R.layout.search_layout_test, appSearchAreaView, true);
 
-
-
-//        (ListView)m_searchboxRootContainer.findViewById(R.id.search_result_sets_container)
         m_searchResultsContainer = new DefaultSearchResultSetsContainer((ViewGroup) m_searchboxRootContainer.findViewById(R.id.search_result_sets_container));
 
         m_searchboxController = new SearchBoxController(m_searchboxRootContainer);
@@ -83,8 +49,7 @@ public class SearchModule implements SearchModuleFacade {
 
         m_defaultFactory = new DefaultSearchResultViewFactory(R.layout.search_result);
 
-        m_searchProviders = new ArrayList<ProviderResultSetPair>();
-        m_autocompleteProviders = new ArrayList<AutoCompleteProviderResultSetPair>();
+        m_searchProviders = new ArrayList<SearchProvider>();
 
         configureTags(R.id.search_tags);
     }
@@ -109,38 +74,30 @@ public class SearchModule implements SearchModuleFacade {
 
     @Override
     public void addSearchProvider(SearchProvider provider) {
-        addSearchProvider(provider, m_defaultFactory);
+        // Create a set
+        final DefaultSearchResultSet set = new DefaultSearchResultSet();
+
+        // Attach Set to Provider
+        provider.addOnResultsRecievedCallback(new OnResultsReceivedCallback() {
+            @Override
+            public void onResultsReceived(SearchResult[] results) {
+                set.updateSetResults(results);
+            }
+        });
+
+        m_searchProviders.add(provider);
     }
 
     private void doSearch(String query) {
-        for(ProviderResultSetPair providerResultsPair : m_searchProviders){
-            providerResultsPair.getSearchProvider().getSearchResults(query, providerResultsPair.getResultSet().updateResultsViewCallback());
+        for(SearchProvider provider:m_searchProviders){
+            provider.getSearchResults(query);
         }
     }
 
     private void doAutoCompleteQuery(String query) {
-        for(AutoCompleteProviderResultSetPair providerResultsPair : m_autocompleteProviders){
-            providerResultsPair.getautocompleteProvider().getSuggestions(query, providerResultsPair.getResultSet().updateResultsViewCallback());
-        }
-    }
-
-    @Override
-    public void addSearchProvider(SearchProvider provider, SearchResultViewFactory factory) {
-        DefaultSearchResultSet resultSet = new DefaultSearchResultSet();
-        m_searchResultsContainer.addSearchResultSet(resultSet, factory);
-        m_searchProviders.add(new ProviderResultSetPair(provider, resultSet));
-    }
-
-    @Override
-    public void addAutoCompleteProvider(AutocompleteProvider provider, SearchResultViewFactory factory) {
-        DefaultSearchResultSet resultSet = new DefaultSearchResultSet();
-        m_searchResultsContainer.addSearchResultSet(resultSet, factory);
-        m_autocompleteProviders.add(new AutoCompleteProviderResultSetPair(provider, resultSet));
-    }
-
-    @Override
-    public void addAutoCompleteProvider(AutocompleteProvider provider) {
-        addAutoCompleteProvider(provider, m_defaultFactory);
+        //for(){
+        //      getSuggestions(query, providerResultsPair.getResultSet().updateResultsViewCallback());
+        //}
     }
 
     @Override
