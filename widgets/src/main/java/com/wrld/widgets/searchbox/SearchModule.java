@@ -22,6 +22,7 @@ public class SearchModule implements SearchModuleFacade {
     private SearchBoxController m_searchboxController;
 
     private ArrayList<SearchProvider> m_searchProviders;
+    private ArrayList<SuggestionProvider> m_suggestionProviders;
 
     private SearchResultViewFactory m_defaultFactory;
 
@@ -50,6 +51,7 @@ public class SearchModule implements SearchModuleFacade {
         m_defaultFactory = new DefaultSearchResultViewFactory(R.layout.search_result);
 
         m_searchProviders = new ArrayList<SearchProvider>();
+        m_suggestionProviders = new ArrayList<SuggestionProvider>();
 
         configureTags(R.id.search_tags);
     }
@@ -77,15 +79,34 @@ public class SearchModule implements SearchModuleFacade {
         // Create a set
         final DefaultSearchResultSet set = new DefaultSearchResultSet();
 
-        // Attach Set to Provider
+        addSearchProvider(provider,set);
+        if(provider instanceof SuggestionProvider){
+            addSuggestionProvider((SuggestionProvider)provider,set);
+        }
+
+    }
+
+    private void addSearchProvider(SearchProvider provider, final DefaultSearchResultSet resultSet){
         provider.addOnResultsRecievedCallback(new OnResultsReceivedCallback() {
             @Override
             public void onResultsReceived(SearchResult[] results) {
-                set.updateSetResults(results);
+                resultSet.updateSetResults(results);
             }
         });
 
         m_searchProviders.add(provider);
+    }
+
+    private void addSuggestionProvider(SuggestionProvider provider, final DefaultSearchResultSet suggestionSet){
+
+        provider.addOnSuggestionsRecievedCallback(new OnResultsReceivedCallback() {
+            @Override
+            public void onResultsReceived(SearchResult[] results) {
+                suggestionSet.updateSetSuggestions(results);
+            }
+        });
+
+        m_suggestionProviders.add(provider);
     }
 
     private void doSearch(String query) {
@@ -95,9 +116,9 @@ public class SearchModule implements SearchModuleFacade {
     }
 
     private void doAutoCompleteQuery(String query) {
-        //for(){
-        //      getSuggestions(query, providerResultsPair.getResultSet().updateResultsViewCallback());
-        //}
+        for(SuggestionProvider provider:m_suggestionProviders){
+            provider.getSuggestions(query);
+        }
     }
 
     @Override
