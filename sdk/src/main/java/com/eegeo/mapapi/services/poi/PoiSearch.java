@@ -8,6 +8,9 @@ import android.support.annotation.WorkerThread;
 import com.eegeo.mapapi.util.NativeApiObject;
 
 
+/**
+ * A handle to an ongoing search.
+ */
 public class PoiSearch extends NativeApiObject {
 
     private PoiApi m_poiApi;
@@ -29,6 +32,9 @@ public class PoiSearch extends NativeApiObject {
         });
     }
 
+    /**
+     * Cancels the current search if it has not yet been completed.
+     */
     @UiThread
     public void cancel() {
         submit(new Runnable() {
