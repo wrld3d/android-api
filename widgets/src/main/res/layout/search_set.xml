@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -7,11 +7,10 @@
     android:layout_weight="1">
 
     <LinearLayout
-        android:id="@+id/set_title_layout"
+        android:id="@+id/search_set_header"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:orientation="horizontal"
-        android:weightSum="1">
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/serach_set_title"
@@ -26,30 +25,37 @@
         android:id="@+id/set_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/search_set_footer"
+        android:layout_below="@+id/search_set_header"
         android:background="#ffaaff"
         android:baselineAligned="false"
         android:orientation="vertical">
 
-        <LinearLayout
+        <ListView
+            android:id="@+id/search_result_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="0.1">
+            android:layout_height="0dp"
+            android:layout_weight="0.1"
+            android:footerDividersEnabled="false"
+            android:headerDividersEnabled="false"></ListView>
 
-            <ListView
-                android:id="@+id/search_result_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:footerDividersEnabled="false"
-                android:headerDividersEnabled="false"></ListView>
-        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/search_set_footer"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:background="#ffffff"
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/expand_controls"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:weightSum="1">
 
             <Button
                 android:id="@+id/search_expand_button"
@@ -65,20 +71,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:weightSum="1">
 
             <Button
                 android:id="@+id/search_pagination_prev"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:layout_weight="1"
+                android:layout_weight="0.125"
                 android:text="@string/pagination_prev" />
 
             <TextView
                 android:id="@+id/search_pagination_results_info"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:layout_weight="1"
+                android:layout_weight="0.75"
                 android:text="@string/search_result_count"
                 android:textAlignment="center" />
 
@@ -86,8 +93,8 @@
                 android:id="@+id/search_pagination_next"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:layout_weight="1"
+                android:layout_weight="0.125"
                 android:text="@string/pagination_next" />
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

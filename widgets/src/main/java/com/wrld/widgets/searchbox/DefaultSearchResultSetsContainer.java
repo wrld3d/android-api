@@ -35,7 +35,7 @@ class DefaultSearchResultSetsContainer {
         ListView listView = (ListView) setContent.findViewById(R.id.search_result_list);
 
         final DefaultSearchResultsContainer resultList = new DefaultSearchResultsContainer(
-                m_inflater, setContent,
+                m_inflater, setView,
                 resultsSet , factoryResults,
                 suggestionsSet, factorySuggestions);
 
@@ -57,7 +57,7 @@ class DefaultSearchResultSetsContainer {
 
         m_searchResultsContainer.add(resultList);
 
-        configureButtons(setContent, resultList);
+        configureButtons(setView, resultList);
     }
 
     private void configureButtons(final View resultsSet, final DefaultSearchResultsContainer resultsAdapter) {
@@ -76,20 +76,20 @@ class DefaultSearchResultSetsContainer {
         Button expand = (Button) resultsSet.findViewById(R.id.search_expand_button);
         expand.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                expandView(resultsSet);
+                expandView(resultsAdapter);
             }
         });
     }
 
-    private void expandView(View resultsSet){
-        View expandControls = resultsSet.findViewById(R.id.expand_controls);
-        expandControls.setVisibility(View.GONE);
-        View paginationControls = resultsSet.findViewById(R.id.pagination_controls);
-        paginationControls.setVisibility(View.VISIBLE);
+    private void expandView(DefaultSearchResultsContainer resultsSet){
+        for(DefaultSearchResultsContainer container: m_searchResultsContainer){
+            container.setState(resultsSet == container ? 2 : 0);
+        }
     }
 
     public void showSuggestions(boolean flag){
         for(DefaultSearchResultsContainer container: m_searchResultsContainer){
+            container.setState(1);
             container.showSuggestions(flag);
         }
     }
