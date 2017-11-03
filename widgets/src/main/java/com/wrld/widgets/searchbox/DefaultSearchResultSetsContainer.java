@@ -3,6 +3,7 @@
 package com.wrld.widgets.searchbox;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
@@ -17,6 +18,8 @@ class DefaultSearchResultSetsContainer {
     private LayoutInflater m_inflater;
     private ViewGroup m_setMedium;
 
+    private int m_setCount = 0;
+
     private ArrayList<DefaultSearchResultsContainer> m_searchResultsContainer;
 
     private SearchResultViewFactory m_defualtViewFactory;
@@ -28,19 +31,14 @@ class DefaultSearchResultSetsContainer {
     }
 
     public void addSearchResultSet(SearchResultSet resultsSet, SearchResultSet suggestionsSet, SearchResultViewFactory factoryResults , SearchResultViewFactory factorySuggestions){
+        
+        View setView = m_inflater.inflate(R.layout.search_set, m_resultSetsContainer, false);
+        m_resultSetsContainer.addView(setView, m_setCount );
 
-
-
-        m_inflater.inflate(R.layout.search_set, m_resultSetsContainer,true);
-
-        ViewGroup setContent = (ViewGroup)m_resultSetsContainer.findViewById(R.id.set_content);
+        ViewGroup setContent = (ViewGroup)setView.findViewById(R.id.set_content);
         m_setMedium = (ViewGroup)m_inflater.inflate(R.layout.search_set_medium, setContent,true);
-
-        ListView mediumListView =(ListView)m_setMedium.findViewById(R.id.search_set_content_view);
-
-        LayoutInflater inflator =LayoutInflater.from(mediumListView.getContext());
-        final DefaultSearchResultsContainer resultList = new DefaultSearchResultsContainer(inflator,resultsSet , factoryResults, suggestionsSet, factorySuggestions);
-
+        ListView mediumListView = (ListView)m_setMedium.findViewById(R.id.search_set_content_view);
+        final DefaultSearchResultsContainer resultList = new DefaultSearchResultsContainer(m_inflater,resultsSet , factoryResults, suggestionsSet, factorySuggestions);
         mediumListView.setAdapter(resultList);
 
         resultsSet.addOnResultChangedHandler(new SearchResultSet.OnResultChanged() {
@@ -59,7 +57,7 @@ class DefaultSearchResultSetsContainer {
         });
 
         m_searchResultsContainer.add(resultList);
-
+        m_setCount++;
     }
 
     public void showSuggestions(boolean flag){
