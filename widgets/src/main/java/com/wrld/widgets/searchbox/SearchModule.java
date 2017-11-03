@@ -54,6 +54,12 @@ public class SearchModule implements SearchModuleFacade {
         setDefaultSearchResultViewFactory(new DefaultSearchResultViewFactory(R.layout.search_result));
 
         configureTags(R.id.search_tags);
+        final Button performSearchButton = (Button)m_searchboxRootContainer.findViewById(R.id.perform_search);
+        performSearchButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                m_searchboxController.performQuery();
+            }
+        });
     }
 
     private void configureTags(int tagContainerId) {
@@ -63,7 +69,7 @@ public class SearchModule implements SearchModuleFacade {
             final Button button = (Button)tagContainer.getChildAt(index);
             button.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    doSearch(button.getText().toString());
+                    m_searchboxController.performQuery(button.getText());
                 }
             });
         }

@@ -51,6 +51,14 @@ class SearchBoxController {
         );
     }
 
+    public void performQuery(){
+        performQuery(m_view.getQuery());
+    }
+
+    public void performQuery(CharSequence query){
+        m_view.setQuery(query, true);
+    }
+
     /**
      * Defines the signature for a method that is called when the EegeoMap object has been created and
      * is ready to call.
