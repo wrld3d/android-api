@@ -3,6 +3,7 @@
 package com.wrld.widgets.searchbox;
 
 public interface SearchProvider {
+    String getTitle();
     void getSearchResults(String query);
 
     void addOnResultsRecievedCallback(OnResultsReceivedCallback callback);

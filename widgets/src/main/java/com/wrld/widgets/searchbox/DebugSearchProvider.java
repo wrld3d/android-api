@@ -22,6 +22,9 @@ public class DebugSearchProvider implements SearchProvider {
     }
 
     @Override
+    public String getTitle() {return m_uid;}
+
+    @Override
     public void getSearchResults(String query) {
         int numResults = 100;
         SearchResult[] results = new SearchResult[numResults];

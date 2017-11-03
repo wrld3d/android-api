@@ -105,7 +105,7 @@ public class SearchModule implements SearchModuleFacade {
             }
         }
 
-        m_searchResultsContainer.addSearchResultSet(setResults, setSuggestions, factoryResults ,factorySuggestions );
+        m_searchResultsContainer.addSearchResultSet( provider.getTitle(), setResults, setSuggestions, factoryResults ,factorySuggestions );
 
     }
 

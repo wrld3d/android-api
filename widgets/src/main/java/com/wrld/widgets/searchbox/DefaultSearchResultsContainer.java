@@ -30,6 +30,8 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
 
     private TextView m_searchResultInfo;
     private View m_setContainer;
+    private View m_header;
+    private View m_footer;
     private View m_expandControls;
     private View m_paginationControls;
     private View m_resultsView;
@@ -41,6 +43,8 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
                                          SearchResultSet suggestionsModel , SearchResultViewFactory factorySuggestions) {
 
         m_setContainer = container;
+        m_header = container.findViewById(R.id.search_set_header);
+        m_footer = container.findViewById(R.id.search_set_footer);
         m_searchResultInfo = (TextView) container.findViewById(R.id.search_pagination_results_info);
         m_expandControls = container.findViewById(R.id.expand_controls);
         m_paginationControls = container.findViewById(R.id.pagination_controls);
@@ -133,6 +137,8 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
         int displayControls = m_suggestionsOn ? View.GONE : View.VISIBLE;
 
         m_expandControls.setVisibility(displayControls);
+        m_header.setVisibility(displayControls);
+        m_footer.setVisibility(displayControls);
         m_paginationControls.setVisibility(View.GONE);
     }
 
@@ -156,27 +162,30 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
         m_searchResultInfo.setText(String.format(RESULTS_INFO, resultsStart, resultsStart + RESULTS_PER_PAGE, m_resultsModel.getResultCount()));
     }
 
-    public void setState(int state){
+    public void setState(ResultSetState state){
 
         LinearLayout.LayoutParams loparams = (LinearLayout.LayoutParams) m_setContainer.getLayoutParams();
 
-        if(state == 0){
+        if(state == ResultSetState.Collapsed){
             m_expandControls.setVisibility(View.VISIBLE);
             m_paginationControls.setVisibility(View.GONE);
             m_resultsView.setVisibility(View.GONE);
+            m_header.setVisibility(View.GONE);
             createAnimation(loparams.weight, 1f);
         }
-        if(state == 1){
+        if(state == ResultSetState.Shared){
             m_expandControls.setVisibility(View.VISIBLE);
             m_paginationControls.setVisibility(View.GONE);
             m_resultsView.setVisibility(View.VISIBLE);
+            m_header.setVisibility(View.VISIBLE);
             createAnimation(loparams.weight, 1f);
         }
-        if(state == 2){
+        if(state == ResultSetState.Expanded){
             m_expandControls.setVisibility(View.GONE);
             m_paginationControls.setVisibility(View.VISIBLE);
             m_resultsView.setVisibility(View.VISIBLE);
-            createAnimation(loparams.weight, 0.15f);
+            m_header.setVisibility(View.VISIBLE);
+            createAnimation(loparams.weight, 0.1f);
         }
     }
 

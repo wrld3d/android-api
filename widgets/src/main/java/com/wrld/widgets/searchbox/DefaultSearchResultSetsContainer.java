@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
+
 import com.wrld.widgets.R;
 import java.util.ArrayList;
 
@@ -26,7 +28,7 @@ class DefaultSearchResultSetsContainer {
         m_searchResultsContainer = new ArrayList<DefaultSearchResultsContainer>();
     }
 
-    public void addSearchResultSet(SearchResultSet resultsSet, SearchResultSet suggestionsSet, SearchResultViewFactory factoryResults , SearchResultViewFactory factorySuggestions){
+    public void addSearchResultSet(String titleText, SearchResultSet resultsSet, SearchResultSet suggestionsSet, SearchResultViewFactory factoryResults , SearchResultViewFactory factorySuggestions){
         
         View setView = m_inflater.inflate(R.layout.search_set, m_resultSetsContainer, false);
         m_resultSetsContainer.addView(setView, m_searchResultsContainer.size() );
@@ -58,6 +60,9 @@ class DefaultSearchResultSetsContainer {
         m_searchResultsContainer.add(resultList);
 
         configureButtons(setView, resultList);
+
+        TextView title = (TextView)setView.findViewById(R.id.serach_set_title);
+        title.setText(titleText);
     }
 
     private void configureButtons(final View resultsSet, final DefaultSearchResultsContainer resultsAdapter) {
@@ -83,13 +88,13 @@ class DefaultSearchResultSetsContainer {
 
     private void expandView(DefaultSearchResultsContainer resultsSet){
         for(DefaultSearchResultsContainer container: m_searchResultsContainer){
-            container.setState(resultsSet == container ? 2 : 0);
+            container.setState(resultsSet == container ? ResultSetState.Expanded : ResultSetState.Collapsed);
         }
     }
 
     public void showSuggestions(boolean flag){
         for(DefaultSearchResultsContainer container: m_searchResultsContainer){
-            container.setState(1);
+            container.setState(ResultSetState.Shared);
             container.showSuggestions(flag);
         }
     }
