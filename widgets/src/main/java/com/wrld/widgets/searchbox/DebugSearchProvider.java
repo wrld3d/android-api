@@ -23,11 +23,11 @@ public class DebugSearchProvider implements SearchProvider {
 
     @Override
     public void getSearchResults(String query) {
-        int numResults = 5;
+        int numResults = 100;
         SearchResult[] results = new SearchResult[numResults];
         results[0] = new DefaultSearchResult(m_uid + ": " + query, new SearchResultStringProperty("Description", LOREM_IPSUM));
         for(int i = 1; i < numResults; ++i){
-            results[i] = generateDebugResult(i);
+            results[i] = generateDebugResult(i, query);
         }
 
         for(OnResultsReceivedCallback callback: m_onResultsReceivedCallback) {
@@ -50,9 +50,9 @@ public class DebugSearchProvider implements SearchProvider {
         return m_resultViewFactory;
     }
 
-    private SearchResult generateDebugResult(int id)
+    private SearchResult generateDebugResult(int id, String query)
     {
-        return new DefaultSearchResult(m_uid + ": " + id, new SearchResultStringProperty("Description", LOREM_IPSUM));
+        return new DefaultSearchResult(m_uid + ": " + query + " (" + id + ")", new SearchResultStringProperty("Description", LOREM_IPSUM));
     }
 
 }

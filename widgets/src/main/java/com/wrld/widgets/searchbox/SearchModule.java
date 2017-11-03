@@ -76,10 +76,9 @@ public class SearchModule implements SearchModuleFacade {
 
     @Override
     public void addSearchProvider(SearchProvider provider, boolean doSuggestions) {
-        // Create a set
-        final DefaultSearchResultSet setResults = new DefaultSearchResultSet();
-        final DefaultSearchResultSet setSuggestions = new DefaultSearchResultSet();
 
+        DefaultSearchResultSet setResults = new DefaultSearchResultSet();
+        DefaultSearchResultSet setSuggestions = new DefaultSearchResultSet();
 
         SearchResultViewFactory factoryResults = provider.getResultViewFactory();
         if(factoryResults == null) {
@@ -102,7 +101,7 @@ public class SearchModule implements SearchModuleFacade {
             }
             else
             {
-                android.util.Log.e("Search Widget: ", "Tried to add a Suggestion Provider that doesn't implement the SuggestionProvider Interface");
+                android.util.Log.w("Search Widget", "Tried to add a Suggestion Provider that doesn't implement the SuggestionProvider Interface");
             }
         }
 

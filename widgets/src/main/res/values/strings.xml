@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Widgets</string>
+    <string name="expand_search_results">Expand</string>
+    <string name="perform_search">Search</string>
+    <string name="search_options">Options</string>
+    <string name="pagination_prev">Prev</string>
+    <string name="pagination_next">Next</string>
+    <string name="search_result_count">1-20 of 100</string>
+    <string name="search_category_a">A</string>
+    <string name="search_category_b">B</string>
+    <string name="search_category_c">C</string>
 </resources>

@@ -7,37 +7,37 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingTop="10dp"
-    android:paddingLeft="10dp">
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
 
     <LinearLayout
         android:id="@+id/search_box_container"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:orientation="horizontal">
-        #
 
         <Button
             android:id="@+id/options"
-            android:layout_width="1dp"
+            android:layout_width="10dp"
             android:layout_height="match_parent"
             android:layout_weight="0.23"
-            android:text="options_text"
+            android:text="@string/search_options"
             tools:text="Options" />
 
         <SearchView
             android:id="@+id/search_box"
-            android:layout_width="100dp"
+            android:layout_width="90dp"
             android:layout_height="match_parent"
             android:layout_weight="0.23"
 
-            android:background="#FFFFFF"/>
+            android:background="#FFFFFF" />
 
         <Button
             android:id="@+id/button4"
-            android:layout_width="1dp"
+            android:layout_width="10dp"
             android:layout_height="match_parent"
             android:layout_weight="0.22"
-            android:text="search_txt"
+            android:text="@string/perform_search"
             tools:text="Search" />
 
     </LinearLayout>
@@ -53,17 +53,19 @@
             android:id="@+id/button_a"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:text="A" />
+            android:text="@string/search_category_a" />
+
         <Button
             android:id="@+id/button_b"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:text="B" />
+            android:text="@string/search_category_b" />
+
         <Button
             android:id="@+id/button_c"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:text="C" />
+            android:text="@string/search_category_c" />
     </LinearLayout>
 
     <LinearLayout

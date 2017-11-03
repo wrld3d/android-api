@@ -5,20 +5,16 @@ package com.wrld.widgets.searchbox;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
-
+import android.widget.TextView;
 import com.wrld.widgets.R;
-
 import java.util.ArrayList;
-
 
 class DefaultSearchResultSetsContainer {
 
     private ViewGroup m_resultSetsContainer;
     private LayoutInflater m_inflater;
-    private ViewGroup m_setMedium;
-
-    private int m_setCount = 0;
 
     private ArrayList<DefaultSearchResultsContainer> m_searchResultsContainer;
 
@@ -33,12 +29,17 @@ class DefaultSearchResultSetsContainer {
     public void addSearchResultSet(SearchResultSet resultsSet, SearchResultSet suggestionsSet, SearchResultViewFactory factoryResults , SearchResultViewFactory factorySuggestions){
         
         View setView = m_inflater.inflate(R.layout.search_set, m_resultSetsContainer, false);
-        m_resultSetsContainer.addView(setView, m_setCount );
+        m_resultSetsContainer.addView(setView, m_searchResultsContainer.size() );
 
         ViewGroup setContent = (ViewGroup)setView.findViewById(R.id.set_content);
-        m_setMedium = (ViewGroup)m_inflater.inflate(R.layout.search_set_medium, setContent,true);
-        ListView mediumListView = (ListView)m_setMedium.findViewById(R.id.search_set_content_view);
-        final DefaultSearchResultsContainer resultList = new DefaultSearchResultsContainer(m_inflater,resultsSet , factoryResults, suggestionsSet, factorySuggestions);
+        View resultSetContainer = m_inflater.inflate(R.layout.search_set_medium, setContent,true);
+        ListView mediumListView = (ListView)resultSetContainer.findViewById(R.id.search_set_content_view);
+
+        final DefaultSearchResultsContainer resultList = new DefaultSearchResultsContainer(
+                m_inflater, resultSetContainer,
+                resultsSet , factoryResults,
+                suggestionsSet, factorySuggestions);
+
         mediumListView.setAdapter(resultList);
 
         resultsSet.addOnResultChangedHandler(new SearchResultSet.OnResultChanged() {
@@ -48,7 +49,6 @@ class DefaultSearchResultSetsContainer {
             }
         });
 
-
         suggestionsSet.addOnResultChangedHandler(new SearchResultSet.OnResultChanged() {
             @Override
             public void invoke() {
@@ -57,7 +57,37 @@ class DefaultSearchResultSetsContainer {
         });
 
         m_searchResultsContainer.add(resultList);
-        m_setCount++;
+
+        configureButtons(resultSetContainer, resultList);
+
+    }
+
+    private void configureButtons(final View resultsSet, final DefaultSearchResultsContainer resultsAdapter) {
+        Button next = (Button) resultsSet.findViewById(R.id.search_pagination_prev);
+        next.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                resultsAdapter.previousPage();
+            }
+        });
+        Button prev = (Button) resultsSet.findViewById(R.id.search_pagination_next);
+        prev.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                resultsAdapter.nextPage();
+            }
+        });
+        Button expand = (Button) resultsSet.findViewById(R.id.search_expand_button);
+        expand.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                expandView(resultsSet);
+            }
+        });
+    }
+
+    private void expandView(View resultsSet){
+        View expandControls = resultsSet.findViewById(R.id.expand_controls);
+        expandControls.setVisibility(View.GONE);
+        View paginationControls = resultsSet.findViewById(R.id.pagination_controls);
+        paginationControls.setVisibility(View.VISIBLE);
     }
 
     public void showSuggestions(boolean flag){

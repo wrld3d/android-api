@@ -2,12 +2,14 @@
 
 package com.wrld.widgets.searchbox;
 
+import android.opengl.Visibility;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.widget.TextView;
+import com.wrld.widgets.R;
 
 class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, SearchResultsContainer {
 
@@ -20,8 +22,23 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
 
     private boolean m_suggestionsOn;
 
-    public DefaultSearchResultsContainer(LayoutInflater inflator, SearchResultSet resultsModel, SearchResultViewFactory viewFactoryResults , SearchResultSet suggestionsModel , SearchResultViewFactory factorySuggestions) {
+    private final int RESULTS_PER_PAGE = 10;
 
+    private int m_resultsPage;
+
+    private TextView m_searchResultInfo;
+    private View m_expandControls;
+    private View m_paginationControls;
+
+    private final String RESULTS_INFO = "%d-%d of %d";
+
+    public DefaultSearchResultsContainer(LayoutInflater inflator, View container,
+                                         SearchResultSet resultsModel, SearchResultViewFactory viewFactoryResults ,
+                                         SearchResultSet suggestionsModel , SearchResultViewFactory factorySuggestions) {
+
+        m_searchResultInfo = (TextView) container.findViewById(R.id.search_pagination_results_info);
+        m_expandControls = container.findViewById(R.id.expand_controls);
+        m_paginationControls = container.findViewById(R.id.pagination_controls);
         m_inflater =inflator;
 
         m_resultsModel = resultsModel;
@@ -34,7 +51,11 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
 
     @Override
     public int getCount() {
-        return (m_suggestionsOn ? m_suggestionsModel.getResultCount() :m_resultsModel.getResultCount());
+        if(m_suggestionsOn){
+            return m_suggestionsModel.getResultCount();
+        }
+
+        return Math.min(m_resultsModel.getResultCount(), RESULTS_PER_PAGE);
     }
 
     @Override
@@ -54,7 +75,12 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
 
     @Override
     public long getItemId(int position) {
-        return position;
+        if(m_suggestionsOn) {
+            return position;
+        }
+
+        int actualResultPosition = position + m_resultsPage * RESULTS_PER_PAGE;
+        return actualResultPosition;
     }
 
     @Override
@@ -71,27 +97,56 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
             convertView.setTag(viewHolder);
         }
 
-        ((SearchResultViewHolder)convertView.getTag()).populate(  getResultForState(position));
+        ((SearchResultViewHolder)convertView.getTag()).populate(getResultForState(position));
 
         return convertView;
     }
 
-    private SearchResult getResultForState(int position){
-        return (m_suggestionsOn ? m_suggestionsModel.getResult(position) :m_resultsModel.getResult(position));
+    private SearchResult getResultForState(int position) {
+        if(m_suggestionsOn) {
+            return m_suggestionsModel.getResult(position);
+        }
+
+        int actualResultPosition = position + m_resultsPage * RESULTS_PER_PAGE;
+        return m_resultsModel.getResult(actualResultPosition);
     }
 
     @Override
     public void refresh() {
-        notifyDataSetChanged();
+        m_resultsPage = 0;
+        updateSearchResults();
     }
 
-    public void showSuggestions(boolean flag){
-        if(m_suggestionsOn != flag)
-        {
+    public void showSuggestions(boolean flag) {
+        if(m_suggestionsOn != flag) {
             m_suggestionsOn = flag;
             refresh();
         }
 
+        int displayControls = m_suggestionsOn ? View.GONE : View.VISIBLE;
 
+        m_expandControls.setVisibility(displayControls);
+        m_paginationControls.setVisibility(View.GONE);
     }
+
+    public void nextPage() {
+        if(m_resultsModel.getResultCount() > RESULTS_PER_PAGE * (m_resultsPage + 1)) {
+            ++m_resultsPage;
+            updateSearchResults();
+        }
+    }
+
+    public void previousPage() {
+        if(m_resultsPage > 0) {
+            --m_resultsPage;
+            updateSearchResults();
+        }
+    }
+
+    private void updateSearchResults() {
+        notifyDataSetChanged();
+        int resultsStart = m_resultsPage * RESULTS_PER_PAGE;
+        m_searchResultInfo.setText(String.format(RESULTS_INFO, resultsStart, resultsStart + RESULTS_PER_PAGE, m_resultsModel.getResultCount()));
+    }
+
 }
