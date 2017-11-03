@@ -33,10 +33,8 @@ class SearchBoxController {
                     }
                     else {
                         //TODO: Clear Results
-                        android.util.Log.v("SA TextChange: ", "Empty String");
                     }
 
-                    android.util.Log.v("SA TextChange: ",newText);
                     return true;
                 }
 

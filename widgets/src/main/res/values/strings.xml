@@ -6,6 +6,7 @@
     <string name="pagination_prev">Prev</string>
     <string name="pagination_next">Next</string>
     <string name="search_result_count">1-20 of 100</string>
+    <string name="default_search_title">Search Results</string>
     <string name="search_category_a">A</string>
     <string name="search_category_b">B</string>
     <string name="search_category_c">C</string>

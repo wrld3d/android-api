@@ -6,8 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import com.wrld.widgets.R;
 import java.util.ArrayList;
 
@@ -31,16 +31,15 @@ class DefaultSearchResultSetsContainer {
         View setView = m_inflater.inflate(R.layout.search_set, m_resultSetsContainer, false);
         m_resultSetsContainer.addView(setView, m_searchResultsContainer.size() );
 
-        ViewGroup setContent = (ViewGroup)setView.findViewById(R.id.set_content);
-        View resultSetContainer = m_inflater.inflate(R.layout.search_set_medium, setContent,true);
-        ListView mediumListView = (ListView)resultSetContainer.findViewById(R.id.search_set_content_view);
+        View setContent = setView.findViewById(R.id.set_content);
+        ListView listView = (ListView) setContent.findViewById(R.id.search_result_list);
 
         final DefaultSearchResultsContainer resultList = new DefaultSearchResultsContainer(
-                m_inflater, resultSetContainer,
+                m_inflater, setContent,
                 resultsSet , factoryResults,
                 suggestionsSet, factorySuggestions);
 
-        mediumListView.setAdapter(resultList);
+        listView.setAdapter(resultList);
 
         resultsSet.addOnResultChangedHandler(new SearchResultSet.OnResultChanged() {
             @Override
@@ -58,8 +57,7 @@ class DefaultSearchResultSetsContainer {
 
         m_searchResultsContainer.add(resultList);
 
-        configureButtons(resultSetContainer, resultList);
-
+        configureButtons(setContent, resultList);
     }
 
     private void configureButtons(final View resultsSet, final DefaultSearchResultsContainer resultsAdapter) {
