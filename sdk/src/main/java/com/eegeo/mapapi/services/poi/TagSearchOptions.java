@@ -4,7 +4,7 @@ import com.eegeo.mapapi.geometry.LatLng;
 
 
 /**
- * A set of parameters for a tag search. 
+ * A set of parameters for a tag search.
  */
 public final class TagSearchOptions {
 

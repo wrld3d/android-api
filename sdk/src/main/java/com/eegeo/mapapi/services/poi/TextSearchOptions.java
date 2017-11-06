@@ -4,7 +4,7 @@ import com.eegeo.mapapi.geometry.LatLng;
 
 
 /**
- * A set of parameters for a free-text search. 
+ * A set of parameters for a free-text search.
  */
 public final class TextSearchOptions {
 
@@ -124,7 +124,7 @@ public final class TextSearchOptions {
         return this;
     }
 
-    
+
     String getQuery() {
         return m_query;
     }
