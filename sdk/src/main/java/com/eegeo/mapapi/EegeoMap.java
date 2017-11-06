@@ -43,6 +43,9 @@ import com.eegeo.mapapi.polygons.PolygonOptions;
 import com.eegeo.mapapi.polylines.Polyline;
 import com.eegeo.mapapi.polylines.PolylineApi;
 import com.eegeo.mapapi.polylines.PolylineOptions;
+import com.eegeo.mapapi.services.poi.PoiApi;
+import com.eegeo.mapapi.services.poi.PoiService;
+import com.eegeo.mapapi.services.poi.PoiSearchResult;
 import com.eegeo.mapapi.rendering.RenderingApi;
 import com.eegeo.mapapi.rendering.RenderingState;
 import com.eegeo.mapapi.util.Callbacks;
@@ -82,6 +85,7 @@ public final class EegeoMap {
     private BlueSphereApi m_blueSphereApi;
     private BuildingsApi m_buildingsApi;
     private PickingApi m_pickingApi;
+    private PoiApi m_poiApi;
     private RenderingApi m_renderingApi;
     private RenderingState m_renderingState;
     private BlueSphere m_blueSphere = null;
@@ -107,6 +111,7 @@ public final class EegeoMap {
         this.m_blueSphereApi = new BlueSphereApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_buildingsApi = new BuildingsApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_pickingApi = new PickingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_poiApi = new PoiApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_renderingApi = new RenderingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         boolean mapCollapsed = false;
         this.m_renderingState = new RenderingState(m_renderingApi, m_allowApiAccess, mapCollapsed);
@@ -809,6 +814,17 @@ public final class EegeoMap {
     }
 
     /**
+     * Creates and returns a PoiService for this map.
+     *
+     * @return  A PoiService object.
+     */
+    @UiThread
+    public PoiService createPoiService() {
+        PoiService poiService = new PoiService(m_poiApi);
+        return poiService;
+    }
+
+    /**
      * Sets whether the map view should display with vertical scaling applied so that terrain and
      * other map features appear flattened.
      */
@@ -850,6 +866,11 @@ public final class EegeoMap {
     @WorkerThread
     private void jniOnBuildingInformationReceived(final int buildingHighlightId) {
         m_buildingsApi.notifyBuildingInformationReceived(buildingHighlightId);
+    }
+
+    @WorkerThread
+    private void jniOnPoiSearchCompleted(final int poiSearchId, final boolean succeeded, final List<PoiSearchResult> searchResults) {
+        m_poiApi.notifySearchComplete(poiSearchId, succeeded, searchResults);
     }
 
     @WorkerThread
