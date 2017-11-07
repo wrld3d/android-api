@@ -36,6 +36,7 @@ import com.eegeo.mapapi.markers.OnMarkerClickListener;
 import com.eegeo.mapapi.positioner.Positioner;
 import com.eegeo.mapapi.positioner.PositionerApi;
 import com.eegeo.mapapi.positioner.PositionerOptions;
+import com.eegeo.mapapi.positioner.OnPositionerChangedListener;
 import com.eegeo.mapapi.picking.PickingApi;
 import com.eegeo.mapapi.polygons.Polygon;
 import com.eegeo.mapapi.polygons.PolygonApi;
@@ -840,6 +841,26 @@ public final class EegeoMap {
     @UiThread
     public void removeMarkerClickListener(@NonNull OnMarkerClickListener listener) {
         m_markerApi.removeMarkerClickListener(listener);
+    }
+
+    /**
+     * Register a listener to an event raised when a Positioner object has changed position.
+     *
+     * @param listener the listener to add
+     */
+    @UiThread
+    public void addPositionerChangedListener(@NonNull OnPositionerChangedListener listener) {
+        m_positionerApi.addPositionerChangedListener(listener);
+    }
+
+    /**
+     * Unregister a listener to an event raised when a Positioner object has changed position.
+     *
+     * @param listener the listener to remove
+     */
+    @UiThread
+    public void removePositionerChangedListener(@NonNull OnPositionerChangedListener listener) {
+        m_positionerApi.removePositionerChangedListener(listener);
     }
 
     @WorkerThread

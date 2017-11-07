@@ -13,11 +13,13 @@ import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.geometry.LatLngAlt;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 
 public class PositionerApi {
     private INativeMessageRunner m_nativeRunner;
     private IUiMessageRunner m_uiRunner;
     private long m_jniEegeoMapApiPtr;
+    private ArrayList<OnPositionerChangedListener> m_onPositionerChangedListeners = new ArrayList<OnPositionerChangedListener>();
     private SparseArray<Positioner> m_nativeHandleToPositioner = new SparseArray<>();
 
 
@@ -37,6 +39,16 @@ public class PositionerApi {
     @UiThread
     public IUiMessageRunner getUiRunner() {
         return m_uiRunner;
+    }
+
+    @UiThread
+    public void addPositionerChangedListener(OnPositionerChangedListener listener) {
+        m_onPositionerChangedListeners.add(listener);
+    }
+
+    @UiThread
+    public void removePositionerChangedListener(OnPositionerChangedListener listener) {
+        m_onPositionerChangedListeners.remove(listener);
     }
 
     @WorkerThread
@@ -114,6 +126,9 @@ public class PositionerApi {
                 @Override
                 public void run() {
                     positioner.setProjectedState(screenPoint, transformedPoint, isBehindGlobeHorizon);
+                    for (OnPositionerChangedListener listener : m_onPositionerChangedListeners) {
+                        listener.onPositionerChanged(positioner);
+                    }
                 }
             });
         }

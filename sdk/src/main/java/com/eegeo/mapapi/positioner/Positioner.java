@@ -69,7 +69,6 @@ public class Positioner extends NativeApiObject {
     private LatLng m_position;
     private double m_elevation;
     private ElevationMode m_elevationMode;
-    private OnPositionerChangedListener m_positionerChangedListener;
     private Point m_screenPoint = new Point();
     private LatLngAlt m_transformedPoint = new LatLngAlt(0, 0, 0);
     private boolean m_isScreenPointValid = false;
@@ -99,7 +98,6 @@ public class Positioner extends NativeApiObject {
         m_elevationMode = positionerOptions.getElevationMode();
         m_indoorMapId = positionerOptions.getIndoorMapId();
         m_indoorMapFloorId = positionerOptions.getIndoorMapFloorId();
-        m_positionerChangedListener = positionerOptions.getPositionerChangedListener();
 
         submit(new Runnable() {
             @WorkerThread
@@ -347,10 +345,6 @@ public class Positioner extends NativeApiObject {
         if (m_isBehindGlobeHorizon != isBehindGlobeHorizon) {
             m_isBehindGlobeHorizon = isBehindGlobeHorizon;
             changed = true;
-        }
-
-        if (changed && m_positionerChangedListener != null) {
-            m_positionerChangedListener.onPositionerChanged(this);
         }
     }
 
