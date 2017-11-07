@@ -46,6 +46,9 @@ import com.eegeo.mapapi.polylines.PolylineApi;
 import com.eegeo.mapapi.polylines.PolylineOptions;
 import com.eegeo.mapapi.rendering.RenderingApi;
 import com.eegeo.mapapi.rendering.RenderingState;
+import com.eegeo.mapapi.services.poi.PoiApi;
+import com.eegeo.mapapi.services.poi.PoiService;
+import com.eegeo.mapapi.services.poi.PoiSearchResult;
 import com.eegeo.mapapi.util.Callbacks;
 import com.eegeo.mapapi.util.Promise;
 import com.eegeo.mapapi.util.Ready;
@@ -85,6 +88,7 @@ public final class EegeoMap {
     private PickingApi m_pickingApi;
     private RenderingApi m_renderingApi;
     private RenderingState m_renderingState;
+    private PoiApi m_poiApi;
     private BlueSphere m_blueSphere = null;
 
 
@@ -111,6 +115,7 @@ public final class EegeoMap {
         this.m_renderingApi = new RenderingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         boolean mapCollapsed = false;
         this.m_renderingState = new RenderingState(m_renderingApi, m_allowApiAccess, mapCollapsed);
+        this.m_poiApi = new PoiApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
 
     @WorkerThread
@@ -824,6 +829,15 @@ public final class EegeoMap {
     }
 
     /**
+     * Creates and returns a PoiService for this map.
+     */
+    @UiThread
+    public PoiService createPoiService() {
+        PoiService poiService = new PoiService(m_poiApi);
+        return poiService;
+    }
+
+    /**
      * Register a listener to an event raised when a marker is tapped by the user.
      *
      * @param listener the listener to add
@@ -877,6 +891,12 @@ public final class EegeoMap {
     private void jniOnPositionerProjectionChanged() {
         m_positionerApi.notifyProjectionChanged();
     }
+
+    @WorkerThread
+    private void jniOnPoiSearchCompleted(final int poiSearchId, final boolean succeeded, final List<PoiSearchResult> searchResults) {
+        m_poiApi.notifySearchComplete(poiSearchId, succeeded, searchResults);
+    }
+
 
     /**
      * Registers a listener to an event raised when the initial map scene has completed streaming all resources
