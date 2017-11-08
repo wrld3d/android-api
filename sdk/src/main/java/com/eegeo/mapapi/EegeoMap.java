@@ -525,6 +525,16 @@ public final class EegeoMap {
         });
     }
 
+    @WorkerThread
+    private void jniOnIndoorEnterFailed() {
+        m_uiRunner.runOnUiThread(new Runnable() {
+            public void run() {
+                m_indoorMap = null;
+                m_currentIndoorFloor = -1;
+            }
+        });
+    }
+
     /**
      * Sets the current floor shown in an indoor map.
      *
