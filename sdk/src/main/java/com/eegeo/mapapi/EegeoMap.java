@@ -49,6 +49,8 @@ import com.eegeo.mapapi.rendering.RenderingState;
 import com.eegeo.mapapi.services.poi.PoiApi;
 import com.eegeo.mapapi.services.poi.PoiService;
 import com.eegeo.mapapi.services.poi.PoiSearchResult;
+import com.eegeo.mapapi.services.routing.RoutingApi;
+import com.eegeo.mapapi.services.routing.RoutingService;
 import com.eegeo.mapapi.util.Callbacks;
 import com.eegeo.mapapi.util.Promise;
 import com.eegeo.mapapi.util.Ready;
@@ -89,6 +91,7 @@ public final class EegeoMap {
     private RenderingApi m_renderingApi;
     private RenderingState m_renderingState;
     private PoiApi m_poiApi;
+    private RoutingApi m_routingApi;
     private BlueSphere m_blueSphere = null;
 
 
@@ -116,6 +119,7 @@ public final class EegeoMap {
         boolean mapCollapsed = false;
         this.m_renderingState = new RenderingState(m_renderingApi, m_allowApiAccess, mapCollapsed);
         this.m_poiApi = new PoiApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_routingApi = new RoutingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
 
     @WorkerThread
@@ -845,6 +849,15 @@ public final class EegeoMap {
     public PoiService createPoiService() {
         PoiService poiService = new PoiService(m_poiApi);
         return poiService;
+    }
+
+    /**
+     * Creates and returns a RoutingService for this map.
+     */
+    @UiThread
+    public RoutingService createRoutingService() {
+        RoutingService routingService = new RoutingService(m_routingApi);
+        return routingService;
     }
 
     /**

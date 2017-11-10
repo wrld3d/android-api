@@ -151,7 +151,8 @@ public class PoiApi {
         m_nativeHandleToPoiSearch.remove(searchNativeHandle);
     }
 
-
+    
+    @WorkerThread
     private native int nativeBeginTextSearch(
             long jniEegeoMapApiPtr,
             String query,
@@ -164,6 +165,7 @@ public class PoiApi {
             boolean useFloor, int floor,
             boolean useFloorDropoff, int floorDropoff);
 
+    @WorkerThread
     private native int nativeBeginTagSearch(
             long jniEegeoMapApiPtr,
             String query,
@@ -172,6 +174,7 @@ public class PoiApi {
             boolean useRadius, double radius,
             boolean useNumber, int number);
 
+    @WorkerThread
     private native int nativeBeginAutocompleteSearch(
             long jniEegeoMapApiPtr,
             String query,
@@ -179,6 +182,7 @@ public class PoiApi {
             double longitude,
             boolean useNumber, int number);
 
+    @WorkerThread
     private native void nativeCancelSearch(long jniEegeoMapApiPtr, int searchNativeHandle);
 }
 
