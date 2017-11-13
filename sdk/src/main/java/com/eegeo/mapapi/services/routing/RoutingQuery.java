@@ -12,6 +12,7 @@ import com.eegeo.mapapi.util.NativeApiObject;
 public class RoutingQuery extends NativeApiObject {
 
     private RoutingApi m_routingApi;
+    private OnRoutingQueryCompletedListener m_callback;
 
     @UiThread
     RoutingQuery(final RoutingApi routingApi, final RoutingQueryOptions options) {
@@ -27,6 +28,7 @@ public class RoutingQuery extends NativeApiObject {
                 });
 
         m_routingApi = routingApi;
+        m_callback = options.getOnRoutingQueryCompletedListener();
 
         submit(new Runnable() {
             @WorkerThread
@@ -47,9 +49,9 @@ public class RoutingQuery extends NativeApiObject {
 //         });
 //     }
 
-//     void returnSearchResults(PoiSearchResponse searchResults) {
-//         if (m_callback != null) {
-//             m_callback.onPoiSearchCompleted(searchResults);
-//         }
-//     }
+    void returnQueryResponse(RoutingQueryResponse response) {
+        if (m_callback != null) {
+            m_callback.onRoutingQueryCompleted(response);
+        }
+    }
 }

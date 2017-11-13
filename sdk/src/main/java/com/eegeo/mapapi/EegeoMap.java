@@ -51,6 +51,7 @@ import com.eegeo.mapapi.services.poi.PoiService;
 import com.eegeo.mapapi.services.poi.PoiSearchResult;
 import com.eegeo.mapapi.services.routing.RoutingApi;
 import com.eegeo.mapapi.services.routing.RoutingService;
+import com.eegeo.mapapi.services.routing.RoutingQueryResult;
 import com.eegeo.mapapi.util.Callbacks;
 import com.eegeo.mapapi.util.Promise;
 import com.eegeo.mapapi.util.Ready;
@@ -918,6 +919,11 @@ public final class EegeoMap {
     @WorkerThread
     private void jniOnPoiSearchCompleted(final int poiSearchId, final boolean succeeded, final List<PoiSearchResult> searchResults) {
         m_poiApi.notifySearchComplete(poiSearchId, succeeded, searchResults);
+    }
+
+    @WorkerThread
+    private void jniOnRoutingQueryCompleted(final int routingQueryId, final boolean succeeded, final List<RoutingQueryResult> routingResults) {
+        m_routingApi.notifyQueryComplete(routingQueryId, succeeded, routingResults);
     }
 
 

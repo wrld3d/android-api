@@ -57,26 +57,26 @@ public class RoutingApi {
     void unregister(int nativeHandle) {
         m_nativeHandleToRoutingQuery.remove(nativeHandle);
     }
-// 
-// 
-//     @WorkerThread
-//     public void notifySearchComplete(final int nativeHandle, final boolean succeeded, final List<PoiSearchResult> searchResults) {
-//         PoiSearchResponse result = new PoiSearchResponse(succeeded, searchResults);
-//         if (m_nativeHandleToPoiSearch.get(nativeHandle) != null) {
-//             returnSearchResults(nativeHandle, result);
-//         }
-//     }
-// 
-//     @WorkerThread
-//     void returnSearchResults(final int nativeHandle, final PoiSearchResponse searchResults) {
-//         final PoiSearch poiSearch = m_nativeHandleToPoiSearch.get(nativeHandle);
-// 
-//         if (poiSearch == null)
-//             throw new NullPointerException("PoiSearch object not found for nativeHandle");
-// 
-//         poiSearch.returnSearchResults(searchResults);
-//         m_nativeHandleToPoiSearch.remove(nativeHandle);
-//     }
+
+
+    @WorkerThread
+    public void notifyQueryComplete(final int routingQueryId, final boolean succeeded, final List<RoutingQueryResult> routingResults) {
+        RoutingQueryResponse response = new RoutingQueryResponse(succeeded, routingResults);
+        if (m_nativeHandleToRoutingQuery.get(routingQueryId) != null) {
+            returnQueryResponse(routingQueryId, response);
+        }
+    }
+
+    @WorkerThread
+    void returnQueryResponse(final int nativeHandle, final RoutingQueryResponse response) {
+        final RoutingQuery routingQuery = m_nativeHandleToRoutingQuery.get(nativeHandle);
+
+        if (routingQuery == null)
+            throw new NullPointerException("RoutingQuery object not found for nativeHandle");
+
+        routingQuery.returnQueryResponse(response);
+        m_nativeHandleToRoutingQuery.remove(nativeHandle);
+    }
 
 
     @UiThread

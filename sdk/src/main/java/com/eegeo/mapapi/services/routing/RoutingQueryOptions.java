@@ -22,7 +22,7 @@ public final class RoutingQueryOptions {
 
     
     private List<Waypoint> m_waypoints = new ArrayList<Waypoint>();
-//     private OnPoiSearchCompletedListener m_onPoiSearchCompletedListener = null;
+    private OnRoutingQueryCompletedListener m_onRoutingQueryCompletedListener = null;
 
     public RoutingQueryOptions addWaypoint(LatLng latLng) {
         m_waypoints.add(new Waypoint(latLng, false, 0));
@@ -38,13 +38,13 @@ public final class RoutingQueryOptions {
         return m_waypoints;
     }
 
-//     public RoutingQueryOptions onPoiSearchCompletedListener(OnPoiSearchCompletedListener onPoiSearchCompletedListener) {
-//         this.m_onPoiSearchCompletedListener = onPoiSearchCompletedListener;
-//         return this;
-//     }
-//
-//     OnPoiSearchCompletedListener getOnPoiSearchCompletedListener() {
-//         return m_onPoiSearchCompletedListener;
-//     }
+    public RoutingQueryOptions onRoutingQueryCompletedListener(OnRoutingQueryCompletedListener onRoutingQueryCompletedListener) {
+        this.m_onRoutingQueryCompletedListener = onRoutingQueryCompletedListener;
+        return this;
+    }
+
+    OnRoutingQueryCompletedListener getOnRoutingQueryCompletedListener() {
+        return m_onRoutingQueryCompletedListener;
+    }
 }
 
