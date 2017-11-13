@@ -57,11 +57,6 @@ public class PositionerApi {
     }
 
     @WorkerThread
-    void unregisterPositioner(Positioner positioner, Positioner.AllowHandleAccess allowHandleAccess) {
-        m_nativeHandleToPositioner.remove(positioner.getNativeHandle(allowHandleAccess));
-    }
-
-    @WorkerThread
     int createPositioner(PositionerOptions positionerOptions, Positioner.AllowHandleAccess allowHandleAccess) throws InvalidParameterException {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Positioner");
@@ -86,9 +81,12 @@ public class PositionerApi {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Positioner");
 
-        nativeDestroyPositioner(
-                m_jniEegeoMapApiPtr,
-                positioner.getNativeHandle(allowHandleAccess));
+        final int nativeHandle = positioner.getNativeHandle(allowHandleAccess);
+
+        if (m_nativeHandleToPositioner.get(nativeHandle) != null) {
+            nativeDestroyPositioner(m_jniEegeoMapApiPtr, nativeHandle);
+            m_nativeHandleToPositioner.remove(nativeHandle);
+        }
     }
 
     @WorkerThread

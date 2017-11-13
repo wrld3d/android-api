@@ -44,11 +44,6 @@ public class MarkerApi {
         m_nativeHandleToMarker.put(marker.getNativeHandle(allowHandleAccess), marker);
     }
 
-    @WorkerThread
-    public void unregisterMarker(Marker marker, Marker.AllowHandleAccess allowHandleAccess) {
-        m_nativeHandleToMarker.remove(marker.getNativeHandle(allowHandleAccess));
-    }
-
     @UiThread
     public void addMarkerClickListener(OnMarkerClickListener listener) {
         m_onMarkerClickListeners.add(listener);
@@ -88,9 +83,12 @@ public class MarkerApi {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Marker");
 
-        nativeDestroyMarker(
-                m_jniEegeoMapApiPtr,
-                marker.getNativeHandle(allowHandleAccess));
+        final int nativeHandle = marker.getNativeHandle(allowHandleAccess);
+
+        if (m_nativeHandleToMarker.get(nativeHandle) != null) {
+            nativeDestroyMarker(m_jniEegeoMapApiPtr,nativeHandle);
+            m_nativeHandleToMarker.remove(nativeHandle);
+        }
     }
 
     @WorkerThread

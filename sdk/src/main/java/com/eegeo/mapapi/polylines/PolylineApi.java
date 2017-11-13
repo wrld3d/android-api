@@ -42,11 +42,6 @@ public class PolylineApi {
         m_nativeHandleToPolyline.put(polyline.getNativeHandle(allowHandleAccess), polyline);
     }
 
-    @WorkerThread
-    public void unregister(Polyline polyline, Polyline.AllowHandleAccess allowHandleAccess) {
-        m_nativeHandleToPolyline.remove(polyline.getNativeHandle(allowHandleAccess));
-    }
-
     private double[] pointsToArray(List<LatLng> points) {
         final int pointCount = points.size();
         double[] coords = new double[pointCount * 2];
@@ -85,9 +80,12 @@ public class PolylineApi {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Polyline");
 
-        nativeDestroyPolyline(
-                m_jniEegeoMapApiPtr,
-                polyline.getNativeHandle(allowHandleAccess));
+        final int nativeHandle = polyline.getNativeHandle(allowHandleAccess);
+
+        if (m_nativeHandleToPolyline.get(nativeHandle) != null) {
+            nativeDestroyPolyline(m_jniEegeoMapApiPtr, nativeHandle);
+            m_nativeHandleToPolyline.remove(nativeHandle);
+        }
     }
 
     @WorkerThread

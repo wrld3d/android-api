@@ -201,7 +201,6 @@ public class Polygon extends NativeApiObject {
             @Override
             public void run() {
                 m_polygonApi.destroy(Polygon.this, Polygon.m_allowHandleAccess);
-                m_polygonApi.unregister(Polygon.this, Polygon.m_allowHandleAccess);
             }
         });
 

@@ -275,7 +275,6 @@ public class Positioner extends NativeApiObject {
             @Override
             public void run() {
                 m_positionerApi.destroy(Positioner.this, Positioner.m_allowHandleAccess);
-                m_positionerApi.unregisterPositioner(Positioner.this, Positioner.m_allowHandleAccess);
             }
         });
 
