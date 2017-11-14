@@ -43,6 +43,9 @@ import com.eegeo.mapapi.polygons.PolygonOptions;
 import com.eegeo.mapapi.polylines.Polyline;
 import com.eegeo.mapapi.polylines.PolylineApi;
 import com.eegeo.mapapi.polylines.PolylineOptions;
+import com.eegeo.mapapi.services.mapscene.Mapscene;
+import com.eegeo.mapapi.services.mapscene.MapsceneApi;
+import com.eegeo.mapapi.services.mapscene.MapsceneService;
 import com.eegeo.mapapi.services.poi.PoiApi;
 import com.eegeo.mapapi.services.poi.PoiService;
 import com.eegeo.mapapi.services.poi.PoiSearchResult;
@@ -86,6 +89,7 @@ public final class EegeoMap {
     private BuildingsApi m_buildingsApi;
     private PickingApi m_pickingApi;
     private PoiApi m_poiApi;
+    private MapsceneApi m_mapsceneApi;
     private RenderingApi m_renderingApi;
     private RenderingState m_renderingState;
     private BlueSphere m_blueSphere = null;
@@ -112,6 +116,7 @@ public final class EegeoMap {
         this.m_buildingsApi = new BuildingsApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_pickingApi = new PickingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_poiApi = new PoiApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_mapsceneApi = new MapsceneApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_renderingApi = new RenderingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         boolean mapCollapsed = false;
         this.m_renderingState = new RenderingState(m_renderingApi, m_allowApiAccess, mapCollapsed);
@@ -825,6 +830,16 @@ public final class EegeoMap {
     }
 
     /**
+     * Creates and returns a MapsceneService for this map.
+     *
+     * @return A new MapsceneService object.
+     */
+    public MapsceneService createMapsceneService() {
+        MapsceneService mapsceneService = new MapsceneService(m_mapsceneApi);
+        return mapsceneService;
+    }
+
+    /**
      * Sets whether the map view should display with vertical scaling applied so that terrain and
      * other map features appear flattened.
      */
@@ -871,6 +886,11 @@ public final class EegeoMap {
     @WorkerThread
     private void jniOnPoiSearchCompleted(final int poiSearchId, final boolean succeeded, final List<PoiSearchResult> searchResults) {
         m_poiApi.notifySearchComplete(poiSearchId, succeeded, searchResults);
+    }
+
+    @WorkerThread
+    private void jniOnMapsceneRequestCompleted(final int mapsceneRequestId, final boolean succeeded, final Mapscene mapscene) {
+        m_mapsceneApi.notifyRequestComplete(mapsceneRequestId, succeeded, mapscene);
     }
 
     @WorkerThread
