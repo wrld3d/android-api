@@ -17,16 +17,21 @@ public class MapsceneApi {
     private IUiMessageRunner m_uiRunner;
     private long m_jniEegeoMapApiPtr;
     private SparseArray<MapsceneRequest> m_nativeHandleToMapsceneRequest = new SparseArray<>();
+    private MapsceneApplier m_mapsceneApplier;
 
     public MapsceneApi(INativeMessageRunner nativeRunner, IUiMessageRunner uiRunner, long jniEegeoMapApiPtr) {
         this.m_nativeRunner = nativeRunner;
         this.m_uiRunner = uiRunner;
         this.m_jniEegeoMapApiPtr = jniEegeoMapApiPtr;
+        this.m_mapsceneApplier = null;
     }
 
     @UiThread
     public MapsceneRequest requestMapscene(final MapsceneRequestOptions options) {
-        MapsceneRequest request = new MapsceneRequest(this, options.getOnMapsceneRequestCompletedListener(),
+        MapsceneRequest request = new MapsceneRequest(
+                this,
+                options.getApplyOnLoad(),
+                options.getOnMapsceneRequestCompletedListener(),
                 new Callable<Integer>() {
                     @WorkerThread
                     @Override
@@ -63,10 +68,22 @@ public class MapsceneApi {
         if (mapsceneRequest == null)
             throw new NullPointerException("MapsceneRequest object not found for nativeHandle");
 
-        mapsceneRequest.returnResponse(response);
+        m_uiRunner.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(response.succeeded() &&
+                   mapsceneRequest.shouldApplyOnLoad() &&
+                   m_mapsceneApplier != null)
+                {
+                    m_mapsceneApplier.ApplyMapscene(response.getMapscene());
+                }
+
+                mapsceneRequest.returnResponse(response);
+            }
+        });
+
         m_nativeHandleToMapsceneRequest.remove(nativeHandle);
     }
-
 
     @UiThread
     INativeMessageRunner getNativeRunner() {
@@ -101,4 +118,9 @@ public class MapsceneApi {
             );
 
     private native void nativeCancelRequest(long jniEegeoMapApiPtr, int requestNativeHandle);
+
+    public void setMapsceneApplier(MapsceneApplier mapsceneApplier)
+    {
+        m_mapsceneApplier = mapsceneApplier;
+    }
 }

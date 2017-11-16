@@ -2,6 +2,7 @@ package com.eegeo.mapapi.services.mapscene;
 
 import android.support.annotation.UiThread;
 
+import com.eegeo.mapapi.EegeoMap;
 import com.eegeo.mapapi.services.poi.PoiSearch;
 import com.eegeo.mapapi.services.poi.TextSearchOptions;
 
@@ -16,13 +17,17 @@ import com.eegeo.mapapi.services.poi.TextSearchOptions;
 public class MapsceneService {
 
     private MapsceneApi m_mapsceneApi;
+    private MapsceneApplier m_mapsceneApplier;
 
     /**
      * @eegeo.internal
      */
-    public MapsceneService(MapsceneApi mapsceneApi)
+    public MapsceneService(MapsceneApi mapsceneApi, EegeoMap map)
     {
         this.m_mapsceneApi = mapsceneApi;
+
+        this.m_mapsceneApplier = new MapsceneApplier(map);
+        this.m_mapsceneApi.setMapsceneApplier(m_mapsceneApplier);
     }
 
     /**

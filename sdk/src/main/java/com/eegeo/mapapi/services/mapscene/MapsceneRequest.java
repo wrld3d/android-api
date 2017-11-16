@@ -14,13 +14,18 @@ import java.util.concurrent.Callable;
 public class MapsceneRequest extends NativeApiObject {
 
     private MapsceneApi m_mapsceneApi;
+    private final boolean m_applyOnLoad;
     private OnMapsceneRequestCompletedListener m_callback = null;
 
     @UiThread
-    MapsceneRequest(final MapsceneApi mapsceneApi, OnMapsceneRequestCompletedListener callback, Callable<Integer> beginSearchCallable) {
+    MapsceneRequest(final MapsceneApi mapsceneApi,
+                    final boolean applyOnLoad,
+                    OnMapsceneRequestCompletedListener callback,
+                    Callable<Integer> beginSearchCallable) {
         super(mapsceneApi.getNativeRunner(), mapsceneApi.getUiRunner(), beginSearchCallable);
 
         m_mapsceneApi = mapsceneApi;
+        m_applyOnLoad = applyOnLoad;
         m_callback = callback;
 
         submit(new Runnable() {
@@ -30,6 +35,11 @@ public class MapsceneRequest extends NativeApiObject {
                 m_mapsceneApi.register(MapsceneRequest.this, getNativeHandle());
             }
         });
+    }
+
+    public boolean shouldApplyOnLoad()
+    {
+        return m_applyOnLoad;
     }
 
     /**
@@ -45,6 +55,7 @@ public class MapsceneRequest extends NativeApiObject {
         });
     }
 
+    @UiThread
     void returnResponse(MapsceneRequestResponse mapsceneResponse) {
         if (m_callback != null) {
             m_callback.onMapsceneRequestCompleted(mapsceneResponse);

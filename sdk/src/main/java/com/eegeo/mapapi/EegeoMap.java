@@ -835,7 +835,7 @@ public final class EegeoMap {
      * @return A new MapsceneService object.
      */
     public MapsceneService createMapsceneService() {
-        MapsceneService mapsceneService = new MapsceneService(m_mapsceneApi);
+        MapsceneService mapsceneService = new MapsceneService(m_mapsceneApi, this);
         return mapsceneService;
     }
 

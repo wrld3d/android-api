@@ -37,18 +37,26 @@ public class MapsceneStartLocation
      */
     public final int startLocationIndoorMapFloorIndex;
 
+    /**
+     * An optional flag to specify if you want to try starting the map at the Device's GPS
+     * position.  Only applicable to mobile devices.
+     */
+    public final boolean tryStartAtGpsLocation;
+
     @UiThread
     MapsceneStartLocation(
             LatLngAlt startLocation,
             float bearing,
             float distanceToInterest,
             String indoorMapId,
-            int indoorMapFloorIndex)
+            int indoorMapFloorIndex,
+            boolean tryStartAtGpsLocation)
     {
         this.startLocation = startLocation;
         this.startLocationBearing = bearing;
         this.startLocationDistanceToInterest = distanceToInterest;
         this.startLocationIndoorMapId = indoorMapId;
         this.startLocationIndoorMapFloorIndex = indoorMapFloorIndex;
+        this.tryStartAtGpsLocation = tryStartAtGpsLocation;
     }
 }
