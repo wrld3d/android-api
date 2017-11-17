@@ -60,8 +60,8 @@ public class RoutingApi {
 
 
     @WorkerThread
-    public void notifyQueryComplete(final int routingQueryId, final boolean succeeded, final List<RoutingQueryResult> routingResults) {
-        RoutingQueryResponse response = new RoutingQueryResponse(succeeded, routingResults);
+    public void notifyQueryComplete(final int routingQueryId, final boolean succeeded, final List<Route> routingResults) {
+        RoutingQueryResponse response = new RoutingQueryResponse(succeeded, new RoutingResults(routingResults));
         if (m_nativeHandleToRoutingQuery.get(routingQueryId) != null) {
             returnQueryResponse(routingQueryId, response);
         }
@@ -89,7 +89,7 @@ public class RoutingApi {
         return m_uiRunner;
     }
 
-    
+
     @WorkerThread
     private native int nativeFindRoute(
             long jniEegeoMapApiPtr,

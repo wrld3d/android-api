@@ -1,7 +1,5 @@
 package com.eegeo.mapapi.services.routing;
 
-import java.util.List;
-
 
 /**
  * A response to a routing query. Returned when a routing query completes via callback.
@@ -9,10 +7,10 @@ import java.util.List;
 public class RoutingQueryResponse {
 
     boolean m_succeeded;
-    List<RoutingQueryResult> m_results;
+    RoutingResults m_results;
 
 
-    RoutingQueryResponse(boolean succeeded, List<RoutingQueryResult> results) {
+    RoutingQueryResponse(boolean succeeded, RoutingResults results) {
         this.m_succeeded = succeeded;
         this.m_results = results;
     }
@@ -26,9 +24,9 @@ public class RoutingQueryResponse {
 
     /**
      * Get the results of the query as a List of RoutingQueryResult objects.
-     * @return The query results. This will be empty if the search failed, or if no routes were found.
+     * @return The query results.
      */
-    public List<RoutingQueryResult> getResults() {
+    public RoutingResults getResults() {
         return m_results;
     }
 }
