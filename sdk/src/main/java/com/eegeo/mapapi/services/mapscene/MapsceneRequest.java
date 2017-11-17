@@ -21,8 +21,8 @@ public class MapsceneRequest extends NativeApiObject {
     MapsceneRequest(final MapsceneApi mapsceneApi,
                     final boolean applyOnLoad,
                     OnMapsceneRequestCompletedListener callback,
-                    Callable<Integer> beginSearchCallable) {
-        super(mapsceneApi.getNativeRunner(), mapsceneApi.getUiRunner(), beginSearchCallable);
+                    Callable<Integer> beginRequestCallable) {
+        super(mapsceneApi.getNativeRunner(), mapsceneApi.getUiRunner(), beginRequestCallable);
 
         m_mapsceneApi = mapsceneApi;
         m_applyOnLoad = applyOnLoad;

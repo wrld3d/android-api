@@ -39,7 +39,7 @@ public class MapsceneStartLocation
 
     /**
      * An optional flag to specify if you want to try starting the map at the Device's GPS
-     * position.  Only applicable to mobile devices.
+     * position.  Only currently applicable to mobile devices via the Wrld App.
      */
     public final boolean tryStartAtGpsLocation;
 
