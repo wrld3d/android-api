@@ -6,7 +6,6 @@ import android.util.SparseArray;
 
 import com.eegeo.mapapi.INativeMessageRunner;
 import com.eegeo.mapapi.IUiMessageRunner;
-import com.eegeo.mapapi.services.poi.MapsceneRequestResponse;
 
 import java.util.concurrent.Callable;
 

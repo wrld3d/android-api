@@ -2,8 +2,6 @@ package com.eegeo.mapapi.services.mapscene;
 
 import android.support.annotation.UiThread;
 
-import com.eegeo.mapapi.services.poi.MapsceneRequestResponse;
-
 
 /**
  * A listener interface for receiving the result of a completed Mapscene request.

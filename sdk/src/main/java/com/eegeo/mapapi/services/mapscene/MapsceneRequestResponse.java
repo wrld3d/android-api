@@ -1,4 +1,4 @@
-package com.eegeo.mapapi.services.poi;
+package com.eegeo.mapapi.services.mapscene;
 
 import com.eegeo.mapapi.services.mapscene.Mapscene;
 

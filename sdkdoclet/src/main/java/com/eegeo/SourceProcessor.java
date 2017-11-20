@@ -61,7 +61,17 @@ public class SourceProcessor extends Doclet {
             "PoiSearchResult",
             "TextSearchOptions",
             "TagSearchOptions",
-            "AutocompleteOptions"
+            "AutocompleteOptions,",
+            "MapsceneService",
+            "MapsceneRequest",
+            "OnMapsceneRequestCompletedListener",
+            "MapsceneRequestOptions",
+            "MapsceneRequestResponse",
+            "Mapscene",
+            "MapsceneStartLocation",
+            "MapsceneDataSources",
+            "MapsceneSearchConfig"
+
     );
     // Would be nicer to extract this list automatically, but that would require two passes
     private static List<String> subClasses = Arrays.asList(

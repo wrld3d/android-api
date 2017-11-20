@@ -3,7 +3,6 @@ package com.eegeo.mapapi.services.mapscene;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 
-import com.eegeo.mapapi.services.poi.MapsceneRequestResponse;
 import com.eegeo.mapapi.util.NativeApiObject;
 
 import java.util.concurrent.Callable;
