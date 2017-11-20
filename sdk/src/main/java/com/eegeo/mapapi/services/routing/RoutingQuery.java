@@ -9,6 +9,9 @@ import android.util.Log;
 import com.eegeo.mapapi.util.NativeApiObject;
 
 
+/**
+ * A handle to an ongoing routing service query.
+ */
 public class RoutingQuery extends NativeApiObject {
 
     private RoutingApi m_routingApi;
@@ -39,6 +42,9 @@ public class RoutingQuery extends NativeApiObject {
         });
     }
 
+    /**
+     * Cancels the current query if it has not yet been completed.
+     */
     @UiThread
     public void cancel() {
         submit(new Runnable() {
