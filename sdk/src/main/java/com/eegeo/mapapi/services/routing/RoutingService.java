@@ -15,7 +15,7 @@ public class RoutingService {
     }
 
     @UiThread
-    public RoutingQuery findRoute(RoutingQueryOptions options) {
+    public RoutingQuery findRoutes(RoutingQueryOptions options) {
         return new RoutingQuery(m_routingApi, options);
     }
 }

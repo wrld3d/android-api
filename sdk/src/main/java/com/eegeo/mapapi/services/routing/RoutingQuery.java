@@ -39,16 +39,17 @@ public class RoutingQuery extends NativeApiObject {
         });
     }
 
-//     @UiThread
-//     public void cancel() {
-//         submit(new Runnable() {
-//             @WorkerThread
-//             public void run() {
-//                 m_poiApi.cancelSearch(getNativeHandle());
-//             }
-//         });
-//     }
+    @UiThread
+    public void cancel() {
+        submit(new Runnable() {
+            @WorkerThread
+            public void run() {
+                m_routingApi.cancelQuery(getNativeHandle());
+            }
+        });
+    }
 
+    @UiThread
     void returnQueryResponse(RoutingQueryResponse response) {
         if (m_callback != null) {
             m_callback.onRoutingQueryCompleted(response);

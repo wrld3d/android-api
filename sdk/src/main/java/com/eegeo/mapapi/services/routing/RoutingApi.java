@@ -44,9 +44,14 @@ public class RoutingApi {
             floorNumbers[i] = waypoints.get(i).floorNumber;
         }
 
-        return nativeFindRoute(m_jniEegeoMapApiPtr, count, latitudes, longitudes, isIndoors, floorNumbers);
+        return nativeBeginRoutingQuery(m_jniEegeoMapApiPtr, count, latitudes, longitudes, isIndoors, floorNumbers);
     }
 
+    @WorkerThread
+    void cancelQuery(final int nativeHandle) {
+        nativeCancelRoutingQuery(m_jniEegeoMapApiPtr, nativeHandle);
+        m_nativeHandleToRoutingQuery.remove(nativeHandle);
+    }
 
     @WorkerThread
     void register(RoutingQuery routingQuery, int nativeHandle) {
@@ -74,7 +79,15 @@ public class RoutingApi {
         if (routingQuery == null)
             throw new NullPointerException("RoutingQuery object not found for nativeHandle");
 
-        routingQuery.returnQueryResponse(response);
+
+        m_uiRunner.runOnUiThread(new Runnable() {
+            @UiThread
+            @Override
+            public void run() {
+                routingQuery.returnQueryResponse(response);
+            }
+        });
+
         m_nativeHandleToRoutingQuery.remove(nativeHandle);
     }
 
@@ -91,12 +104,17 @@ public class RoutingApi {
 
 
     @WorkerThread
-    private native int nativeFindRoute(
+    private native int nativeBeginRoutingQuery(
             long jniEegeoMapApiPtr,
             int waypointCount,
             double[] latitudes,
             double[] longitudes,
             boolean[] isIndoors,
             int[] floorNumbers);
+
+    @WorkerThread
+    private native void nativeCancelRoutingQuery(
+            long jniEegeoMapApiPtr,
+            int routingQueryId);
 }
 
