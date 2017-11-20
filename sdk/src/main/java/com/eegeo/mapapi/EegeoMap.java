@@ -4,13 +4,12 @@ import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
-import android.util.Log;
 
 import com.eegeo.mapapi.bluesphere.BlueSphere;
 import com.eegeo.mapapi.bluesphere.BlueSphereApi;
 import com.eegeo.mapapi.buildings.BuildingHighlight;
-import com.eegeo.mapapi.buildings.BuildingsApi;
 import com.eegeo.mapapi.buildings.BuildingHighlightOptions;
+import com.eegeo.mapapi.buildings.BuildingsApi;
 import com.eegeo.mapapi.camera.CameraApiJniCalls;
 import com.eegeo.mapapi.camera.CameraPosition;
 import com.eegeo.mapapi.camera.CameraUpdate;
@@ -19,8 +18,6 @@ import com.eegeo.mapapi.camera.Projection;
 import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.geometry.LatLngAlt;
 import com.eegeo.mapapi.geometry.LatLngBounds;
-import com.eegeo.mapapi.geometry.MapFeatureType;
-import com.eegeo.mapapi.picking.PickResult;
 import com.eegeo.mapapi.indoors.ExpandFloorsJniCalls;
 import com.eegeo.mapapi.indoors.IndoorMap;
 import com.eegeo.mapapi.indoors.IndoorsApiJniCalls;
@@ -33,10 +30,7 @@ import com.eegeo.mapapi.markers.Marker;
 import com.eegeo.mapapi.markers.MarkerApi;
 import com.eegeo.mapapi.markers.MarkerOptions;
 import com.eegeo.mapapi.markers.OnMarkerClickListener;
-import com.eegeo.mapapi.positioner.Positioner;
-import com.eegeo.mapapi.positioner.PositionerApi;
-import com.eegeo.mapapi.positioner.PositionerOptions;
-import com.eegeo.mapapi.positioner.OnPositionerChangedListener;
+import com.eegeo.mapapi.picking.PickResult;
 import com.eegeo.mapapi.picking.PickingApi;
 import com.eegeo.mapapi.polygons.Polygon;
 import com.eegeo.mapapi.polygons.PolygonApi;
@@ -44,11 +38,18 @@ import com.eegeo.mapapi.polygons.PolygonOptions;
 import com.eegeo.mapapi.polylines.Polyline;
 import com.eegeo.mapapi.polylines.PolylineApi;
 import com.eegeo.mapapi.polylines.PolylineOptions;
+import com.eegeo.mapapi.positioner.OnPositionerChangedListener;
+import com.eegeo.mapapi.positioner.Positioner;
+import com.eegeo.mapapi.positioner.PositionerApi;
+import com.eegeo.mapapi.positioner.PositionerOptions;
 import com.eegeo.mapapi.rendering.RenderingApi;
 import com.eegeo.mapapi.rendering.RenderingState;
+import com.eegeo.mapapi.services.mapscene.Mapscene;
+import com.eegeo.mapapi.services.mapscene.MapsceneApi;
+import com.eegeo.mapapi.services.mapscene.MapsceneService;
 import com.eegeo.mapapi.services.poi.PoiApi;
-import com.eegeo.mapapi.services.poi.PoiService;
 import com.eegeo.mapapi.services.poi.PoiSearchResult;
+import com.eegeo.mapapi.services.poi.PoiService;
 import com.eegeo.mapapi.util.Callbacks;
 import com.eegeo.mapapi.util.Promise;
 import com.eegeo.mapapi.util.Ready;
@@ -89,6 +90,7 @@ public final class EegeoMap {
     private RenderingApi m_renderingApi;
     private RenderingState m_renderingState;
     private PoiApi m_poiApi;
+    private MapsceneApi m_mapsceneApi;
     private BlueSphere m_blueSphere = null;
 
 
@@ -116,6 +118,7 @@ public final class EegeoMap {
         boolean mapCollapsed = false;
         this.m_renderingState = new RenderingState(m_renderingApi, m_allowApiAccess, mapCollapsed);
         this.m_poiApi = new PoiApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_mapsceneApi = new MapsceneApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
 
     @WorkerThread
@@ -848,6 +851,16 @@ public final class EegeoMap {
     }
 
     /**
+     * Creates and returns a MapsceneService for this map.
+     *
+     * @return A new MapsceneService object.
+     */
+    public MapsceneService createMapsceneService() {
+        MapsceneService mapsceneService = new MapsceneService(m_mapsceneApi, this);
+        return mapsceneService;
+    }
+
+    /**
      * Register a listener to an event raised when a marker is tapped by the user.
      *
      * @param listener the listener to add
@@ -907,6 +920,10 @@ public final class EegeoMap {
         m_poiApi.notifySearchComplete(poiSearchId, succeeded, searchResults);
     }
 
+    @WorkerThread
+    private void jniOnMapsceneRequestCompleted(final int mapsceneRequestId, final boolean succeeded, final Mapscene mapscene) {
+        m_mapsceneApi.notifyRequestComplete(mapsceneRequestId, succeeded, mapscene);
+    }
 
     /**
      * Registers a listener to an event raised when the initial map scene has completed streaming all resources
