@@ -65,8 +65,7 @@ public class RoutingApi {
 
 
     @WorkerThread
-    public void notifyQueryComplete(final int routingQueryId, final boolean succeeded, final List<Route> routingResults) {
-        RoutingQueryResponse response = new RoutingQueryResponse(succeeded, new RoutingResults(routingResults));
+    public void notifyQueryComplete(final int routingQueryId, final RoutingQueryResponse response) {
         if (m_nativeHandleToRoutingQuery.get(routingQueryId) != null) {
             returnQueryResponse(routingQueryId, response);
         }

@@ -49,7 +49,7 @@ import com.eegeo.mapapi.rendering.RenderingState;
 import com.eegeo.mapapi.services.poi.PoiApi;
 import com.eegeo.mapapi.services.poi.PoiService;
 import com.eegeo.mapapi.services.poi.PoiSearchResult;
-import com.eegeo.mapapi.services.routing.Route;
+import com.eegeo.mapapi.services.routing.RoutingQueryResponse;
 import com.eegeo.mapapi.services.routing.RoutingApi;
 import com.eegeo.mapapi.services.routing.RoutingService;
 import com.eegeo.mapapi.util.Callbacks;
@@ -922,8 +922,8 @@ public final class EegeoMap {
     }
 
     @WorkerThread
-    private void jniOnRoutingQueryCompleted(final int routingQueryId, final boolean succeeded, final List<Route> routingResults) {
-        m_routingApi.notifyQueryComplete(routingQueryId, succeeded, routingResults);
+    private void jniOnRoutingQueryCompleted(final int routingQueryId, RoutingQueryResponse response) {
+        m_routingApi.notifyQueryComplete(routingQueryId, response);
     }
 
 

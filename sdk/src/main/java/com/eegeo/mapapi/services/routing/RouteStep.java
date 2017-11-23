@@ -8,7 +8,7 @@ public class RouteStep {
 
     public final List<LatLng> path;
     public final RouteDirections directions;
-    public final String mode;
+    public final TransportationMode mode;
     public final boolean isIndoors;
     public final String indoorId;
     public final int floorIndex;
@@ -18,7 +18,7 @@ public class RouteStep {
     RouteStep(
             final List<LatLng> path,
             final RouteDirections directions,
-            final String mode,
+            final TransportationMode mode,
             final boolean isIndoors,
             final String indoorId,
             final int floorIndex,
