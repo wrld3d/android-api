@@ -26,6 +26,8 @@ public class RoutingService {
      * Asynchronously query the routing service.
      *
      * The results of the query will be passed as a RoutingResults object to the callback provided in the options.
+     *
+     * @param options The parameters of the routing query.
      */
     @UiThread
     public RoutingQuery findRoutes(RoutingQueryOptions options) {

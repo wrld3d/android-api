@@ -65,7 +65,7 @@ public class SourceProcessor extends Doclet {
             "RoutingService",
             "RoutingQuery",
             "OnRoutingQueryCompletedListener",
-            "RoutingResults",
+            "RoutingQueryResponse",
             "Route",
             "RouteSection",
             "RouteStep",
