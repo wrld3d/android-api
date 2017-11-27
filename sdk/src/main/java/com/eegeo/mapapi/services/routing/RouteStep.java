@@ -10,7 +10,7 @@ import java.util.List;
 public class RouteStep {
 
     /**
-     * A List of the individual LatLng points that make up this step.
+     * A List of the individual LatLng points that make up this step. This can be a single point if no distance was covered, for example a RouteStep may indicate departure or arrival with a single point.
      */
     public final List<LatLng> path;
 
@@ -35,9 +35,9 @@ public class RouteStep {
     public final String indoorId;
 
     /**
-     * If indoors, the index of the floor this step is on.
+     * If indoors, the ID of the floor this step is on.
      */
-    public final int floorIndex;
+    public final int indoorFloorId;
 
     /**
      * The estimated time this step will take to travel in seconds.
@@ -55,7 +55,7 @@ public class RouteStep {
             final TransportationMode mode,
             final boolean isIndoors,
             final String indoorId,
-            final int floorIndex,
+            final int indoorFloorId,
             final double duration,
             final double distance)
     {
@@ -64,7 +64,7 @@ public class RouteStep {
         this.mode = mode;
         this.isIndoors = isIndoors;
         this.indoorId = indoorId;
-        this.floorIndex = floorIndex;
+        this.indoorFloorId = indoorFloorId;
         this.duration = duration;
         this.distance = distance;
     }
