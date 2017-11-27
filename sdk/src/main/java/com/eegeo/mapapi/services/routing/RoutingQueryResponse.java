@@ -25,8 +25,8 @@ public class RoutingQueryResponse {
     }
 
     /**
-     * Get the results of the query. Each route passes through all given waypoints with the first route being the shortest.
-     * @return The query results as a List of Route objects.
+     * Get the results of the query as a List of Route objects. Each route passes through all given waypoints with the first route being the shortest.
+     * @return The query results.
      */
     public List<Route> getResults() {
         return m_results;
