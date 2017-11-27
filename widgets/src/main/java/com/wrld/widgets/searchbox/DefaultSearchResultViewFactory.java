@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.wrld.widgets.R;
 
-class DefaultSearchResultViewFactory implements SearchResultViewFactory {
+public class DefaultSearchResultViewFactory implements SearchResultViewFactory {
 
     private int m_layoutId;
 

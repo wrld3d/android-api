@@ -1,6 +1,7 @@
 include ':sdk'
 include ':widgets'
 include ':sdkdoclet'
+include ':searchproviders'
 project(':sdk').projectDir = new File('sdk')
 project(':widgets').projectDir = new File('widgets')
-
+project(':searchproviders').projectDir = new File('searchproviders')

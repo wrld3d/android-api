@@ -131,7 +131,9 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
     public void showSuggestions(boolean flag) {
         if(m_suggestionsOn != flag) {
             m_suggestionsOn = flag;
-            refresh();
+            if(flag) {
+                refresh();
+            }
         }
 
         int displayControls = m_suggestionsOn ? View.GONE : View.VISIBLE;

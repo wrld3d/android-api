@@ -1,16 +1,15 @@
 // Copyright Wrld3d Ltd (2012-2017), All Rights Reserved
 package com.wrld.widgets.searchbox;
 
-import android.graphics.drawable.Icon;
 import java.util.HashMap;
 
-class DefaultSearchResult implements SearchResult {
+public class DefaultSearchResult implements SearchResult {
 
     private String m_title;
 
     private HashMap<String, SearchResultProperty> m_additionalProperties;
 
-    DefaultSearchResult(String title, SearchResultProperty... additionalProperties) {
+    public DefaultSearchResult(String title, SearchResultProperty... additionalProperties) {
         m_title = title;
 
         m_additionalProperties = new HashMap<String, SearchResultProperty>();
