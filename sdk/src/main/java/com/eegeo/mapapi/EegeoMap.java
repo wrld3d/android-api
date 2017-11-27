@@ -4,13 +4,12 @@ import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
-import android.util.Log;
 
 import com.eegeo.mapapi.bluesphere.BlueSphere;
 import com.eegeo.mapapi.bluesphere.BlueSphereApi;
 import com.eegeo.mapapi.buildings.BuildingHighlight;
-import com.eegeo.mapapi.buildings.BuildingsApi;
 import com.eegeo.mapapi.buildings.BuildingHighlightOptions;
+import com.eegeo.mapapi.buildings.BuildingsApi;
 import com.eegeo.mapapi.camera.CameraApiJniCalls;
 import com.eegeo.mapapi.camera.CameraPosition;
 import com.eegeo.mapapi.camera.CameraUpdate;
@@ -19,8 +18,6 @@ import com.eegeo.mapapi.camera.Projection;
 import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.geometry.LatLngAlt;
 import com.eegeo.mapapi.geometry.LatLngBounds;
-import com.eegeo.mapapi.geometry.MapFeatureType;
-import com.eegeo.mapapi.picking.PickResult;
 import com.eegeo.mapapi.indoors.ExpandFloorsJniCalls;
 import com.eegeo.mapapi.indoors.IndoorMap;
 import com.eegeo.mapapi.indoors.IndoorsApiJniCalls;
@@ -33,9 +30,7 @@ import com.eegeo.mapapi.markers.Marker;
 import com.eegeo.mapapi.markers.MarkerApi;
 import com.eegeo.mapapi.markers.MarkerOptions;
 import com.eegeo.mapapi.markers.OnMarkerClickListener;
-import com.eegeo.mapapi.positioner.Positioner;
-import com.eegeo.mapapi.positioner.PositionerApi;
-import com.eegeo.mapapi.positioner.PositionerOptions;
+import com.eegeo.mapapi.picking.PickResult;
 import com.eegeo.mapapi.picking.PickingApi;
 import com.eegeo.mapapi.polygons.Polygon;
 import com.eegeo.mapapi.polygons.PolygonApi;
@@ -43,8 +38,18 @@ import com.eegeo.mapapi.polygons.PolygonOptions;
 import com.eegeo.mapapi.polylines.Polyline;
 import com.eegeo.mapapi.polylines.PolylineApi;
 import com.eegeo.mapapi.polylines.PolylineOptions;
+import com.eegeo.mapapi.positioner.OnPositionerChangedListener;
+import com.eegeo.mapapi.positioner.Positioner;
+import com.eegeo.mapapi.positioner.PositionerApi;
+import com.eegeo.mapapi.positioner.PositionerOptions;
 import com.eegeo.mapapi.rendering.RenderingApi;
 import com.eegeo.mapapi.rendering.RenderingState;
+import com.eegeo.mapapi.services.mapscene.Mapscene;
+import com.eegeo.mapapi.services.mapscene.MapsceneApi;
+import com.eegeo.mapapi.services.mapscene.MapsceneService;
+import com.eegeo.mapapi.services.poi.PoiApi;
+import com.eegeo.mapapi.services.poi.PoiSearchResult;
+import com.eegeo.mapapi.services.poi.PoiService;
 import com.eegeo.mapapi.util.Callbacks;
 import com.eegeo.mapapi.util.Promise;
 import com.eegeo.mapapi.util.Ready;
@@ -84,6 +89,8 @@ public final class EegeoMap {
     private PickingApi m_pickingApi;
     private RenderingApi m_renderingApi;
     private RenderingState m_renderingState;
+    private PoiApi m_poiApi;
+    private MapsceneApi m_mapsceneApi;
     private BlueSphere m_blueSphere = null;
 
 
@@ -110,6 +117,8 @@ public final class EegeoMap {
         this.m_renderingApi = new RenderingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         boolean mapCollapsed = false;
         this.m_renderingState = new RenderingState(m_renderingApi, m_allowApiAccess, mapCollapsed);
+        this.m_poiApi = new PoiApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_mapsceneApi = new MapsceneApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
 
     @WorkerThread
@@ -519,6 +528,16 @@ public final class EegeoMap {
         });
     }
 
+    @WorkerThread
+    private void jniOnIndoorEnterFailed() {
+        m_uiRunner.runOnUiThread(new Runnable() {
+            public void run() {
+                m_indoorMap = null;
+                m_currentIndoorFloor = -1;
+            }
+        });
+    }
+
     /**
      * Sets the current floor shown in an indoor map.
      *
@@ -823,6 +842,25 @@ public final class EegeoMap {
     }
 
     /**
+     * Creates and returns a PoiService for this map.
+     */
+    @UiThread
+    public PoiService createPoiService() {
+        PoiService poiService = new PoiService(m_poiApi);
+        return poiService;
+    }
+
+    /**
+     * Creates and returns a MapsceneService for this map.
+     *
+     * @return A new MapsceneService object.
+     */
+    public MapsceneService createMapsceneService() {
+        MapsceneService mapsceneService = new MapsceneService(m_mapsceneApi, this);
+        return mapsceneService;
+    }
+
+    /**
      * Register a listener to an event raised when a marker is tapped by the user.
      *
      * @param listener the listener to add
@@ -842,6 +880,26 @@ public final class EegeoMap {
         m_markerApi.removeMarkerClickListener(listener);
     }
 
+    /**
+     * Register a listener to an event raised when a Positioner object has changed position.
+     *
+     * @param listener the listener to add
+     */
+    @UiThread
+    public void addPositionerChangedListener(@NonNull OnPositionerChangedListener listener) {
+        m_positionerApi.addPositionerChangedListener(listener);
+    }
+
+    /**
+     * Unregister a listener to an event raised when a Positioner object has changed position.
+     *
+     * @param listener the listener to remove
+     */
+    @UiThread
+    public void removePositionerChangedListener(@NonNull OnPositionerChangedListener listener) {
+        m_positionerApi.removePositionerChangedListener(listener);
+    }
+
     @WorkerThread
     private void jniOnMarkerClicked(final int markerId) {
         m_markerApi.notifyMarkerClicked(markerId);
@@ -855,6 +913,16 @@ public final class EegeoMap {
     @WorkerThread
     private void jniOnPositionerProjectionChanged() {
         m_positionerApi.notifyProjectionChanged();
+    }
+
+    @WorkerThread
+    private void jniOnPoiSearchCompleted(final int poiSearchId, final boolean succeeded, final List<PoiSearchResult> searchResults) {
+        m_poiApi.notifySearchComplete(poiSearchId, succeeded, searchResults);
+    }
+
+    @WorkerThread
+    private void jniOnMapsceneRequestCompleted(final int mapsceneRequestId, final boolean succeeded, final Mapscene mapscene) {
+        m_mapsceneApi.notifyRequestComplete(mapsceneRequestId, succeeded, mapscene);
     }
 
     /**

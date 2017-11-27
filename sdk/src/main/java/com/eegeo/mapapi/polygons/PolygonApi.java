@@ -44,11 +44,6 @@ public class PolygonApi {
     }
 
     @WorkerThread
-    public void unregister(Polygon polygon, Polygon.AllowHandleAccess allowHandleAccess) {
-        m_nativeHandleToPolygon.remove(polygon.getNativeHandle(allowHandleAccess));
-    }
-
-    @WorkerThread
     public int create(PolygonOptions polygonOptions, Polygon.AllowHandleAccess allowHandleAccess) throws InvalidParameterException {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Polygon");
@@ -119,9 +114,12 @@ public class PolygonApi {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Polygon");
 
-        nativeDestroyPolygon(
-                m_jniEegeoMapApiPtr,
-                polygon.getNativeHandle(allowHandleAccess));
+        final int nativeHandle = polygon.getNativeHandle(allowHandleAccess);
+
+        if (m_nativeHandleToPolygon.get(nativeHandle) != null) {
+            nativeDestroyPolygon(m_jniEegeoMapApiPtr,nativeHandle);
+            m_nativeHandleToPolygon.remove(nativeHandle);
+        }
     }
 
     @WorkerThread

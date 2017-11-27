@@ -16,7 +16,6 @@ public final class PositionerOptions {
     private ElevationMode m_elevationMode = ElevationMode.HeightAboveGround;
     private String m_indoorMapId = "";
     private int m_indoorMapFloorId;
-    private OnPositionerChangedListener m_onPositionerChangedListener = null;
 
     /**
      * Instantiate a new set of positioner options
@@ -78,18 +77,6 @@ public final class PositionerOptions {
     }
 
     /**
-     * This method sets a listener object to obtain notification that a Positioner object created
-     * from these options has changed position.
-     *
-     * @return The PositionerOptions object on which the method was called, with the option set.
-     */
-    public PositionerOptions positionerChangedListener(OnPositionerChangedListener listener) {
-        m_onPositionerChangedListener = listener;
-        return this;
-    }
-
-
-    /**
      * @eegeo.internal
      */
     LatLng getPosition() {
@@ -123,9 +110,4 @@ public final class PositionerOptions {
     int getIndoorMapFloorId() {
         return m_indoorMapFloorId;
     }
-
-    /**
-     * @eegeo.internal
-     */
-    OnPositionerChangedListener getPositionerChangedListener() { return m_onPositionerChangedListener; }
 }

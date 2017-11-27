@@ -13,11 +13,13 @@ import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.geometry.LatLngAlt;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 
 public class PositionerApi {
     private INativeMessageRunner m_nativeRunner;
     private IUiMessageRunner m_uiRunner;
     private long m_jniEegeoMapApiPtr;
+    private ArrayList<OnPositionerChangedListener> m_onPositionerChangedListeners = new ArrayList<OnPositionerChangedListener>();
     private SparseArray<Positioner> m_nativeHandleToPositioner = new SparseArray<>();
 
 
@@ -39,14 +41,19 @@ public class PositionerApi {
         return m_uiRunner;
     }
 
-    @WorkerThread
-    void registerPositioner(Positioner positioner, Positioner.AllowHandleAccess allowHandleAccess) {
-        m_nativeHandleToPositioner.put(positioner.getNativeHandle(allowHandleAccess), positioner);
+    @UiThread
+    public void addPositionerChangedListener(OnPositionerChangedListener listener) {
+        m_onPositionerChangedListeners.add(listener);
+    }
+
+    @UiThread
+    public void removePositionerChangedListener(OnPositionerChangedListener listener) {
+        m_onPositionerChangedListeners.remove(listener);
     }
 
     @WorkerThread
-    void unregisterPositioner(Positioner positioner, Positioner.AllowHandleAccess allowHandleAccess) {
-        m_nativeHandleToPositioner.remove(positioner.getNativeHandle(allowHandleAccess));
+    void registerPositioner(Positioner positioner, Positioner.AllowHandleAccess allowHandleAccess) {
+        m_nativeHandleToPositioner.put(positioner.getNativeHandle(allowHandleAccess), positioner);
     }
 
     @WorkerThread
@@ -74,9 +81,12 @@ public class PositionerApi {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Positioner");
 
-        nativeDestroyPositioner(
-                m_jniEegeoMapApiPtr,
-                positioner.getNativeHandle(allowHandleAccess));
+        final int nativeHandle = positioner.getNativeHandle(allowHandleAccess);
+
+        if (m_nativeHandleToPositioner.get(nativeHandle) != null) {
+            nativeDestroyPositioner(m_jniEegeoMapApiPtr, nativeHandle);
+            m_nativeHandleToPositioner.remove(nativeHandle);
+        }
     }
 
     @WorkerThread
@@ -114,6 +124,9 @@ public class PositionerApi {
                 @Override
                 public void run() {
                     positioner.setProjectedState(screenPoint, transformedPoint, isBehindGlobeHorizon);
+                    for (OnPositionerChangedListener listener : m_onPositionerChangedListeners) {
+                        listener.onPositionerChanged(positioner);
+                    }
                 }
             });
         }

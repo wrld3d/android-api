@@ -46,11 +46,6 @@ public class BuildingsApi {
     }
 
     @WorkerThread
-    public void unregister(BuildingHighlight buildingHighlight, BuildingHighlight.AllowHandleAccess allowHandleAccess) {
-        m_nativeHandleToBuildingHighlight.remove(buildingHighlight.getNativeHandle(allowHandleAccess));
-    }
-
-    @WorkerThread
     public int create(BuildingHighlightOptions buildingHighlightOptions, BuildingHighlight.AllowHandleAccess allowHandleAccess) throws InvalidParameterException {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by BuildingHighlight");
@@ -77,9 +72,12 @@ public class BuildingsApi {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by BuildingHighlight");
 
-        nativeDestroyBuildingHighlight(
-                m_jniEegeoMapApiPtr,
-                buildingHighlight.getNativeHandle(allowHandleAccess));
+        final int nativeHandle = buildingHighlight.getNativeHandle(allowHandleAccess);
+
+        if (m_nativeHandleToBuildingHighlight.get(nativeHandle) != null) {
+            nativeDestroyBuildingHighlight(m_jniEegeoMapApiPtr, nativeHandle);
+            m_nativeHandleToBuildingHighlight.remove(nativeHandle);
+        }
     }
 
     @WorkerThread

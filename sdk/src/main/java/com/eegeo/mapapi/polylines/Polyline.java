@@ -237,7 +237,6 @@ public class Polyline extends NativeApiObject {
             @Override
             public void run() {
                 m_polylineApi.destroy(Polyline.this, Polyline.m_allowHandleAccess);
-                m_polylineApi.unregister(Polyline.this, Polyline.m_allowHandleAccess);
             }
         });
 

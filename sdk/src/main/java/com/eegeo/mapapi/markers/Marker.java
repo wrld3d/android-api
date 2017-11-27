@@ -329,7 +329,6 @@ public class Marker extends NativeApiObject {
             @Override
             public void run() {
                 m_markerApi.destroy(Marker.this, Marker.m_allowHandleAccess);
-                m_markerApi.unregisterMarker(Marker.this, Marker.m_allowHandleAccess);
             }
         });
 

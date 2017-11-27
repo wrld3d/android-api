@@ -91,7 +91,6 @@ public class BuildingHighlight extends NativeApiObject {
             @Override
             public void run() {
                 m_buildingsApi.destroy(BuildingHighlight.this, BuildingHighlight.m_allowHandleAccess);
-                m_buildingsApi.unregister(BuildingHighlight.this, BuildingHighlight.m_allowHandleAccess);
             }
         });
 
