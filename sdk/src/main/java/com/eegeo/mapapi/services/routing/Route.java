@@ -14,12 +14,12 @@ public class Route {
     public final List<RouteSection> sections;
 
     /**
-     * The estimated time this route will take to travel.
+     * The estimated time this route will take to travel in seconds.
      */
     public final double duration;
 
     /**
-     * The estimated distance this route covers.
+     * The estimated distance this route covers in meters.
      */
     public final double distance;
 

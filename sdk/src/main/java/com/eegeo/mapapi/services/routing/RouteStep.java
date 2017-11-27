@@ -40,12 +40,12 @@ public class RouteStep {
     public final int floorIndex;
 
     /**
-     * The estimated time this step will take to travel.
+     * The estimated time this step will take to travel in seconds.
      */
     public final double duration;
 
     /**
-     * The estimated distance this step covers.
+     * The estimated distance this step covers in meters.
      */
     public final double distance;
 

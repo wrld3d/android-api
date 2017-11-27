@@ -14,12 +14,12 @@ public class RouteSection {
     public final List<RouteStep> steps;
 
     /**
-     * The estimated time this section will take to travel.
+     * The estimated time this section will take to travel in seconds.
      */
     public final double duration;
 
     /**
-     * The estimated distance this section covers.
+     * The estimated distance this section covers in meters.
      */
     public final double distance;
 
