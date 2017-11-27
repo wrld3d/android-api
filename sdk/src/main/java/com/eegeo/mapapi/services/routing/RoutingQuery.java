@@ -25,7 +25,6 @@ public class RoutingQuery extends NativeApiObject {
                     @Override
                     public Integer call() throws Exception {
                         Integer id = routingApi.beginRouteQuery(options);
-                        Log.i("eegeo", "Searching for route: " + String.valueOf(id));
                         return id;
                     }
                 });
@@ -58,7 +57,7 @@ public class RoutingQuery extends NativeApiObject {
     @UiThread
     void returnQueryResponse(RoutingQueryResponse response) {
         if (m_callback != null) {
-            m_callback.onRoutingQueryCompleted(response);
+            m_callback.onRoutingQueryCompleted(this, response);
         }
     }
 }

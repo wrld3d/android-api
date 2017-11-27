@@ -58,7 +58,7 @@ public final class RoutingQueryOptions {
     /**
      * Sets a listener to receive routing results when the query completes.
      *
-     * @param onPoiSearchCompletedListener A listener implementing the OnRoutingQueryCompletedListener interface.
+     * @param onRoutingQueryCompletedListener A listener implementing the OnRoutingQueryCompletedListener interface.
      * @return This RoutingQueryOptions object.
      */
     public RoutingQueryOptions onRoutingQueryCompletedListener(OnRoutingQueryCompletedListener onRoutingQueryCompletedListener) {
