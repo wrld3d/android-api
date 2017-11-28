@@ -70,7 +70,7 @@ public class SourceProcessor extends Doclet {
             "Mapscene",
             "MapsceneStartLocation",
             "MapsceneDataSources",
-            "MapsceneSearchConfig"
+            "MapsceneSearchConfig",
             "RoutingService",
             "RoutingQuery",
             "OnRoutingQueryCompletedListener",
