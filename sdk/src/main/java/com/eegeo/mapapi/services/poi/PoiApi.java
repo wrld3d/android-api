@@ -93,7 +93,12 @@ public class PoiApi {
         if (poiSearch == null)
             throw new NullPointerException("PoiSearch object not found for nativeHandle");
 
-        poiSearch.returnSearchResults(searchResults);
+        m_uiRunner.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                poiSearch.returnSearchResults(searchResults);
+            }
+        });
         m_nativeHandleToPoiSearch.remove(nativeHandle);
     }
 

@@ -37,42 +37,9 @@ public class PoiSearchProvider implements SearchProvider, OnPoiSearchCompletedLi
 
     private SearchResultViewFactory m_resultViewFactory;
 
+    private final OnPoiSearchCompletedListener m_listener = this;
+
     private ArrayList<OnResultsReceivedCallback> m_onResultsReceivedCallbacks;
-
-    class RetrieveResultsTask extends AsyncTask<OnPoiSearchCompletedListener, Void, PoiSearchResponse> implements OnPoiSearchCompletedListener {
-        private Exception exception;
-
-        PoiSearchResponse m_response;
-
-        private Semaphore m_semaphore;
-        private OnPoiSearchCompletedListener m_onCompleteListener;
-
-        @Override
-        protected PoiSearchResponse doInBackground(OnPoiSearchCompletedListener... listenerCallback) {
-            try {
-                m_onCompleteListener = listenerCallback[0];
-                m_semaphore = new Semaphore(0);
-                m_semaphore.acquire();
-
-                return m_response;
-            } catch (Exception e) {
-                this.exception = e;
-                android.util.Log.e("AsyncTask", exception.toString());
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(PoiSearchResponse response) {
-            m_onCompleteListener.onPoiSearchCompleted(response);
-        }
-
-        @Override
-        public void onPoiSearchCompleted(PoiSearchResponse response) {
-            m_response = response;
-            m_semaphore.release();
-        }
-    }
 
     public PoiSearchProvider(PoiService poiApi, EegeoMap map)
     {
@@ -92,23 +59,11 @@ public class PoiSearchProvider implements SearchProvider, OnPoiSearchCompletedLi
             m_currentSearch.cancel();
         }
 
-        RetrieveResultsTask listener = new RetrieveResultsTask();
-        listener.execute(this);
-
         m_currentSearch = m_poiService.searchText(
                 new TextSearchOptions(query, m_map.getCameraPosition().target.toLatLng())
                         .radius(1000.0)
                         .number(60)
-                        .onPoiSearchCompletedListener(listener));
-        //invokeResultsReceived(createDemoModel());
-    }
-
-    private ArrayList<SearchResult> createDemoModel(){
-        ArrayList<SearchResult> demoResults = new ArrayList<SearchResult>();
-        //PoiSearchResultModel demoModel = new PoiSearchResultModel("1", new LatLng(0, 0), "2");
-        SearchResult demoModel = new DefaultSearchResult("1", new SearchResultStringProperty("Description", "2"));
-        demoResults.add(demoModel);
-        return demoResults;
+                        .onPoiSearchCompletedListener(m_listener));
     }
 
     @Override
