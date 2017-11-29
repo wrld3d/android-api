@@ -2,11 +2,9 @@
 
 package com.wrld.widgets.searchbox;
 
-import android.opengl.Visibility;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -61,12 +59,18 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
     }
 
     @Override
+    /**
+     * returns the number of ListView elements to be rendered on the current page of results
+     */
     public int getCount() {
         if(m_suggestionsOn){
             return m_suggestionsModel.getResultCount();
         }
 
-        return Math.min(m_resultsModel.getResultCount(), RESULTS_PER_PAGE);
+        int notPagedOverCount = m_resultsModel.getResultCount() - (m_resultsPage * RESULTS_PER_PAGE);
+        int onScreenResults = Math.min(RESULTS_PER_PAGE, notPagedOverCount);
+
+        return onScreenResults;
     }
 
     @Override
