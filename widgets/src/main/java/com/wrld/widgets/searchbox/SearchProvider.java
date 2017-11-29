@@ -6,7 +6,7 @@ public interface SearchProvider {
     String getTitle();
     void getSearchResults(String query);
 
-    void addOnResultsRecievedCallback(OnResultsReceivedCallback callback);
+    void addOnResultsReceivedCallback(OnResultsReceivedCallback callback);
 
     void setResultViewFactory(SearchResultViewFactory factory);
     SearchResultViewFactory getResultViewFactory();

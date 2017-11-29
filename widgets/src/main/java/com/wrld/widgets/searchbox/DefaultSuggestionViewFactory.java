@@ -8,11 +8,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.wrld.widgets.R;
 
-public class TitleOnlySearchResultViewFactory implements SearchResultViewFactory {
+public class DefaultSuggestionViewFactory implements SearchResultViewFactory {
 
     private int m_layoutId;
 
-    public TitleOnlySearchResultViewFactory(int layoutId) {
+    public DefaultSuggestionViewFactory(int layoutId) {
         m_layoutId = layoutId;
     }
 

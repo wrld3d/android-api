@@ -28,7 +28,7 @@ public class SearchModule implements SearchModuleFacade {
 
     public SearchModule(ViewGroup appSearchAreaView) {
         m_inflater = LayoutInflater.from(appSearchAreaView.getContext());
-        m_searchboxRootContainer = (ViewGroup) m_inflater.inflate(R.layout.search_layout_test, appSearchAreaView, true);
+        m_searchboxRootContainer = (ViewGroup) m_inflater.inflate(R.layout.search_layout, appSearchAreaView, true);
 
         m_searchResultsContainer = new DefaultSearchResultSetsContainer((ViewGroup) m_searchboxRootContainer.findViewById(R.id.search_result_sets_container));
 
@@ -91,7 +91,7 @@ public class SearchModule implements SearchModuleFacade {
             factoryResults = m_defualtViewFactory;
         }
 
-        addSearchProvider(provider,setResults);
+        addSearchProvider(provider, setResults);
 
         SearchResultViewFactory factorySuggestions = m_defualtViewFactory;
         if(doSuggestions) {
@@ -111,12 +111,12 @@ public class SearchModule implements SearchModuleFacade {
             }
         }
 
-        m_searchResultsContainer.addSearchResultSet( provider.getTitle(), setResults, setSuggestions, factoryResults ,factorySuggestions );
-
+        m_searchResultsContainer.addSearchResultSet( provider, setResults, setSuggestions, factoryResults ,factorySuggestions );
     }
 
     private void addSearchProvider(SearchProvider provider, final DefaultSearchResultSet resultSet){
-        provider.addOnResultsRecievedCallback(new OnResultsReceivedCallback() {
+
+        provider.addOnResultsReceivedCallback(new OnResultsReceivedCallback() {
             @Override
             public void onResultsReceived(SearchResult[] results) {
                 resultSet.updateSetResults(results);
@@ -144,6 +144,8 @@ public class SearchModule implements SearchModuleFacade {
         for(SearchProvider provider:m_searchProviders){
             provider.getSearchResults(query);
         }
+
+        m_searchResultsContainer.searching();
     }
 
     private void doAutoCompleteQuery(String query) {

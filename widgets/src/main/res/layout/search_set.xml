@@ -1,24 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:layout_marginTop="5dp"
+    android:layout_marginTop="@dimen/padding_search"
+    android:layout_marginRight="@dimen/padding_search"
+    android:layout_marginBottom="@dimen/padding_search"
+    android:layout_marginLeft="@dimen/padding_search"
     android:layout_weight="1">
 
     <LinearLayout
         android:id="@+id/search_set_header"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <TextView
-            android:id="@+id/serach_set_title"
+            android:id="@+id/search_set_title"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#FFFFFF"
 
-            android:text="@string/default_search_title" />
+            android:text="@string/default_search_title"
+            android:textColor="@color/WrldBlue"
+            android:textSize="@dimen/font_size_title" />
     </LinearLayout>
 
     <LinearLayout
@@ -27,9 +34,16 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/search_set_footer"
         android:layout_below="@+id/search_set_header"
-        android:background="#ffaaff"
         android:baselineAligned="false"
         android:orientation="vertical">
+
+        <ProgressBar
+            android:id="@+id/search_set_in_progress_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:indeterminate="true"
+            android:visibility="gone" />
 
         <ListView
             android:id="@+id/search_result_list"
@@ -39,6 +53,8 @@
             android:footerDividersEnabled="false"
             android:headerDividersEnabled="false"></ListView>
 
+
+
     </LinearLayout>
 
     <LinearLayout
@@ -47,7 +63,8 @@
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"
         android:background="#ffffff"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/expand_controls"

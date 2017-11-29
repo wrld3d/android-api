@@ -2,32 +2,20 @@
 
 package com.wrld.searchproviders;
 
-import android.os.AsyncTask;
-import android.os.Looper;
-
 import com.eegeo.mapapi.EegeoMap;
-import com.eegeo.mapapi.geometry.LatLng;
+import com.eegeo.mapapi.services.poi.AutocompleteOptions;
 import com.eegeo.mapapi.services.poi.OnPoiSearchCompletedListener;
 import com.eegeo.mapapi.services.poi.PoiSearch;
 import com.eegeo.mapapi.services.poi.PoiSearchResponse;
 import com.eegeo.mapapi.services.poi.PoiSearchResult;
 import com.eegeo.mapapi.services.poi.PoiService;
 import com.eegeo.mapapi.services.poi.TextSearchOptions;
-import com.wrld.widgets.searchbox.DefaultSearchResult;
-import com.wrld.widgets.searchbox.DefaultSearchResultViewFactory;
-import com.wrld.widgets.searchbox.OnResultsReceivedCallback;
-import com.wrld.widgets.searchbox.SearchProvider;
 import com.wrld.widgets.searchbox.SearchResult;
-import com.wrld.widgets.searchbox.SearchResultStringProperty;
-import com.wrld.widgets.searchbox.SearchResultViewFactory;
+import com.wrld.widgets.searchbox.SuggestionProviderBase;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
-public class PoiSearchProvider implements SearchProvider, OnPoiSearchCompletedListener {
-
-    private static String m_Title = "Places of Interest";
+public class PoiSearchProvider extends SuggestionProviderBase {
 
     private EegeoMap m_map;
     private PoiService m_poiService;
@@ -35,80 +23,90 @@ public class PoiSearchProvider implements SearchProvider, OnPoiSearchCompletedLi
     private PoiSearch m_currentSearch;
     private int m_failedSearches;
 
-    private SearchResultViewFactory m_resultViewFactory;
+    private interface SearchCompleteCallback {
+        void invoke(SearchResult[] results);
+    }
 
-    private final OnPoiSearchCompletedListener m_listener = this;
+    private class PoiSearchListener implements OnPoiSearchCompletedListener {
 
-    private ArrayList<OnResultsReceivedCallback> m_onResultsReceivedCallbacks;
+        private SearchCompleteCallback m_searchCompleteCallback;
+
+        public PoiSearchListener(SearchCompleteCallback searchCompleteCallback){
+            m_searchCompleteCallback = searchCompleteCallback;
+        }
+
+        @Override
+        public void onPoiSearchCompleted(PoiSearchResponse response) {
+            List<PoiSearchResult> results = response.getResults();
+
+            if (response.succeeded() && results.size() > 0) {
+                SearchResult[] resultsArray = new SearchResult[results.size()];
+                for (int i = 0; i < results.size(); ++i) {
+                    PoiSearchResult poi = results.get(i);
+                    resultsArray[i] = new PoiSearchResultModel(poi.title, poi.latLng, poi.subtitle);
+                }
+                m_currentSearch = null;
+                m_searchCompleteCallback.invoke(resultsArray);
+            }
+            else {
+                m_failedSearches += 1;
+
+                if (m_failedSearches >= 3) {
+                    m_currentSearch = null;
+                }
+            }
+        }
+    }
 
     public PoiSearchProvider(PoiService poiApi, EegeoMap map)
     {
+        super("Places of Interest");
         m_poiService = poiApi;
         m_map = map;
-        m_onResultsReceivedCallbacks = new ArrayList<OnResultsReceivedCallback>();
-    }
-
-    @Override
-    public String getTitle() {
-        return m_Title;
     }
 
     @Override
     public void getSearchResults(String query) {
+
         if(m_currentSearch != null){
             m_currentSearch.cancel();
         }
+
+        PoiSearchListener listener = new PoiSearchListener(
+                new SearchCompleteCallback() {
+                    @Override
+                    public void invoke(SearchResult[] results) {
+                        performSearchCompletedCallbacks(results);
+                    }
+                }
+        );
 
         m_currentSearch = m_poiService.searchText(
                 new TextSearchOptions(query, m_map.getCameraPosition().target.toLatLng())
                         .radius(1000.0)
                         .number(60)
-                        .onPoiSearchCompletedListener(m_listener));
+                        .onPoiSearchCompletedListener(listener));
     }
 
     @Override
-    public void onPoiSearchCompleted(PoiSearchResponse response) {
-        List<PoiSearchResult> results = response.getResults();
+    public void getSuggestions(String query) {
 
-        if (response.succeeded() && results.size() > 0) {
-            ArrayList<SearchResult> resultModels = new ArrayList<SearchResult>(results.size());
-            for (PoiSearchResult poi : results) {
-                resultModels.add(new PoiSearchResultModel(poi.title, poi.latLng, poi.subtitle));
-            }
-            m_currentSearch = null;
-            invokeResultsReceived(resultModels);
+        if(m_currentSearch != null){
+            m_currentSearch.cancel();
         }
-        else {
-            m_failedSearches += 1;
 
-            if (m_failedSearches >= 3) {
-                m_currentSearch = null;
-            }
-        }
-    }
+        PoiSearchListener listener = new PoiSearchListener(
+                new SearchCompleteCallback() {
+                    @Override
+                    public void invoke(SearchResult[] results) {
+                        performSuggestionCompletedCallbacks(results);
+                    }
+                }
+        );
 
-    @Override
-    public void addOnResultsRecievedCallback(OnResultsReceivedCallback callback) {
-        m_onResultsReceivedCallbacks.add(callback);
-    }
-
-    @Override
-    public void setResultViewFactory(SearchResultViewFactory factory){
-        m_resultViewFactory = factory;
-    }
-
-    @Override
-    public SearchResultViewFactory getResultViewFactory() {
-        return m_resultViewFactory;
-    }
-
-    private void invokeResultsReceived(ArrayList<SearchResult> resultList){
-
-        SearchResult[] results = new SearchResult[resultList.size()];
-        resultList.toArray(results);
-
-        for(OnResultsReceivedCallback callback : m_onResultsReceivedCallbacks){
-            callback.onResultsReceived(results);
-        }
+        m_currentSearch = m_poiService.searchAutocomplete(
+                new AutocompleteOptions(query, m_map.getCameraPosition().target.toLatLng())
+                        .number(5)
+                        .onPoiSearchCompletedListener(listener));
     }
 }

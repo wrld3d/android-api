@@ -2,50 +2,52 @@ package com.wrld.widgets.searchbox;
 
 import java.util.ArrayList;
 
-public class DebugSuggestionProvider extends DebugSearchProvider implements SuggestionProvider{
+public class DebugSuggestionProvider extends SuggestionProviderBase implements SuggestionProvider{
 
     private SearchResultViewFactory m_suggestionViewFactory;
     private ArrayList<OnResultsReceivedCallback> m_onSuggestionsReceivedCallback;
 
     private final String LOREM_IPSUM =
             "ex vis nusquam tincidunt, Lorem ipsum dolor sit amet.";
+
     public DebugSuggestionProvider(String uid) {
         super(uid);
-        m_onSuggestionsReceivedCallback = new ArrayList<OnResultsReceivedCallback>();
     }
 
     @Override
     public void getSuggestions(String query) {
 
         int numResults = 5;
+
         SearchResult[] results = new SearchResult[numResults];
-        results[0] = new DefaultSearchResult(m_uid + ": Suggestion : " + query);
+        results[0] = new DefaultSearchResult(m_title + " " + query);
         for(int i = 1; i < numResults; ++i){
-            results[i] = generateDebugSuggestion(i);
+            results[i] = generateDebugSuggestion(i, query);
         }
 
-        for(OnResultsReceivedCallback callback: m_onSuggestionsReceivedCallback) {
-            callback.onResultsReceived(results);
+        performSuggestionCompletedCallbacks(results);
+    }
+
+    @Override
+    public void getSearchResults(String query) {
+
+        int numResults = 100;
+        SearchResult[] results = new SearchResult[numResults];
+        results[0] = new DefaultSearchResult(m_title + ": " + query, new SearchResultStringProperty("Description", LOREM_IPSUM));
+        for(int i = 1; i < numResults; ++i){
+            results[i] = generateDebugResult(i, query);
         }
+
+        performSearchCompletedCallbacks(results);
     }
 
-    @Override
-    public void addOnSuggestionsRecievedCallback(OnResultsReceivedCallback callback) {
-        m_onSuggestionsReceivedCallback.add(callback);
-    }
-
-    @Override
-    public void setSuggestionViewFactory(SearchResultViewFactory factory){
-        m_suggestionViewFactory = factory;
-    }
-
-    @Override
-    public SearchResultViewFactory getSuggestionViewFactory() {
-        return m_suggestionViewFactory;
-    }
-
-    private SearchResult generateDebugSuggestion(int id)
+    private SearchResult generateDebugResult(int id, String query)
     {
-        return new DefaultSearchResult(m_uid + ": Suggestion : " + id);
+        return new DefaultSearchResult(m_title + ": " + query + " result (" + id + ")", new SearchResultStringProperty("Description", LOREM_IPSUM));
+    }
+
+    private SearchResult generateDebugSuggestion(int id, String query)
+    {
+        return new DefaultSearchResult(m_title + ": " + query + " suggestion (" + id + ")");
     }
 }

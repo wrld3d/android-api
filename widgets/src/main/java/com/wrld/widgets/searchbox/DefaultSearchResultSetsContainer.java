@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -18,17 +17,15 @@ class DefaultSearchResultSetsContainer {
     private ViewGroup m_resultSetsContainer;
     private LayoutInflater m_inflater;
 
-    private ArrayList<DefaultSearchResultsContainer> m_searchResultsContainer;
-
-    private SearchResultViewFactory m_defualtViewFactory;
+    private ArrayList<PaginatedSearchResultsContainer> m_searchResultsContainer;
 
     DefaultSearchResultSetsContainer(ViewGroup resultSetsContainer){
         m_resultSetsContainer = resultSetsContainer;
         m_inflater = LayoutInflater.from(m_resultSetsContainer.getContext());
-        m_searchResultsContainer = new ArrayList<DefaultSearchResultsContainer>();
+        m_searchResultsContainer = new ArrayList<PaginatedSearchResultsContainer>();
     }
 
-    public void addSearchResultSet(String titleText, SearchResultSet resultsSet, SearchResultSet suggestionsSet, SearchResultViewFactory factoryResults , SearchResultViewFactory factorySuggestions){
+    public void addSearchResultSet(SearchProvider provider, SearchResultSet resultsSet, SearchResultSet suggestionsSet, SearchResultViewFactory factoryResults , SearchResultViewFactory factorySuggestions){
         
         View setView = m_inflater.inflate(R.layout.search_set, m_resultSetsContainer, false);
         m_resultSetsContainer.addView(setView, m_searchResultsContainer.size() );
@@ -46,14 +43,14 @@ class DefaultSearchResultSetsContainer {
         resultsSet.addOnResultChangedHandler(new SearchResultSet.OnResultChanged() {
             @Override
             public void invoke() {
-                resultList.refresh();
+                resultList.showResults(true);
             }
         });
 
         suggestionsSet.addOnResultChangedHandler(new SearchResultSet.OnResultChanged() {
             @Override
             public void invoke() {
-                resultList.refresh();
+                resultList.showSuggestions(true);
             }
         });
 
@@ -61,11 +58,11 @@ class DefaultSearchResultSetsContainer {
 
         configureButtons(setView, resultList);
 
-        TextView title = (TextView)setView.findViewById(R.id.serach_set_title);
-        title.setText(titleText);
+        TextView title = (TextView)setView.findViewById(R.id.search_set_title);
+        title.setText(provider.getTitle());
     }
 
-    private void configureButtons(final View resultsSet, final DefaultSearchResultsContainer resultsAdapter) {
+    private void configureButtons(final View resultsSet, final PaginatedSearchResultsContainer resultsAdapter) {
         Button next = (Button) resultsSet.findViewById(R.id.search_pagination_prev);
         next.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -86,16 +83,22 @@ class DefaultSearchResultSetsContainer {
         });
     }
 
-    private void expandView(DefaultSearchResultsContainer resultsSet){
-        for(DefaultSearchResultsContainer container: m_searchResultsContainer){
+    private void expandView(SearchResultsContainer resultsSet){
+        for(SearchResultsContainer container: m_searchResultsContainer){
             container.setState(resultsSet == container ? ResultSetState.Expanded : ResultSetState.Collapsed);
         }
     }
 
     public void showSuggestions(boolean flag){
-        for(DefaultSearchResultsContainer container: m_searchResultsContainer){
+        for(SearchResultsContainer container: m_searchResultsContainer){
             container.setState(ResultSetState.Shared);
             container.showSuggestions(flag);
+        }
+    }
+
+    public void searching(){
+        for(SearchResultsContainer container: m_searchResultsContainer){
+            container.searchStarted();
         }
     }
 }
