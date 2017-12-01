@@ -2,8 +2,9 @@
 
 package com.wrld.widgets.searchbox;
 
-public enum ResultSetState {
+public enum ResultsViewState {
     Collapsed,
     Shared,
-    Expanded
+    Expanded,
+    Hidden
 }

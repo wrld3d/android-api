@@ -39,7 +39,7 @@ public class PoiSearchProvider extends SuggestionProviderBase {
         public void onPoiSearchCompleted(PoiSearchResponse response) {
             List<PoiSearchResult> results = response.getResults();
 
-            if (response.succeeded() && results.size() > 0) {
+            if (response.succeeded()) {
                 SearchResult[] resultsArray = new SearchResult[results.size()];
                 for (int i = 0; i < results.size(); ++i) {
                     PoiSearchResult poi = results.get(i);
@@ -51,8 +51,9 @@ public class PoiSearchProvider extends SuggestionProviderBase {
             else {
                 m_failedSearches += 1;
 
-                if (m_failedSearches >= 3) {
+                if (m_failedSearches >= 1) {
                     m_currentSearch = null;
+                    m_searchCompleteCallback.invoke(new SearchResult[0]);
                 }
             }
         }

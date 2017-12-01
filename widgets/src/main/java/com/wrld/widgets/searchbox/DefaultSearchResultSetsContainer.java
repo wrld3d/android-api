@@ -43,14 +43,14 @@ class DefaultSearchResultSetsContainer {
         resultsSet.addOnResultChangedHandler(new SearchResultSet.OnResultChanged() {
             @Override
             public void invoke() {
-                resultList.showResults(true);
+                resultList.setResultsVisibility(true);
             }
         });
 
         suggestionsSet.addOnResultChangedHandler(new SearchResultSet.OnResultChanged() {
             @Override
             public void invoke() {
-                resultList.showSuggestions(true);
+                resultList.refreshContent();
             }
         });
 
@@ -85,14 +85,13 @@ class DefaultSearchResultSetsContainer {
 
     private void expandView(SearchResultsContainer resultsSet){
         for(SearchResultsContainer container: m_searchResultsContainer){
-            container.setState(resultsSet == container ? ResultSetState.Expanded : ResultSetState.Collapsed);
+            container.setResultsViewState(resultsSet == container ? ResultsViewState.Expanded : ResultsViewState.Collapsed);
         }
     }
 
     public void showSuggestions(boolean flag){
         for(SearchResultsContainer container: m_searchResultsContainer){
-            container.setState(ResultSetState.Shared);
-            container.showSuggestions(flag);
+            container.setSuggestionsVisilility(flag);
         }
     }
 

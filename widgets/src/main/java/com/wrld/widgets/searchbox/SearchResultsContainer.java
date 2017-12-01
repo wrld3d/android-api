@@ -4,8 +4,8 @@ package com.wrld.widgets.searchbox;
 
 interface SearchResultsContainer {
     void searchStarted();
-    void showSuggestions(boolean flag);
-    void showResults(boolean flag);
+    void setSuggestionsVisilility(boolean suggestionsVisible);
+    void setResultsVisibility(boolean resultsVisible);
     void refreshContent();
-    void setState(ResultSetState state);
+    void setResultsViewState(ResultsViewState state);
 }
