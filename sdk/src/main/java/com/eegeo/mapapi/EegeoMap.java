@@ -50,6 +50,8 @@ import com.eegeo.mapapi.services.mapscene.MapsceneService;
 import com.eegeo.mapapi.services.poi.PoiApi;
 import com.eegeo.mapapi.services.poi.PoiSearchResult;
 import com.eegeo.mapapi.services.poi.PoiService;
+import com.eegeo.mapapi.services.poi.SearchTags;
+import com.eegeo.mapapi.services.poi.TagsApi;
 import com.eegeo.mapapi.util.Callbacks;
 import com.eegeo.mapapi.util.Promise;
 import com.eegeo.mapapi.util.Ready;
@@ -90,6 +92,7 @@ public final class EegeoMap {
     private RenderingApi m_renderingApi;
     private RenderingState m_renderingState;
     private PoiApi m_poiApi;
+    private TagsApi m_tagsApi;
     private MapsceneApi m_mapsceneApi;
     private BlueSphere m_blueSphere = null;
 
@@ -118,6 +121,7 @@ public final class EegeoMap {
         boolean mapCollapsed = false;
         this.m_renderingState = new RenderingState(m_renderingApi, m_allowApiAccess, mapCollapsed);
         this.m_poiApi = new PoiApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_tagsApi = new TagsApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_mapsceneApi = new MapsceneApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
 
@@ -923,6 +927,11 @@ public final class EegeoMap {
     @WorkerThread
     private void jniOnMapsceneRequestCompleted(final int mapsceneRequestId, final boolean succeeded, final Mapscene mapscene) {
         m_mapsceneApi.notifyRequestComplete(mapsceneRequestId, succeeded, mapscene);
+    }
+
+    @WorkerThread
+    private void jniOnSearchTagsLoaded(final SearchTags searchTags) {
+        m_tagsApi.notifyTagsLoaded(searchTags);
     }
 
     /**
