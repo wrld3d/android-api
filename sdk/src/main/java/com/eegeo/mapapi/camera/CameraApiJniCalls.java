@@ -12,6 +12,7 @@ public class CameraApiJniCalls {
                                       boolean jumpIfFarAway,
                                       boolean allowInterruption);
 
+
     @WorkerThread
     public static native void setViewToBounds(long jniEegeoMapApiPtr, boolean animated, double northEastLat, double northEastLon, double southWestLat, double southWestLon, boolean allowInterruption);
 
@@ -27,4 +28,7 @@ public class CameraApiJniCalls {
                                        double headingDegrees,
                                        double tiltDegrees,
                                        boolean modifyTilt);
+
+    @WorkerThread
+    public static native void moveCameraIdentityCameraPositionUpdate(long jniEegeoMapApiPtr, CameraPosition cameraPostion);
 }
