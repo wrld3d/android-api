@@ -212,7 +212,7 @@ public final class EegeoMap {
                 double latitude = (cameraPosition.target != null) ? cameraPosition.target.latitude : 0.0;
                 double longitude = (cameraPosition.target != null) ? cameraPosition.target.longitude : 0.0;
                 double altitude = (cameraPosition.target != null) ? cameraPosition.target.altitude : 0.0;
-                CameraApiJniCalls.setView(m_eegeoMapApiPtr, true,
+                CameraApiJniCalls.setView(m_eegeoMapApiPtr, false,
                         latitude, longitude, altitude, cameraPosition.modifyTarget,
                         cameraPosition.distance, cameraPosition.modifyDistance,
                         cameraPosition.bearing, cameraPosition.modifyBearing,
