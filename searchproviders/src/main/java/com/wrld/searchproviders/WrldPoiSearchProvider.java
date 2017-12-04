@@ -15,7 +15,7 @@ import com.wrld.widgets.searchbox.SuggestionProviderBase;
 
 import java.util.List;
 
-public class PoiSearchProvider extends SuggestionProviderBase {
+public class WrldPoiSearchProvider extends SuggestionProviderBase {
 
     private EegeoMap m_map;
     private PoiService m_poiService;
@@ -43,7 +43,7 @@ public class PoiSearchProvider extends SuggestionProviderBase {
                 SearchResult[] resultsArray = new SearchResult[results.size()];
                 for (int i = 0; i < results.size(); ++i) {
                     PoiSearchResult poi = results.get(i);
-                    resultsArray[i] = new PoiSearchResultModel(poi.title, poi.latLng, poi.subtitle);
+                    resultsArray[i] = new PositionalSearchResult(poi.title, poi.latLng, poi.subtitle);
                 }
                 m_currentSearch = null;
                 m_searchCompleteCallback.invoke(resultsArray);
@@ -59,7 +59,7 @@ public class PoiSearchProvider extends SuggestionProviderBase {
         }
     }
 
-    public PoiSearchProvider(PoiService poiApi, EegeoMap map)
+    public WrldPoiSearchProvider(PoiService poiApi, EegeoMap map)
     {
         super("Places of Interest");
         m_poiService = poiApi;
@@ -68,6 +68,9 @@ public class PoiSearchProvider extends SuggestionProviderBase {
 
     @Override
     public void getSearchResults(String query) {
+
+        //TODO test poi search invokes callbacks
+        //TODO test poi search response without network
 
         if(m_currentSearch != null){
             m_currentSearch.cancel();
@@ -91,6 +94,9 @@ public class PoiSearchProvider extends SuggestionProviderBase {
 
     @Override
     public void getSuggestions(String query) {
+
+        //TODO test poi search invokes callbacks
+        //TODO test poi search response without network
 
         if(m_currentSearch != null){
             m_currentSearch.cancel();

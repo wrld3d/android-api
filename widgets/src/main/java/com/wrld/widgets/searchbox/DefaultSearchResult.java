@@ -7,7 +7,7 @@ public class DefaultSearchResult implements SearchResult {
 
     private String m_title;
 
-    private HashMap<String, SearchResultProperty> m_additionalProperties;
+    protected HashMap<String, SearchResultProperty> m_additionalProperties;
 
     public DefaultSearchResult(String title, SearchResultProperty... additionalProperties) {
         m_title = title;

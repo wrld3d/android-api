@@ -91,7 +91,7 @@ class DefaultSearchResultSetsContainer {
 
     public void showSuggestions(boolean flag){
         for(SearchResultsContainer container: m_searchResultsContainer){
-            container.setSuggestionsVisilility(flag);
+            container.setSuggestionsVisibility(flag);
         }
     }
 

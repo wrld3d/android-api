@@ -164,7 +164,7 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
     }
 
     @Override
-    public void setSuggestionsVisilility(boolean suggestionsVisible) {
+    public void setSuggestionsVisibility(boolean suggestionsVisible) {
         if(m_suggestionsVisible != suggestionsVisible) {
             m_suggestionsVisible = suggestionsVisible;
             if(m_suggestionsVisible){

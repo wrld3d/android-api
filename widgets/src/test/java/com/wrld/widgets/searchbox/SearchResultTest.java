@@ -22,7 +22,7 @@ public abstract class SearchResultTest {
     protected SearchResult m_searchResult;
 
     public SearchResultTest(){
-        m_searchResult = CreateSearchResult(DefaultTitle, new SearchResultStringProperty("Description",LoremIpsum));
+        m_searchResult = CreateSearchResult(DefaultTitle, new SearchResultPropertyString("Description",LoremIpsum));
     }
 
     @Test
@@ -52,7 +52,7 @@ public abstract class SearchResultTest {
         when(mockProperty.getKey()).thenReturn(propKey);
         when(mockProperty.getValue()).thenReturn(propValue);
 
-        SearchResult searchResult = CreateSearchResult(DefaultTitle, new SearchResultStringProperty("Description",LoremIpsum), mockProperty);
+        SearchResult searchResult = CreateSearchResult(DefaultTitle, new SearchResultPropertyString("Description",LoremIpsum), mockProperty);
         assertEquals(propValue, searchResult.getProperty(propKey).getValue());
     }
 

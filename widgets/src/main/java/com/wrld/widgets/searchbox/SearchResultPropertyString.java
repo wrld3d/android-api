@@ -2,12 +2,12 @@
 
 package com.wrld.widgets.searchbox;
 
-public class SearchResultStringProperty implements SearchResultProperty<String> {
+public class SearchResultPropertyString implements SearchResultProperty<String> {
 
     private String m_key;
     private String m_value;
 
-    public SearchResultStringProperty (String key, String value) {
+    public SearchResultPropertyString(String key, String value) {
         m_key = key;
         m_value = value;
     }
