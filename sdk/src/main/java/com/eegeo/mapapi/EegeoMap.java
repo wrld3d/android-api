@@ -10,14 +10,14 @@ import com.eegeo.mapapi.bluesphere.BlueSphereApi;
 import com.eegeo.mapapi.buildings.BuildingHighlight;
 import com.eegeo.mapapi.buildings.BuildingHighlightOptions;
 import com.eegeo.mapapi.buildings.BuildingsApi;
-import com.eegeo.mapapi.camera.CameraApiJniCalls;
+import com.eegeo.mapapi.camera.CameraAnimationOptions;
+import com.eegeo.mapapi.camera.CameraApi;
 import com.eegeo.mapapi.camera.CameraPosition;
 import com.eegeo.mapapi.camera.CameraUpdate;
 import com.eegeo.mapapi.camera.CameraUpdateFactory;
 import com.eegeo.mapapi.camera.Projection;
 import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.geometry.LatLngAlt;
-import com.eegeo.mapapi.geometry.LatLngBounds;
 import com.eegeo.mapapi.indoors.ExpandFloorsJniCalls;
 import com.eegeo.mapapi.indoors.IndoorMap;
 import com.eegeo.mapapi.indoors.IndoorsApiJniCalls;
@@ -83,6 +83,7 @@ public final class EegeoMap {
     private IndoorMap m_indoorMap = null;
     private int m_currentIndoorFloor = -1;
     private Projection m_projection;
+    private CameraApi m_cameraApi;
     private MarkerApi m_markerApi;
     private PositionerApi m_positionerApi;
     private PolygonApi m_polygonApi;
@@ -110,7 +111,9 @@ public final class EegeoMap {
         this.m_uiRunner = uiRunner;
         this.m_nativeRunner = nativeRunner;
         this.m_eegeoMapApiPtr = createNativeEegeoMapApi.create(this, eegeoMapOptions);
+
         this.m_projection = new Projection(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_cameraApi = new CameraApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_markerApi = new MarkerApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_positionerApi = new PositionerApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_polygonApi = new PolygonApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
@@ -132,113 +135,46 @@ public final class EegeoMap {
     }
 
     /**
+     * Moves the camera change from its current position to a new position.
+     *
+     * @param update Specifies the new position, either by specifying the new camera position, or by describing the desired display area.
+     */
+    @UiThread
+    public void moveCamera(@NonNull final CameraUpdate update) {
+        m_nativeRunner.runOnNativeThread(new Runnable() {
+            @WorkerThread
+            @Override
+            public void run() {
+                m_cameraApi.moveCamera(update);
+            }
+        });
+    }
+
+    /**
      * Animates the camera change from its current position to a new position.
      *
      * @param update     Specifies the new position, either by specifying the new camera position, or by describing the desired display area.
      * @param durationMs Length of time for the transition, in ms.
      */
     @UiThread
-    public void animateCamera(@NonNull CameraUpdate update, int durationMs) {
-        switch (update.getUpdateType()) {
-            case CameraPosition:
-                performAnimateCamera((CameraUpdateFactory.IdentityCameraPositionUpdate) update, durationMs);
-                break;
-            case LatLngBounds:
-                performAnimateCamera((CameraUpdateFactory.LatLongBoundsCameraPositionUpdate) update, durationMs);
-                break;
-        }
-    }
+    public void animateCamera(@NonNull final CameraUpdate update, final int durationMs) {
+        final CameraAnimationOptions animationOptions = new CameraAnimationOptions.Builder()
+                .duration(durationMs / 1000.0)
+                .Build();
 
-    @UiThread
-    private void performAnimateCamera(@NonNull final CameraUpdateFactory.IdentityCameraPositionUpdate cameraPositionUpdate, final int durationMs) {
-        final CameraPosition cameraPosition = cameraPositionUpdate.getCameraPosition();
         m_nativeRunner.runOnNativeThread(new Runnable() {
             @WorkerThread
             @Override
             public void run() {
-                double latitude = (cameraPosition.target != null) ? cameraPosition.target.latitude : 0.0;
-                double longitude = (cameraPosition.target != null) ? cameraPosition.target.longitude : 0.0;
-                //double altitude = (cameraPosition.target != null) ? cameraPosition.target.altitude : 0.0;
-                double altitude =0.0; // todo_camera_api, stubbed pending fixup of interop
-                CameraApiJniCalls.setView(m_eegeoMapApiPtr, true,
-                        latitude, longitude, altitude, cameraPosition.modifyTarget,
-                        cameraPosition.distance, cameraPosition.modifyDistance,
-                        cameraPosition.bearing, cameraPosition.modifyBearing,
-                        cameraPosition.tilt, cameraPosition.modifyTilt,
-                        durationMs / 1000.0, true,
-                        true, true);
+                m_cameraApi.animateCamera(update, animationOptions);
             }
         });
     }
 
-    @UiThread
-    private void performAnimateCamera(@NonNull final CameraUpdateFactory.LatLongBoundsCameraPositionUpdate latLongBoundsUpdate, final int durationMs) {
-        //TODO: support for durationMs
-        final LatLngBounds latLngBounds = latLongBoundsUpdate.getLatLngBounds();
-        m_nativeRunner.runOnNativeThread(new Runnable() {
-            @WorkerThread
-            @Override
-            public void run() {
-                CameraApiJniCalls.setViewToBounds(m_eegeoMapApiPtr, true, latLngBounds.northeast.latitude, latLngBounds.northeast.longitude,
-                        latLngBounds.southwest.latitude, latLngBounds.southwest.longitude,
-                        true);
-            }
-        });
-    }
-
-    /**
-     * Moves the camera change from its current position to a new position.
-     *
-     * @param update Specifies the new position, either by specifying the new camera position, or by describing the desired display area.
-     */
-    @UiThread
-    public void moveCamera(@NonNull CameraUpdate update) {
-        switch (update.getUpdateType()) {
-            case CameraPosition:
-                performMoveCamera((CameraUpdateFactory.IdentityCameraPositionUpdate) update);
-                break;
-            case LatLngBounds:
-                performMoveCamera((CameraUpdateFactory.LatLongBoundsCameraPositionUpdate) update);
-                break;
-        }
-    }
-
-    @UiThread
-    private void performMoveCamera(@NonNull final CameraUpdateFactory.IdentityCameraPositionUpdate cameraPositionUpdate) {
-        final CameraPosition cameraPosition = cameraPositionUpdate.getCameraPosition();
-        m_nativeRunner.runOnNativeThread(new Runnable() {
-            @WorkerThread
-            @Override
-            public void run() {
-                CameraApiJniCalls.moveCameraIdentityCameraPositionUpdate(m_eegeoMapApiPtr, cameraPosition);
-            }
-        });
-    }
-
-    @UiThread
-    private void performMoveCamera(@NonNull final CameraUpdateFactory.LatLongBoundsCameraPositionUpdate latLongBoundsUpdate) {
-        final LatLngBounds latLngBounds = latLongBoundsUpdate.getLatLngBounds();
-        m_nativeRunner.runOnNativeThread(new Runnable() {
-            @WorkerThread
-            @Override
-            public void run() {
-                CameraApiJniCalls.setViewToBounds(m_eegeoMapApiPtr, true, latLngBounds.northeast.latitude, latLngBounds.northeast.longitude,
-                        latLngBounds.southwest.latitude, latLngBounds.southwest.longitude,
-                        true);
-            }
-        });
-    }
 
     @WorkerThread
     private void initLocation(@NonNull CameraPosition cameraPosition) {
-        CameraApiJniCalls.initView(m_eegeoMapApiPtr,
-                cameraPosition.target.latitude,
-                cameraPosition.target.longitude,
-                // todo_camera_api broken cameraPosition.target.altitude,
-                cameraPosition.targetElevation,
-                cameraPosition.distance,
-                cameraPosition.bearing,
-                cameraPosition.tilt, cameraPosition.modifyTilt);
+        m_cameraApi.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
     /**
@@ -259,7 +195,7 @@ public final class EegeoMap {
         m_nativeRunner.runOnNativeThread(new Runnable() {
             @Override
             public void run() {
-                CameraApiJniCalls.tryStopTransition(m_eegeoMapApiPtr);
+                m_cameraApi.cancelAnimation();
             }
         });
     }
