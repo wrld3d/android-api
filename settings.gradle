@@ -1,4 +1,6 @@
 include ':sdk'
 include ':sdkdoclet'
+include ':dataviz'
 project(':sdk').projectDir = new File('sdk')
+project(':dataviz').projectDir = new File('dataviz')
 
