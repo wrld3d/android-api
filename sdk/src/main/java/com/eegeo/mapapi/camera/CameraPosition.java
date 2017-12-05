@@ -4,27 +4,38 @@ import android.content.res.TypedArray;
 import android.support.annotation.NonNull;
 
 import com.eegeo.mapapi.R;
+import com.eegeo.mapapi.geometry.ElevationMode;
 import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.geometry.LatLngAlt;
+import com.eegeo.mapapi.positioner.PositionerOptions;
 
 /**
  * Class which encapsulates a 3D camera position and orientation.
  */
 public final class CameraPosition {
     /**
-     * The position of the camera.
+     * The coordinate that the camera is pointing at.
      */
-    public final LatLngAlt target;
+    public final LatLng target;
+
+    public final double targetElevation;
+
+    public final ElevationMode targetElevationMode;
+
+    public final String targetIndoorMapId;
+
+    public final int targetIndoorMapFloorId;
+
     /**
      * The zoom level, in the range 0 to 26.
      */
     public final double zoom;
     /**
-     * The camera tilt in degrees, as an offset from earth normal.
+     * The angle between the forward pointing direction of the camera, and a direction vertically upwards from the Earth at target coordinate
      */
     public final double tilt;
     /**
-     * The camera bearing in degrees, as an offset from north.
+     * The camera bearing, in degrees clockwise from north.
      */
     public final double bearing;
 
@@ -69,7 +80,7 @@ public final class CameraPosition {
      * @eegeo.internal Create a camera position with the given parameters.
      */
     public CameraPosition(LatLngAlt target, double zoom, double tilt, double bearing) {
-        this.target = target;
+        this.target = target.toLatLng();
         this.zoom = zoom;
         this.tilt = tilt;
         this.bearing = bearing;
@@ -79,26 +90,41 @@ public final class CameraPosition {
         this.modifyDistance = true;
         this.modifyBearing = true;
         this.modifyTilt = true;
+
+        this.targetElevation = 0.0;
+        this.targetElevationMode = ElevationMode.HeightAboveGround;
+        this.targetIndoorMapId = "";
+        this.targetIndoorMapFloorId = 0;
     }
+
 
     /**
      * @eegeo.internal Constructor used by the builder.
      */
 
-    private CameraPosition(LatLngAlt target,
-                           boolean modifyTarget,
+    private CameraPosition(LatLng target,
+                           double targetElevation,
+                           ElevationMode targetElevationMode,
+                           String targetIndoorMapId,
+                           int targetIndoorMapFloorId,
                            double distance,
-                           boolean modifyDistance,
                            double bearing,
-                           boolean modifyBearing,
                            double tilt,
+                           boolean modifyTarget,
+                           boolean modifyDistance,
+                           boolean modifyBearing,
                            boolean modifyTilt) {
         this.target = target;
+        this.targetElevation = targetElevation;
+        this.targetElevationMode = targetElevationMode;
+        this.targetIndoorMapId = targetIndoorMapId;
+        this.targetIndoorMapFloorId = targetIndoorMapFloorId;
+
+        this.distance = distance;
         this.tilt = tilt;
         this.bearing = bearing;
         this.zoom = Builder.DistanceToZoom(distance);
 
-        this.distance = distance;
         this.modifyTarget = modifyTarget;
         this.modifyDistance = modifyDistance;
         this.modifyBearing = modifyBearing;
@@ -135,7 +161,13 @@ public final class CameraPosition {
                 17,
                 9,
                 5};
-        private LatLngAlt m_target;
+
+        private LatLng m_target = new LatLng(0.0, 0.0);
+        private double m_targetElevation = 0.0;
+        private ElevationMode m_targetElevationMode = ElevationMode.HeightAboveGround;
+        private String m_targetIndoorMapId = "";
+        private int m_targetIndoorMapFloorId = 0;
+
         private double m_distance = 0.0;
         private double m_tilt = 0.0;
         private double m_bearing = 0.0;
@@ -248,7 +280,7 @@ public final class CameraPosition {
          * @return Updated CameraPosition.Builder object.
          */
         public Builder target(double latitude, double longitude) {
-            this.m_target = new LatLngAlt(latitude, longitude, 0.0);
+            this.m_target = new LatLng(latitude, longitude);
             this.m_modifyTarget = true;
             return this;
         }
@@ -262,7 +294,9 @@ public final class CameraPosition {
          * @return Updated CameraPosition.Builder object.
          */
         public Builder target(double latitude, double longitude, double altitude) {
-            this.m_target = new LatLngAlt(latitude, longitude, altitude);
+            this.m_target = new LatLng(latitude, longitude);
+            this.m_targetElevation = altitude;
+            this.m_targetElevationMode = ElevationMode.HeightAboveSeaLevel;
             this.m_modifyTarget = true;
             return this;
         }
@@ -274,7 +308,7 @@ public final class CameraPosition {
          * @return Updated CameraPosition.Builder object.
          */
         public Builder target(@NonNull LatLng latLon) {
-            this.m_target = new LatLngAlt(latLon.latitude, latLon.longitude, 0.0);
+            this.m_target = new LatLng(latLon.latitude, latLon.longitude);
             this.m_modifyTarget = true;
             return this;
         }
@@ -286,8 +320,28 @@ public final class CameraPosition {
          * @return Updated CameraPosition.Builder object.
          */
         public Builder target(@NonNull LatLngAlt latLonAlt) {
-            this.m_target = latLonAlt;
+            this.m_target = latLonAlt.toLatLng();
+            this.m_targetElevation = latLonAlt.altitude;
+            this.m_targetElevationMode = ElevationMode.HeightAboveSeaLevel;
             this.m_modifyTarget = true;
+            return this;
+        }
+
+        public Builder elevation(@NonNull double elevation) {
+            this.m_targetElevation = elevation;
+            this.m_modifyTarget = true;
+            return this;
+        }
+
+        public Builder elevationMode(@NonNull ElevationMode elevationMode) {
+            this.m_targetElevationMode = elevationMode;
+            this.m_modifyTarget = true;
+            return this;
+        }
+
+        public Builder indoor(String indoorMapId, int indoorMapFloorId) {
+            this.m_targetIndoorMapId = indoorMapId;
+            this.m_targetIndoorMapFloorId = indoorMapFloorId;
             return this;
         }
 
@@ -334,10 +388,20 @@ public final class CameraPosition {
          * @return The final CameraPosition object.
          */
         public final CameraPosition build() {
-            return new CameraPosition(m_target, m_modifyTarget,
-                    m_distance, m_modifyDistance,
-                    m_bearing, m_modifyBearing,
-                    m_tilt, m_modifyTilt);
+            return new CameraPosition(
+                    m_target,
+                    m_targetElevation,
+                    m_targetElevationMode,
+                    m_targetIndoorMapId,
+                    m_targetIndoorMapFloorId,
+                    m_distance,
+                    m_bearing,
+                    m_tilt,
+                    m_modifyTarget,
+                    m_modifyDistance,
+                    m_modifyBearing,
+                    m_modifyTilt
+                    );
         }
     }
 }

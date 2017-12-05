@@ -158,7 +158,8 @@ public final class EegeoMap {
             public void run() {
                 double latitude = (cameraPosition.target != null) ? cameraPosition.target.latitude : 0.0;
                 double longitude = (cameraPosition.target != null) ? cameraPosition.target.longitude : 0.0;
-                double altitude = (cameraPosition.target != null) ? cameraPosition.target.altitude : 0.0;
+                //double altitude = (cameraPosition.target != null) ? cameraPosition.target.altitude : 0.0;
+                double altitude =0.0; // todo_camera_api, stubbed pending fixup of interop
                 CameraApiJniCalls.setView(m_eegeoMapApiPtr, true,
                         latitude, longitude, altitude, cameraPosition.modifyTarget,
                         cameraPosition.distance, cameraPosition.modifyDistance,
@@ -233,7 +234,8 @@ public final class EegeoMap {
         CameraApiJniCalls.initView(m_eegeoMapApiPtr,
                 cameraPosition.target.latitude,
                 cameraPosition.target.longitude,
-                cameraPosition.target.altitude,
+                // todo_camera_api broken cameraPosition.target.altitude,
+                cameraPosition.targetElevation,
                 cameraPosition.distance,
                 cameraPosition.bearing,
                 cameraPosition.tilt, cameraPosition.modifyTilt);
