@@ -1,4 +1,3 @@
-// Copyright Wrld3d Ltd (2012-2017), All Rights Reserved
 package com.wrld.widgets.searchbox;
 
 import java.util.HashMap;
@@ -7,7 +6,7 @@ public class DefaultSearchResult implements SearchResult {
 
     private String m_title;
 
-    protected HashMap<String, SearchResultProperty> m_additionalProperties;
+    private HashMap<String, SearchResultProperty> m_additionalProperties;
 
     public DefaultSearchResult(String title, SearchResultProperty... additionalProperties) {
         m_title = title;
@@ -25,10 +24,19 @@ public class DefaultSearchResult implements SearchResult {
     }
 
     @Override
+    public boolean hasProperty(String key){
+        return m_additionalProperties.containsKey(key);
+    }
+
+    @Override
     public SearchResultProperty getProperty(String propertyKey) {
         if(m_additionalProperties.containsKey(propertyKey)) {
             return m_additionalProperties.get(propertyKey);
         }
         return null;
+    }
+
+    protected void addProperty(String key, SearchResultProperty property){
+        m_additionalProperties.put(key, property);
     }
 }

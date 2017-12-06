@@ -1,10 +1,11 @@
-// Copyright Wrld3d Ltd (2012-2017), All Rights Reserved
-
 package com.wrld.searchproviders;
 
 import android.text.TextUtils;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.StringRequest;
 import com.eegeo.mapapi.EegeoMap;
 import com.eegeo.mapapi.geometry.LatLngAlt;
 import com.wrld.widgets.searchbox.DefaultSearchResult;
@@ -37,13 +38,13 @@ public class YelpSearchProvider extends SuggestionProviderBase {
     private boolean m_isAuthenticated;
     public boolean isAuthenticated () { return m_isAuthenticated; }
 
-    private HttpRequester m_httpRequester;
+    private RequestQueue m_requestQueue;
 
-    public YelpSearchProvider(HttpRequester httpRequester, EegeoMap map){
+    public YelpSearchProvider(RequestQueue requestQueue, EegeoMap map){
         super(m_title);
         m_isAuthenticated = false;
 
-        m_httpRequester = httpRequester;
+        m_requestQueue = requestQueue;
         m_map = map;
     }
 
@@ -52,24 +53,31 @@ public class YelpSearchProvider extends SuggestionProviderBase {
         //TODO test isAuthenticated after failed authentication (invalid key)
         //TODO test isAuthenticated after failed authentication (invalid secret)
 
-        HashMap<String, String> args = new HashMap<String, String>();
+        HashMap<String, String> postArgs = new HashMap<String, String>();
 
-        args.put("grant_type", "client_credentials");
-        args.put("client_id", yelpApiClientKey);
-        args.put("client_secret", yelpApiClientSecret);
+        postArgs.put("grant_type", "client_credentials");
+        postArgs.put("client_id", yelpApiClientKey);
+        postArgs.put("client_secret", yelpApiClientSecret);
 
-        m_httpRequester.makeStringRequest(Request.Method.POST, m_authUrl, args, new HttpRequester.StringResponseHandler() {
-
+        Response.Listener<String> responseHandler = new Response.Listener<String>() {
             @Override
-            public void responseReceived(String response) {
+            public void onResponse(String response) {
                 try {
                     authenticationResponseHandler(new JSONObject(response));
                 }
                 catch(JSONException e){
-                    android.util.Log.w("Yelp Authentication", "Yelp Authentication returned invalid json");
+                    //TODO Handle auth failure
                 }
             }
-        });
+        };
+
+        StringRequest request =  new VolleyStringRequestBuilder(
+                Request.Method.POST,
+                m_authUrl,
+                responseHandler)
+                .setParams(postArgs)
+                .build();
+        m_requestQueue.add(request);
     }
 
     private void authenticationResponseHandler(JSONObject response)
@@ -90,20 +98,26 @@ public class YelpSearchProvider extends SuggestionProviderBase {
             headers.put("Authorization", "Bearer " + m_accessToken);
 
             LatLngAlt cameraPosition = m_map.getCameraPosition().target;
-            m_httpRequester.makeStringRequestWithHeaders(
-                    Request.Method.GET,
-                    m_searchUrl + queryParams(query, cameraPosition, m_searchRadiusInMeters), headers,
-                    new HttpRequester.StringResponseHandler() {
 
-                        @Override
-                        public void responseReceived(String response) {
-                            try {
-                                searchResponseHandler(new JSONObject(response));
-                            } catch (JSONException e) {
-                                //TODO Handle invalid json
-                            }
-                        }
-                    });
+            Response.Listener<String> responseHandler = new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        searchResponseHandler(new JSONObject(response));
+                    } catch (JSONException e) {
+                        //TODO Handle invalid json
+                    }
+                }
+            };
+
+            StringRequest request = new VolleyStringRequestBuilder(
+                    Request.Method.GET,
+                    m_searchUrl + queryParams(query, cameraPosition, m_searchRadiusInMeters),
+                    responseHandler)
+                    .setHeaders(headers).build();
+
+            m_requestQueue.add(request);
         }
     }
 
@@ -118,20 +132,25 @@ public class YelpSearchProvider extends SuggestionProviderBase {
             headers.put("Authorization", "Bearer " + m_accessToken);
 
             LatLngAlt cameraPosition = m_map.getCameraPosition().target;
-            m_httpRequester.makeStringRequestWithHeaders(
-                    Request.Method.GET,
-                    m_autocompleteUrl + queryParams(text, cameraPosition), headers,
-                    new HttpRequester.StringResponseHandler() {
 
-                        @Override
-                        public void responseReceived(String response) {
-                            try {
-                                suggestionResponseHandler(new JSONObject(response));
-                            } catch (JSONException e) {
-                                //TODO Handle invalid json
-                            }
-                        }
-                    });
+            Response.Listener<String> responseHandler = new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        suggestionResponseHandler(new JSONObject(response));
+                    } catch (JSONException e) {
+                        //TODO Handle invalid json
+                    }
+                }
+            };
+
+            StringRequest request = new VolleyStringRequestBuilder(
+                    Request.Method.GET,
+                    m_autocompleteUrl + queryParams(text, cameraPosition),
+                    responseHandler)
+                    .setHeaders(headers).build();
+
+            m_requestQueue.add(request);
         }
     }
 

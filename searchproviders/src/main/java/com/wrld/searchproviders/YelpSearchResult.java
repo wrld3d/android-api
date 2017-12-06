@@ -1,5 +1,3 @@
-// Copyright Wrld3d Ltd (2012-2017), All Rights Reserved
-
 package com.wrld.searchproviders;
 
 import com.eegeo.mapapi.geometry.LatLng;
@@ -20,10 +18,10 @@ public class YelpSearchResult extends DefaultSearchResult {
         super(  yelpBusinessJson.optString("name"));
         JSONObject coordinateJson = yelpBusinessJson.optJSONObject("coordinates");
 
-        m_additionalProperties.put(SearchPropertyLatLng.Key, new SearchPropertyLatLng(
+        addProperty(SearchPropertyLatLng.Key, new SearchPropertyLatLng(
                 new LatLng(coordinateJson.optDouble("latitude"), coordinateJson.optDouble("longitude"))));
-        m_additionalProperties.put(RatingKey, new SearchResultPropertyDouble(RatingKey, yelpBusinessJson.optDouble("rating", 0)));
-        m_additionalProperties.put(ReviewCountKey, new SearchResultPropertyInt(ReviewCountKey, yelpBusinessJson.optInt("review_count", 0)));
-        m_additionalProperties.put(BusinessLink, new SearchResultPropertyString(ReviewCountKey, yelpBusinessJson.optString("url", m_defaultUrl)));
+        addProperty(RatingKey, new SearchResultPropertyDouble(RatingKey, yelpBusinessJson.optDouble("rating", 0)));
+        addProperty(ReviewCountKey, new SearchResultPropertyInt(ReviewCountKey, yelpBusinessJson.optInt("review_count", 0)));
+        addProperty(BusinessLink, new SearchResultPropertyString(ReviewCountKey, yelpBusinessJson.optString("url", m_defaultUrl)));
     }
 }

@@ -1,10 +1,9 @@
-// Copyright Wrld3d Ltd (2012-2017), All Rights Reserved
-
 package com.wrld.searchproviders;
 
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,9 +30,11 @@ public class YelpSearchResultViewFactory implements SearchResultViewFactory {
         m_reviewText = context.getString(R.string.yelp_review_text);
 
         m_starCache = new HashMap<Double, Integer>();
+
+        cacheRatingStarImages();
     }
 
-    public void cacheRatingStarImages(){
+    private void cacheRatingStarImages(){
         m_starCache.put(0.0, R.drawable.stars_small_0);
         m_starCache.put(1.0, R.drawable.stars_small_1);
         m_starCache.put(1.5, R.drawable.stars_small_1_half);
@@ -79,16 +80,26 @@ public class YelpSearchResultViewFactory implements SearchResultViewFactory {
 
         public void populate(SearchResult result) {
             m_title.setText(result.getTitle());
-            m_rating.setImageResource(m_starCache.get(result.getProperty(YelpSearchResult.RatingKey).getValue()));
-            m_url = (String) result.getProperty(YelpSearchResult.BusinessLink).getValue();
 
-            String reviewCountText = String.format(m_reviewText, result.getProperty(YelpSearchResult.ReviewCountKey).getValue());
-            m_reviewCount.setText(reviewCountText);
+            if(result.hasProperty(YelpSearchResult.RatingKey)) {
+                m_rating.setImageResource(m_starCache.get(result.getProperty(YelpSearchResult.RatingKey).getValue()));
+            }
+
+            if(result.hasProperty(YelpSearchResult.BusinessLink)) {
+                m_url = (String) result.getProperty(YelpSearchResult.BusinessLink).getValue();
+            }
+
+            if(result.hasProperty(YelpSearchResult.ReviewCountKey)) {
+                String reviewCountText = String.format(m_reviewText, result.getProperty(YelpSearchResult.ReviewCountKey).getValue());
+                m_reviewCount.setText(reviewCountText);
+            }
         }
 
         private void openLink(){
-            Intent browse = new Intent( Intent.ACTION_VIEW , Uri.parse( m_url ) );
-            m_context.startActivity( browse );
+            if(!TextUtils.isEmpty(m_url)) {
+                Intent browse = new Intent(Intent.ACTION_VIEW, Uri.parse(m_url));
+                m_context.startActivity(browse);
+            }
         }
     }
 
