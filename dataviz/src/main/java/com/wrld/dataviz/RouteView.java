@@ -26,26 +26,61 @@ public class RouteView {
         addToMap();
     }
 
+    private Polyline makeVerticalLine(RouteStep step, int floor, int direction) {
+        PolylineOptions options = new PolylineOptions()
+            .color(ColorUtils.setAlphaComponent(Color.RED, 128))
+            .indoor(step.indoorId, floor)
+            .add(step.path.get(0), 0.0)
+            .add(step.path.get(1), 5.0 * direction);
+
+        return map.addPolyline(options);
+    }
+
     public void addToMap() {
         for (RouteSection section: route.sections) {
-            for (RouteStep step: section.steps) {
+            List<RouteStep> steps = section.steps;
+
+            for (int i=0; i<steps.size(); ++i) {
+                RouteStep step = steps.get(i);
+
                 if (step.path.size() < 2) {
                     continue;
                 }
 
-                PolylineOptions options = new PolylineOptions()
-                    .color(ColorUtils.setAlphaComponent(Color.RED, 128));
+                if (step.isMultiFloor) {
+                    if (i == 0 || i == (steps.size() - 1) || !step.isIndoors) {
+                        continue;
+                    }
 
-                if (step.isIndoors) {
-                    options.indoor(step.indoorId, step.indoorFloorId);
+                    int floorBefore = steps.get(i-1).indoorFloorId;
+                    int floorAfter = steps.get(i+1).indoorFloorId;
+                    int direction = Integer.signum(floorAfter - floorBefore);
+
+                    polylines.add(makeVerticalLine(step, floorBefore, direction));
+
+                    int middleFloors = Math.abs(floorAfter - floorBefore) - 1;
+                    for (int j = 0; j < middleFloors; ++j) {
+                        int floorId = floorBefore + (j + 1) * direction;
+                        polylines.add(makeVerticalLine(step, floorId, 1));
+                    }
+
+                    polylines.add(makeVerticalLine(step, floorAfter, -direction));
                 }
+                else {
+                    PolylineOptions options = new PolylineOptions()
+                        .color(ColorUtils.setAlphaComponent(Color.RED, 128));
 
-                for (LatLng point: step.path) {
-                    options.add(point);
+                    if (step.isIndoors) {
+                        options.indoor(step.indoorId, step.indoorFloorId);
+                    }
+
+                    for (LatLng point: step.path) {
+                        options.add(point);
+                    }
+
+                    Polyline routeLine = map.addPolyline(options);
+                    polylines.add(routeLine);
                 }
-
-                Polyline routeLine = map.addPolyline(options);
-                polylines.add(routeLine);
             }
         }
     }
