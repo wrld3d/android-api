@@ -5,6 +5,8 @@ import android.text.TextUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.eegeo.mapapi.EegeoMap;
 import com.eegeo.mapapi.geometry.LatLngAlt;
@@ -17,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class YelpSearchProvider extends SuggestionProviderBase {
 
@@ -27,31 +30,64 @@ public class YelpSearchProvider extends SuggestionProviderBase {
     private static final String m_autocompleteUrl = "https://api.yelp.com/v3/autocomplete";
 
     private static final String m_authTokenKey = "access_token";
+    private static final String m_resultsArrayKey = "businesses";
 
     private static final int m_searchRadiusInMeters = 500;
     private static final int m_initialResultCount = 40;
 
+    private static final int m_timeoutMs = 10000;
+    private static final int m_maxRetries = 3;
+
     private EegeoMap m_map;
 
-    private String m_accessToken;
+    private String m_yelpApiClientKey;
+    private String m_yelpApiClientSecret;
 
-    private boolean m_isAuthenticated;
-    public boolean isAuthenticated () { return m_isAuthenticated; }
+    private enum AuthStatus {UNAUTHENTICATED, AUTHENTICATING, AUTHENTICATED, TIMED_OUT, REJECTED };
+    private AuthStatus m_authStatus;
+    public boolean isAuthenticated () { return m_authStatus == AuthStatus.AUTHENTICATED; }
+    private Map<String, String> m_authHeaders;
+
+    private enum SearchType {SEARCH, AUTOCOMPLETE };
+    private SearchType m_deferredSearchType;
+    private String m_deferredQuery;
 
     private RequestQueue m_requestQueue;
 
-    public YelpSearchProvider(RequestQueue requestQueue, EegeoMap map){
+    private ErrorHandler m_errorHandler;
+
+    private Response.Listener<String> m_authResponseListener;
+    private Response.Listener<String> m_searchResponseListener;
+    private Response.Listener<String> m_autocompleteResponseListener;
+    private Response.ErrorListener m_authErrorListener;
+
+    private Request m_currentRequest;
+
+    public YelpSearchProvider(RequestQueue requestQueue, EegeoMap map, ErrorHandler errorHandler){
         super(m_title);
-        m_isAuthenticated = false;
+        m_authStatus = AuthStatus.UNAUTHENTICATED;
 
         m_requestQueue = requestQueue;
         m_map = map;
+        m_errorHandler = errorHandler;
+
+        createCallbacks();
     }
 
     public void authenticate(String yelpApiClientKey, String yelpApiClientSecret) {
-        //TODO test isAuthenticated after successful authentication
-        //TODO test isAuthenticated after failed authentication (invalid key)
-        //TODO test isAuthenticated after failed authentication (invalid secret)
+
+        m_yelpApiClientKey = yelpApiClientKey;
+        m_yelpApiClientSecret = yelpApiClientSecret;
+
+        if(m_authStatus == AuthStatus.AUTHENTICATING){
+            m_errorHandler.handleError(R.string.yelp_auth_error_title, R.string.yelp_error_auth_retry_while_in_progress);
+            return;
+        }
+
+        if(m_authStatus == AuthStatus.AUTHENTICATED){
+            m_errorHandler.handleError(R.string.yelp_auth_error_title, R.string.yelp_error_auth_retry_while_authenticated);
+            return;
+        }
 
         HashMap<String, String> postArgs = new HashMap<String, String>();
 
@@ -59,98 +95,91 @@ public class YelpSearchProvider extends SuggestionProviderBase {
         postArgs.put("client_id", yelpApiClientKey);
         postArgs.put("client_secret", yelpApiClientSecret);
 
-        Response.Listener<String> responseHandler = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    authenticationResponseHandler(new JSONObject(response));
-                }
-                catch(JSONException e){
-                    //TODO Handle auth failure
-                }
-            }
-        };
-
         StringRequest request =  new VolleyStringRequestBuilder(
                 Request.Method.POST,
                 m_authUrl,
-                responseHandler)
+                m_authResponseListener)
                 .setParams(postArgs)
+                .setErrorListener(m_authErrorListener)
+                .setRetryPolicy(m_timeoutMs, m_maxRetries)
                 .build();
+
+        m_authStatus = AuthStatus.AUTHENTICATING;
         m_requestQueue.add(request);
     }
 
-    private void authenticationResponseHandler(JSONObject response)
-    {
+    private void authenticationResponseHandler(JSONObject response) {
         if(response.has(m_authTokenKey)) {
-            m_accessToken = response.optString(m_authTokenKey);
-            m_isAuthenticated = !TextUtils.isEmpty(m_accessToken);
+            String accessToken = response.optString(m_authTokenKey);
+            if(TextUtils.isEmpty(accessToken)){
+                m_errorHandler.handleError(R.string.yelp_auth_error_title, R.string.yelp_error_empty_auth_token);
+                m_authStatus = AuthStatus.REJECTED;
+                return;
+            }
+            m_authStatus = AuthStatus.AUTHENTICATED;
+            m_authHeaders = new HashMap<String, String>();
+            m_authHeaders.put("Authorization", "Bearer " + accessToken);
+
+            if(!TextUtils.isEmpty(m_deferredQuery)){
+                sendDeferredQuery();
+            }
+        }
+        else{
+            m_errorHandler.handleError(R.string.yelp_auth_error_title, R.string.yelp_error_no_auth_token);
+            m_authStatus = AuthStatus.REJECTED;
         }
     }
 
     @Override
     public void getSearchResults(String query) {
-        //TODO test getSearchResults before authentication
-        //TODO test getSearchResults after valid authentication
-        //TODO test getSearchResults after failed authentication
+
         if(isAuthenticated()) {
-            HashMap<String, String> headers = new HashMap<String, String>();
-            headers.put("Authorization", "Bearer " + m_accessToken);
+
+            if(m_currentRequest != null && !m_currentRequest.hasHadResponseDelivered()){
+                m_currentRequest.cancel();
+            }
 
             LatLngAlt cameraPosition = m_map.getCameraPosition().target;
+            String queryUrl = m_searchUrl + queryParams(query, cameraPosition, m_searchRadiusInMeters);
 
-            Response.Listener<String> responseHandler = new Response.Listener<String>() {
+            m_currentRequest = new VolleyStringRequestBuilder(
+                    Request.Method.GET, queryUrl, m_searchResponseListener)
+                    .setHeaders(m_authHeaders)
+                    .setRetryPolicy(m_timeoutMs, m_maxRetries)
+                    .build();
 
-                @Override
-                public void onResponse(String response) {
-                    try {
-                        searchResponseHandler(new JSONObject(response));
-                    } catch (JSONException e) {
-                        //TODO Handle invalid json
-                    }
-                }
-            };
-
-            StringRequest request = new VolleyStringRequestBuilder(
-                    Request.Method.GET,
-                    m_searchUrl + queryParams(query, cameraPosition, m_searchRadiusInMeters),
-                    responseHandler)
-                    .setHeaders(headers).build();
-
-            m_requestQueue.add(request);
+            m_requestQueue.add(m_currentRequest);
+        }
+        else {
+            m_deferredQuery = query;
+            m_deferredSearchType = SearchType.SEARCH;
+            handleUnauthorisedRequest();
         }
     }
 
     @Override
     public void getSuggestions(String text) {
-        //TODO test getSuggestions before authentication
-        //TODO test getSuggestions after valid authentication
-        //TODO test getSuggestions after failed authentication
 
         if(isAuthenticated()) {
-            HashMap<String, String> headers = new HashMap<String, String>();
-            headers.put("Authorization", "Bearer " + m_accessToken);
+
+            if(m_currentRequest != null && !m_currentRequest.hasHadResponseDelivered()){
+                m_currentRequest.cancel();
+            }
 
             LatLngAlt cameraPosition = m_map.getCameraPosition().target;
+            String queryUrl = m_autocompleteUrl + queryParams(text, cameraPosition);
 
-            Response.Listener<String> responseHandler = new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    try {
-                        suggestionResponseHandler(new JSONObject(response));
-                    } catch (JSONException e) {
-                        //TODO Handle invalid json
-                    }
-                }
-            };
+            m_currentRequest = new VolleyStringRequestBuilder(
+                    Request.Method.GET, queryUrl, m_autocompleteResponseListener)
+                    .setRetryPolicy(m_timeoutMs, m_maxRetries)
+                    .setHeaders(m_authHeaders).build();
 
-            StringRequest request = new VolleyStringRequestBuilder(
-                    Request.Method.GET,
-                    m_autocompleteUrl + queryParams(text, cameraPosition),
-                    responseHandler)
-                    .setHeaders(headers).build();
-
-            m_requestQueue.add(request);
+            m_requestQueue.add(m_currentRequest);
+        }
+        else {
+            m_deferredQuery = text;
+            m_deferredSearchType = SearchType.AUTOCOMPLETE;
+            handleUnauthorisedRequest();
         }
     }
 
@@ -169,7 +198,7 @@ public class YelpSearchProvider extends SuggestionProviderBase {
     }
 
     private void suggestionResponseHandler(JSONObject response){
-        JSONArray businesses = response.optJSONArray("businesses");
+        JSONArray businesses = response.optJSONArray(m_resultsArrayKey);
         SearchResult[] results = new SearchResult[businesses.length()];
         for(int i = 0; i < businesses.length(); ++i){
             JSONObject businessJson = businesses.optJSONObject(i);
@@ -180,7 +209,7 @@ public class YelpSearchProvider extends SuggestionProviderBase {
     }
 
     private void searchResponseHandler(JSONObject response){
-        JSONArray businesses = response.optJSONArray("businesses");
+        JSONArray businesses = response.optJSONArray(m_resultsArrayKey);
         SearchResult[] results = new SearchResult[businesses.length()];
         for(int i = 0; i < businesses.length(); ++i){
             JSONObject businessJson = businesses.optJSONObject(i);
@@ -188,5 +217,85 @@ public class YelpSearchProvider extends SuggestionProviderBase {
         }
 
         performSearchCompletedCallbacks(results);
+    }
+
+    private void createCallbacks(){
+
+        m_authResponseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    authenticationResponseHandler(new JSONObject(response));
+                }
+                catch(JSONException e){
+                    m_errorHandler.handleError(R.string.yelp_auth_error_title, R.string.yelp_error_auth_invalid_response);
+                }
+            }
+        };
+
+        m_searchResponseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    searchResponseHandler(new JSONObject(response));
+                } catch (JSONException e) {
+                    android.util.Log.w("Yelp Search", "Search Response Error: " +  response);
+                    performSearchCompletedCallbacks(new SearchResult[0]);
+                }
+            }
+        };
+
+        m_autocompleteResponseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    suggestionResponseHandler(new JSONObject(response));
+                } catch (JSONException e) {
+                    android.util.Log.w("Yelp Search", "Suggestion Response Error: " +  response);
+                    performSuggestionCompletedCallbacks(new SearchResult[0]);
+                }
+            }
+        };
+
+        m_authErrorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if(error instanceof TimeoutError){
+                    m_errorHandler.handleError(R.string.yelp_auth_error_title, R.string.yelp_error_auth_timed_out);
+                    m_authStatus = AuthStatus.TIMED_OUT;
+                    return;
+                }
+                if(error.networkResponse.statusCode == 400) {
+                    m_errorHandler.handleError(R.string.yelp_auth_error_title, R.string.yelp_error_auth_rejected);
+                }
+                if(error.networkResponse.statusCode == 404) {
+                    m_errorHandler.handleError(R.string.yelp_auth_error_title, R.string.yelp_error_auth_404);
+                }
+                m_authStatus = AuthStatus.REJECTED;
+            }
+        };
+    }
+
+    private void sendDeferredQuery(){
+        if(m_deferredSearchType == SearchType.SEARCH){
+            getSearchResults(m_deferredQuery);
+        }
+        else{
+            getSuggestions(m_deferredQuery);
+        }
+    }
+
+    private void handleUnauthorisedRequest(){
+        switch(m_authStatus){
+            case TIMED_OUT:
+                authenticate(m_yelpApiClientKey, m_yelpApiClientSecret);
+                break;
+            case REJECTED:
+                m_errorHandler.handleError(R.string.yelp_search_error_title, R.string.yelp_error_rejected_authorisation_search);
+                break;
+            case UNAUTHENTICATED:
+                m_errorHandler.handleError(R.string.yelp_search_error_title, R.string.yelp_error_unauthorised_search);
+                break;
+        }
     }
 }
