@@ -47,6 +47,7 @@ public class YelpSearchProvider extends SuggestionProviderBase {
     private AuthStatus m_authStatus;
     public boolean isAuthenticated () { return m_authStatus == AuthStatus.AUTHENTICATED; }
     private Map<String, String> m_authHeaders;
+    private boolean m_hasRaisedAuthError = false;
 
     private enum SearchType {SEARCH, AUTOCOMPLETE };
     private SearchType m_deferredSearchType;
@@ -70,6 +71,7 @@ public class YelpSearchProvider extends SuggestionProviderBase {
         m_requestQueue = requestQueue;
         m_map = map;
         m_errorHandler = errorHandler;
+        m_hasRaisedAuthError = false;
 
         createCallbacks();
     }
@@ -291,10 +293,16 @@ public class YelpSearchProvider extends SuggestionProviderBase {
                 authenticate(m_yelpApiClientKey, m_yelpApiClientSecret);
                 break;
             case REJECTED:
-                m_errorHandler.handleError(R.string.yelp_search_error_title, R.string.yelp_error_rejected_authorisation_search);
+                if(!m_hasRaisedAuthError){
+                    m_errorHandler.handleError(R.string.yelp_search_error_title, R.string.yelp_error_rejected_authorisation_search);
+                    m_hasRaisedAuthError = true;
+                }
                 break;
             case UNAUTHENTICATED:
-                m_errorHandler.handleError(R.string.yelp_search_error_title, R.string.yelp_error_unauthorised_search);
+                if(!m_hasRaisedAuthError) {
+                    m_errorHandler.handleError(R.string.yelp_search_error_title, R.string.yelp_error_unauthorised_search);
+                    m_hasRaisedAuthError = true;
+                }
                 break;
         }
     }
