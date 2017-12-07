@@ -9,7 +9,6 @@ class DefaultSearchResultSet implements SearchResultSet {
     private ArrayList<SearchResult> m_results;
     private ArrayList<OnResultChanged> m_onResultChangedCallbackList;
 
-
     public void updateSetResults(SearchResult[] results) {
         m_results.clear();
         m_results.addAll(Arrays.asList(results));

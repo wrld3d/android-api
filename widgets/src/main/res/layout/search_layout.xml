@@ -10,74 +10,44 @@
     android:paddingLeft="@dimen/padding_search"
     android:paddingRight="@dimen/padding_search">
 
-    <LinearLayout
-        android:id="@+id/search_box_container"
+    <RelativeLayout
+        android:id="@+id/searchbox_search"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/options"
-            android:layout_width="10dp"
+        <LinearLayout
+            android:id="@+id/searchbox_search"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/searchbox_search_results"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.23"
-            android:text="@string/search_options"
-            tools:text="Options" />
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/searchbox_search"
+            android:layout_toEndOf="@+id/search_tags"
+            android:layout_toRightOf="@+id/search_tags"
+            android:orientation="vertical"></LinearLayout>
 
-        <SearchView
-            android:id="@+id/search_box"
-            android:layout_width="90dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.23"
-
-            android:background="#FFFFFF" />
-
-        <Button
-            android:id="@+id/perform_search"
-            android:layout_width="10dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.22"
-            android:text="@string/perform_search"
-            tools:text="Search" />
-
-    </LinearLayout>
+    </RelativeLayout>
 
     <LinearLayout
-        android:id="@+id/search_tags"
-        android:layout_width="50dp"
+        android:id="@+id/searchbox_menu_container"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/search_box_container"
         android:orientation="vertical">
-
-        <Button
-            android:id="@+id/button_a"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="@string/search_category_a" />
-
-        <Button
-            android:id="@+id/button_b"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="@string/search_category_b" />
-
-        <Button
-            android:id="@+id/button_c"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="@string/search_category_c" />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/search_result_sets_container"
+        android:id="@+id/searchbox_options_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/search_box_container"
-        android:layout_toEndOf="@+id/search_tags"
-        android:layout_toRightOf="@+id/search_tags"
+        android:layout_height="match_parent"
         android:orientation="vertical"></LinearLayout>
 
 </RelativeLayout>

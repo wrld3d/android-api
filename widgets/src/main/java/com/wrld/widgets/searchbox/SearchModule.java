@@ -28,9 +28,10 @@ public class SearchModule implements SearchModuleFacade {
         m_inflater = LayoutInflater.from(appSearchAreaView.getContext());
         m_searchboxRootContainer = (ViewGroup) m_inflater.inflate(R.layout.search_layout, appSearchAreaView, true);
 
-        m_searchResultsContainer = new DefaultSearchResultSetsContainer((ViewGroup) m_searchboxRootContainer.findViewById(R.id.search_result_sets_container));
+        m_searchResultsContainer = new DefaultSearchResultSetsContainer((ViewGroup) m_searchboxRootContainer.findViewById(R.id.searchbox_search_results));
 
-        m_searchboxController = new SearchBoxController(m_searchboxRootContainer);
+        ViewGroup searchbox = (ViewGroup) m_inflater.inflate(R.layout.searchbox_search, appSearchAreaView, true);
+        m_searchboxController = new SearchBoxController(searchbox);
 
         m_searchboxController.addQuerySubmittedCallback(new SearchBoxController.OnSearchQueryUpdatedCallback() {
             @Override
@@ -51,26 +52,12 @@ public class SearchModule implements SearchModuleFacade {
 
         setDefaultSearchResultViewFactory(new DefaultSearchResultViewFactory(R.layout.search_result));
 
-        configureTags(R.id.search_tags);
-        final Button performSearchButton = (Button)m_searchboxRootContainer.findViewById(R.id.perform_search);
+        final View performSearchButton = m_searchboxRootContainer.findViewById(R.id.searchbox_search_perform);
         performSearchButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 m_searchboxController.performQuery();
             }
         });
-    }
-
-    private void configureTags(int tagContainerId) {
-        ViewGroup tagContainer = (ViewGroup) m_searchboxRootContainer.findViewById(tagContainerId);
-
-        for(int index=0; index<tagContainer.getChildCount(); ++index) {
-            final Button button = (Button)tagContainer.getChildAt(index);
-            button.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    m_searchboxController.performQuery(button.getText());
-                }
-            });
-        }
     }
 
     @Override

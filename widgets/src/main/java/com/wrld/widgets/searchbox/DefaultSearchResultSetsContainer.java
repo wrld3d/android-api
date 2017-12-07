@@ -28,8 +28,8 @@ class DefaultSearchResultSetsContainer {
         View setView = m_inflater.inflate(R.layout.search_set, m_resultSetsContainer, false);
         m_resultSetsContainer.addView(setView, m_searchResultsContainer.size() );
 
-        View setContent = setView.findViewById(R.id.set_content);
-        ListView listView = (ListView) setContent.findViewById(R.id.search_result_list);
+        View setContent = setView.findViewById(R.id.searchbox_set_content);
+        ListView listView = (ListView) setContent.findViewById(R.id.searchbox_set_result_list);
 
         final DefaultSearchResultsContainer resultList = new DefaultSearchResultsContainer(
                 m_inflater, setView,
@@ -61,19 +61,19 @@ class DefaultSearchResultSetsContainer {
     }
 
     private void configureButtons(final View resultsSet, final PaginatedSearchResultsContainer resultsAdapter) {
-        Button next = (Button) resultsSet.findViewById(R.id.search_pagination_prev);
+        Button next = (Button) resultsSet.findViewById(R.id.searchbox_set_pagination_next);
         next.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                resultsAdapter.previousPage();
-            }
-        });
-        Button prev = (Button) resultsSet.findViewById(R.id.search_pagination_next);
-        prev.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 resultsAdapter.nextPage();
             }
         });
-        Button expand = (Button) resultsSet.findViewById(R.id.search_expand_button);
+        Button prev = (Button) resultsSet.findViewById(R.id.searchbox_set_pagination_prev);
+        prev.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                resultsAdapter.previousPage();
+            }
+        });
+        Button expand = (Button) resultsSet.findViewById(R.id.searchbox_set_expand_button);
         expand.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 expandView(resultsAdapter);

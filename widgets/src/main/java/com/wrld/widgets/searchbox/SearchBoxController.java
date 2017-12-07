@@ -15,7 +15,7 @@ class SearchBoxController {
     public ArrayList<OnSearchQueryUpdatedCallback> m_onQuerySubmitedCallbacks;
 
     SearchBoxController(ViewGroup searchboxRootContainer) {
-        m_view = (SearchView) searchboxRootContainer.findViewById(R.id.search_box);
+        m_view = (SearchView) searchboxRootContainer.findViewById(R.id.searchbox_search_querybox);
         m_onQueryUpdatedCallbacks = new ArrayList<OnSearchQueryUpdatedCallback>();
         m_onQuerySubmitedCallbacks = new ArrayList<OnSearchQueryUpdatedCallback>();
 

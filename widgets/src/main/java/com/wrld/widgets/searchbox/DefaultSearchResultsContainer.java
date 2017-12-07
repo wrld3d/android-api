@@ -44,17 +44,17 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
                                          SearchResultSet suggestionsModel , SearchResultViewFactory factorySuggestions) {
 
         m_setContainer = container;
-        m_header = container.findViewById(R.id.search_set_header);
-        m_footer = container.findViewById(R.id.search_set_footer);
-        m_searchResultInfo = (TextView) container.findViewById(R.id.search_pagination_results_info);
-        m_expandControls = container.findViewById(R.id.expand_controls);
-        m_paginationControls = container.findViewById(R.id.pagination_controls);
+        m_header = container.findViewById(R.id.searchbox_set_header);
+        m_footer = container.findViewById(R.id.searchbox_set_footer);
+        m_searchResultInfo = (TextView) container.findViewById(R.id.searchbox_set_pagination_results_info);
+        m_expandControls = container.findViewById(R.id.searchbox_set_expand_controls);
+        m_paginationControls = container.findViewById(R.id.searchbox_set_pagination_controls);
         m_paginationButtons = new View[2];
-        m_paginationButtons[0] = container.findViewById(R.id.search_pagination_prev);
-        m_paginationButtons[1] = container.findViewById(R.id.search_pagination_next);
+        m_paginationButtons[0] = container.findViewById(R.id.searchbox_set_pagination_prev);
+        m_paginationButtons[1] = container.findViewById(R.id.searchbox_set_pagination_next);
 
-        m_searchResultsView = container.findViewById(R.id.search_result_list);
-        m_searchInProgressView = container.findViewById(R.id.search_set_in_progress_view);
+        m_searchResultsView = container.findViewById(R.id.searchbox_set_result_list);
+        m_searchInProgressView = container.findViewById(R.id.searchbox_set_search_in_progress_view);
 
         m_inflater =inflater;
 

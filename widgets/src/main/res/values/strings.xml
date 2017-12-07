@@ -1,13 +1,19 @@
 <resources>
-    <string name="app_name">Widgets</string>
-    <string name="expand_search_results">Expand</string>
-    <string name="perform_search">Search</string>
-    <string name="search_options">Options</string>
-    <string name="pagination_prev">Prev</string>
-    <string name="pagination_next">Next</string>
-    <string name="search_result_count">1-20 of 100</string>
     <string name="default_search_title">Search Results</string>
-    <string name="search_category_a">A</string>
-    <string name="search_category_b">B</string>
-    <string name="search_category_c">C</string>
+    <string name="searchbox_query_hint">Search the WRLD</string>
+    <string name="searchbox_menu_find_header">Find:</string>
+    <string name="searchbox_menu_about_title">About</string>
+    <string name="searchbox_menu_options_title">Options</string>
+    <string name="searchbox_menu_options_appearance_header">Map Appearance</string>
+    <string name="searchbox_menu_options_appearance_time_header">Time, Weather, Season</string>
+    <string name="searchbox_menu_options_appearance_theme_header">Theme (Style)</string>
+    <string name="searchbox_menu_options_save_place">Save this place</string>
+    <string name="searchbox_menu_options_show_help">Show help cards again</string>
+    <string name="searchbox_menu_options_map_settings_header">Map Settings</string>
+    <string name="searchbox_menu_options_stream_title">Only stream over WiFi</string>
+    <string name="searchbox_menu_options_stream_description">Streaming over mobile networks can be expensive</string>
+    <string name="searchbox_menu_options_store_data_title">Store map data on device</string>
+    <string name="searchbox_menu_options_store_data_description">Faster loading and less streaming required</string>
+    <string name="searchbox_menu_options_clear_title">Clear stored map data</string>
+    <string name="searchbox_menu_options_clear_description">To free up space on your device</string>
 </resources>

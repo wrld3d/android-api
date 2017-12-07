@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/searchbox_set"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/padding_search"
@@ -11,7 +12,7 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/search_set_header"
+        android:id="@+id/searchbox_set_header"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:orientation="horizontal"
@@ -29,16 +30,16 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/set_content"
+        android:id="@+id/searchbox_set_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/search_set_footer"
-        android:layout_below="@+id/search_set_header"
+        android:layout_above="@+id/searchbox_set_footer"
+        android:layout_below="@+id/searchbox_set_header"
         android:baselineAligned="false"
         android:orientation="vertical">
 
         <ProgressBar
-            android:id="@+id/search_set_in_progress_view"
+            android:id="@+id/searchbox_set_search_in_progress_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#FFFFFF"
@@ -46,7 +47,7 @@
             android:visibility="gone" />
 
         <ListView
-            android:id="@+id/search_result_list"
+            android:id="@+id/searchbox_set_result_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.1"
@@ -57,7 +58,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/search_set_footer"
+        android:id="@+id/searchbox_set_footer"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"
@@ -66,7 +67,7 @@
         android:visibility="gone">
 
         <LinearLayout
-            android:id="@+id/expand_controls"
+            android:id="@+id/searchbox_set_expand_controls"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -74,16 +75,15 @@
             android:weightSum="1">
 
             <Button
-                android:id="@+id/search_expand_button"
+                android:id="@+id/searchbox_set_expand_button"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_weight="1"
-                android:text="@string/expand_search_results"
                 android:visibility="visible" />
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/pagination_controls"
+            android:id="@+id/searchbox_set_pagination_controls"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -91,26 +91,23 @@
             android:weightSum="1">
 
             <Button
-                android:id="@+id/search_pagination_prev"
+                android:id="@+id/searchbox_set_pagination_prev"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:layout_weight="0.125"
-                android:text="@string/pagination_prev" />
+                android:layout_weight="0.0" />
 
             <TextView
-                android:id="@+id/search_pagination_results_info"
+                android:id="@+id/searchbox_set_pagination_results_info"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:layout_weight="0.75"
-                android:text="@string/search_result_count"
+                android:layout_weight="1.0"
                 android:textAlignment="center" />
 
             <Button
-                android:id="@+id/search_pagination_next"
+                android:id="@+id/searchbox_set_pagination_next"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:layout_weight="0.125"
-                android:text="@string/pagination_next" />
+                android:layout_weight="0.0" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

@@ -2,7 +2,7 @@ package com.wrld.widgets.searchbox;
 
 import java.util.ArrayList;
 
-public class DebugSuggestionProvider extends SuggestionProviderBase implements SuggestionProvider{
+public class SpoofSuggestionProvider extends SuggestionProviderBase implements SuggestionProvider{
 
     private SearchResultViewFactory m_suggestionViewFactory;
     private ArrayList<OnResultsReceivedCallback> m_onSuggestionsReceivedCallback;
@@ -10,7 +10,7 @@ public class DebugSuggestionProvider extends SuggestionProviderBase implements S
     private final String LOREM_IPSUM =
             "ex vis nusquam tincidunt, Lorem ipsum dolor sit amet.";
 
-    public DebugSuggestionProvider(String uid) {
+    public SpoofSuggestionProvider(String uid) {
         super(uid);
     }
 
