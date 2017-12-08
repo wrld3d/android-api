@@ -293,14 +293,12 @@ public final class EegeoMap {
     }
 
     @WorkerThread
-    private void jniUpdateCameraState(final double lat, final double lon, final double interestAltitude, final double bearing, final double tilt, final double distance) {
+    private void jniSetCameraPosition(final CameraPosition cameraPosition) {
         m_uiRunner.runOnUiThread(new Runnable() {
             @UiThread
             @Override
             public void run() {
-                double zoom = CameraPosition.Builder.DistanceToZoom(distance);
-
-                m_cameraPosition = new CameraPosition(new LatLngAlt(lat, lon, interestAltitude), zoom, tilt, bearing);
+                m_cameraPosition = cameraPosition;
             }
         });
     }

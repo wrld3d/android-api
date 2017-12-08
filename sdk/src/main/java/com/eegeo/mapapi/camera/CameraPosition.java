@@ -30,10 +30,12 @@ public final class CameraPosition {
      * The zoom level, in the range 0 to 26.
      */
     public final double zoom;
+
     /**
      * The angle between the forward pointing direction of the camera, and a direction vertically upwards from the Earth at target coordinate
      */
     public final double tilt;
+
     /**
      * The camera bearing, in degrees clockwise from north.
      */
@@ -45,30 +47,36 @@ public final class CameraPosition {
      * @eegeo.internal
      */
     public final double distance;
+
     /**
      * Flag to signify that the target has changed.
      *
      * @eegeo.internal
      */
     public final boolean modifyTarget;
-    /**
-     * Flag to signify that the distance has changed.
-     *
-     * @eegeo.internal
-     */
-    public final boolean modifyDistance;
-    /**
-     * Flag to signify that the bearing has changed.
-     *
-     * @eegeo.internal
-     */
-    public final boolean modifyBearing;
+
     /**
      * Flag to signify that the tilt has changed.
      *
      * @eegeo.internal
      */
     public final boolean modifyTilt;
+
+    /**
+     * Flag to signify that the bearing has changed.
+     *
+     * @eegeo.internal
+     */
+
+    public final boolean modifyBearing;
+
+    /**
+     * Flag to signify that the distance has changed.
+     *
+     * @eegeo.internal
+     */
+    public final boolean modifyDistance;
+
 
 
     /**
@@ -81,20 +89,20 @@ public final class CameraPosition {
      */
     public CameraPosition(LatLngAlt target, double zoom, double tilt, double bearing) {
         this.target = target.toLatLng();
-        this.zoom = zoom;
-        this.tilt = tilt;
-        this.bearing = bearing;
-
-        this.distance = Builder.ZoomToDistance(zoom);
-        this.modifyTarget = true;
-        this.modifyDistance = true;
-        this.modifyBearing = true;
-        this.modifyTilt = true;
-
         this.targetElevation = 0.0;
         this.targetElevationMode = ElevationMode.HeightAboveGround;
         this.targetIndoorMapId = "";
         this.targetIndoorMapFloorId = 0;
+
+        this.zoom = zoom;
+        this.tilt = tilt;
+        this.bearing = bearing;
+        this.distance = Builder.ZoomToDistance(zoom);
+
+        this.modifyTarget = true;
+        this.modifyTilt = true;
+        this.modifyBearing = true;
+        this.modifyDistance = true;
     }
 
 
@@ -107,28 +115,30 @@ public final class CameraPosition {
                            ElevationMode targetElevationMode,
                            String targetIndoorMapId,
                            int targetIndoorMapFloorId,
-                           double distance,
-                           double bearing,
+                           double zoom,
                            double tilt,
+                           double bearing,
+                           double distance,
                            boolean modifyTarget,
-                           boolean modifyDistance,
+                           boolean modifyTilt,
                            boolean modifyBearing,
-                           boolean modifyTilt) {
+                           boolean modifyDistance) {
         this.target = target;
         this.targetElevation = targetElevation;
         this.targetElevationMode = targetElevationMode;
         this.targetIndoorMapId = targetIndoorMapId;
         this.targetIndoorMapFloorId = targetIndoorMapFloorId;
 
-        this.distance = distance;
+        this.zoom = zoom;
         this.tilt = tilt;
         this.bearing = bearing;
-        this.zoom = Builder.DistanceToZoom(distance);
+        this.distance = distance;
 
         this.modifyTarget = modifyTarget;
-        this.modifyDistance = modifyDistance;
-        this.modifyBearing = modifyBearing;
         this.modifyTilt = modifyTilt;
+        this.modifyBearing = modifyBearing;
+        this.modifyDistance = modifyDistance;
+
     }
 
     /**
@@ -168,9 +178,10 @@ public final class CameraPosition {
         private String m_targetIndoorMapId = "";
         private int m_targetIndoorMapFloorId = 0;
 
-        private double m_distance = 0.0;
         private double m_tilt = 0.0;
         private double m_bearing = 0.0;
+        private double m_distance = 0.0;
+
         private boolean m_modifyTarget = false;
         private boolean m_modifyTilt = false;
         private boolean m_modifyBearing = false;
@@ -206,15 +217,16 @@ public final class CameraPosition {
                 zoom(zoom);
             }
 
+            if (typedArray.hasValue(R.styleable.eegeo_MapView_camera_tilt)) {
+                double tilt = typedArray.getFloat(R.styleable.eegeo_MapView_camera_tilt, 0.0f);
+                tilt(tilt);
+            }
+
             if (typedArray.hasValue(R.styleable.eegeo_MapView_camera_bearing)) {
                 double bearing = typedArray.getFloat(R.styleable.eegeo_MapView_camera_bearing, 0.0f);
                 bearing(bearing);
             }
 
-            if (typedArray.hasValue(R.styleable.eegeo_MapView_camera_tilt)) {
-                double tilt = typedArray.getFloat(R.styleable.eegeo_MapView_camera_tilt, 0.0f);
-                tilt(tilt);
-            }
 
         }
 
@@ -252,24 +264,6 @@ public final class CameraPosition {
                 }
             }
             return 17;
-        }
-
-        /**
-         * Sets the orientation of the camera in the earth tangent plane, in degrees clockwise from north.
-         *
-         * @param bearing Angle in degrees.
-         * @return Updated CameraPosition.Builder object.
-         */
-        public Builder bearing(double bearing) {
-            while (bearing >= 360.0) {
-                bearing -= 360.0;
-            }
-            while (bearing < 0.0) {
-                bearing += 360.0;
-            }
-            this.m_bearing = bearing;
-            this.m_modifyBearing = true;
-            return this;
         }
 
         /**
@@ -346,19 +340,6 @@ public final class CameraPosition {
         }
 
         /**
-         * Sets the distance.
-         *
-         * @param distance
-         * @return Updated CameraPosition.Builder object.
-         * @eegeo.internal
-         */
-        private Builder distance(double distance) {
-            this.m_distance = distance; // todo - clamp?
-            this.m_modifyDistance = true;
-            return this;
-        }
-
-        /**
          * Sets the camera zoom.
          *
          * @param zoom The new zoom value.
@@ -383,24 +364,58 @@ public final class CameraPosition {
         }
 
         /**
+         * Sets the orientation of the camera in the earth tangent plane, in degrees clockwise from north.
+         *
+         * @param bearing Angle in degrees.
+         * @return Updated CameraPosition.Builder object.
+         */
+        public Builder bearing(double bearing) {
+            while (bearing >= 360.0) {
+                bearing -= 360.0;
+            }
+            while (bearing < 0.0) {
+                bearing += 360.0;
+            }
+            this.m_bearing = bearing;
+            this.m_modifyBearing = true;
+            return this;
+        }
+
+        /**
+         * Sets the distance.
+         *
+         * @param distance
+         * @return Updated CameraPosition.Builder object.
+         * @eegeo.internal
+         */
+        private Builder distance(double distance) {
+            this.m_distance = distance;
+            this.m_modifyDistance = true;
+            return this;
+        }
+
+        /**
          * Builds a CameraPosition object.
          *
          * @return The final CameraPosition object.
          */
         public final CameraPosition build() {
+            double zoom = DistanceToZoom(m_distance);
+
             return new CameraPosition(
                     m_target,
                     m_targetElevation,
                     m_targetElevationMode,
                     m_targetIndoorMapId,
                     m_targetIndoorMapFloorId,
-                    m_distance,
-                    m_bearing,
+                    zoom,
                     m_tilt,
+                    m_bearing,
+                    m_distance,
                     m_modifyTarget,
-                    m_modifyDistance,
+                    m_modifyTilt,
                     m_modifyBearing,
-                    m_modifyTilt
+                    m_modifyDistance
                     );
         }
     }
