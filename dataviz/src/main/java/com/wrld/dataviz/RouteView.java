@@ -3,9 +3,10 @@ package com.wrld.dataviz;
 import java.util.List;
 import java.util.ArrayList;
 
-import android.util.Log;
 import android.graphics.Color;
+import android.support.annotation.UiThread;
 import android.support.v4.graphics.ColorUtils;
+import android.util.Log;
 
 import com.eegeo.mapapi.EegeoMap;
 import com.eegeo.mapapi.geometry.LatLng;
@@ -16,28 +17,39 @@ import com.eegeo.mapapi.services.routing.*;
 
 public class RouteView {
 
-    private EegeoMap map = null;
-    private Route route = null;
-    private List<Polyline> polylines = new ArrayList();
+    private EegeoMap m_map = null;
+    private Route m_route = null;
+    private List<Polyline> m_polylines = new ArrayList();
+    private boolean m_currentlyOnMap = false;
 
-    public RouteView(EegeoMap map, Route route) {
-        this.map = map;
-        this.route = route;
+    private float m_width;
+    private int m_colorARGB;
+    private float m_miterLimit;
+
+
+    /**
+     * Create a new RouteView for the given route and options, and add it to the map.
+     *
+     * @param map The EegeoMap to draw this RouteView on.
+     * @param route The Route to display.
+     * @param options Options for styling the route.
+     */
+    // TODO(paul): add constructor that takes List<Route>
+    public RouteView(EegeoMap map, Route route, RouteViewOptions options) {
+        this.m_map = map;
+        this.m_route = route;
+        this.m_width = options.getWidth();
+        this.m_colorARGB = options.getColor();
+        this.m_miterLimit = options.getMiterLimit();
         addToMap();
     }
 
-    private Polyline makeVerticalLine(RouteStep step, int floor, int direction) {
-        PolylineOptions options = new PolylineOptions()
-            .color(ColorUtils.setAlphaComponent(Color.RED, 128))
-            .indoor(step.indoorId, floor)
-            .add(step.path.get(0), 0.0)
-            .add(step.path.get(1), 5.0 * direction);
 
-        return map.addPolyline(options);
-    }
-
+    /**
+     * Add this RouteView back on to the map, if it has been removed.
+     */
     public void addToMap() {
-        for (RouteSection section: route.sections) {
+        for (RouteSection section: m_route.sections) {
             List<RouteStep> steps = section.steps;
 
             for (int i=0; i<steps.size(); ++i) {
@@ -48,46 +60,124 @@ public class RouteView {
                 }
 
                 if (step.isMultiFloor) {
-                    if (i == 0 || i == (steps.size() - 1) || !step.isIndoors) {
+                    boolean isValidTransition = i > 0 && i < (steps.size() - 1) && step.isIndoors;
+
+                    if (!isValidTransition) {
                         continue;
                     }
 
-                    int floorBefore = steps.get(i-1).indoorFloorId;
-                    int floorAfter = steps.get(i+1).indoorFloorId;
-                    int direction = Integer.signum(floorAfter - floorBefore);
+                    RouteStep stepBefore = steps.get(i-1);
+                    RouteStep stepAfter = steps.get(i+1);
 
-                    polylines.add(makeVerticalLine(step, floorBefore, direction));
-
-                    int middleFloors = Math.abs(floorAfter - floorBefore) - 1;
-                    for (int j = 0; j < middleFloors; ++j) {
-                        int floorId = floorBefore + (j + 1) * direction;
-                        polylines.add(makeVerticalLine(step, floorId, 1));
-                    }
-
-                    polylines.add(makeVerticalLine(step, floorAfter, -direction));
+                    addLinesForFloorTransition(step, stepBefore, stepAfter);
                 }
                 else {
-                    PolylineOptions options = new PolylineOptions()
-                        .color(ColorUtils.setAlphaComponent(Color.RED, 128));
-
-                    if (step.isIndoors) {
-                        options.indoor(step.indoorId, step.indoorFloorId);
-                    }
-
-                    for (LatLng point: step.path) {
-                        options.add(point);
-                    }
-
-                    Polyline routeLine = map.addPolyline(options);
-                    polylines.add(routeLine);
+                    addLinesForRouteStep(step);
                 }
             }
         }
+
+        m_currentlyOnMap = true;
     }
 
+    private PolylineOptions basePolylineOptions() {
+        return new PolylineOptions()
+            .color(m_colorARGB)
+            .width(m_width)
+            .miterLimit(m_miterLimit);
+    }
+
+    private Polyline makeVerticalLine(RouteStep step, int floor, int direction) {
+        PolylineOptions options = basePolylineOptions()
+            .indoor(step.indoorId, floor)
+            .add(step.path.get(0), 0.0)
+            .add(step.path.get(1), 5.0 * direction);
+
+        return m_map.addPolyline(options);
+    }
+
+    private void addLinesForRouteStep(RouteStep step) {
+        PolylineOptions options = basePolylineOptions();
+
+        if (step.isIndoors) {
+            options.indoor(step.indoorId, step.indoorFloorId);
+        }
+
+        for (LatLng point: step.path) {
+            options.add(point);
+        }
+
+        Polyline routeLine = m_map.addPolyline(options);
+        m_polylines.add(routeLine);
+    }
+
+    private void addLinesForFloorTransition(RouteStep step, RouteStep stepBefore, RouteStep stepAfter) {
+        int floorBefore = stepBefore.indoorFloorId;
+        int floorAfter = stepAfter.indoorFloorId;
+        int direction = Integer.signum(floorAfter - floorBefore);
+
+        m_polylines.add(makeVerticalLine(step, floorBefore, direction));
+
+        int middleFloors = Math.abs(floorAfter - floorBefore) - 1;
+        for (int j = 0; j < middleFloors; ++j) {
+            int floorId = floorBefore + (j + 1) * direction;
+            m_polylines.add(makeVerticalLine(step, floorId, 1));
+        }
+
+        m_polylines.add(makeVerticalLine(step, floorAfter, -direction));
+    }
+
+
+    /**
+     * Remove this RouteView from the map.
+     */
     public void removeFromMap() {
-        for (Polyline polyline: polylines) {
-            map.removePolyline(polyline);
+        for (Polyline polyline: m_polylines) {
+            m_map.removePolyline(polyline);
+        }
+
+        m_currentlyOnMap = false;
+    }
+
+
+    /**
+     * Sets the width of this RouteView's polylines.
+     *
+     * @param width The width of the polyline in screen pixels.
+     */
+    @UiThread
+    public void setWidth(float width) {
+        m_width = width;
+        for (Polyline polyline: m_polylines) {
+            polyline.setWidth(m_width);
+        }
+    }
+
+    /**
+     * Sets the color for this RouteView's polylines.
+     *
+     * @param color The color of the polyline as a 32-bit ARGB color.
+     */
+    @UiThread
+    public void setColor(int color) {
+        m_colorARGB = color;
+        for (Polyline polyline: m_polylines) {
+            polyline.setColor(m_colorARGB);
+        }
+    }
+
+    /**
+     * Sets the miter limit of this RouteView's polylines.
+     *
+     * @param miterLimit the miter limit, as a ratio between maximum allowed miter join diagonal
+     *                   length and the line width.
+     */
+    @UiThread
+    public void setMiterLimit(float miterLimit) {
+        m_miterLimit = miterLimit;
+        for (Polyline polyline: m_polylines) {
+            polyline.setMiterLimit(m_miterLimit);
         }
     }
 }
+
