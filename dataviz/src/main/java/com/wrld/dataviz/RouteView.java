@@ -17,6 +17,8 @@ import com.eegeo.mapapi.services.routing.*;
 
 public class RouteView {
 
+    private static double VERTICAL_LINE_HEIGHT = 4.0;
+
     private EegeoMap m_map = null;
     private Route m_route = null;
     private List<Polyline> m_polylines = new ArrayList();
@@ -34,7 +36,6 @@ public class RouteView {
      * @param route The Route to display.
      * @param options Options for styling the route.
      */
-    // TODO(paul): add constructor that takes List<Route>
     public RouteView(EegeoMap map, Route route, RouteViewOptions options) {
         this.m_map = map;
         this.m_route = route;
@@ -87,11 +88,11 @@ public class RouteView {
             .miterLimit(m_miterLimit);
     }
 
-    private Polyline makeVerticalLine(RouteStep step, int floor, int direction) {
+    private Polyline makeVerticalLine(RouteStep step, int floor, double height) {
         PolylineOptions options = basePolylineOptions()
             .indoor(step.indoorId, floor)
             .add(step.path.get(0), 0.0)
-            .add(step.path.get(1), 5.0 * direction);
+            .add(step.path.get(1), height);
 
         return m_map.addPolyline(options);
     }
@@ -116,15 +117,15 @@ public class RouteView {
         int floorAfter = stepAfter.indoorFloorId;
         int direction = Integer.signum(floorAfter - floorBefore);
 
-        m_polylines.add(makeVerticalLine(step, floorBefore, direction));
+        m_polylines.add(makeVerticalLine(step, floorBefore, VERTICAL_LINE_HEIGHT * direction));
 
         int middleFloors = Math.abs(floorAfter - floorBefore) - 1;
         for (int j = 0; j < middleFloors; ++j) {
             int floorId = floorBefore + (j + 1) * direction;
-            m_polylines.add(makeVerticalLine(step, floorId, 1));
+            m_polylines.add(makeVerticalLine(step, floorId, VERTICAL_LINE_HEIGHT));
         }
 
-        m_polylines.add(makeVerticalLine(step, floorAfter, -direction));
+        m_polylines.add(makeVerticalLine(step, floorAfter, -VERTICAL_LINE_HEIGHT * direction));
     }
 
 

@@ -49,15 +49,15 @@ public final class RouteViewOptions {
         return this;
     }
 
-    public float getWidth() {
+    float getWidth() {
         return m_width;
     }
 
-    public int getColor() {
+    int getColor() {
         return m_colorARGB;
     }
 
-    public float getMiterLimit() {
+    float getMiterLimit() {
         return m_miterLimit;
     }
 }
