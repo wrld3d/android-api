@@ -42,7 +42,7 @@ android {
         ndk {
             // filter for abi types to be packed into aar. Also defaults cmake to building these
             // abis, but can be overridden with externalNativeBuild.cmake.abiFilters
-            abiFilters "armeabi"
+            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a"
         }
 
         lintOptions {
