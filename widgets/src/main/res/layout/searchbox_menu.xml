@@ -10,18 +10,4 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"></ExpandableListView>
 
-    <Button
-        android:id="@+id/searchbox_menu_options"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/searchbox_menu_find"
-        android:text="@string/searchbox_menu_options_title" />
-
-    <Button
-        android:id="@+id/searchbox_menu_about"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/searchbox_menu_options"
-        android:text="@string/searchbox_menu_about_title" />
-
 </RelativeLayout>
