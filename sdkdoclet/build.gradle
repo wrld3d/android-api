@@ -2,6 +2,7 @@ apply plugin: 'java'
 
 task apidoc(type: Javadoc, dependsOn: ('jar')) {
     source = project(':sdk').fileTree(include: ['**/*.java'], dir: 'src/main/java')
+    source += project(':dataviz').fileTree(include: ['**/*.java'], dir: 'src/main/java')
     executable = project(':sdk').javadoc.executable
     destinationDir = new File(rootDir, "android-sdk-docs/docs/api");
     classpath = project(':sdk').javadoc.classpath
@@ -15,6 +16,7 @@ dependencies {
     compile fileTree(include: ['**/*.java'], dir: 'src')
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files(project(':sdk').android.sourceSets.main.java.srcDirs)
+    compile files(project(':dataviz').android.sourceSets.main.java.srcDirs)
 }
 
 
