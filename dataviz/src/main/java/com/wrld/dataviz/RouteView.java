@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import android.graphics.Color;
 import android.support.annotation.UiThread;
-import android.support.v4.graphics.ColorUtils;
 import android.util.Log;
 
 import com.eegeo.mapapi.EegeoMap;
