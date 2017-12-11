@@ -17,7 +17,7 @@ import com.eegeo.mapapi.services.routing.*;
 
 public class RouteView {
 
-    private static double VERTICAL_LINE_HEIGHT = 4.0;
+    private static double VERTICAL_LINE_HEIGHT = 5.0;
 
     private EegeoMap m_map = null;
     private Route m_route = null;
@@ -115,17 +115,10 @@ public class RouteView {
     private void addLinesForFloorTransition(RouteStep step, RouteStep stepBefore, RouteStep stepAfter) {
         int floorBefore = stepBefore.indoorFloorId;
         int floorAfter = stepAfter.indoorFloorId;
-        int direction = Integer.signum(floorAfter - floorBefore);
+        double lineHeight = (floorAfter > floorBefore) ? VERTICAL_LINE_HEIGHT : -VERTICAL_LINE_HEIGHT;
 
-        m_polylines.add(makeVerticalLine(step, floorBefore, VERTICAL_LINE_HEIGHT * direction));
-
-        int middleFloors = Math.abs(floorAfter - floorBefore) - 1;
-        for (int j = 0; j < middleFloors; ++j) {
-            int floorId = floorBefore + (j + 1) * direction;
-            m_polylines.add(makeVerticalLine(step, floorId, VERTICAL_LINE_HEIGHT));
-        }
-
-        m_polylines.add(makeVerticalLine(step, floorAfter, -VERTICAL_LINE_HEIGHT * direction));
+        m_polylines.add(makeVerticalLine(step, floorBefore, lineHeight));
+        m_polylines.add(makeVerticalLine(step, floorAfter, -lineHeight));
     }
 
 
