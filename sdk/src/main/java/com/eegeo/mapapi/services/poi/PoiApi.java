@@ -94,6 +94,7 @@ public class PoiApi {
             throw new NullPointerException("PoiSearch object not found for nativeHandle");
 
         m_uiRunner.runOnUiThread(new Runnable() {
+            @UiThread
             @Override
             public void run() {
                 poiSearch.returnSearchResults(searchResults);
@@ -157,6 +158,7 @@ public class PoiApi {
     }
 
 
+    @WorkerThread
     private native int nativeBeginTextSearch(
             long jniEegeoMapApiPtr,
             String query,
@@ -169,6 +171,7 @@ public class PoiApi {
             boolean useFloor, int floor,
             boolean useFloorDropoff, int floorDropoff);
 
+    @WorkerThread
     private native int nativeBeginTagSearch(
             long jniEegeoMapApiPtr,
             String query,
@@ -177,6 +180,7 @@ public class PoiApi {
             boolean useRadius, double radius,
             boolean useNumber, int number);
 
+    @WorkerThread
     private native int nativeBeginAutocompleteSearch(
             long jniEegeoMapApiPtr,
             String query,
@@ -184,6 +188,7 @@ public class PoiApi {
             double longitude,
             boolean useNumber, int number);
 
+    @WorkerThread
     private native void nativeCancelSearch(long jniEegeoMapApiPtr, int searchNativeHandle);
 }
 
