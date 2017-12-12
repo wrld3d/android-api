@@ -41,43 +41,6 @@ public final class CameraPosition {
      */
     public final double bearing;
 
-    /**
-     * Distance from camera to target.
-     *
-     * @eegeo.internal
-     */
-    public final double distance;
-
-    /**
-     * Flag to signify that the target has changed.
-     *
-     * @eegeo.internal
-     */
-    public final boolean modifyTarget;
-
-    /**
-     * Flag to signify that the tilt has changed.
-     *
-     * @eegeo.internal
-     */
-    public final boolean modifyTilt;
-
-    /**
-     * Flag to signify that the bearing has changed.
-     *
-     * @eegeo.internal
-     */
-
-    public final boolean modifyBearing;
-
-    /**
-     * Flag to signify that the distance has changed.
-     *
-     * @eegeo.internal
-     */
-    public final boolean modifyDistance;
-
-
 
     /**
      * @param target  The target point.
@@ -87,8 +50,12 @@ public final class CameraPosition {
      * @param bearing Orientation of the camera in the earth tangent plane, in degrees clockwise from north.
      * @eegeo.internal Create a camera position with the given parameters.
      */
-    public CameraPosition(LatLngAlt target, double zoom, double tilt, double bearing) {
-        this.target = target.toLatLng();
+    public CameraPosition(LatLng target, double zoom, double tilt, double bearing) {
+        if (target == null) {
+            throw new NullPointerException("A non-null target LatLng must be specified");
+        }
+
+        this.target = target;
         this.targetElevation = 0.0;
         this.targetElevationMode = ElevationMode.HeightAboveGround;
         this.targetIndoorMapId = "";
@@ -97,12 +64,6 @@ public final class CameraPosition {
         this.zoom = zoom;
         this.tilt = tilt;
         this.bearing = bearing;
-        this.distance = Builder.ZoomToDistance(zoom);
-
-        this.modifyTarget = true;
-        this.modifyTilt = true;
-        this.modifyBearing = true;
-        this.modifyDistance = true;
     }
 
 
@@ -117,12 +78,10 @@ public final class CameraPosition {
                            int targetIndoorMapFloorId,
                            double zoom,
                            double tilt,
-                           double bearing,
-                           double distance,
-                           boolean modifyTarget,
-                           boolean modifyTilt,
-                           boolean modifyBearing,
-                           boolean modifyDistance) {
+                           double bearing) {
+        if (target == null) {
+            throw new NullPointerException("A non-null target LatLng must be specified");
+        }
         this.target = target;
         this.targetElevation = targetElevation;
         this.targetElevationMode = targetElevationMode;
@@ -132,20 +91,16 @@ public final class CameraPosition {
         this.zoom = zoom;
         this.tilt = tilt;
         this.bearing = bearing;
-        this.distance = distance;
-
-        this.modifyTarget = modifyTarget;
-        this.modifyTilt = modifyTilt;
-        this.modifyBearing = modifyBearing;
-        this.modifyDistance = modifyDistance;
-
     }
 
     /**
      * Builds a camera position.
      */
     public static final class Builder {
-        private static double[] ms_zoomToDistances = new double[]{27428700,
+        private static double ms_defaultZoom = 17;
+        private static double ms_defaultTilt = 45;
+        private static double[] ms_zoomToDistances = new double[]{
+                27428700,
                 14720762,
                 8000000,
                 4512909,
@@ -170,22 +125,18 @@ public final class CameraPosition {
                 31,
                 17,
                 9,
-                5};
+                5
+        };
 
-        private LatLng m_target = new LatLng(0.0, 0.0);
+        private LatLng m_target = null;
         private double m_targetElevation = 0.0;
         private ElevationMode m_targetElevationMode = ElevationMode.HeightAboveGround;
         private String m_targetIndoorMapId = "";
         private int m_targetIndoorMapFloorId = 0;
 
-        private double m_tilt = 0.0;
+        private double m_zoom = ms_defaultZoom;
+        private double m_tilt = ms_defaultTilt;
         private double m_bearing = 0.0;
-        private double m_distance = 0.0;
-
-        private boolean m_modifyTarget = false;
-        private boolean m_modifyTilt = false;
-        private boolean m_modifyBearing = false;
-        private boolean m_modifyDistance = false;
 
         /**
          * Creates an empty builder.
@@ -194,6 +145,19 @@ public final class CameraPosition {
             super();
         }
 
+        /**
+         * Creates an builder initialised to the supplied CameraPosition
+         */
+        public Builder(CameraPosition previous) {
+            this.m_target = previous.target;
+            this.m_targetElevation = previous.targetElevation;
+            this.m_targetElevationMode = previous.targetElevationMode;
+            this.m_targetIndoorMapId = previous.targetIndoorMapId;
+            this.m_targetIndoorMapFloorId = previous.targetIndoorMapFloorId;
+            this.m_zoom = previous.zoom;
+            this.m_tilt = previous.tilt;
+            this.m_bearing = previous.bearing;
+        }
         /**
          * Creates a builder and populates it with resource values.
          *
@@ -231,39 +195,37 @@ public final class CameraPosition {
         }
 
         /**
-         * Convert a zoom to a distance value
+         * Convert a distance to a zoom level.
          *
-         * @param zoom
-         * @return Distance in meters.
+         * @param distance Distance from camera to interest point in meters.
+         * @return The equivalent zoom level.
          * @eegeo.internal
          */
-        public static double ZoomToDistance(double zoom) {
-            int zoomLevel = (int) zoom;
-            if (zoomLevel < 0) {
-                return ms_zoomToDistances[0];
+        private static double DistanceToZoom(double distance) {
+            int i1 = FirstZoomLevelLessThanDistance(distance);
+            if (i1 < 0)
+            {
+                return ms_zoomToDistances.length - 1;
             }
-
-            if (zoomLevel >= ms_zoomToDistances.length) {
-                return ms_zoomToDistances[ms_zoomToDistances.length - 1];
+            if (i1 == 0)
+            {
+                return i1;
             }
+            int i0 = i1 - 1;
 
-            return ms_zoomToDistances[zoomLevel];
+            double a = ms_zoomToDistances[i0];
+            double b = ms_zoomToDistances[i1];
+            double t = (a - distance) / (a - b);
+            return i0 + t;
         }
 
-        /**
-         * Convert a distance to an approximate zoom.
-         *
-         * @param distance
-         * @return The approximate zoom.
-         * @eegeo.internal
-         */
-        public static double DistanceToZoom(double distance) {
+        private static int FirstZoomLevelLessThanDistance(double distance) {
             for (int i = 0; i < ms_zoomToDistances.length; ++i) {
-                if (distance >= ms_zoomToDistances[i]) {
+                if (ms_zoomToDistances[i] < distance) {
                     return i;
                 }
             }
-            return 17;
+            return -1;
         }
 
         /**
@@ -275,7 +237,6 @@ public final class CameraPosition {
          */
         public Builder target(double latitude, double longitude) {
             this.m_target = new LatLng(latitude, longitude);
-            this.m_modifyTarget = true;
             return this;
         }
 
@@ -291,7 +252,6 @@ public final class CameraPosition {
             this.m_target = new LatLng(latitude, longitude);
             this.m_targetElevation = altitude;
             this.m_targetElevationMode = ElevationMode.HeightAboveSeaLevel;
-            this.m_modifyTarget = true;
             return this;
         }
 
@@ -303,7 +263,6 @@ public final class CameraPosition {
          */
         public Builder target(@NonNull LatLng latLon) {
             this.m_target = new LatLng(latLon.latitude, latLon.longitude);
-            this.m_modifyTarget = true;
             return this;
         }
 
@@ -317,19 +276,16 @@ public final class CameraPosition {
             this.m_target = latLonAlt.toLatLng();
             this.m_targetElevation = latLonAlt.altitude;
             this.m_targetElevationMode = ElevationMode.HeightAboveSeaLevel;
-            this.m_modifyTarget = true;
             return this;
         }
 
         public Builder elevation(@NonNull double elevation) {
             this.m_targetElevation = elevation;
-            this.m_modifyTarget = true;
             return this;
         }
 
         public Builder elevationMode(@NonNull ElevationMode elevationMode) {
             this.m_targetElevationMode = elevationMode;
-            this.m_modifyTarget = true;
             return this;
         }
 
@@ -346,7 +302,7 @@ public final class CameraPosition {
          * @return Updated CameraPosition.Builder object.
          */
         public Builder zoom(double zoom) {
-            distance(ZoomToDistance(zoom));
+            this.m_zoom = zoom;
             return this;
         }
 
@@ -359,7 +315,6 @@ public final class CameraPosition {
          */
         public Builder tilt(double tilt) {
             this.m_tilt = Math.min(Math.max(tilt, 0.0), 90.0);
-            this.m_modifyTilt = true;
             return this;
         }
 
@@ -377,7 +332,6 @@ public final class CameraPosition {
                 bearing += 360.0;
             }
             this.m_bearing = bearing;
-            this.m_modifyBearing = true;
             return this;
         }
 
@@ -388,10 +342,8 @@ public final class CameraPosition {
          * @return Updated CameraPosition.Builder object.
          * @eegeo.internal
          */
-        private Builder distance(double distance) {
-            this.m_distance = distance;
-            this.m_modifyDistance = true;
-            return this;
+        public Builder distance(double distance) {
+            return zoom(DistanceToZoom(distance));
         }
 
         /**
@@ -400,7 +352,6 @@ public final class CameraPosition {
          * @return The final CameraPosition object.
          */
         public final CameraPosition build() {
-            double zoom = DistanceToZoom(m_distance);
 
             return new CameraPosition(
                     m_target,
@@ -408,15 +359,11 @@ public final class CameraPosition {
                     m_targetElevationMode,
                     m_targetIndoorMapId,
                     m_targetIndoorMapFloorId,
-                    zoom,
+                    m_zoom,
                     m_tilt,
-                    m_bearing,
-                    m_distance,
-                    m_modifyTarget,
-                    m_modifyTilt,
-                    m_modifyBearing,
-                    m_modifyDistance
+                    m_bearing
                     );
         }
     }
 }
+

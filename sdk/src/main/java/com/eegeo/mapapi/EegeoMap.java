@@ -79,7 +79,7 @@ public final class EegeoMap {
     private List<OnIndoorExitedListener> m_onIndoorExitedListeners = new ArrayList<>();
     private List<OnFloorChangedListener> m_onIndoorFloorChangedListeners = new ArrayList<>();
     private List<OnInitialStreamingCompleteListener> m_onInitialStreamingCompleteListeners = new ArrayList<>();
-    private CameraPosition m_cameraPosition = new CameraPosition.Builder().build();
+    private CameraPosition m_cameraPosition = null;
     private IndoorMap m_indoorMap = null;
     private int m_currentIndoorFloor = -1;
     private Projection m_projection;
@@ -131,7 +131,8 @@ public final class EegeoMap {
 
     @WorkerThread
     void initialise(@NonNull EegeoMapOptions eegeoMapOptions) {
-        initLocation(eegeoMapOptions.getCamera());
+        m_cameraPosition = new CameraPosition.Builder(eegeoMapOptions.getCamera()).build();
+        initLocation(m_cameraPosition);
     }
 
     /**
