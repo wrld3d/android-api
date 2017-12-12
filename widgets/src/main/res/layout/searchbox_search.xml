@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/searchbox_search"
+    android:id="@+id/searchbox_search_container"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:orientation="horizontal"
-    android:paddingTop="@dimen/padding_search"
-    android:paddingLeft="@dimen/padding_search"
-    android:paddingRight="@dimen/padding_search">
+    android:background="@drawable/searchbox_border"
+    >
 
     <ImageButton
         android:id="@+id/searchbox_search_menu"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/search_button_size"
+        android:layout_height="@dimen/search_button_size"
         android:layout_weight="0.0"
-        app:srcCompat="@android:drawable/ic_menu_manage"
+        app:srcCompat="@drawable/menu_btn"
         tools:text="Options" />
 
     <SearchView
@@ -28,9 +27,9 @@
 
     <ImageButton
         android:id="@+id/searchbox_search_perform"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/search_button_size"
+        android:layout_height="@dimen/search_button_size"
         android:layout_weight="0.0"
-        app:srcCompat="@android:drawable/ic_search_category_default" />
+        app:srcCompat="@drawable/search_btn" />
 
 </LinearLayout>

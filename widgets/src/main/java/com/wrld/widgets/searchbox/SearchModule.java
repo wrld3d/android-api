@@ -3,179 +3,102 @@ package com.wrld.widgets.searchbox;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.TranslateAnimation;
-import android.widget.Button;
+
 import com.wrld.widgets.R;
+
 import java.util.ArrayList;
 
-public class SearchModule implements SearchModuleFacade {
+public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
 
-    private boolean m_isExpanded = true;
-    private Button m_button;
+    private SearchModuleController m_searchModuleController;
 
-    private DefaultSearchResultSetsContainer m_searchResultsContainer;
-    private ViewGroup m_searchboxRootContainer;
-    private LayoutInflater m_inflater;
+    private SearchProvider[] m_searchProviders;
+    private SuggestionProvider[] m_suggestionProviders;
 
-    private SearchBoxController m_searchboxController;
+    private ArrayList<SearchResultSet> m_searchProviderSets;
+    private ArrayList<SearchResultSet> m_suggestionProviderSets;
 
-    private ArrayList<SearchProvider> m_searchProviders;
-    private ArrayList<SuggestionProvider> m_suggestionProviders;
-
-    private SearchResultViewFactory m_defualtViewFactory;
+    private SearchResultSetFactory m_searchResultSetFactory;
 
     public SearchModule(ViewGroup appSearchAreaView) {
-        m_inflater = LayoutInflater.from(appSearchAreaView.getContext());
-        m_searchboxRootContainer = (ViewGroup) m_inflater.inflate(R.layout.search_layout, appSearchAreaView, true);
+        LayoutInflater inflater = LayoutInflater.from(appSearchAreaView.getContext());
+        View root = inflater.inflate(R.layout.search_layout, appSearchAreaView, true);
 
-        m_searchResultsContainer = new DefaultSearchResultSetsContainer((ViewGroup) m_searchboxRootContainer.findViewById(R.id.searchbox_search_results));
+        m_searchModuleController = new SearchModuleController();
 
-        ViewGroup searchbox = (ViewGroup) m_inflater.inflate(R.layout.searchbox_search, appSearchAreaView, true);
-        m_searchboxController = new SearchBoxController(searchbox);
+        m_searchResultSetFactory = new SearchResultSetFactory();
 
-        m_searchboxController.addQuerySubmittedCallback(new SearchBoxController.OnSearchQueryUpdatedCallback() {
-            @Override
-            public void performQuery(String query) {
-                doSearch(query);
-            }
-        });
+        m_searchModuleController.setSearchQueryHandler(this);
 
-        m_searchboxController.addQueryUpdatedCallback(new SearchBoxController.OnSearchQueryUpdatedCallback() {
-            @Override
-            public void performQuery(String query) {
-                doAutoCompleteQuery(query);
-            }
-        });
+        ViewGroup searchContainer = (ViewGroup) root.findViewById(R.id.searchbox_search_container);
+        inflater.inflate(R.layout.searchbox_search, searchContainer);
+        SearchController searchController = new SearchController(searchContainer, m_searchModuleController);
+        m_searchModuleController.setQueryBoxController(searchController);
 
-        m_searchProviders = new ArrayList<SearchProvider>();
-        m_suggestionProviders = new ArrayList<SuggestionProvider>();
+        ViewGroup resultSpace = (ViewGroup) root.findViewById(R.id.searchbox_results_space);
+        SearchResultScreenController resultSetController = new SearchResultScreenController(resultSpace, m_searchModuleController);
+        m_searchModuleController.setSearchResultsSetController(resultSetController);
 
         setDefaultSearchResultViewFactory(new DefaultSearchResultViewFactory(R.layout.search_result));
+        setDefaultSuggestionViewFactory(new DefaultSuggestionViewFactory(R.layout.search_suggestion));
 
-        final View performSearchButton = m_searchboxRootContainer.findViewById(R.id.searchbox_search_perform);
-        performSearchButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                m_searchboxController.performQuery();
-            }
-        });
+        m_searchModuleController.showQueryBox(searchController);
+        m_searchModuleController.hideResults(searchController);
+
+        m_searchProviders = new SearchProvider[0];
+        m_suggestionProviders = new SuggestionProvider[0];
+        m_searchProviderSets = new ArrayList<SearchResultSet>();
+        m_suggestionProviderSets = new ArrayList<SearchResultSet>();
     }
 
     @Override
     public void setDefaultSearchResultViewFactory(SearchResultViewFactory factory) {
-        m_defualtViewFactory = factory;
+        //TODO
     }
 
     @Override
-    public void addSearchProvider(SearchProvider provider, boolean doSuggestions) {
+    public void setDefaultSuggestionViewFactory(SearchResultViewFactory factory) {
+        //TODO
+    }
 
-        DefaultSearchResultSet setResults = new DefaultSearchResultSet();
-        DefaultSearchResultSet setSuggestions = new DefaultSearchResultSet();
+    @Override
+    public void setSearchProviders(SearchProvider[] searchProviders) {
 
-        SearchResultViewFactory factoryResults = provider.getResultViewFactory();
-        if(factoryResults == null) {
-            factoryResults = m_defualtViewFactory;
+        for(SearchResultSet set : m_searchProviderSets){
+            set.deregisterWithProvider();
         }
 
-        addSearchProvider(provider, setResults);
+        m_searchProviderSets.clear();
+        m_searchModuleController.setSearchProviders(searchProviders, m_searchResultSetFactory);
 
-        SearchResultViewFactory factorySuggestions = m_defualtViewFactory;
-        if(doSuggestions) {
+        m_searchProviders = searchProviders;
+    }
 
-            if (provider instanceof SuggestionProvider) {
-                SuggestionProvider providerSuggestion = (SuggestionProvider)provider;
-                factorySuggestions = providerSuggestion.getSuggestionViewFactory();
-                if(factorySuggestions == null) {
-                    factorySuggestions = m_defualtViewFactory;
-                }
-
-                addSuggestionProvider(providerSuggestion, setSuggestions);
-            }
-            else
-            {
-                android.util.Log.w("Search Widget", "Tried to add a Suggestion Provider that doesn't implement the SuggestionProvider Interface");
-            }
+    @Override
+    public void setSuggestionProviders(SuggestionProvider[] suggestionProviders){
+        for(SearchResultSet set : m_suggestionProviderSets){
+            set.deregisterWithProvider();
         }
 
-        m_searchResultsContainer.addSearchResultSet( provider, setResults, setSuggestions, factoryResults ,factorySuggestions );
+        m_suggestionProviderSets.clear();
+        m_searchModuleController.setSuggestionProviders(suggestionProviders, m_searchResultSetFactory);
+
+        m_suggestionProviders = suggestionProviders;
     }
 
-    private void addSearchProvider(SearchProvider provider, final DefaultSearchResultSet resultSet){
+    //TODO public void addConsumer(SearchResultConsumer consumer) { }
 
-        provider.addOnResultsReceivedCallback(new OnResultsReceivedCallback() {
-            @Override
-            public void onResultsReceived(SearchResult[] results) {
-                resultSet.updateSetResults(results);
-            }
-        });
-
-        m_searchProviders.add(provider);
-    }
-
-    private void addSuggestionProvider(SuggestionProvider provider, final DefaultSearchResultSet suggestionSet){
-
-        provider.addOnSuggestionsRecievedCallback(new OnResultsReceivedCallback() {
-            @Override
-            public void onResultsReceived(SearchResult[] results) {
-                suggestionSet.updateSetResults(results);
-            }
-        });
-
-        m_suggestionProviders.add(provider);
-    }
-
-    private void doSearch(String query) {
-        m_searchResultsContainer.showSuggestions(false);
-
-        for(SearchProvider provider:m_searchProviders){
+    @Override
+    public void searchFor(String query){
+        for(SearchProvider provider : m_searchProviders){
             provider.getSearchResults(query);
         }
-
-        m_searchResultsContainer.searching();
-    }
-
-    private void doAutoCompleteQuery(String query) {
-        m_searchResultsContainer.showSuggestions(true);
-
-        for(SuggestionProvider provider:m_suggestionProviders){
-            provider.getSuggestions(query);
-        }
     }
 
     @Override
-    public void addConsumer(SearchResultConsumer consumer) {
-
-    }
-
-    public void setButton(Button button){
-
-
-        m_button = button;
-
-        m_button.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View v) {
-                setIsExpanded(!m_isExpanded);
-            }
-        });
-    }
-
-    public void setIsExpanded(boolean expand){
-        m_isExpanded = expand;
-
-        TranslateAnimation animation;
-
-        if(expand){
-            animation = buildTranslationXAnimation(-m_searchboxRootContainer.getWidth(), 0);
+    public void getSuggestionsFor(String text){
+        for(SuggestionProvider provider : m_suggestionProviders){
+            provider.getSuggestions(text);
         }
-        else {
-            animation = buildTranslationXAnimation(0, -m_searchboxRootContainer.getWidth());
-        }
-        animation.setDuration(1000);
-        animation.setFillAfter(true);
-
-        m_searchboxRootContainer.startAnimation(animation);
-    }
-
-    private TranslateAnimation buildTranslationXAnimation(float startX,float endX){
-        return new TranslateAnimation(startX, endX, 0, 0);
     }
 }

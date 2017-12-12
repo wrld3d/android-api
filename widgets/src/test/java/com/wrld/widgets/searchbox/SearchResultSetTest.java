@@ -15,13 +15,16 @@ public abstract class SearchResultSetTest {
     // create a concrete instance
     abstract SearchResultSet CreateSearchResultSet();
 
-    // implementation detail for concrete
-    abstract void PopulateWithResults(SearchResult[] results);
-
     protected SearchResultSet m_searchResultSet;
 
     public SearchResultSetTest(){
         m_searchResultSet = CreateSearchResultSet();
+    }
+
+    void populateWithResults(SearchResult[] results) {
+        for(SearchResult result : results){
+            m_searchResultSet.addResult(result);
+        }
     }
 
     @Test
@@ -34,7 +37,7 @@ public abstract class SearchResultSetTest {
             when(mockResults[i].getTitle()).thenReturn("Title " + (resultCount-(i+1)));
         }
 
-        PopulateWithResults(mockResults);
+        populateWithResults(mockResults);
 
         SearchResult[] results = m_searchResultSet.sortOn("Title");
 
@@ -56,7 +59,7 @@ public abstract class SearchResultSetTest {
             when(mockResults[i].getProperty("Description")).thenReturn(mockDescription);
         }
 
-        PopulateWithResults(mockResults);
+        populateWithResults(mockResults);
 
         SearchResult[] results = m_searchResultSet.sortOn("Description");
 
@@ -88,7 +91,7 @@ public abstract class SearchResultSetTest {
 
     @Test
     public void testClearEmptiesResultsSet() {
-        PopulateWithResults(createMockResults(10));
+        populateWithResults(createMockResults(10));
         assertEquals(10, m_searchResultSet.getResultCount());
         m_searchResultSet.clear();
         assertEquals(0, m_searchResultSet.getResultCount());
@@ -97,7 +100,7 @@ public abstract class SearchResultSetTest {
     @Test
     public void testRemoveSearchResultDecrementsCountBy1() {
         SearchResult[] results = createMockResults(10);
-        PopulateWithResults(results);
+        populateWithResults(results);
 
         m_searchResultSet.removeResult(results[9]);
 
@@ -107,7 +110,7 @@ public abstract class SearchResultSetTest {
     @Test
     public void testRemoveSearchResultByIndexDecrementsCountBy1() {
         SearchResult[] results = createMockResults(10);
-        PopulateWithResults(results);
+        populateWithResults(results);
 
         m_searchResultSet.removeResult(9);
 
@@ -116,34 +119,34 @@ public abstract class SearchResultSetTest {
 
     @Test
     public void testGetAllResultsReturnsCorrectAmount() {
-        PopulateWithResults(createMockResults(10));
+        populateWithResults(createMockResults(10));
         assertEquals(10, m_searchResultSet.getAllResults().length);
     }
 
     @Test
     public void testGetResultReturnsCorrectResult() {
         SearchResult[] mockResults = createMockResults(5);
-        PopulateWithResults(mockResults);
+        populateWithResults(mockResults);
         assertEquals(mockResults[3], m_searchResultSet.getResult(3));
     }
 
     @Test
     public void testGetAllResultsReturnsInOrder() {
         SearchResult[] results = createMockResults(10);
-        PopulateWithResults(results);
+        populateWithResults(results);
         assertArrayEquals(results, m_searchResultSet.getAllResults());
     }
 
     @Test
     public void testGetAllResultsCountReturnsCorrectAmount() {
-        PopulateWithResults(createMockResults(10));
+        populateWithResults(createMockResults(10));
         assertEquals(10, m_searchResultSet.getResultCount());
     }
 
     @Test
     public void testGetResultsInRangeReturnsCorrectResultsInRange() {
         SearchResult[] results = createMockResults(10);
-        PopulateWithResults(results);
+        populateWithResults(results);
 
         int startIndex = 3;
         int rangeSize = 4;
@@ -160,7 +163,7 @@ public abstract class SearchResultSetTest {
 
         int totalResults = 10;
         SearchResult[] results = createMockResults(totalResults);
-        PopulateWithResults(results);
+        populateWithResults(results);
 
         int startIndex = 8;
         int expectedResults = totalResults - startIndex;

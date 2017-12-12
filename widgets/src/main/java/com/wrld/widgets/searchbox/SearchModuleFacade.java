@@ -2,8 +2,10 @@ package com.wrld.widgets.searchbox;
 
 interface SearchModuleFacade {
     void setDefaultSearchResultViewFactory(SearchResultViewFactory factory);
+    void setDefaultSuggestionViewFactory(SearchResultViewFactory factory);
 
-    void addSearchProvider(SearchProvider provider, boolean doSuggestions);
+    void setSearchProviders(final SearchProvider[] searchProviders);
+    void setSuggestionProviders(final SuggestionProvider[] autocompleteSuggestionProviders);
 
-    void addConsumer(SearchResultConsumer consumer);
+    //TODO void addConsumer(SearchResultConsumer consumer);
 }

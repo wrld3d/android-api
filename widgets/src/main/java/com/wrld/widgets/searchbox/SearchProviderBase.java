@@ -22,6 +22,11 @@ public abstract class SearchProviderBase implements SearchProvider {
         m_onResultsReceivedCallbacks.add(callback);
     }
 
+    @Override
+    public void removeOnResultsReceivedCallback(OnResultsReceivedCallback callback) {
+        m_onResultsReceivedCallbacks.remove(callback);
+    }
+
     protected void performSearchCompletedCallbacks(SearchResult[] results){
         for(OnResultsReceivedCallback callback: m_onResultsReceivedCallbacks) {
             callback.onResultsReceived(results);

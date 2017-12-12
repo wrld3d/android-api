@@ -12,8 +12,13 @@ public abstract class SuggestionProviderBase extends SearchProviderBase implemen
     }
 
     @Override
-    public void addOnSuggestionsRecievedCallback(OnResultsReceivedCallback callback) {
+    public void addOnSuggestionsReceivedCallback(OnResultsReceivedCallback callback) {
         m_onSuggestionsReceivedCallback.add(callback);
+    }
+
+    @Override
+    public void removeOnSuggestionsReceivedCallback(OnResultsReceivedCallback callback) {
+        m_onSuggestionsReceivedCallback.remove(callback);
     }
 
     protected void performSuggestionCompletedCallbacks(SearchResult[] results){

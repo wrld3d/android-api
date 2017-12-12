@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="WrldBlue">#3434a9</color>
+    <color name="wrld_blue">#3434a9</color>
+    <color name="searchbox_border">#0071BC</color>
+    <color name="searchbox_background">#FFFFFF</color>
 </resources>

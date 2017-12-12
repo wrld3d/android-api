@@ -9,17 +9,21 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import com.wrld.widgets.R;
 
-class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, PaginatedSearchResultsContainer {
+class PaginatedSearchResultsController extends BaseAdapter implements SearchResultsController {
+
+    enum ResultsViewState {
+        Collapsed,
+        Shared,
+        Expanded,
+        Hidden
+    }
 
     private LayoutInflater m_inflater;
 
-    private SearchResultSet m_resultsModel;
-    private SearchResultSet m_suggestionsModel;
+    private SearchResultSet m_searchResultSet;
     private SearchResultViewFactory m_resultsViewFactory;
-    private SearchResultViewFactory m_suggestionsViewFactory;
 
     private ResultsViewState m_resultsViewState;
-    private boolean m_suggestionsVisible;
 
     private final int RESULTS_PER_PAGE = 20;
 
@@ -36,14 +40,14 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
     private View m_searchInProgressView;
     private View m_searchResultsView;
 
-
     private final String RESULTS_INFO = "%d-%d of %d";
 
-    public DefaultSearchResultsContainer(LayoutInflater inflater, View container,
-                                         SearchResultSet resultsModel, SearchResultViewFactory viewFactoryResults ,
-                                         SearchResultSet suggestionsModel , SearchResultViewFactory factorySuggestions) {
+    public PaginatedSearchResultsController(View container, SearchResultSet resultSet, SearchResultViewFactory viewFactory) {
+
+        m_inflater = LayoutInflater.from(container.getContext());
 
         m_setContainer = container;
+        m_searchResultSet = resultSet;
         m_header = container.findViewById(R.id.searchbox_set_header);
         m_footer = container.findViewById(R.id.searchbox_set_footer);
         m_searchResultInfo = (TextView) container.findViewById(R.id.searchbox_set_pagination_results_info);
@@ -56,15 +60,22 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
         m_searchResultsView = container.findViewById(R.id.searchbox_set_result_list);
         m_searchInProgressView = container.findViewById(R.id.searchbox_set_search_in_progress_view);
 
-        m_inflater =inflater;
+        m_resultsViewFactory = viewFactory;
 
-        m_resultsModel = resultsModel;
-        m_suggestionsModel = suggestionsModel;
-        m_suggestionsViewFactory = factorySuggestions;
-        m_resultsViewFactory = viewFactoryResults;
-
-        m_suggestionsVisible = false;
         m_resultsViewState = ResultsViewState.Hidden;
+    }
+
+    @Override
+    public SearchResultSet.OnResultChanged getUpdateCallback(){
+        return new SearchResultSet.OnResultChanged() {
+            @Override
+            public void invoke() {
+                m_resultsViewState = ResultsViewState.Shared;
+                m_resultsPage = 0;
+                setContainerElementsVisibility();
+                refreshContent();
+            }
+        };
     }
 
     @Override
@@ -72,37 +83,19 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
      * returns the number of ListView elements to be rendered on the current page of results
      */
     public int getCount() {
-        if(m_suggestionsVisible){
-            return m_suggestionsModel.getResultCount();
-        }
-
-        int notPagedOverCount = m_resultsModel.getResultCount() - (m_resultsPage * RESULTS_PER_PAGE);
+        int notPagedOverCount = m_searchResultSet.getResultCount() - (m_resultsPage * RESULTS_PER_PAGE);
         int onScreenResults = Math.min(RESULTS_PER_PAGE, notPagedOverCount);
 
         return onScreenResults;
     }
 
     @Override
-    public int getViewTypeCount(){
-        return 2;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return m_suggestionsVisible ? 1 : 0;
-    }
-
-    @Override
     public Object getItem(int position) {
-        return  getResultForState(position);
+        return  getResult(position);
     }
 
     @Override
     public long getItemId(int position) {
-        if(m_suggestionsVisible) {
-            return position;
-        }
-
         int actualResultPosition = position + m_resultsPage * RESULTS_PER_PAGE;
         return actualResultPosition;
     }
@@ -111,31 +104,22 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
     public View getView(int position, View convertView, ViewGroup parent) {
 
         if(convertView == null) {
-
-            SearchResultViewFactory factory = (m_suggestionsVisible ? m_suggestionsViewFactory : m_resultsViewFactory);
-
-            convertView = factory.makeSearchResultView(m_inflater, getResultForState(position), parent);
-
-            SearchResultViewHolder viewHolder = factory.makeSearchResultViewHolder();
+            convertView = m_resultsViewFactory.makeSearchResultView(m_inflater, getResult(position), parent);
+            SearchResultViewHolder viewHolder = m_resultsViewFactory.makeSearchResultViewHolder();
             viewHolder.initialise(convertView);
             convertView.setTag(viewHolder);
         }
 
-        ((SearchResultViewHolder)convertView.getTag()).populate(getResultForState(position));
+        ((SearchResultViewHolder)convertView.getTag()).populate(getResult(position));
 
         return convertView;
     }
 
-    private SearchResult getResultForState(int position) {
-        if(m_suggestionsVisible) {
-            return m_suggestionsModel.getResult(position);
-        }
-
+    private SearchResult getResult(int position) {
         int actualResultPosition = position + m_resultsPage * RESULTS_PER_PAGE;
-        return m_resultsModel.getResult(actualResultPosition);
+        return m_searchResultSet.getResult(actualResultPosition);
     }
 
-    @Override
     public void searchStarted() {
         m_searchInProgressView.setVisibility(View.VISIBLE);
         m_searchResultsView.setVisibility(View.GONE);
@@ -143,44 +127,13 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
     }
 
     @Override
-    public void setResultsVisibility(boolean resultsVisible) {
-        if(resultsVisible) {
-            if(!searchResultsCurrentlyVisible()) {
-                m_resultsViewState = ResultsViewState.Shared;
-                m_suggestionsVisible = false;
-                m_resultsPage = 0;
-                setContainerElementsVisibility();
-                refreshContent();
-            }
-        }
-        else {
-            if(searchResultsCurrentlyVisible()) {
-                m_resultsViewState = ResultsViewState.Hidden;
-                setContainerElementsVisibility();
-            }
-        }
-    }
-
-    @Override
-    public void setSuggestionsVisibility(boolean suggestionsVisible) {
-        if(m_suggestionsVisible != suggestionsVisible) {
-            m_suggestionsVisible = suggestionsVisible;
-            if(m_suggestionsVisible){
-                m_resultsViewState = ResultsViewState.Hidden;
-            }
-            setContainerElementsVisibility();
-            refreshContent();
-        }
-    }
-
-    @Override
     public void refreshContent() {
         notifyDataSetChanged();
 
         int resultsStart = m_resultsPage * RESULTS_PER_PAGE;
-        int resultsEnd = Math.min(resultsStart + RESULTS_PER_PAGE, m_resultsModel.getResultCount());
+        int resultsEnd = Math.min(resultsStart + RESULTS_PER_PAGE, m_searchResultSet.getResultCount());
 
-        m_searchResultInfo.setText(String.format(RESULTS_INFO, resultsStart, resultsEnd, m_resultsModel.getResultCount()));
+        m_searchResultInfo.setText(String.format(RESULTS_INFO, resultsStart, resultsEnd, m_searchResultSet.getResultCount()));
     }
 
     private boolean searchResultsCurrentlyVisible() {
@@ -188,7 +141,7 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
     }
 
     private void setContainerElementsVisibility(){
-        int containerVisible = (m_suggestionsVisible || searchResultsCurrentlyVisible()) ? View.VISIBLE : View.GONE;
+        int containerVisible = searchResultsCurrentlyVisible() ? View.VISIBLE : View.GONE;
 
         m_searchResultsView.setVisibility(containerVisible);
         m_searchInProgressView.setVisibility(View.GONE);
@@ -198,8 +151,8 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
 
     private void configureSearchResultPaginationViews(){
 
-        int anyResults = m_resultsModel.getResultCount() > 0 ? View.VISIBLE : View.GONE;
-        int multiplePages = m_resultsModel.getResultCount() > RESULTS_PER_PAGE ? View.VISIBLE : View.GONE;
+        int anyResults = m_searchResultSet.getResultCount() > 0 ? View.VISIBLE : View.GONE;
+        int multiplePages = m_searchResultSet.getResultCount() > RESULTS_PER_PAGE ? View.VISIBLE : View.GONE;
 
         switch (m_resultsViewState) {
             case Collapsed:
@@ -237,23 +190,21 @@ class DefaultSearchResultsContainer extends BaseAdapter implements ListAdapter, 
         }
     }
 
-    @Override
-    public void nextPage() {
-        if(m_resultsModel.getResultCount() > RESULTS_PER_PAGE * (m_resultsPage + 1)) {
+    private void nextPage() {
+        if(m_searchResultSet.getResultCount() > RESULTS_PER_PAGE * (m_resultsPage + 1)) {
             ++m_resultsPage;
             refreshContent();
         }
     }
 
-    @Override
-    public void previousPage() {
+    private void previousPage() {
         if(m_resultsPage > 0) {
             --m_resultsPage;
             refreshContent();
         }
     }
 
-    public void setResultsViewState(ResultsViewState state){
+    public void setViewState(ResultsViewState state){
         if(state != m_resultsViewState) {
             m_resultsViewState = state;
             LinearLayout.LayoutParams loparams = (LinearLayout.LayoutParams) m_setContainer.getLayoutParams();

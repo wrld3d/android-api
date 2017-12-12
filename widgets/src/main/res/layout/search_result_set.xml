@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/searchbox_set"
+    android:id="@+id/searchbox_result_set"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/padding_search"
-    android:layout_marginLeft="@dimen/padding_search"
-    android:layout_marginRight="@dimen/padding_search"
-    android:layout_marginTop="@dimen/padding_search"
+    android:layout_margin="@dimen/search_padding"
     android:layout_weight="1"
     android:orientation="vertical">
 
@@ -25,7 +22,7 @@
             android:background="#FFFFFF"
 
             android:text="@string/default_search_title"
-            android:textColor="@color/WrldBlue"
+            android:textColor="@color/wrld_blue"
             android:textSize="@dimen/font_size_title" />
     </LinearLayout>
 

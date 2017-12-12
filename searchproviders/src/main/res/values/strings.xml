@@ -8,6 +8,7 @@
     <string name="yelp_error_empty_auth_token">Authentication token is empty</string>
     <string name="yelp_error_no_auth_token">Response does not contain authentication token</string>
     <string name="yelp_error_auth_timed_out">Authentication request timed out</string>
+    <string name="yelp_error_no_connection">Failed to establish connection</string>
     <string name="yelp_error_auth_rejected">Failed to authenticate with Yelp</string>
     <string name="yelp_error_auth_retry_while_in_progress">Authentication already in progress</string>
     <string name="yelp_error_auth_retry_while_authenticated">Already authenticated</string>

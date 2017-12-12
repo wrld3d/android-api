@@ -6,34 +6,57 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingTop="@dimen/padding_search"
-    android:paddingLeft="@dimen/padding_search"
-    android:paddingRight="@dimen/padding_search">
+    android:paddingTop="@dimen/search_padding"
+    android:paddingLeft="@dimen/search_padding"
+    android:paddingRight="@dimen/search_padding">
 
     <RelativeLayout
-        android:id="@+id/searchbox_search"
+        android:id="@+id/searchbox_search_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/searchbox_search"
+            android:id="@+id/searchbox_search_container"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="visible">
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/searchbox_search_results"
+            android:id="@+id/searchbox_results_space"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_below="@+id/searchbox_search"
-            android:layout_toEndOf="@+id/search_tags"
-            android:layout_toRightOf="@+id/search_tags"
-            android:orientation="vertical"></LinearLayout>
+            android:layout_below="@+id/searchbox_search_container"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/searchbox_search_results_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/searchbox_search_container"
+                android:orientation="vertical"
+                android:visibility="gone"></LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/searchbox_autocomplete_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/searchbox_search_container"
+                android:orientation="vertical"
+                android:visibility="gone"></LinearLayout>
+        </LinearLayout>
 
     </RelativeLayout>
 
@@ -41,7 +64,7 @@
         android:id="@+id/searchbox_menu_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-    </LinearLayout>
+        android:orientation="vertical"
+        android:visibility="gone"></LinearLayout>
 
 </RelativeLayout>

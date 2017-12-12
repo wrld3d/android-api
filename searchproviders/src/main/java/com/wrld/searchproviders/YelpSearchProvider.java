@@ -2,6 +2,7 @@ package com.wrld.searchproviders;
 
 import android.text.TextUtils;
 
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -264,6 +265,11 @@ public class YelpSearchProvider extends SuggestionProviderBase {
             public void onErrorResponse(VolleyError error) {
                 if(error instanceof TimeoutError){
                     m_errorHandler.handleError(R.string.yelp_auth_error_title, R.string.yelp_error_auth_timed_out);
+                    m_authStatus = AuthStatus.TIMED_OUT;
+                    return;
+                }
+                if(error instanceof NoConnectionError){
+                    m_errorHandler.handleError(R.string.yelp_auth_error_title, R.string.yelp_error_no_connection);
                     m_authStatus = AuthStatus.TIMED_OUT;
                     return;
                 }
