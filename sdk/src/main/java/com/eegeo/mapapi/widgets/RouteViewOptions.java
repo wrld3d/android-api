@@ -1,4 +1,4 @@
-package com.wrld.dataviz;
+package com.eegeo.mapapi.widgets;
 
 
 /**

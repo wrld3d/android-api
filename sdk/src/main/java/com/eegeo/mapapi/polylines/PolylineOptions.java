@@ -59,6 +59,14 @@ public final class PolylineOptions {
         return this;
     }
 
+    /**
+     * Add a vertex fo the end of the polyline with a vertical offset.
+     *
+     * @param point The point to add.
+     * @param heightOffset A height offset in metres. This is relative to the elevation set for the whole Polyline.
+     * @return The PolylineOptions object on which the method was called, with the new point added.
+     */
+    @SuppressWarnings("JavaDoc")
     public PolylineOptions add(LatLng point, double heightOffset) {
         m_points.add(point);
         m_perPointElevations.add(heightOffset);

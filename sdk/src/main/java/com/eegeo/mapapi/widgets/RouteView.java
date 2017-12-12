@@ -1,4 +1,4 @@
-package com.wrld.dataviz;
+package com.eegeo.mapapi.widgets;
 
 import java.util.List;
 import java.util.ArrayList;
