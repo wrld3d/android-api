@@ -80,7 +80,9 @@ public class SourceProcessor extends Doclet {
             "RouteStep",
             "RouteDirections",
             "RoutingQueryOptions",
-            "TransportationMode"
+            "TransportationMode",
+            "RouteView",
+            "RouteViewOptions"
     );
     // Would be nicer to extract this list automatically, but that would require two passes
     private static List<String> subClasses = Arrays.asList(

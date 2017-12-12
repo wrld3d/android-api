@@ -39,6 +39,8 @@ public class RouteStep {
      */
     public final int indoorFloorId;
 
+    public final boolean isMultiFloor;
+
     /**
      * The estimated time this step will take to travel in seconds.
      */
@@ -56,6 +58,7 @@ public class RouteStep {
             final boolean isIndoors,
             final String indoorId,
             final int indoorFloorId,
+            final boolean isMultiFloor,
             final double duration,
             final double distance)
     {
@@ -65,6 +68,7 @@ public class RouteStep {
         this.isIndoors = isIndoors;
         this.indoorId = indoorId;
         this.indoorFloorId = indoorFloorId;
+        this.isMultiFloor = isMultiFloor;
         this.duration = duration;
         this.distance = distance;
     }
