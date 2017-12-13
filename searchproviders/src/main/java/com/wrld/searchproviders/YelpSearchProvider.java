@@ -19,6 +19,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -143,6 +145,13 @@ public class YelpSearchProvider extends SuggestionProviderBase {
             }
 
             LatLngAlt cameraPosition = m_map.getCameraPosition().target;
+
+            try {
+                query = URLEncoder.encode(query, "utf-8");
+            }
+            catch (UnsupportedEncodingException ex){
+                m_errorHandler.handleError(R.string.yelp_search_error_title, R.string.yelp_error_badly_formatted_query);
+            }
             String queryUrl = m_searchUrl + queryParams(query, cameraPosition, m_searchRadiusInMeters);
 
             m_currentRequest = new VolleyStringRequestBuilder(
@@ -170,6 +179,14 @@ public class YelpSearchProvider extends SuggestionProviderBase {
             }
 
             LatLngAlt cameraPosition = m_map.getCameraPosition().target;
+
+            try {
+                text = URLEncoder.encode(text, "utf-8");
+            }
+            catch (UnsupportedEncodingException ex){
+                return;
+            }
+
             String queryUrl = m_autocompleteUrl + queryParams(text, cameraPosition);
 
             m_currentRequest = new VolleyStringRequestBuilder(

@@ -1,7 +1,9 @@
 <resources>
     <string name="default_search_title">Search Results</string>
     <string name="searchbox_query_hint">Search the WRLD</string>
+    <string name="searchbox_query_button_description">Perform a search</string>
     <string name="searchbox_menu_find_header">Find:</string>
+    <string name="searchbox_menu_title">[Map Name] Menu</string>
     <string name="searchbox_menu_about_title">About</string>
     <string name="searchbox_menu_options_title">Options</string>
     <string name="searchbox_menu_options_appearance_header">Map Appearance</string>
@@ -16,4 +18,20 @@
     <string name="searchbox_menu_options_store_data_description">Faster loading and less streaming required</string>
     <string name="searchbox_menu_options_clear_title">Clear stored map data</string>
     <string name="searchbox_menu_options_clear_description">To free up space on your device</string>
+    <string name="back_button_description">Back</string>
+    <string name="searchbox_menu_button_icon_description">Menu Button Icon</string>
+    <string name="searchbox_menu_button_group_description">Menu Group Icon</string>
+
+    <string name="searchbox_menu_category_around_me">Around Me</string>
+    <string name="searchbox_menu_category_accomodation">Accomodation</string>
+    <string name="searchbox_menu_category_art_and_museums">Art &amp; Museums</string>
+    <string name="searchbox_menu_category_business">Business</string>
+    <string name="searchbox_menu_category_entertainment">Entertainment</string>
+    <string name="searchbox_menu_category_food_and_drink">Food &amp; Drink</string>
+    <string name="searchbox_menu_category_amenities">General Amenities</string>
+    <string name="searchbox_menu_category_health">Health</string>
+    <string name="searchbox_menu_category_shopping">Shopping</string>
+    <string name="searchbox_menu_category_sport_and_leisure">Sports &amp; Leisure</string>
+    <string name="searchbox_menu_category_tourism">Tourism</string>
+    <string name="searchbox_menu_category_transport">Transport</string>
 </resources>

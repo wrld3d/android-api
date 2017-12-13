@@ -14,4 +14,5 @@
     <string name="yelp_error_auth_retry_while_authenticated">Already authenticated</string>
     <string name="yelp_error_auth_404">Auth service returned 404</string>
     <string name="yelp_error_auth_invalid_response">Invalid JSON object received from auth service</string>
+    <string name="yelp_error_badly_formatted_query">Could not format query string</string>
 </resources>

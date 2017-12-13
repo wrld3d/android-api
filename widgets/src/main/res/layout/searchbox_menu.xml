@@ -1,13 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/searchbox_menu"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <ExpandableListView
-        android:id="@+id/searchbox_menu_find"
+    <LinearLayout
+        android:id="@+id/searchbox_menu_header"
         android:layout_width="match_parent"
-        android:layout_height="0dp"></ExpandableListView>
+        android:layout_height="@dimen/search_header_height"
+        android:orientation="horizontal"
+        android:background="@color/searchbox_background">
+
+        <ImageButton
+            android:contentDescription="@string/back_button_description"
+            android:id="@+id/searchbox_menu_back"
+            android:layout_width="@dimen/search_menu_header_back_icon_size"
+            android:layout_height="@dimen/search_menu_header_back_icon_size"
+            android:layout_weight="0"
+            android:layout_margin="@dimen/search_menu_header_back_icon_margin"
+            android:layout_marginRight="@dimen/search_menu_header_back_icon_title_margin"
+            app:srcCompat="@drawable/back_btn" />
+
+        <TextView
+            android:id="@+id/searchbox_menu_title"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/search_menu_header_text_area_height"
+            android:layout_margin="@dimen/search_menu_header_text_area_margin"
+            android:layout_marginLeft="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/searchbox_menu_title" />
+    </LinearLayout>
+
+    <Space
+        android:id="@+id/searchbox_menu_header_space"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/search_menu_header_spacer_height"
+        android:layout_below="@id/searchbox_menu_header"/>
+
+    <ExpandableListView
+        android:id="@+id/searchbox_menu_contents"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/searchbox_menu_header_space"
+        android:padding="@dimen/search_menu_drop_down_padding"
+        android:paddingTop="@dimen/search_menu_drop_down_padding_top"
+        android:background="@color/searchbox_background"
+        android:groupIndicator="@null"/>
 
 </RelativeLayout>

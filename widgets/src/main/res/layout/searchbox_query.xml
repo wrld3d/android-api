@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/searchbox_search_container"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/search_query_height"
+    android:orientation="horizontal"
+    android:background="@color/searchbox_background"
+    >
+
+    <ImageButton
+        android:id="@+id/searchbox_search_menu"
+        android:layout_width="@dimen/search_query_button_size"
+        android:layout_height="@dimen/search_query_button_size"
+        android:layout_weight="0.0"
+        android:layout_margin="@dimen/search_query_margin"
+        app:srcCompat="@drawable/menu_btn"
+        tools:text="Options" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1.0"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_margin="@dimen/search_query_margin"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:background="@drawable/searchbox_border">
+
+        <LinearLayout
+            android:id="@+id/searchbox_search_clear"
+            android:layout_width="@dimen/search_query_clear_button_touch_size"
+            android:layout_height="@dimen/search_query_clear_button_touch_size"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:visibility="visible"
+            android:layout_margin="@dimen/search_query_margin">
+
+            <ImageView
+                android:layout_width="@dimen/search_query_clear_button_icon_size"
+                android:layout_height="@dimen/search_query_clear_button_icon_size"
+                app:srcCompat="@drawable/deletesearch_btn"></ImageView>
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/searchbox_search_querybox"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/searchbox_query_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:padding="8dp"
+            android:layout_toLeftOf="@id/searchbox_search_clear"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+    <ImageButton
+        android:contentDescription="@string/searchbox_query_button_description"
+        android:id="@+id/searchbox_search_perform"
+        android:layout_width="@dimen/search_query_button_size"
+        android:layout_height="@dimen/search_query_button_size"
+        android:layout_weight="0.0"
+        android:layout_margin="@dimen/search_query_margin"
+        app:srcCompat="@drawable/search_btn" />
+
+</LinearLayout>

@@ -1,17 +1,26 @@
 package com.wrld.widgets.searchbox;
 
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.widget.SearchView;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.wrld.widgets.R;
 import com.wrld.widgets.ui.UiScreenController;
 
 class SearchController implements UiScreenController {
 
     private View m_rootView;
-    private SearchView m_searchView;
+    private EditText m_searchView;
+    private View m_clearText;
 
     private Animation m_showAnim;
     private Animation m_hideAnim;
@@ -27,45 +36,68 @@ class SearchController implements UiScreenController {
         m_searchModuleMediator = searchModuleMediator;
 
         m_rootView = searchBoxRootContainer;
-        m_searchView = (SearchView) searchBoxRootContainer.findViewById(R.id.searchbox_search_querybox);
+        m_searchView = (EditText) searchBoxRootContainer.findViewById(R.id.searchbox_search_querybox);
+        m_clearText = searchBoxRootContainer.findViewById(R.id.searchbox_search_clear);
 
-        final UiScreenController selfAsMediatorElement = this;
+        final UiScreenController selfAsScreenController = this;
 
-        m_searchView.setOnQueryTextListener(
-            new SearchView.OnQueryTextListener() {
+        m_searchView.addTextChangedListener(
+            new TextWatcher() {
                 @Override
-                public boolean onQueryTextChange(String newText) {
-                    if (newText != null && !TextUtils.isEmpty(newText.trim())) {
-                        m_searchModuleMediator.doAutocomplete(newText);
-                    }
-                    else {
-                        m_searchModuleMediator.hideResults(selfAsMediatorElement);
-                    }
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-                    return true;
                 }
 
                 @Override
-                public boolean onQueryTextSubmit(String query) {
-                    m_searchModuleMediator.doSearch(selfAsMediatorElement, query);
-                    return true;
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (!TextUtils.isEmpty(s)) {
+                        m_searchModuleMediator.doAutocomplete(s.toString());
+                        m_clearText.setVisibility(View.VISIBLE);
+                    }
+                    else {
+                        m_searchModuleMediator.hideResults(selfAsScreenController);
+                        m_clearText.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
                 }
             }
         );
 
-        final View performSearchButton = searchBoxRootContainer.findViewById(R.id.searchbox_search_perform);
-        performSearchButton.setOnClickListener(new View.OnClickListener() {
+        m_clearText.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
-                performQuery(m_searchView.getQuery());
+                clear();
+            }
+        });
+        m_clearText.setVisibility(View.GONE);
+
+        m_searchView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    performSearch();
+                    return true;
+                }
+                return false;
             }
         });
 
-        /*final View showMenuButton = searchBoxRootContainer.findViewById(R.id.searchbox_search_menu);
+        final View performSearchButton = searchBoxRootContainer.findViewById(R.id.searchbox_search_perform);
+        performSearchButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                performSearch();
+            }
+        });
+
+        final View showMenuButton = searchBoxRootContainer.findViewById(R.id.searchbox_search_menu);
         showMenuButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                m_searchModuleMediator.showMenu(selfAsMediatorElement);
+                m_searchModuleMediator.showMenu(selfAsScreenController);
             }
-        });*/
+        });
 
         m_showAnim = new Animation(){
             @Override
@@ -87,11 +119,17 @@ class SearchController implements UiScreenController {
         m_screenState = ScreenState.VISIBLE;
     }
 
-    public void performQuery(CharSequence query){
-        m_searchView.setQuery(query, true);
+    private void performSearch(){
+        m_searchModuleMediator.doSearch(this, m_searchView.getText().toString());
     }
+
+    public void setQuery(CharSequence query){
+        m_searchView.setText(query);
+        m_searchView.setSelection(m_searchView.getText().length());
+    }
+
     public void clear(){
-        m_searchView.setQuery("", false);
+        m_searchView.setText("");
     }
 
     @Override
@@ -104,6 +142,5 @@ class SearchController implements UiScreenController {
     public Animation transitionToGone() {
         m_hideAnim.reset();
         return m_hideAnim;
-
     }
 }
