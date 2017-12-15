@@ -854,6 +854,10 @@ public final class EegeoMap {
         return poiService;
     }
 
+    /**
+     * Creates and returns a TagService for this map
+     * @return A new TagService object.
+     */
     @UiThread
     public TagService createTagService() {
         TagService tagService = new TagService(m_tagApi);
