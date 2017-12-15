@@ -161,7 +161,20 @@ public final class EegeoMap {
     public void animateCamera(@NonNull final CameraUpdate update, final int durationMs) {
         final CameraAnimationOptions animationOptions = new CameraAnimationOptions.Builder()
                 .duration(durationMs / 1000.0)
-                .Build();
+                .build();
+
+        animateCamera(update, animationOptions);
+
+    }
+
+    /**
+     * Animates the camera change from its current position to a new position.
+     *
+     * @param update Specifies the new position, either by specifying the new camera position, or by describing the desired display area.
+     * @param animationOptions The animation options for the camera transition.
+     */
+    @UiThread
+    public void animateCamera(@NonNull final CameraUpdate update, final CameraAnimationOptions animationOptions) {
 
         m_nativeRunner.runOnNativeThread(new Runnable() {
             @WorkerThread
@@ -171,6 +184,8 @@ public final class EegeoMap {
             }
         });
     }
+
+
 
 
     @WorkerThread
