@@ -1,8 +1,10 @@
 package com.wrld.widgets.searchbox;
 
-public interface SearchBoxMenuItem {
+import com.wrld.widgets.ui.AccordionItem;
+
+public interface SearchBoxMenuItem extends AccordionItem {
     interface OnClickListener{
-        void onClick(SearchBoxMenuItem clicked);
+        void onClick(SearchBoxMenuItem clickedItem);
     }
 
     String getTitle();

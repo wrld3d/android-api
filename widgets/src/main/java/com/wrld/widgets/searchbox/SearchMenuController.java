@@ -2,11 +2,12 @@ package com.wrld.widgets.searchbox;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.view.animation.Animation;
-import android.widget.ExpandableListView;
 
 import com.wrld.widgets.R;
+import com.wrld.widgets.ui.Accordion;
 import com.wrld.widgets.ui.UiScreenController;
 
 public class SearchMenuController implements UiScreenController {
@@ -26,7 +27,7 @@ public class SearchMenuController implements UiScreenController {
 
     private SearchMenuContent m_contentProvider;
 
-    private ExpandableListView m_expandableListView;
+    private Accordion m_accordion;
 
     public SearchMenuController(ViewStub stub, SearchModuleController searchModuleController, SearchMenuContent contentProvider){
 
@@ -44,7 +45,7 @@ public class SearchMenuController implements UiScreenController {
                 if(!m_hasInflated){
                     inflate();
                 }
-                m_expandableListView.expandGroup(0);
+                m_accordion.expandGroup(0);
                 m_rootContainer.setVisibility(View.VISIBLE);
                 m_screenState = ScreenState.VISIBLE;
             }
@@ -83,37 +84,10 @@ public class SearchMenuController implements UiScreenController {
         });
         m_hasInflated = true;
 
-        m_expandableListView = (ExpandableListView) m_rootContainer.findViewById(R.id.searchbox_menu_contents);
-        m_expandableListView.setAdapter(m_contentProvider);
-        m_expandableListView.setOnGroupClickListener(onGroupClicked());
-        m_expandableListView.setOnChildClickListener(onChildClicked());
+        ViewGroup accordionSpace = (ViewGroup)m_rootContainer.findViewById(R.id.searchbox_menu_groups_space);
+        m_accordion = new Accordion(accordionSpace, m_contentProvider, R.layout.searchbox_menu_group);
+        m_accordion.addGroups(m_contentProvider.getGroupCount());
      }
-
-     private ExpandableListView.OnChildClickListener onChildClicked(){
-         return new ExpandableListView.OnChildClickListener() {
-             @Override
-             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                 m_contentProvider.getSearchBoxMenuGroup(groupPosition).get(childPosition).clicked();
-                 return true;
-             }
-         };
-     }
-
-    private ExpandableListView.OnGroupClickListener onGroupClicked(){
-        return new ExpandableListView.OnGroupClickListener() {
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                if(parent.isGroupExpanded(groupPosition)){
-                    parent.collapseGroup(groupPosition);
-                }
-                else{
-                    parent.expandGroup(groupPosition);
-                }
-                m_contentProvider.getSearchBoxMenuGroup(groupPosition).clicked();
-                return true;
-            }
-        };
-    }
 
     public void setDefaultMenuContent(Context context){
         SearchBoxMenuGroup find = m_contentProvider.addGroup("Find:");
@@ -138,8 +112,8 @@ public class SearchMenuController implements UiScreenController {
         final UiScreenController self = this;
         return new SearchBoxMenuItem.OnClickListener(){
             @Override
-            public void onClick(SearchBoxMenuItem clicked) {
-                m_searchModuleController.doSearch(self, clicked.getTitle());
+            public void onClick(SearchBoxMenuItem clickedItem) {
+                m_searchModuleController.doSearch(self, clickedItem.getTitle());
             }
         };
     }

@@ -40,14 +40,14 @@
         android:layout_height="@dimen/search_menu_header_spacer_height"
         android:layout_below="@id/searchbox_menu_header"/>
 
-    <ExpandableListView
-        android:id="@+id/searchbox_menu_contents"
+    <LinearLayout
+        android:id="@+id/searchbox_menu_groups_space"
+        android:layout_below="@id/searchbox_menu_header_space"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/searchbox_menu_header_space"
         android:padding="@dimen/search_menu_drop_down_padding"
         android:paddingTop="@dimen/search_menu_drop_down_padding_top"
         android:background="@color/searchbox_background"
-        android:groupIndicator="@null"/>
+        android:orientation="vertical"></LinearLayout>
 
 </RelativeLayout>
