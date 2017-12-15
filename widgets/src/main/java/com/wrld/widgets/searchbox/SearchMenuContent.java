@@ -70,7 +70,10 @@ class SearchMenuContent implements AccordionDataProvider {
         if(group.size() > 0){
             icon = isExpanded ? R.drawable.expander_open:R.drawable.expander;
         }
-        ((SearchBoxMenuGroupViewHolder)convertView.getTag()).populate(group.getTitle(), icon);
+
+        boolean hideShadow = isExpanded || (groupPosition == m_groups.size() - 1);
+
+        ((SearchBoxMenuGroupViewHolder)convertView.getTag()).populate(group.getTitle(), icon, hideShadow);
 
         return convertView;
     }

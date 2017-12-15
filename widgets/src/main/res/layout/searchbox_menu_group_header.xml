@@ -2,23 +2,38 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/searchbox_background"
+    android:layout_height="wrap_content"
     android:layout_margin="@dimen/search_menu_drop_down_group_margin"
-    android:layout_gravity="center_vertical"
-    android:orientation="horizontal">
+    android:background="@color/searchbox_background"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/searchbox_menu_item_text"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/search_menu_drop_down_group_text_area_height"
-        android:layout_margin="@dimen/search_menu_drop_down_group_margin"
-        android:layout_weight="1" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/searchbox_menu_group_icon"
+            android:layout_width="@dimen/search_menu_drop_down_group_icon_height"
+            android:layout_height="@dimen/search_menu_drop_down_group_icon_height"
+            android:layout_margin="@dimen/search_menu_drop_down_group_margin"
+            android:layout_alignParentRight="true"
+            app:srcCompat="@drawable/expander" />
+
+        <TextView
+            android:id="@+id/searchbox_menu_item_text"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/search_menu_drop_down_group_text_area_height"
+            android:layout_margin="@dimen/search_menu_drop_down_group_margin"
+            android:layout_toLeftOf="@id/searchbox_menu_group_icon"/>
+    </RelativeLayout>
 
     <ImageView
-        android:id="@+id/searchbox_menu_group_icon"
-        android:layout_width="@dimen/search_menu_drop_down_group_icon_height"
-        android:layout_height="@dimen/search_menu_drop_down_group_icon_height"
-        android:layout_margin="@dimen/search_menu_drop_down_group_margin"
-        app:srcCompat="@drawable/expander" />
+        android:id="@+id/searchbox_menu_contents_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/search_menu_drop_down_padding"
+        android:groupIndicator="@null"
+        app:srcCompat="@drawable/gradientshadow" />
+
 </LinearLayout>

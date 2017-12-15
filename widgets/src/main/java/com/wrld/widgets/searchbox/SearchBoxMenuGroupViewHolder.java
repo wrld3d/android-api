@@ -9,15 +9,17 @@ import com.wrld.widgets.R;
 public class SearchBoxMenuGroupViewHolder {
     private TextView m_title;
     private ImageView m_icon;
+    private ImageView m_shadow;
 
     public SearchBoxMenuGroupViewHolder(View root){
         m_title = (TextView) root.findViewById(R.id.searchbox_menu_item_text);
         m_icon = (ImageView) root.findViewById(R.id.searchbox_menu_group_icon);
+        m_shadow = (ImageView) root.findViewById(R.id.searchbox_menu_contents_shadow);
     }
 
-    public void populate(String text, int iconImageResource){
-
+    public void populate(String text, int iconImageResource, boolean hideShadow){
         m_title.setText(text);
         m_icon.setImageResource(iconImageResource);
+        m_shadow.setVisibility(hideShadow ? View.GONE : View.VISIBLE);
     }
 }
