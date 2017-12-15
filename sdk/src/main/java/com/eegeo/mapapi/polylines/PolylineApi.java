@@ -62,6 +62,13 @@ public class PolylineApi {
 
         double[] latLongs = pointsToArray(polylineOptions.getPoints());
 
+        List<Double> perPointElevationsList = polylineOptions.getPerPointElevations();
+        double[] perPointElevations = new double[perPointElevationsList.size()];
+        for (int i = 0; i < perPointElevationsList.size(); ++i) {
+            perPointElevations[i] = perPointElevationsList.get(i);
+        }
+
+
         return nativeCreatePolyline(
                 m_jniEegeoMapApiPtr,
                 polylineOptions.getIndoorMapId(),
@@ -69,6 +76,7 @@ public class PolylineApi {
                 polylineOptions.getElevation(),
                 polylineOptions.getElevationMode().ordinal(),
                 latLongs,
+                perPointElevations,
                 polylineOptions.getWidth(),
                 polylineOptions.getColor(),
                 polylineOptions.getMiterLimit()
@@ -143,6 +151,7 @@ public class PolylineApi {
             double elevation,
             int elevationMode,
             double[] points,
+            double[] perPointElevations,
             float width,
             int colorARGB,
             float miterLimit
