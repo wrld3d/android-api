@@ -2,9 +2,10 @@ package com.wrld.widgets.searchbox;
 
 import android.view.animation.Animation;
 
-import com.wrld.widgets.ui.ExpandableListViewIndex;
 import com.wrld.widgets.ui.UiScreenController;
+import com.wrld.widgets.ui.UiScreenStateList;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 class SearchModuleController {
@@ -14,24 +15,28 @@ class SearchModuleController {
     private SearchResultScreenController m_searchResultScreenController;
     private SearchMenuController m_searchMenuController;
 
-    private Stack<UiScreenController> m_uiScreenHistory;
-    UiScreenController m_currentUiScreen;
+    private ArrayList<UiScreenController> m_allScreens;
+    private Stack<UiScreenStateList> m_uiScreenHistory;
 
     public void setSearchQueryHandler(SearchQueryHandler queryHandler){
         m_searchQueryHandler = queryHandler;
-        m_uiScreenHistory = new Stack<UiScreenController>();
+        m_uiScreenHistory = new Stack<UiScreenStateList>();
+        m_allScreens = new ArrayList<UiScreenController>();
     }
 
     public void setQueryBoxController(SearchController searchController) {
         m_searchController = searchController;
+        m_allScreens.add(searchController);
     }
 
     public void setSearchResultsSetController(SearchResultScreenController searchResultScreenController) {
         m_searchResultScreenController = searchResultScreenController;
+        m_allScreens.add(searchResultScreenController);
     }
 
     public void setSearchMenuController(SearchMenuController searchMenuController) {
         m_searchMenuController = searchMenuController;
+        m_allScreens.add(searchMenuController);
     }
 
     public void showQueryBox(UiScreenController caller) {
@@ -87,10 +92,10 @@ class SearchModuleController {
     //TODO public void focusOnResult(SearchModuleMediatorElement caller, SearchResult result){}
 
     public void showMenu(UiScreenController caller) {
-        m_uiScreenHistory.push(caller);
-        doHideElement(caller);
+        m_uiScreenHistory.push(new UiScreenStateList(m_allScreens));
+        doHideElement(m_searchController);
+        doHideElement(m_searchResultScreenController);
         doShowElement(m_searchMenuController);
-        m_currentUiScreen = m_searchMenuController;
     }
 
     private void doShowElement(UiScreenController element){
@@ -108,9 +113,7 @@ class SearchModuleController {
 
     public void back(){
         if(m_uiScreenHistory.size() > 0){
-            doHideElement(m_currentUiScreen);
-            m_currentUiScreen = m_uiScreenHistory.pop();
-            doShowElement(m_currentUiScreen);
+            m_uiScreenHistory.pop().resetTo();
         }
     }
 }
