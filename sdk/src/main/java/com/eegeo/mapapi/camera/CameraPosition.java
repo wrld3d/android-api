@@ -14,16 +14,32 @@ import com.eegeo.mapapi.positioner.PositionerOptions;
  */
 public final class CameraPosition {
     /**
-     * The coordinate that the camera is pointing at.
+     * The coordinate of the interest point that the camera is pointing at.
      */
     public final LatLng target;
 
+    /**
+     * The elevation of the interest point, in meters. The property is interpreted differently,
+     * depending on targetElevationMode.
+     */
     public final double targetElevation;
 
+    /**
+     * An enumerated value indicating whether targetElevation is specified as a height above
+     * terrain, or an absolute altitude above sea level.
+     */
     public final ElevationMode targetElevationMode;
 
+    /**
+     * For a camera with interest point on an indoor map, the string identifier of the indoor map;
+     * else, an empty string.
+     */
     public final String targetIndoorMapId;
 
+    /**
+     * For a camera with interest point on an indoor map, the identifier of an indoor map floor on
+     * which the target interest point lies.
+     */
     public final int targetIndoorMapFloorId;
 
     /**
@@ -32,7 +48,7 @@ public final class CameraPosition {
     public final double zoom;
 
     /**
-     * The angle between the forward pointing direction of the camera, and a direction vertically upwards from the Earth at target coordinate
+     * The angle formed at the target coordinate from the camera direction to the vertical, in degrees.
      */
     public final double tilt;
 
@@ -94,7 +110,7 @@ public final class CameraPosition {
     }
 
     /**
-     * Builds a camera position.
+     * Builds a CameraPosition.
      */
     public static final class Builder {
         private static double ms_defaultZoom = 17;
@@ -146,7 +162,7 @@ public final class CameraPosition {
         }
 
         /**
-         * Creates an builder initialised to the supplied CameraPosition
+         * Creates an builder initialised to the values of the supplied CameraPosition
          */
         public Builder(CameraPosition previous) {
             this.m_target = previous.target;
@@ -219,6 +235,9 @@ public final class CameraPosition {
             return i0 + t;
         }
 
+        /**
+         * @eegeo.internal
+         */
         private static int FirstZoomLevelLessThanDistance(double distance) {
             for (int i = 0; i < ms_zoomToDistances.length; ++i) {
                 if (ms_zoomToDistances[i] < distance) {
@@ -279,16 +298,36 @@ public final class CameraPosition {
             return this;
         }
 
+        /**
+         * Sets the targetElevation for the CameraPosition. The default targetElevation is 0.
+         *
+         * @param elevation The elevation, in meters.
+         * @return Updated CameraPosition.Builder object.
+         */
         public Builder elevation(@NonNull double elevation) {
             this.m_targetElevation = elevation;
             return this;
         }
 
+        /**
+         * Sets the targetElevationMode for the CameraPosition. The default targetElevationMode is ElevationMode.HeightAboveGround.
+         *
+         * @param elevationMode The ElevationMode used to interpret the targetElevation.
+         * @return Updated CameraPosition.Builder object.
+         */
         public Builder elevationMode(@NonNull ElevationMode elevationMode) {
             this.m_targetElevationMode = elevationMode;
             return this;
         }
 
+        /**
+         * Sets the indoor map properties for the CameraPosition target. If this method is not called,
+         * the builder is initialised to create a CameraPosition with its interest point on an outdoor map.
+         *
+         * @param indoorMapId The identifier of the indoor map of the camera target interest point.
+         * @param indoorMapFloorId The identifier of the indoor map floor of the camera target interest point.
+         * @return Updated CameraPosition.Builder object.
+         */
         public Builder indoor(String indoorMapId, int indoorMapFloorId) {
             this.m_targetIndoorMapId = indoorMapId;
             this.m_targetIndoorMapFloorId = indoorMapFloorId;
@@ -321,7 +360,7 @@ public final class CameraPosition {
         /**
          * Sets the orientation of the camera in the earth tangent plane, in degrees clockwise from north.
          *
-         * @param bearing Angle in degrees.
+         * @param bearing The direction that the camera is facing, in degrees clockwise from north.
          * @return Updated CameraPosition.Builder object.
          */
         public Builder bearing(double bearing) {
@@ -336,9 +375,9 @@ public final class CameraPosition {
         }
 
         /**
-         * Sets the distance.
+         * Sets the distance from the camera to its target interest point.
          *
-         * @param distance
+         * @param distance The distance, in meters, from the camera location to the target interest point.
          * @return Updated CameraPosition.Builder object.
          * @eegeo.internal
          */
