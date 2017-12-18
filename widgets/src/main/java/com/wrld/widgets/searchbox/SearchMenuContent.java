@@ -66,14 +66,16 @@ class SearchMenuContent implements AccordionDataProvider {
             convertView.setTag(viewHolder);
         }
         int icon = android.R.color.transparent;
+        float rotation = 0;
         SearchBoxMenuGroup group = m_groups.get(groupPosition);
         if(group.size() > 0){
-            icon = isExpanded ? R.drawable.expander_open:R.drawable.expander;
+            icon = R.drawable.expander;
+            rotation = isExpanded ? 90 : 0;
         }
 
         boolean hideShadow = isExpanded || (groupPosition == m_groups.size() - 1);
 
-        ((SearchBoxMenuGroupViewHolder)convertView.getTag()).populate(group.getTitle(), icon, hideShadow);
+        ((SearchBoxMenuGroupViewHolder)convertView.getTag()).populate(group.getTitle(), icon, rotation, hideShadow);
 
         return convertView;
     }

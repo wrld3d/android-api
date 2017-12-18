@@ -4,18 +4,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
 
 class SuggestionSearchResultController extends BaseAdapter implements SearchResultsController {
     private LayoutInflater m_inflater;
 
     private SearchResultSet m_searchResultSet;
     private SearchResultViewFactory m_resultsViewFactory;
+    private View m_container;
+
+    private int m_maxSuggestions = 4;
 
     public SuggestionSearchResultController(View container, SearchResultSet resultSet, SearchResultViewFactory viewFactory) {
+        m_container = container;
         m_inflater = LayoutInflater.from(container.getContext());
         m_searchResultSet = resultSet;
         m_resultsViewFactory = viewFactory;
+        m_container.setVisibility(View.GONE);
     }
 
     @Override
@@ -30,7 +34,7 @@ class SuggestionSearchResultController extends BaseAdapter implements SearchResu
 
     @Override
     public int getCount() {
-        return m_searchResultSet.getResultCount();
+        return Math.min(m_maxSuggestions, m_searchResultSet.getResultCount());
     }
 
     @Override
@@ -60,7 +64,16 @@ class SuggestionSearchResultController extends BaseAdapter implements SearchResu
 
     @Override
     public void refreshContent() {
+        int containerVisibility = getCount() > 0 ? View.VISIBLE: View.GONE;
+        if(containerVisibility != m_container.getVisibility()) {
+            m_container.setVisibility(containerVisibility);
+        }
+
         notifyDataSetChanged();
+    }
+
+    public void hide(){
+        m_container.setVisibility(View.GONE);
     }
 
     private SearchResult getResult(int position) {

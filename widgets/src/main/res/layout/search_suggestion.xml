@@ -1,33 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/search_result"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="#FFFFFF"
-    android:orientation="vertical">
+    android:layout_height="@dimen/search_suggestions_result_height"
+    android:orientation="horizontal"
+    android:background="@color/searchbox_background"
+    android:gravity="center_vertical">
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/search_result_icon"
+        android:layout_width="@dimen/search_suggestions_result_icon_size"
+        android:layout_height="@dimen/search_suggestions_result_icon_size"
+        android:paddingLeft="@dimen/search_suggestions_result_horizontal_padding"
+        android:paddingRight="@dimen/search_suggestions_result_horizontal_padding"
+        android:paddingTop="@dimen/search_suggestions_result_vertical_padding"
+        android:paddingBottom="@dimen/search_suggestions_result_vertical_padding"
+        android:adjustViewBounds="true"
+        app:srcCompat="@android:drawable/ic_menu_search" />
+
+    <TextView
+        android:id="@+id/search_result_title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
-
-        <ImageView
-            android:id="@+id/search_result_icon"
-            android:layout_width="128dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:adjustViewBounds="true"
-            app:srcCompat="@android:drawable/ic_menu_search" />
-
-        <TextView
-            android:id="@+id/search_result_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Title"
-            android:textSize="@dimen/font_size_title" />
-    </LinearLayout>
-
-</RelativeLayout>
+        android:paddingLeft="0dp"
+        android:paddingRight="@dimen/search_suggestions_result_horizontal_padding"
+        android:paddingTop="@dimen/search_suggestions_result_vertical_padding"
+        android:paddingBottom="@dimen/search_suggestions_result_vertical_padding"
+        android:textSize="@dimen/font_size_title" />
+</LinearLayout>

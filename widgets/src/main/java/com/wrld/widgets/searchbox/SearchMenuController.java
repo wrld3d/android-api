@@ -92,19 +92,19 @@ public class SearchMenuController implements UiScreenController {
     public void setDefaultMenuContent(Context context){
         SearchBoxMenuGroup find = m_contentProvider.addGroup("Find:");
 
-        find.add( new String[]{
-                context.getString(R.string.searchbox_menu_category_around_me),
-                context.getString(R.string.searchbox_menu_category_accomodation),
-                context.getString(R.string.searchbox_menu_category_art_and_museums),
-                context.getString(R.string.searchbox_menu_category_business),
-                context.getString(R.string.searchbox_menu_category_entertainment),
-                context.getString(R.string.searchbox_menu_category_food_and_drink),
-                context.getString(R.string.searchbox_menu_category_amenities),
-                context.getString(R.string.searchbox_menu_category_health),
-                context.getString(R.string.searchbox_menu_category_shopping),
-                context.getString(R.string.searchbox_menu_category_sport_and_leisure),
-                context.getString(R.string.searchbox_menu_category_tourism),
-                context.getString(R.string.searchbox_menu_category_transport)});
+        find.add( new SearchBoxMenuChild[]{
+               new SearchBoxMenuChild(context.getString(R.string.searchbox_menu_category_around_me)),
+               new SearchBoxMenuChild(context.getString(R.string.searchbox_menu_category_accomodation)),
+               new SearchBoxMenuChild(context.getString(R.string.searchbox_menu_category_art_and_museums)),
+               new SearchBoxMenuChild(context.getString(R.string.searchbox_menu_category_business)),
+               new SearchBoxMenuChild(context.getString(R.string.searchbox_menu_category_entertainment)),
+               new SearchBoxMenuChild(context.getString(R.string.searchbox_menu_category_food_and_drink)),
+               new SearchBoxMenuChild(context.getString(R.string.searchbox_menu_category_amenities)),
+               new SearchBoxMenuChild(context.getString(R.string.searchbox_menu_category_health)),
+               new SearchBoxMenuChild(context.getString(R.string.searchbox_menu_category_shopping)),
+               new SearchBoxMenuChild(context.getString(R.string.searchbox_menu_category_sport_and_leisure)),
+               new SearchBoxMenuChild(context.getString(R.string.searchbox_menu_category_tourism)),
+               new SearchBoxMenuChild(context.getString(R.string.searchbox_menu_category_transport))});
         find.addOnClickListenerToAllChildren(onFindClickListener());
     }
 

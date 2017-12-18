@@ -13,19 +13,14 @@ public final class SearchBoxMenuGroup extends SearchBoxMenuItemBase {
         m_children = new ArrayList<SearchBoxMenuChild>();
     }
 
-    public SearchBoxMenuChild add(String childText){
-        SearchBoxMenuChild child = new SearchBoxMenuChild(childText);
+    public void add(SearchBoxMenuChild child){
         m_children.add(child);
-        return child;
     }
 
-    public SearchBoxMenuItem[] add(String[] childTexts){
-        ArrayList<SearchBoxMenuChild> newChildren = new ArrayList<SearchBoxMenuChild>();
-        for(String childText : childTexts){
-            newChildren.add(add(childText));
+    public void add(SearchBoxMenuChild[] children){
+        for(SearchBoxMenuChild child : children){
+            m_children.add(child);
         }
-        SearchBoxMenuChild[] newChildrenArray = new SearchBoxMenuChild[newChildren.size()];
-        return newChildren.toArray(newChildrenArray);
     }
 
     public SearchBoxMenuChild get(int index){

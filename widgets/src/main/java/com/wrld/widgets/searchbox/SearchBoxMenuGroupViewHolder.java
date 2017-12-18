@@ -17,9 +17,10 @@ public class SearchBoxMenuGroupViewHolder {
         m_shadow = (ImageView) root.findViewById(R.id.searchbox_menu_contents_shadow);
     }
 
-    public void populate(String text, int iconImageResource, boolean hideShadow){
+    public void populate(String text, int iconImageResource, float rotation, boolean hideShadow){
         m_title.setText(text);
         m_icon.setImageResource(iconImageResource);
+        m_icon.setRotation(rotation);
         m_shadow.setVisibility(hideShadow ? View.GONE : View.VISIBLE);
     }
 }

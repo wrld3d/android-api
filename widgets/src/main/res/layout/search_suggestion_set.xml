@@ -1,49 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/searchbox_suggestion_set"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/search_padding"
     android:layout_weight="1"
+    android:background="@color/searchbox_background"
+    android:layout_marginTop="@dimen/search_suggestions_set_vertical_spacing"
+    android:minHeight="@dimen/search_suggestions_header_text_area_height_with_padding"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/searchbox_set_header"
+    <TextView
+        android:id="@+id/search_set_title"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:orientation="horizontal"
-        android:visibility="gone">
+        android:layout_height="@dimen/search_suggestions_header_text_area_height_with_padding"
+        android:minHeight="@dimen/search_suggestions_header_text_area_height_with_padding"
+        android:textColor="@color/searchbox_autcomplete_list_header_font"
+        android:paddingTop="@dimen/search_suggestions_header_padding"
+        android:paddingLeft="@dimen/search_suggestions_header_padding"
+        android:paddingRight="@dimen/search_suggestions_header_padding"
+        android:paddingBottom="@dimen/search_suggestions_header_padding_bottom"
+        android:background="@color/searchbox_autcomplete_list_header_background"
+        android:layout_gravity="center_vertical"
+        android:textSize="@dimen/font_size_suggestions_title" />
 
-        <TextView
-            android:id="@+id/search_set_title"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#FFFFFF"
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/search_suggestions_shadow_size"
+        android:rotation="180"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/gradientshadow" />
 
-            android:text="@string/default_search_title"
-            android:textColor="@color/wrld_blue"
-            android:textSize="@dimen/font_size_title" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/searchbox_set_content"
+    <ListView
+        android:id="@+id/searchbox_set_result_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/searchbox_set_footer"
-        android:layout_below="@+id/searchbox_set_header"
-        android:baselineAligned="false"
-        android:orientation="vertical">
+        android:footerDividersEnabled="false"
+        android:paddingTop="@dimen/search_suggestions_result_vertical_padding"
+        android:paddingBottom="@dimen/search_suggestions_result_vertical_padding"
+        android:paddingLeft="@dimen/search_suggestions_result_horizontal_padding"
+        android:paddingRight="@dimen/search_suggestions_result_horizontal_padding"
+        android:headerDividersEnabled="false" />
 
-        <ListView
-            android:id="@+id/searchbox_set_result_list"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.1"
-            android:footerDividersEnabled="false"
-            android:headerDividersEnabled="false"></ListView>
-
-
-    </LinearLayout>
-
-</RelativeLayout>
+</LinearLayout>

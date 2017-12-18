@@ -82,7 +82,9 @@ class SearchModuleController {
 
     public SearchResultsController addSuggestionProvider(SuggestionProvider suggestionProvider, SearchResultSet searchResultSet){
        return m_searchResultScreenController.inflateViewForAutoCompleteProvider(
-                            searchResultSet, suggestionProvider.getSuggestionViewFactory());
+               suggestionProvider.getTitle(),
+               searchResultSet,
+               suggestionProvider.getSuggestionViewFactory());
     }
 
     public void removeAllSuggestionProviders(){
@@ -115,5 +117,12 @@ class SearchModuleController {
         if(m_uiScreenHistory.size() > 0){
             m_uiScreenHistory.pop().resetTo();
         }
+    }
+
+    public void showDefaultView(){
+        doShowElement(m_searchController);
+        doHideElement(m_searchResultScreenController);
+        doHideElement(m_searchMenuController);
+        m_uiScreenHistory.clear();
     }
 }

@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.wrld.widgets.R;
 import com.wrld.widgets.ui.UiScreenController;
@@ -20,7 +21,7 @@ class SearchResultScreenController implements UiScreenController {
     private ViewGroup m_autoCompleteResultContainer;
 
     private ArrayList<PaginatedSearchResultsController> m_searchResultControllers;
-    private int m_autocompleteResultContainerCount;
+    private ArrayList<SuggestionSearchResultController> m_suggestionControllers;
 
     private Animation m_showAnim;
     private Animation m_hideAnim;
@@ -52,12 +53,14 @@ class SearchResultScreenController implements UiScreenController {
             @Override
             public void start() {
                 super.start();
+                hideSuggestionSets();
                 m_rootContainer.setVisibility(View.GONE);
                 m_screenState = ScreenState.GONE;
             }
         };
 
         m_searchResultControllers = new ArrayList<PaginatedSearchResultsController>();
+        m_suggestionControllers = new ArrayList<SuggestionSearchResultController>();
         m_screenState = ScreenState.GONE;
     }
 
@@ -68,7 +71,7 @@ class SearchResultScreenController implements UiScreenController {
 
     public void removeAllAutocompleteProviderViews(){
         m_autoCompleteResultContainer.removeAllViews();
-        m_autocompleteResultContainerCount = 0;
+        m_suggestionControllers.clear();
     }
 
     public SearchResultsController inflateViewForSearchProvider(
@@ -89,23 +92,27 @@ class SearchResultScreenController implements UiScreenController {
     }
 
     public SearchResultsController inflateViewForAutoCompleteProvider(
+            String title,
             SearchResultSet resultSet,
             SearchResultViewFactory viewFactory){
         // Cannot add view here with flag as we need to specify the index for layout to work
         View setView = m_inflater.inflate(R.layout.search_suggestion_set, m_autoCompleteResultContainer, false);
-        m_autoCompleteResultContainer.addView(setView, m_autocompleteResultContainerCount);
-        ++m_autocompleteResultContainerCount;
+        m_autoCompleteResultContainer.addView(setView, m_suggestionControllers.size());
         ListView listView = (ListView) setView.findViewById(R.id.searchbox_set_result_list);
 
         final SuggestionSearchResultController resultsController = new SuggestionSearchResultController(
                 setView, resultSet, viewFactory);
 
+        TextView titleView = (TextView)setView.findViewById(R.id.search_set_title);
+        titleView.setText(title);
+
+        m_suggestionControllers.add(resultsController);
         listView.setAdapter(resultsController);
         return resultsController;
     }
 
     public void showResults(){
-        m_autoCompleteResultContainer.setVisibility(View.GONE);
+        hideSuggestionSets();
         m_searchResultContainer.setVisibility(View.VISIBLE);
 
         for(PaginatedSearchResultsController searchResultController : m_searchResultControllers){
@@ -128,5 +135,12 @@ class SearchResultScreenController implements UiScreenController {
     public Animation transitionToGone() {
         m_hideAnim.reset();
         return m_hideAnim;
+    }
+
+    private void hideSuggestionSets(){
+        m_autoCompleteResultContainer.setVisibility(View.GONE);
+        for(SuggestionSearchResultController suggestionController : m_suggestionControllers){
+            suggestionController.hide();
+        }
     }
 }

@@ -1,38 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/searchbox_result_set"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_margin="@dimen/search_padding"
-    android:layout_weight="1"
-    android:orientation="vertical">
-
-    <LinearLayout
-        android:id="@+id/searchbox_set_header"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:orientation="horizontal"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/search_set_title"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#FFFFFF"
-
-            android:text="@string/default_search_title"
-            android:textColor="@color/wrld_blue"
-            android:textSize="@dimen/font_size_title" />
-    </LinearLayout>
+    android:orientation="vertical"
+    android:visibility="gone">
 
     <LinearLayout
         android:id="@+id/searchbox_set_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/searchbox_set_footer"
-        android:layout_below="@+id/searchbox_set_header"
-        android:baselineAligned="false"
+        android:layout_height="0dp"
+        android:layout_weight="0"
         android:orientation="vertical">
 
         <ProgressBar
@@ -46,10 +26,9 @@
         <ListView
             android:id="@+id/searchbox_set_result_list"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.1"
+            android:layout_height="match_parent"
             android:footerDividersEnabled="false"
-            android:headerDividersEnabled="false"></ListView>
+            android:headerDividersEnabled="false" />
 
 
     </LinearLayout>
@@ -57,54 +36,60 @@
     <LinearLayout
         android:id="@+id/searchbox_set_footer"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_alignParentBottom="true"
+        android:layout_height="@dimen/search_results_footer_height"
+        android:layout_weight="1.0"
         android:background="#ffffff"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:id="@+id/searchbox_set_expand_controls"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/search_results_footer_height"
             android:orientation="horizontal"
-            android:visibility="gone"
-            android:weightSum="1">
+            android:padding="@dimen/search_results_more_margin"
+            android:visibility="visible">
 
-            <Button
+            <ImageButton
                 android:id="@+id/searchbox_set_expand_button"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:visibility="visible" />
+                android:layout_width="@dimen/search_results_more_icon_size"
+                android:layout_height="@dimen/search_results_more_icon_size"
+                android:visibility="visible"
+                app:srcCompat="@drawable/moreresults_butn" />
+
+            <TextView
+                android:id="@+id/searchbox_set_expand_info"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/search_results_text_area_height"
+                android:textAlignment="center" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/searchbox_set_pagination_controls"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="horizontal"
-            android:visibility="gone"
-            android:weightSum="1">
+            android:visibility="visible">
 
-            <Button
+            <ImageButton
                 android:id="@+id/searchbox_set_pagination_prev"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="0.0" />
+                android:layout_width="@dimen/search_results_page_icon_width"
+                android:layout_height="@dimen/search_results_page_icon_height"
+                app:srcCompat="@drawable/expander" />
 
             <TextView
                 android:id="@+id/searchbox_set_pagination_results_info"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1.0"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/search_results_text_area_height"
                 android:textAlignment="center" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/searchbox_set_pagination_next"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="0.0" />
+                android:layout_width="@dimen/search_results_page_icon_width"
+                android:layout_height="@dimen/search_results_page_icon_height"
+                android:rotation="180"
+                app:srcCompat="@drawable/expander" />
         </LinearLayout>
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

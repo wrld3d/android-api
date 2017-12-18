@@ -31,7 +31,6 @@ class PaginatedSearchResultsController extends BaseAdapter implements SearchResu
 
     private TextView m_searchResultInfo;
     private View m_setContainer;
-    private View m_header;
     private View m_footer;
     private View m_expandControls;
     private View m_paginationControls;
@@ -48,7 +47,6 @@ class PaginatedSearchResultsController extends BaseAdapter implements SearchResu
 
         m_setContainer = container;
         m_searchResultSet = resultSet;
-        m_header = container.findViewById(R.id.searchbox_set_header);
         m_footer = container.findViewById(R.id.searchbox_set_footer);
         m_searchResultInfo = (TextView) container.findViewById(R.id.searchbox_set_pagination_results_info);
         m_expandControls = container.findViewById(R.id.searchbox_set_expand_controls);
@@ -158,13 +156,11 @@ class PaginatedSearchResultsController extends BaseAdapter implements SearchResu
             case Collapsed:
                 m_expandControls.setVisibility(anyResults);
                 m_paginationControls.setVisibility(View.GONE);
-                m_header.setVisibility(View.GONE);
                 m_footer.setVisibility(anyResults);
                 break;
             case Shared:
                 m_expandControls.setVisibility(anyResults);
                 m_paginationControls.setVisibility(View.GONE);
-                m_header.setVisibility(View.VISIBLE);
                 m_footer.setVisibility(anyResults);
                 break;
             case Expanded:
@@ -172,13 +168,11 @@ class PaginatedSearchResultsController extends BaseAdapter implements SearchResu
                 m_paginationControls.setVisibility(anyResults);
                 paginationButtonVisibility(multiplePages);
                 m_searchResultInfo.setVisibility(anyResults);
-                m_header.setVisibility(View.VISIBLE);
                 m_footer.setVisibility(anyResults);
                 break;
             case Hidden:
                 m_expandControls.setVisibility(View.GONE);
                 m_paginationControls.setVisibility(View.GONE);
-                m_header.setVisibility(View.GONE);
                 m_footer.setVisibility(View.GONE);
                 break;
         }

@@ -9,6 +9,7 @@ interface SearchModuleFacade {
 
     SearchBoxMenuGroup getGroupByIndex(int index);
 
+    void showDefaultView();
     SearchBoxMenuGroup addGroup(String title);
 
     //TODO void addConsumer(SearchResultConsumer consumer);

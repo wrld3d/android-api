@@ -46,6 +46,8 @@ public class Accordion {
     private boolean m_isExpanded;
     private int m_expandedGroupIndex;
 
+    private boolean m_collapseOtherViewsOnExpand = true;
+
     public Accordion(ViewGroup container, AccordionDataProvider dataProvider, int groupLayoutResourceId){
         m_root = container;
         m_inflater = LayoutInflater.from(container.getContext());
@@ -61,6 +63,10 @@ public class Accordion {
                 addGroup();
             }
         });
+    }
+
+    public void collapseOtherViewsOnExpand(boolean collapseOthers){
+        m_collapseOtherViewsOnExpand = collapseOthers;
     }
 
     public void clear(){
@@ -87,7 +93,7 @@ public class Accordion {
 
     public void expandGroup(int groupIndex){
         AccordionExpandableListView listView = m_expandableListViews.get(groupIndex);
-        if(m_isExpanded){
+        if(m_isExpanded && m_collapseOtherViewsOnExpand){
             m_expandableListViews.get(m_expandedGroupIndex).collapse();
         }
         listView.expand();

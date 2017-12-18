@@ -1,6 +1,5 @@
 package com.wrld.widgets.searchbox;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -119,6 +118,11 @@ public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
     @Override
     public SearchBoxMenuGroup getGroupByIndex(int index) {
         return m_menuContent.getSearchBoxMenuGroup(index);
+    }
+
+    @Override
+    public void showDefaultView() {
+        m_searchModuleController.showDefaultView();
     }
 
     @Override
