@@ -1,4 +1,8 @@
 <resources>
+    <string name="wrld_poi_search_result_title">WRLD</string>
+    <string name="wrld_poi_suggestion_result_title_formatting">WRLD places \'%s\'</string>
+    <string name="yelp_search_result_title">Yelp</string>
+    <string name="yelp_suggestion_formatting">Yelp places \'%s\'</string>
     <string name="ok">OK</string>
     <string name="yelp_review_text">From %d reviews</string>
     <string name="yelp_auth_error_title">Yelp Authentication</string>

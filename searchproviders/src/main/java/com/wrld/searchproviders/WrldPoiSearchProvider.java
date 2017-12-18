@@ -1,5 +1,7 @@
 package com.wrld.searchproviders;
 
+import android.content.Context;
+
 import com.eegeo.mapapi.EegeoMap;
 import com.eegeo.mapapi.services.poi.AutocompleteOptions;
 import com.eegeo.mapapi.services.poi.OnPoiSearchCompletedListener;
@@ -21,8 +23,23 @@ public class WrldPoiSearchProvider extends SuggestionProviderBase {
     private PoiSearch m_currentSearch;
     private int m_failedSearches;
 
+    private String m_suggestionTitleFormatting;
+
     private interface SearchCompleteCallback {
         void invoke(SearchResult[] results);
+    }
+
+    @Override
+    public String getSuggestionTitleFormatting() {
+        return m_suggestionTitleFormatting;
+    }
+
+    public WrldPoiSearchProvider(Context context, PoiService poiApi, EegeoMap map)
+    {
+        super(context.getString(R.string.wrld_poi_search_result_title));
+        m_suggestionTitleFormatting = context.getString(R.string.wrld_poi_suggestion_result_title_formatting);
+        m_poiService = poiApi;
+        m_map = map;
     }
 
     private class PoiSearchListener implements OnPoiSearchCompletedListener {
@@ -55,13 +72,6 @@ public class WrldPoiSearchProvider extends SuggestionProviderBase {
                 }
             }
         }
-    }
-
-    public WrldPoiSearchProvider(PoiService poiApi, EegeoMap map)
-    {
-        super("Places of Interest");
-        m_poiService = poiApi;
-        m_map = map;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.wrld.searchproviders;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.android.volley.NoConnectionError;
@@ -26,7 +27,12 @@ import java.util.Map;
 
 public class YelpSearchProvider extends SuggestionProviderBase {
 
-    private static final String m_title = "Yelp";
+    private String m_suggestionsTitleFormatting;
+
+    @Override
+    public String getSuggestionTitleFormatting() {
+        return m_suggestionsTitleFormatting;
+    }
 
     private static final String m_authUrl = "https://api.yelp.com/oauth2/token";
     private static final String m_searchUrl = "https://api.yelp.com/v3/businesses/search";
@@ -67,8 +73,9 @@ public class YelpSearchProvider extends SuggestionProviderBase {
 
     private Request m_currentRequest;
 
-    public YelpSearchProvider(RequestQueue requestQueue, EegeoMap map, ErrorHandler errorHandler){
-        super(m_title);
+    public YelpSearchProvider(Context context, RequestQueue requestQueue, EegeoMap map, ErrorHandler errorHandler){
+        super(context.getString(R.string.yelp_search_result_title));
+        m_suggestionsTitleFormatting = context.getString(R.string.yelp_suggestion_formatting);
         m_authStatus = AuthStatus.UNAUTHENTICATED;
 
         m_requestQueue = requestQueue;

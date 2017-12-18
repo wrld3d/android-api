@@ -92,7 +92,7 @@ class SearchResultScreenController implements UiScreenController {
     }
 
     public SearchResultsController inflateViewForAutoCompleteProvider(
-            String title,
+            String titleFormatText,
             SearchResultSet resultSet,
             SearchResultViewFactory viewFactory){
         // Cannot add view here with flag as we need to specify the index for layout to work
@@ -101,10 +101,7 @@ class SearchResultScreenController implements UiScreenController {
         ListView listView = (ListView) setView.findViewById(R.id.searchbox_set_result_list);
 
         final SuggestionSearchResultController resultsController = new SuggestionSearchResultController(
-                setView, resultSet, viewFactory);
-
-        TextView titleView = (TextView)setView.findViewById(R.id.search_set_title);
-        titleView.setText(title);
+                titleFormatText, setView, resultSet, viewFactory);
 
         m_suggestionControllers.add(resultsController);
         listView.setAdapter(resultsController);
@@ -120,9 +117,13 @@ class SearchResultScreenController implements UiScreenController {
         }
     }
 
-    public void showAutoComplete(){
+    public void showAutoComplete(String text){
         m_autoCompleteResultContainer.setVisibility(View.VISIBLE);
         m_searchResultContainer.setVisibility(View.GONE);
+
+        for(SuggestionSearchResultController suggestionController : m_suggestionControllers){
+            suggestionController.updateTitle(text);
+        }
     }
 
     @Override

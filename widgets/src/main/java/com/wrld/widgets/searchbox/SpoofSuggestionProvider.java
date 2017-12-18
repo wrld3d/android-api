@@ -15,6 +15,11 @@ public class SpoofSuggestionProvider extends SuggestionProviderBase implements S
     }
 
     @Override
+    public String getSuggestionTitleFormatting() {
+        return "Spoof places '%d'";
+    }
+
+    @Override
     public void getSuggestions(String query) {
 
         int numResults = 5;

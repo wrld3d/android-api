@@ -62,7 +62,7 @@ class SearchModuleController {
     public void doAutocomplete(String text){
         m_searchQueryHandler.getSuggestionsFor(text);
 
-        m_searchResultScreenController.showAutoComplete();
+        m_searchResultScreenController.showAutoComplete(text);
         doShowElement(m_searchResultScreenController);
     }
 
@@ -82,7 +82,7 @@ class SearchModuleController {
 
     public SearchResultsController addSuggestionProvider(SuggestionProvider suggestionProvider, SearchResultSet searchResultSet){
        return m_searchResultScreenController.inflateViewForAutoCompleteProvider(
-               suggestionProvider.getTitle(),
+               suggestionProvider.getSuggestionTitleFormatting(),
                searchResultSet,
                suggestionProvider.getSuggestionViewFactory());
     }

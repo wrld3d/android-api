@@ -4,22 +4,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
+
+import com.wrld.widgets.R;
 
 class SuggestionSearchResultController extends BaseAdapter implements SearchResultsController {
     private LayoutInflater m_inflater;
 
     private SearchResultSet m_searchResultSet;
+    private SearchQueryHandler m_searchQueryHandler;
     private SearchResultViewFactory m_resultsViewFactory;
     private View m_container;
+    private TextView m_titleView;
+    private String m_titleFormatText;
 
     private int m_maxSuggestions = 4;
 
-    public SuggestionSearchResultController(View container, SearchResultSet resultSet, SearchResultViewFactory viewFactory) {
+    public SuggestionSearchResultController(String titleFormatText, View container, SearchResultSet resultSet, SearchResultViewFactory viewFactory) {
         m_container = container;
         m_inflater = LayoutInflater.from(container.getContext());
         m_searchResultSet = resultSet;
         m_resultsViewFactory = viewFactory;
         m_container.setVisibility(View.GONE);
+
+        m_titleFormatText = titleFormatText;
+        m_titleView = (TextView)container.findViewById(R.id.search_set_title);
     }
 
     @Override
@@ -70,6 +79,10 @@ class SuggestionSearchResultController extends BaseAdapter implements SearchResu
         }
 
         notifyDataSetChanged();
+    }
+
+    public void updateTitle(String queryText){
+        m_titleView.setText(String.format(m_titleFormatText, queryText));
     }
 
     public void hide(){
