@@ -1,9 +1,12 @@
 package com.wrld.widgets.searchbox;
 
+import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.TextView;
 
 import com.wrld.widgets.R;
 
@@ -23,8 +26,11 @@ public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
 
     private SearchMenuContent m_menuContent;
 
+    private TextView m_queryDisplay;
+
     public SearchModule(ViewGroup appSearchAreaView) {
-        LayoutInflater inflater = LayoutInflater.from(appSearchAreaView.getContext());
+        Context context = appSearchAreaView.getContext();
+        LayoutInflater inflater = LayoutInflater.from(context);
         View root = inflater.inflate(R.layout.search_layout, appSearchAreaView, true);
 
         m_menuContent = new SearchMenuContent(inflater);
@@ -39,6 +45,7 @@ public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
         inflater.inflate(R.layout.searchbox_query, searchContainer);
         SearchController searchController = new SearchController(searchContainer, m_searchModuleController);
         m_searchModuleController.setQueryBoxController(searchController);
+        m_queryDisplay = (TextView) searchContainer.findViewById(R.id.searchbox_search_querybox);
 
         ViewGroup resultSpace = (ViewGroup) root.findViewById(R.id.searchbox_results_space);
         SearchResultScreenController resultSetController = new SearchResultScreenController(
@@ -53,7 +60,15 @@ public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
         m_searchModuleController.setSearchMenuController(searchMenuController);
 
         setDefaultSearchResultViewFactory(new DefaultSearchResultViewFactory(R.layout.search_result));
-        setDefaultSuggestionViewFactory(new DefaultSuggestionViewFactory(R.layout.search_suggestion));
+
+        int matchedTextColor = ContextCompat.getColor(context, R.color.searchbox_autcomplete_list_header_font_matched);
+
+        DefaultSuggestionViewFactory suggestionViewFactory = new DefaultSuggestionViewFactory(
+                R.layout.search_suggestion,
+                this,
+                matchedTextColor);
+
+        setDefaultSuggestionViewFactory(suggestionViewFactory);
 
         m_searchModuleController.showQueryBox(searchController);
         m_searchModuleController.hideResults(searchController);
@@ -144,5 +159,10 @@ public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
         for(SuggestionProvider provider : m_suggestionProviders){
             provider.getSuggestions(text);
         }
+    }
+
+    @Override
+    public CharSequence getCurrentQuery(){
+        return m_queryDisplay.getText();
     }
 }

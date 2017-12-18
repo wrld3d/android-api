@@ -4,5 +4,6 @@
     <color name="searchbox_border">#0071BC</color>
     <color name="searchbox_background">#FFFFFF</color>
     <color name="searchbox_autcomplete_list_header_background">#F0F0F0</color>
-    <color name="searchbox_autcomplete_list_header_font">#202020</color>
+    <color name="searchbox_autcomplete_list_header_font_unmatched">#606060</color>
+    <color name="searchbox_autcomplete_list_header_font_matched">#202020</color>
 </resources>

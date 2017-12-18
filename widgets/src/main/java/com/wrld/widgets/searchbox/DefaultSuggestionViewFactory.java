@@ -9,9 +9,18 @@ import com.wrld.widgets.R;
 public class DefaultSuggestionViewFactory implements SearchResultViewFactory {
 
     private int m_layoutId;
+    private SearchQueryHandler m_queryHandler;
+
+    private SuggestionTextMatchSpan m_highlighter;
 
     public DefaultSuggestionViewFactory(int layoutId) {
         m_layoutId = layoutId;
+    }
+
+    public DefaultSuggestionViewFactory(int layoutId, SearchQueryHandler queryHandler, int matchedColor){
+        m_layoutId = layoutId;
+        m_queryHandler = queryHandler;
+        m_highlighter = new SuggestionTextMatchSpan(matchedColor);
     }
 
     @Override
@@ -29,7 +38,17 @@ public class DefaultSuggestionViewFactory implements SearchResultViewFactory {
         }
 
         public void populate(SearchResult result){
-            m_title.setText(result.getTitle());
+            if(m_queryHandler != null){
+                highlightMatchingQueryComponent(result.getTitle());
+            }
+            else{
+                m_title.setText(result.getTitle());
+            }
+        }
+
+        private void highlightMatchingQueryComponent(String content){
+            String query = m_queryHandler.getCurrentQuery().toString();
+            m_highlighter.format(m_title, content, query);
         }
     }
 

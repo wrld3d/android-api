@@ -23,9 +23,10 @@
         android:id="@+id/search_result_title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingBottom="@dimen/search_suggestions_result_vertical_padding"
         android:paddingLeft="0dp"
         android:paddingRight="@dimen/search_suggestions_result_horizontal_padding"
         android:paddingTop="@dimen/search_suggestions_result_vertical_padding"
-        android:paddingBottom="@dimen/search_suggestions_result_vertical_padding"
+        android:textColor="@color/searchbox_autcomplete_list_header_font_unmatched"
         android:textSize="@dimen/font_size_title" />
 </LinearLayout>
