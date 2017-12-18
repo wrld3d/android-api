@@ -19,6 +19,7 @@ public final class PolylineOptions {
     private String m_indoorMapId = "";
     private int m_indoorFloorId;
     private List<LatLng> m_points = new ArrayList<>();
+    private List<Double> m_perPointElevations = new ArrayList<>();
     private float m_width = 10.f;
     private int m_colorARGB = 0xff000000;
     private float m_miterLimit = 10.f;
@@ -39,6 +40,9 @@ public final class PolylineOptions {
     @SuppressWarnings("JavaDoc")
     public PolylineOptions add(LatLng... points) {
         Collections.addAll(m_points, points);
+        for (int i=0; i<points.length; ++i) {
+            m_perPointElevations.add(0.0);
+        }
         return this;
     }
 
@@ -51,6 +55,21 @@ public final class PolylineOptions {
     @SuppressWarnings("JavaDoc")
     public PolylineOptions add(LatLng point) {
         m_points.add(point);
+        m_perPointElevations.add(0.0);
+        return this;
+    }
+
+    /**
+     * Add a vertex fo the end of the polyline with a vertical offset.
+     *
+     * @param point The point to add.
+     * @param heightOffset A height offset in metres. This is relative to the elevation set for the whole Polyline.
+     * @return The PolylineOptions object on which the method was called, with the new point added.
+     */
+    @SuppressWarnings("JavaDoc")
+    public PolylineOptions add(LatLng point, double heightOffset) {
+        m_points.add(point);
+        m_perPointElevations.add(heightOffset);
         return this;
     }
 
@@ -177,6 +196,10 @@ public final class PolylineOptions {
      */
     public List<LatLng> getPoints() {
         return m_points;
+    }
+
+    public List<Double> getPerPointElevations() {
+        return m_perPointElevations;
     }
 
     /**

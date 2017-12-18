@@ -52,6 +52,9 @@ import com.eegeo.mapapi.services.poi.PoiSearchResult;
 import com.eegeo.mapapi.services.poi.PoiService;
 import com.eegeo.mapapi.services.tag.TagApi;
 import com.eegeo.mapapi.services.tag.TagService;
+import com.eegeo.mapapi.services.routing.RoutingQueryResponse;
+import com.eegeo.mapapi.services.routing.RoutingApi;
+import com.eegeo.mapapi.services.routing.RoutingService;
 import com.eegeo.mapapi.util.Callbacks;
 import com.eegeo.mapapi.util.Promise;
 import com.eegeo.mapapi.util.Ready;
@@ -94,6 +97,7 @@ public final class EegeoMap {
     private PoiApi m_poiApi;
     private TagApi m_tagApi;
     private MapsceneApi m_mapsceneApi;
+    private RoutingApi m_routingApi;
     private BlueSphere m_blueSphere = null;
 
 
@@ -123,6 +127,7 @@ public final class EegeoMap {
         this.m_poiApi = new PoiApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_tagApi = new TagApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_mapsceneApi = new MapsceneApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_routingApi = new RoutingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
 
     @WorkerThread
@@ -847,6 +852,8 @@ public final class EegeoMap {
 
     /**
      * Creates and returns a PoiService for this map.
+     *
+     * @return A new PoiService object.
      */
     @UiThread
     public PoiService createPoiService() {
@@ -872,6 +879,17 @@ public final class EegeoMap {
     public MapsceneService createMapsceneService() {
         MapsceneService mapsceneService = new MapsceneService(m_mapsceneApi, this);
         return mapsceneService;
+    }
+
+    /**
+     * Creates and returns a RoutingService for this map.
+     *
+     * @return A new RoutingService object.
+     */
+    @UiThread
+    public RoutingService createRoutingService() {
+        RoutingService routingService = new RoutingService(m_routingApi);
+        return routingService;
     }
 
     /**
@@ -942,6 +960,10 @@ public final class EegeoMap {
     @WorkerThread
     private void jniOnSearchTagsLoaded() {
         m_tagApi.notifyTagsLoaded();
+    }
+
+    private void jniOnRoutingQueryCompleted(final int routingQueryId, RoutingQueryResponse response) {
+        m_routingApi.notifyQueryComplete(routingQueryId, response);
     }
 
     /**

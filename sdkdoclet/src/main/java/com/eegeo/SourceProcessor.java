@@ -70,8 +70,19 @@ public class SourceProcessor extends Doclet {
             "Mapscene",
             "MapsceneStartLocation",
             "MapsceneDataSources",
-            "MapsceneSearchConfig"
-
+            "MapsceneSearchConfig",
+            "RoutingService",
+            "RoutingQuery",
+            "OnRoutingQueryCompletedListener",
+            "RoutingQueryResponse",
+            "Route",
+            "RouteSection",
+            "RouteStep",
+            "RouteDirections",
+            "RoutingQueryOptions",
+            "TransportationMode",
+            "RouteView",
+            "RouteViewOptions"
     );
     // Would be nicer to extract this list automatically, but that would require two passes
     private static List<String> subClasses = Arrays.asList(
