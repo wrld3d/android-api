@@ -77,8 +77,8 @@ public class TagService {
     }
 
     /**
-     * Resolve a set of tags to a collection of Human Readable tag descriptions. i.e. "sports" =>
-     * "Sports & Leisure".
+     * Resolve a set of tags to a collection of Human Readable tag descriptions. i.e. "sports" converts to
+     * "Sports and Leisure".
      * @param tags the set of tags i.e. from a PoiSearchResult.tags to find matching tag descriptions for.
      * @return a Promise of a set of human readable descriptions in a String array, matching the input order.
      */
