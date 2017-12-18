@@ -1,7 +1,9 @@
 package com.wrld.widgets.searchbox;
 
+import android.content.Context;
 import android.view.animation.Animation;
 
+import com.wrld.widgets.R;
 import com.wrld.widgets.ui.UiScreenController;
 import com.wrld.widgets.ui.UiScreenStateList;
 
@@ -73,7 +75,8 @@ class SearchModuleController {
 
     public SearchResultsController addSearchProvider(SearchProvider searchProvider, SearchResultSet searchResultSet) {
         return m_searchResultScreenController.inflateViewForSearchProvider(
-                        searchResultSet, searchProvider.getResultViewFactory());
+                searchProvider,
+                searchResultSet);
     }
 
     public void removeAllSearchProviders(){
@@ -82,9 +85,8 @@ class SearchModuleController {
 
     public SearchResultsController addSuggestionProvider(SuggestionProvider suggestionProvider, SearchResultSet searchResultSet){
        return m_searchResultScreenController.inflateViewForAutoCompleteProvider(
-               suggestionProvider.getSuggestionTitleFormatting(),
-               searchResultSet,
-               suggestionProvider.getSuggestionViewFactory());
+               suggestionProvider,
+               searchResultSet);
     }
 
     public void removeAllSuggestionProviders(){

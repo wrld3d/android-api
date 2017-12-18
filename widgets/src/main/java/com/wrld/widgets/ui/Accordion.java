@@ -20,7 +20,7 @@ public class Accordion {
         public ExpandableListView getExpandableListView() { return m_listView;}
 
         public AccordionExpandableListView(View container){
-            m_listView = (ExpandableListView)container.findViewById(R.id.searchbox_menu_contents);
+            m_listView = (ExpandableListView)container.findViewById(R.id.accordion_group);
             m_layoutParams = (LinearLayout.LayoutParams)m_listView.getLayoutParams();
         }
 

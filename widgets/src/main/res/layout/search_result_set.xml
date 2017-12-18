@@ -3,30 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/searchbox_result_set"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="0dp"
     android:layout_margin="@dimen/search_padding"
-    android:orientation="vertical"
-    android:visibility="gone">
+    android:layout_weight="1.0"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/searchbox_set_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0"
+        android:layout_weight="1.0"
         android:orientation="vertical">
 
         <ProgressBar
             android:id="@+id/searchbox_set_search_in_progress_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#FFFFFF"
+            android:layout_height="50dp"
+            android:background="@color/searchbox_background"
             android:indeterminate="true"
             android:visibility="gone" />
 
         <ListView
             android:id="@+id/searchbox_set_result_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:footerDividersEnabled="false"
             android:headerDividersEnabled="false" />
 
@@ -37,10 +37,9 @@
         android:id="@+id/searchbox_set_footer"
         android:layout_width="match_parent"
         android:layout_height="@dimen/search_results_footer_height"
-        android:layout_weight="1.0"
-        android:background="#ffffff"
-        android:orientation="vertical"
-        android:visibility="visible">
+        android:background="@color/searchbox_background"
+        android:minHeight="@dimen/search_results_footer_height"
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/searchbox_set_expand_controls"
@@ -90,6 +89,13 @@
                 android:layout_height="@dimen/search_results_page_icon_height"
                 android:rotation="180"
                 app:srcCompat="@drawable/expander" />
+
+            <TextView
+                android:id="@+id/searchbox_set_expanded_results_count"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/search_results_text_area_height"
+                android:gravity="end"
+                android:textAlignment="textEnd" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

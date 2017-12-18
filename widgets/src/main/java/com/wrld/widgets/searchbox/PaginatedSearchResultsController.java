@@ -1,5 +1,6 @@
 package com.wrld.widgets.searchbox;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +30,9 @@ class PaginatedSearchResultsController extends BaseAdapter implements SearchResu
 
     private int m_resultsPage;
 
-    private TextView m_searchResultInfo;
+    private TextView m_searchResultSharedInfoView;
+    private TextView m_searchResultExpandedPageInfoView;
+    private TextView m_searchResultExpandedResultCountView;
     private View m_setContainer;
     private View m_footer;
     private View m_expandControls;
@@ -39,18 +42,32 @@ class PaginatedSearchResultsController extends BaseAdapter implements SearchResu
     private View m_searchInProgressView;
     private View m_searchResultsView;
 
-    private final String RESULTS_INFO = "%d-%d of %d";
+    private String m_expandButtonTextFormatting;
+    private String m_expandedTextFormatting;
+    private String m_expandedResultsCountTextFormatting;
 
-    public PaginatedSearchResultsController(View container, SearchResultSet resultSet, SearchResultViewFactory viewFactory) {
+    public PaginatedSearchResultsController(View container,
+                                            SearchResultSet resultSet,
+                                            SearchResultViewFactory viewFactory,
+                                            String expandButtonTextFormatting) {
 
-        m_inflater = LayoutInflater.from(container.getContext());
+        Context context = container.getContext();
+        m_inflater = LayoutInflater.from(context);
+
+        m_expandButtonTextFormatting = expandButtonTextFormatting;
+        m_expandedTextFormatting = context.getString(R.string.search_expanded_results_info, "%d");
+        m_expandedResultsCountTextFormatting = context.getString(R.string.search_expanded_results_count, "%d");
 
         m_setContainer = container;
         m_searchResultSet = resultSet;
+
         m_footer = container.findViewById(R.id.searchbox_set_footer);
-        m_searchResultInfo = (TextView) container.findViewById(R.id.searchbox_set_pagination_results_info);
+        m_searchResultSharedInfoView = (TextView) container.findViewById(R.id.searchbox_set_expand_info);
+        m_searchResultExpandedPageInfoView = (TextView) container.findViewById(R.id.searchbox_set_pagination_results_info);
+        m_searchResultExpandedResultCountView = (TextView) container.findViewById(R.id.searchbox_set_expanded_results_count);
         m_expandControls = container.findViewById(R.id.searchbox_set_expand_controls);
         m_paginationControls = container.findViewById(R.id.searchbox_set_pagination_controls);
+
         m_paginationButtons = new View[2];
         m_paginationButtons[0] = container.findViewById(R.id.searchbox_set_pagination_prev);
         m_paginationButtons[1] = container.findViewById(R.id.searchbox_set_pagination_next);
@@ -122,6 +139,7 @@ class PaginatedSearchResultsController extends BaseAdapter implements SearchResu
         m_searchInProgressView.setVisibility(View.VISIBLE);
         m_searchResultsView.setVisibility(View.GONE);
         m_resultsViewState = ResultsViewState.Hidden;
+        configureSearchResultPaginationViews();
     }
 
     @Override
@@ -130,8 +148,10 @@ class PaginatedSearchResultsController extends BaseAdapter implements SearchResu
 
         int resultsStart = m_resultsPage * RESULTS_PER_PAGE;
         int resultsEnd = Math.min(resultsStart + RESULTS_PER_PAGE, m_searchResultSet.getResultCount());
-
-        m_searchResultInfo.setText(String.format(RESULTS_INFO, resultsStart, resultsEnd, m_searchResultSet.getResultCount()));
+        int resultsCount = m_searchResultSet.getResultCount();
+        m_searchResultSharedInfoView.setText(String.format(m_expandButtonTextFormatting, resultsCount));
+        m_searchResultExpandedPageInfoView.setText(String.format(m_expandedTextFormatting, resultsStart, resultsEnd));
+        m_searchResultExpandedResultCountView.setText(String.format(m_expandedResultsCountTextFormatting, resultsCount));
     }
 
     private boolean searchResultsCurrentlyVisible() {
@@ -162,12 +182,16 @@ class PaginatedSearchResultsController extends BaseAdapter implements SearchResu
                 m_expandControls.setVisibility(anyResults);
                 m_paginationControls.setVisibility(View.GONE);
                 m_footer.setVisibility(anyResults);
+                m_searchResultSharedInfoView.setVisibility(View.VISIBLE);
+                m_searchResultExpandedPageInfoView.setVisibility(View.GONE);
+                m_searchResultExpandedPageInfoView.setVisibility(View.GONE);
                 break;
             case Expanded:
                 m_expandControls.setVisibility(View.GONE);
                 m_paginationControls.setVisibility(anyResults);
                 paginationButtonVisibility(multiplePages);
-                m_searchResultInfo.setVisibility(anyResults);
+                m_searchResultExpandedPageInfoView.setVisibility(anyResults);
+                m_searchResultExpandedPageInfoView.setVisibility(anyResults);
                 m_footer.setVisibility(anyResults);
                 break;
             case Hidden:

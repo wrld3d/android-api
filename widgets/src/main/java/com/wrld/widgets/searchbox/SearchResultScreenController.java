@@ -1,5 +1,6 @@
 package com.wrld.widgets.searchbox;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,9 +33,15 @@ class SearchResultScreenController implements UiScreenController {
 
     private SearchModuleController m_searchModuleMediator;
 
+    private Context m_context;
+
+    private String m_searchResultSharedInfoFormatting;
+    private String m_searchResultExpandedInfoFormatting;
+
     SearchResultScreenController(ViewGroup resultSetsContainer, SearchModuleController searchModuleMediator){
 
         m_rootContainer = resultSetsContainer;
+        m_context = m_rootContainer.getContext();
         m_inflater = LayoutInflater.from(m_rootContainer.getContext());
         m_searchResultContainer = (ViewGroup)resultSetsContainer.findViewById(R.id.searchbox_search_results_container);
         m_autoCompleteResultContainer = (ViewGroup)resultSetsContainer.findViewById(R.id.searchbox_autocomplete_container);
@@ -75,16 +82,21 @@ class SearchResultScreenController implements UiScreenController {
     }
 
     public SearchResultsController inflateViewForSearchProvider(
-            SearchResultSet resultSet,
-            SearchResultViewFactory viewFactory){
+            SearchProvider searchProvider,
+            SearchResultSet resultSet
+            ){
         // Cannot add view here with flag as we need to specify the index for layout to work
         View setView = m_inflater.inflate(R.layout.search_result_set, m_searchResultContainer, false);
-        m_searchResultContainer.addView(setView, m_searchResultControllers.size() );
+        m_searchResultContainer.addView(setView, m_searchResultControllers.size());
         View setContent = setView.findViewById(R.id.searchbox_set_content);
         ListView listView = (ListView) setContent.findViewById(R.id.searchbox_set_result_list);
 
-        final PaginatedSearchResultsController resultsController = new PaginatedSearchResultsController(
-                setView, resultSet, viewFactory);
+        PaginatedSearchResultsController resultsController = new PaginatedSearchResultsController(
+                setView,
+                resultSet,
+                searchProvider.getResultViewFactory(),
+                m_context.getString(R.string.search_shared_results_info, searchProvider.getTitle(), "%d")
+        );
 
         m_searchResultControllers.add(resultsController);
         listView.setAdapter(resultsController);
@@ -92,16 +104,15 @@ class SearchResultScreenController implements UiScreenController {
     }
 
     public SearchResultsController inflateViewForAutoCompleteProvider(
-            String titleFormatText,
-            SearchResultSet resultSet,
-            SearchResultViewFactory viewFactory){
+            SuggestionProvider suggestionProvider,
+            SearchResultSet resultSet){
         // Cannot add view here with flag as we need to specify the index for layout to work
         View setView = m_inflater.inflate(R.layout.search_suggestion_set, m_autoCompleteResultContainer, false);
         m_autoCompleteResultContainer.addView(setView, m_suggestionControllers.size());
         ListView listView = (ListView) setView.findViewById(R.id.searchbox_set_result_list);
 
         final SuggestionSearchResultController resultsController = new SuggestionSearchResultController(
-                titleFormatText, setView, resultSet, viewFactory);
+                suggestionProvider.getSuggestionTitleFormatting(), setView, resultSet, suggestionProvider.getSuggestionViewFactory());
 
         m_suggestionControllers.add(resultsController);
         listView.setAdapter(resultsController);

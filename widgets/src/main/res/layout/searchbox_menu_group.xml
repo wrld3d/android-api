@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ExpandableListView  xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/searchbox_menu_contents"
+    android:id="@+id/accordion_group"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:groupIndicator="@null"/>
