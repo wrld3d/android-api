@@ -318,24 +318,4 @@ JNIEXPORT void JNICALL Java_com_eegeo_mapapi_EegeoNativeMapView_nativeProcessPoi
     pAndroidApiRunner->HandleTouchEvent(event);
 }
 
-JNIEXPORT void JNICALL Java_com_eegeo_mapapi_NativeJniCalls_setView(JNIEnv*, jobject obj, jlong jniEegeoMapApiPtr,
-                                                                      jboolean animated, jdouble latDegrees, jdouble lonDegrees, jdouble altitude, jboolean modifyPosition,
-                                                                      jdouble distance, jboolean modifyDistance,
-                                                                      jdouble headingDegrees, jboolean modifyHeading,
-                                                                      jdouble tiltDegrees, jboolean modifyTilt,
-                                                                      jdouble transitionDurationSeconds, jboolean hasTransitionDuration,
-                                                                      jboolean jumpIfFarAway,
-                                                                      jboolean allowInterruption)
-{
-    Eegeo_ASSERT(jniEegeoMapApiPtr != 0);
-    auto pEegeoMapApi = reinterpret_cast<Eegeo::Api::EegeoMapApi*>(jniEegeoMapApiPtr);
-
-    pEegeoMapApi->GetCameraApi().SetView(animated, latDegrees, lonDegrees, altitude, modifyPosition,
-                                         distance, modifyDistance,
-                                         headingDegrees, modifyHeading,
-                                         tiltDegrees, modifyTilt,
-                                         transitionDurationSeconds, hasTransitionDuration,
-                                         jumpIfFarAway,
-                                         allowInterruption);
-}
 
