@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -34,9 +35,6 @@ class SearchResultScreenController implements UiScreenController {
     private SearchModuleController m_searchModuleMediator;
 
     private Context m_context;
-
-    private String m_searchResultSharedInfoFormatting;
-    private String m_searchResultExpandedInfoFormatting;
 
     SearchResultScreenController(ViewGroup resultSetsContainer, SearchModuleController searchModuleMediator){
 
@@ -116,6 +114,7 @@ class SearchResultScreenController implements UiScreenController {
 
         m_suggestionControllers.add(resultsController);
         listView.setAdapter(resultsController);
+        listView.setOnItemClickListener(onClickListener(resultSet));
         return resultsController;
     }
 
@@ -154,5 +153,15 @@ class SearchResultScreenController implements UiScreenController {
         for(SuggestionSearchResultController suggestionController : m_suggestionControllers){
             suggestionController.hide();
         }
+    }
+
+    private AdapterView.OnItemClickListener onClickListener (final SearchResultSet resultSet){
+        final UiScreenController selfAsUiScreenController = this;
+        return new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                m_searchModuleMediator.focusOnResult(selfAsUiScreenController, resultSet.getResult(position));
+            }
+        };
     }
 }

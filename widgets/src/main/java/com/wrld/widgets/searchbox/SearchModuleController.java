@@ -93,7 +93,9 @@ class SearchModuleController {
         m_searchResultScreenController.removeAllAutocompleteProviderViews();
     }
 
-    //TODO public void focusOnResult(SearchModuleMediatorElement caller, SearchResult result){}
+    public void focusOnResult(UiScreenController caller, SearchResult result){
+        doSearch(caller, result.getTitle());
+    }
 
     public void showMenu(UiScreenController caller) {
         m_uiScreenHistory.push(new UiScreenStateList(m_allScreens));

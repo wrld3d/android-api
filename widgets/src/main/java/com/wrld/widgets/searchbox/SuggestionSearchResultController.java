@@ -12,7 +12,6 @@ class SuggestionSearchResultController extends BaseAdapter implements SearchResu
     private LayoutInflater m_inflater;
 
     private SearchResultSet m_searchResultSet;
-    private SearchQueryHandler m_searchQueryHandler;
     private SearchResultViewFactory m_resultsViewFactory;
     private View m_container;
     private TextView m_titleView;
