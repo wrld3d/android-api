@@ -47,9 +47,8 @@ public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
         m_searchModuleController.setQueryBoxController(searchController);
         m_queryDisplay = (TextView) searchContainer.findViewById(R.id.searchbox_search_querybox);
 
-        ViewGroup resultSpace = (ViewGroup) root.findViewById(R.id.searchbox_results_space);
         SearchResultScreenController resultSetController = new SearchResultScreenController(
-                resultSpace,
+                root,
                 m_searchModuleController);
         m_searchModuleController.setSearchResultsSetController(resultSetController);
 

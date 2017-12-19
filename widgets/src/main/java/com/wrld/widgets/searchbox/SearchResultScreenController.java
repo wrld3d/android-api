@@ -7,17 +7,18 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.wrld.widgets.R;
 import com.wrld.widgets.ui.UiScreenController;
+import com.wrld.widgets.ui.UiScreenMemento;
+import com.wrld.widgets.ui.UiScreenMementoOriginator;
+import com.wrld.widgets.ui.UiScreenVisibilityState;
 
 import java.util.ArrayList;
 
-class SearchResultScreenController implements UiScreenController {
+class SearchResultScreenController implements UiScreenController, UiScreenMementoOriginator<SearchResultScreenVisibilityState> {
 
     private LayoutInflater m_inflater;
-    private ViewGroup m_rootContainer;
 
     private ViewGroup m_searchResultContainer;
     private ViewGroup m_autoCompleteResultContainer;
@@ -36,11 +37,9 @@ class SearchResultScreenController implements UiScreenController {
 
     private Context m_context;
 
-    SearchResultScreenController(ViewGroup resultSetsContainer, SearchModuleController searchModuleMediator){
-
-        m_rootContainer = resultSetsContainer;
-        m_context = m_rootContainer.getContext();
-        m_inflater = LayoutInflater.from(m_rootContainer.getContext());
+    SearchResultScreenController(View resultSetsContainer, SearchModuleController searchModuleMediator){
+        m_context = resultSetsContainer.getContext();
+        m_inflater = LayoutInflater.from(resultSetsContainer.getContext());
         m_searchResultContainer = (ViewGroup)resultSetsContainer.findViewById(R.id.searchbox_search_results_container);
         m_autoCompleteResultContainer = (ViewGroup)resultSetsContainer.findViewById(R.id.searchbox_autocomplete_container);
 
@@ -50,7 +49,6 @@ class SearchResultScreenController implements UiScreenController {
             @Override
             public void start() {
                 super.start();
-                m_rootContainer.setVisibility(View.VISIBLE);
                 m_screenState = ScreenState.VISIBLE;
             }
         };
@@ -58,8 +56,9 @@ class SearchResultScreenController implements UiScreenController {
             @Override
             public void start() {
                 super.start();
-                hideSuggestionSets();
-                m_rootContainer.setVisibility(View.GONE);
+                m_searchResultContainer.setVisibility(View.GONE);
+                m_autoCompleteResultContainer.setVisibility(View.GONE);
+
                 m_screenState = ScreenState.GONE;
             }
         };
@@ -163,5 +162,17 @@ class SearchResultScreenController implements UiScreenController {
                 m_searchModuleMediator.focusOnResult(selfAsUiScreenController, resultSet.getResult(position));
             }
         };
+    }
+
+    @Override
+    public UiScreenMemento<SearchResultScreenVisibilityState> generateMemento() {
+        return new SearchResultScreenVisibilityState(
+                m_searchResultContainer.getVisibility(),
+                m_autoCompleteResultContainer.getVisibility());
+    }
+
+    @Override
+    public void resetTo(UiScreenMemento<SearchResultScreenVisibilityState> memento) {
+        memento.getState().apply(m_searchResultContainer, m_autoCompleteResultContainer);
     }
 }

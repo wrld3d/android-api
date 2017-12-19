@@ -9,14 +9,15 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wrld.widgets.R;
 import com.wrld.widgets.ui.UiScreenController;
+import com.wrld.widgets.ui.UiScreenMemento;
+import com.wrld.widgets.ui.UiScreenMementoOriginator;
+import com.wrld.widgets.ui.UiScreenVisibilityState;
 
-class SearchController implements UiScreenController {
+class SearchController implements UiScreenController, UiScreenMementoOriginator<UiScreenVisibilityState> {
 
     private View m_rootView;
     private EditText m_searchView;
@@ -142,5 +143,15 @@ class SearchController implements UiScreenController {
     public Animation transitionToGone() {
         m_hideAnim.reset();
         return m_hideAnim;
+    }
+
+    @Override
+    public UiScreenMemento<UiScreenVisibilityState> generateMemento() {
+        return new UiScreenVisibilityState(this);
+    }
+
+    @Override
+    public void resetTo(UiScreenMemento<UiScreenVisibilityState> memento) {
+        memento.getState().apply();
     }
 }

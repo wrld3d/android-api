@@ -1,44 +1,29 @@
 package com.wrld.widgets.ui;
 
-import android.view.animation.Animation;
-
 import java.util.ArrayList;
 
 public class UiScreenStateList {
 
-    private class UiScreenState{
-        private UiScreenController m_screenController;
-        private UiScreenController.ScreenState m_stateAtTime;
+    private class UiScreenState<T>{
+        private UiScreenMementoOriginator<T> m_originator;
+        private UiScreenMemento<T> m_memento;
 
-        public UiScreenState(UiScreenController screen){
-            m_screenController = screen;
-            m_stateAtTime = screen.getScreenState();
+        public UiScreenState(UiScreenMementoOriginator<T> originator){
+            m_originator = originator;
+            m_memento = originator.generateMemento();
         }
 
         public void setToStateAtTime(){
-            if(m_screenController.getScreenState() != m_stateAtTime){
-                resetState();
-            }
-        }
-
-        private void resetState(){
-            Animation resetAnim;
-            if(m_stateAtTime == UiScreenController.ScreenState.GONE){
-                resetAnim = m_screenController.transitionToGone();
-            }
-            else{
-                resetAnim = m_screenController.transitionToVisible();
-            }
-            resetAnim.start();
+            m_originator.resetTo(m_memento);
         }
     }
 
     private ArrayList<UiScreenState> m_statesAtTime;
 
-    public UiScreenStateList(ArrayList<UiScreenController> screens){
+    public UiScreenStateList(ArrayList<UiScreenMementoOriginator> screens){
         m_statesAtTime = new ArrayList<UiScreenState>();
-        for(UiScreenController screen : screens){
-            m_statesAtTime.add(new UiScreenState(screen));
+        for(UiScreenMementoOriginator originator : screens){
+            m_statesAtTime.add(new UiScreenState(originator));
         }
     }
 

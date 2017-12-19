@@ -9,8 +9,11 @@ import android.view.animation.Animation;
 import com.wrld.widgets.R;
 import com.wrld.widgets.ui.Accordion;
 import com.wrld.widgets.ui.UiScreenController;
+import com.wrld.widgets.ui.UiScreenMemento;
+import com.wrld.widgets.ui.UiScreenMementoOriginator;
+import com.wrld.widgets.ui.UiScreenVisibilityState;
 
-public class SearchMenuController implements UiScreenController {
+public class SearchMenuController implements UiScreenController, UiScreenMementoOriginator<UiScreenVisibilityState> {
 
     private Animation m_showAnim;
     private Animation m_hideAnim;
@@ -116,6 +119,16 @@ public class SearchMenuController implements UiScreenController {
                 m_searchModuleController.doSearch(self, clickedItem.getTitle());
             }
         };
+    }
+
+    @Override
+    public UiScreenMemento<UiScreenVisibilityState> generateMemento() {
+        return new UiScreenVisibilityState(this);
+    }
+
+    @Override
+    public void resetTo(UiScreenMemento<UiScreenVisibilityState> memento) {
+        memento.getState().apply();
     }
 }
 

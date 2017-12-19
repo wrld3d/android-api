@@ -7,48 +7,29 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/searchbox_search_layout"
+    <LinearLayout
+        android:id="@+id/searchbox_search_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="@dimen/search_query_height"
+        android:orientation="horizontal"
+        android:visibility="visible">
+    </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/searchbox_search_container"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/search_query_height"
-            android:orientation="horizontal"
-            android:visibility="visible">
+    <LinearLayout
+        android:id="@+id/searchbox_search_results_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/searchbox_search_container"
+        android:visibility="gone" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/searchbox_results_space"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:weightSum="1.0"
-            android:layout_below="@+id/searchbox_search_container"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <LinearLayout
-                android:id="@+id/searchbox_search_results_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone" />
-
-            <LinearLayout
-                android:id="@+id/searchbox_autocomplete_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone" />
-        </LinearLayout>
-
-    </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/searchbox_autocomplete_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/searchbox_search_container"
+        android:orientation="vertical"
+        android:visibility="gone" />
 
     <ViewStub
         android:id="@+id/searchbox_menu_container_stub"

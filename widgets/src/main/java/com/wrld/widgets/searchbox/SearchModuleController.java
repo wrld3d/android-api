@@ -1,10 +1,9 @@
 package com.wrld.widgets.searchbox;
 
-import android.content.Context;
 import android.view.animation.Animation;
 
-import com.wrld.widgets.R;
 import com.wrld.widgets.ui.UiScreenController;
+import com.wrld.widgets.ui.UiScreenMementoOriginator;
 import com.wrld.widgets.ui.UiScreenStateList;
 
 import java.util.ArrayList;
@@ -17,13 +16,13 @@ class SearchModuleController {
     private SearchResultScreenController m_searchResultScreenController;
     private SearchMenuController m_searchMenuController;
 
-    private ArrayList<UiScreenController> m_allScreens;
+    private ArrayList<UiScreenMementoOriginator> m_allScreens;
     private Stack<UiScreenStateList> m_uiScreenHistory;
 
     public void setSearchQueryHandler(SearchQueryHandler queryHandler){
         m_searchQueryHandler = queryHandler;
         m_uiScreenHistory = new Stack<UiScreenStateList>();
-        m_allScreens = new ArrayList<UiScreenController>();
+        m_allScreens = new ArrayList<UiScreenMementoOriginator>();
     }
 
     public void setQueryBoxController(SearchController searchController) {
