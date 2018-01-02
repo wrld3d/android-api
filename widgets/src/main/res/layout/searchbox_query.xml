@@ -38,6 +38,7 @@
             android:background="@android:color/transparent"
             android:gravity="center"
             android:visibility="visible"
+
             android:layout_margin="@dimen/search_query_margin">
 
             <ImageView
@@ -48,6 +49,7 @@
 
         <EditText
             android:id="@+id/searchbox_search_querybox"
+            android:background="@android:color/transparent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="@string/searchbox_query_hint"

@@ -1,13 +1,16 @@
 package com.wrld.widgets.searchbox;
 
+import android.content.Context;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -16,6 +19,7 @@ import com.wrld.widgets.ui.UiScreenController;
 import com.wrld.widgets.ui.UiScreenMemento;
 import com.wrld.widgets.ui.UiScreenMementoOriginator;
 import com.wrld.widgets.ui.UiScreenVisibilityState;
+
 
 class SearchController implements UiScreenController, UiScreenMementoOriginator<UiScreenVisibilityState> {
 
@@ -66,6 +70,15 @@ class SearchController implements UiScreenController, UiScreenMementoOriginator<
                 }
             }
         );
+
+        m_searchView.setOnFocusChangeListener(new OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus) {
+                    hideKeyboard();
+                }
+            }
+        });
 
         m_clearText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,8 +133,17 @@ class SearchController implements UiScreenController, UiScreenMementoOriginator<
         m_screenState = ScreenState.VISIBLE;
     }
 
+    private void hideKeyboard() {
+        InputMethodManager imm =  (InputMethodManager) m_searchView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(m_searchView.getWindowToken(), 0);
+    }
+
     private void performSearch(){
-        m_searchModuleMediator.doSearch(this, m_searchView.getText().toString());
+        m_searchView.clearFocus();
+        if(!TextUtils.isEmpty(m_searchView.getText()))
+        {
+            m_searchModuleMediator.doSearch(this, m_searchView.getText().toString());
+        }
     }
 
     public void setQuery(CharSequence query){
@@ -131,6 +153,7 @@ class SearchController implements UiScreenController, UiScreenMementoOriginator<
 
     public void clear(){
         m_searchView.setText("");
+        m_searchView.clearFocus();
     }
 
     @Override

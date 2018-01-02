@@ -119,6 +119,7 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
 
     public void showResults(){
         hideSuggestionSets();
+
         m_searchResultContainer.setVisibility(View.VISIBLE);
 
         for(PaginatedSearchResultsController searchResultController : m_searchResultControllers){
@@ -168,11 +169,13 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
     public UiScreenMemento<SearchResultScreenVisibilityState> generateMemento() {
         return new SearchResultScreenVisibilityState(
                 m_searchResultContainer.getVisibility(),
-                m_autoCompleteResultContainer.getVisibility());
+                m_autoCompleteResultContainer.getVisibility(),
+                m_screenState);
     }
 
     @Override
     public void resetTo(UiScreenMemento<SearchResultScreenVisibilityState> memento) {
         memento.getState().apply(m_searchResultContainer, m_autoCompleteResultContainer);
+        m_screenState = memento.getState().getScreenState();
     }
 }
