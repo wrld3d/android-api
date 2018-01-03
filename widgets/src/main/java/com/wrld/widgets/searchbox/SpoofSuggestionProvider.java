@@ -37,7 +37,6 @@ public class SpoofSuggestionProvider extends SuggestionProviderBase implements S
 
     @Override
     public void getSearchResults(String query) {
-
         int numResults = 100;
         SearchResult[] results = new SearchResult[numResults];
         results[0] = new DefaultSearchResult(m_title + ": " + query, new SearchResultPropertyString("Description", LOREM_IPSUM));
@@ -46,6 +45,16 @@ public class SpoofSuggestionProvider extends SuggestionProviderBase implements S
         }
 
         performSearchCompletedCallbacks(results);
+    }
+
+    @Override
+    public boolean hasActiveRequest() {
+        return false;
+    }
+
+    @Override
+    public void cancelActiveRequest() {
+
     }
 
     private SearchResult generateDebugResult(int id, String query)

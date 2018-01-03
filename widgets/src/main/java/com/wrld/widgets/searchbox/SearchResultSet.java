@@ -33,11 +33,6 @@ class SearchResultSet {
             public void onQueryCompleted(SearchResult[] returnedResults) {
                 updateSetResults(returnedResults);
             }
-
-            @Override
-            public void onQueryCancelled() {
-                updateSetResults(new SearchResult[0]);
-            }
         };
 
         return m_queryCompletedCallback;

@@ -20,7 +20,6 @@ import com.wrld.widgets.ui.UiScreenMemento;
 import com.wrld.widgets.ui.UiScreenMementoOriginator;
 import com.wrld.widgets.ui.UiScreenVisibilityState;
 
-
 class SearchController implements UiScreenController, UiScreenMementoOriginator<UiScreenVisibilityState> {
 
     private View m_rootView;
@@ -36,9 +35,12 @@ class SearchController implements UiScreenController, UiScreenMementoOriginator<
 
     private SearchModuleController m_searchModuleMediator;
 
+    private boolean m_performSuggestionOnChange;
+
     SearchController(ViewGroup searchBoxRootContainer, SearchModuleController searchModuleMediator) {
 
         m_searchModuleMediator = searchModuleMediator;
+        m_performSuggestionOnChange = true;
 
         m_rootView = searchBoxRootContainer;
         m_searchView = (EditText) searchBoxRootContainer.findViewById(R.id.searchbox_search_querybox);
@@ -56,7 +58,9 @@ class SearchController implements UiScreenController, UiScreenMementoOriginator<
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     if (!TextUtils.isEmpty(s)) {
-                        m_searchModuleMediator.doAutocomplete(s.toString());
+                        if(m_performSuggestionOnChange) {
+                            m_searchModuleMediator.doAutocomplete(s.toString());
+                        }
                         m_clearText.setVisibility(View.VISIBLE);
                     }
                     else {
@@ -149,6 +153,13 @@ class SearchController implements UiScreenController, UiScreenMementoOriginator<
     public void setQuery(CharSequence query){
         m_searchView.setText(query);
         m_searchView.setSelection(m_searchView.getText().length());
+    }
+
+    public void setQuery(CharSequence query, boolean performSuggestion){
+        m_performSuggestionOnChange = performSuggestion;
+        m_searchView.setText(query);
+        m_searchView.setSelection(m_searchView.getText().length());
+        m_performSuggestionOnChange = true;
     }
 
     public void clear(){

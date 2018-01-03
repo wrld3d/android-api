@@ -20,15 +20,21 @@ interface SearchModuleFacade {
     void addSearchPerformedCallback(QueryPerformedCallback queryPerformedCallback);
     void removeSearchPerformedCallback(QueryPerformedCallback queryPerformedCallback);
 
-    void addSuggestionPerformedCallback(QueryPerformedCallback queryPerformedCallback);
-    void removeSuggestionPerformedCallback(QueryPerformedCallback queryPerformedCallback);
+    void addSuggestionsRequestedCallback(QueryPerformedCallback queryPerformedCallback);
+    void removeSuggestionsRequestedCallback(QueryPerformedCallback queryPerformedCallback);
 
     void addSearchCompletedCallback(QueryCompletedCallback queryCompletedCallback);
     void removeSearchCompletedCallback(QueryCompletedCallback queryCompletedCallback);
+
+    void addSuggestionsReturnedCallback(QueryCompletedCallback queryCompletedCallback);
+    void removeSuggestionsReturnedCallback(QueryCompletedCallback queryCompletedCallback);
 
     void addMenuVisibilityCallback(MenuVisibilityChangedCallback menuVisibilityChangedCallback);
     void removeMenuVisibilityChangedCallback(MenuVisibilityChangedCallback menuVisibilityChangedCallback);
 
     void addSearchResultSelectedCallback(SearchResultSelectedCallback searchResultSelectedCallback);
     void removeSearchResultSelectedCallback(SearchResultSelectedCallback searchResultSelectedCallback);
+
+    void addSuggestionSelectedCallback(SearchResultSelectedCallback suggestionSelectedCallback);
+    void removeSuggestionSelectedCallback(SearchResultSelectedCallback suggestionSelectedCallback);
 }

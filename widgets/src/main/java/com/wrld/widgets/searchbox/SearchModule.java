@@ -15,10 +15,12 @@ import com.wrld.widgets.searchbox.api.events.QueryPerformedCallback;
 import com.wrld.widgets.searchbox.api.events.SearchResultSelectedCallback;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
 
     private SearchModuleController m_searchModuleController;
+    private SearchMenuController m_searchMenuController;
 
     private SearchProvider[] m_searchProviders;
     private SuggestionProvider[] m_suggestionProviders;
@@ -34,13 +36,21 @@ public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
 
     private ArrayList<QueryPerformedCallback> m_queryPerformedCallbacks;
     private ArrayList<QueryPerformedCallback> m_suggestionPerformedHandlers;
-    private ArrayList<QueryCompletedCallback> m_queryCompletedCallbacks;
-    private ArrayList<MenuVisibilityChangedCallback> m_menuVisibilityChangedCallbacks;
-    private ArrayList<SearchResultSelectedCallback> m_searchResultSelectedCallbacks;
+    private ArrayList<QueryCompletedCallback> m_searchCompletedCallbacks;
+    private ArrayList<QueryCompletedCallback> m_suggestionsReturnedCallbacks;
+
+    private int m_responsesToLastRequest;
+    private ArrayList<SearchResult> m_resultsFromLastRequest;
+
+    private QueryCompletedCallback m_onSearchResultsReturnedCallback;
+    private QueryCompletedCallback m_onSuggestionsReturnedCallback;
 
     public SearchModule(ViewGroup appSearchAreaView) {
         initialiseMembers();
         inflateViewsAndAssignControllers(appSearchAreaView);
+
+        m_onSearchResultsReturnedCallback = onSearchResultsReturned();
+        m_onSuggestionsReturnedCallback = onSuggestionsReturned();
     }
 
     private void initialiseMembers(){
@@ -50,11 +60,13 @@ public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
         m_searchProviderSets                = new ArrayList<SearchResultSet>();
         m_suggestionProviderSets            = new ArrayList<SearchResultSet>();
 
-        m_queryPerformedCallbacks = new ArrayList<QueryPerformedCallback> ();
+        m_queryPerformedCallbacks           = new ArrayList<QueryPerformedCallback> ();
         m_suggestionPerformedHandlers       = new ArrayList<QueryPerformedCallback> ();
-        m_queryCompletedCallbacks = new ArrayList<QueryCompletedCallback> ();
-        m_menuVisibilityChangedCallbacks = new ArrayList<MenuVisibilityChangedCallback> ();
-        m_searchResultSelectedCallbacks = new ArrayList<SearchResultSelectedCallback> ();
+
+        m_searchCompletedCallbacks          = new ArrayList<QueryCompletedCallback> ();
+        m_suggestionsReturnedCallbacks      = new ArrayList<QueryCompletedCallback> ();
+
+        m_resultsFromLastRequest            = new ArrayList<SearchResult>();
     }
 
     private void inflateViewsAndAssignControllers(ViewGroup container) {
@@ -80,11 +92,11 @@ public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
                 m_searchModuleController);
         m_searchModuleController.setSearchResultsSetController(resultSetController);
 
-        SearchMenuController searchMenuController = new SearchMenuController(
+        m_searchMenuController = new SearchMenuController(
                 (ViewStub) root.findViewById(R.id.searchbox_menu_container_stub),
                 m_searchModuleController,
                 m_menuContent);
-        m_searchModuleController.setSearchMenuController(searchMenuController);
+        m_searchModuleController.setSearchMenuController(m_searchMenuController);
 
         setDefaultSearchResultViewFactory(new DefaultSearchResultViewFactory(R.layout.search_result));
 
@@ -100,7 +112,7 @@ public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
         m_searchModuleController.showQueryBox(searchController);
         m_searchModuleController.hideResults(searchController);
 
-        searchMenuController.setDefaultMenuContent(root.getContext());
+        m_searchMenuController.setDefaultMenuContent(root.getContext());
     }
 
     @Override
@@ -120,6 +132,9 @@ public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
             set.deregisterWithProvider();
         }
         m_searchProviderSets.clear();
+        for(SearchProvider searchProvider : m_searchProviders) {
+            searchProvider.removeSearchCompletedCallback(m_onSearchResultsReturnedCallback);
+        }
 
         m_searchModuleController.removeAllSearchProviders();
 
@@ -128,6 +143,7 @@ public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
             SearchResultsController searchResultsController = m_searchModuleController.addSearchProvider(searchProvider, searchResultSet);
             searchResultSet.addOnResultChangedHandler(searchResultsController.getUpdateCallback());
             m_searchProviderSets.add(searchResultSet);
+            searchProvider.addSearchCompletedCallback(m_onSearchResultsReturnedCallback);
         }
 
         m_searchProviders = searchProviders;
@@ -139,6 +155,9 @@ public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
             set.deregisterWithProvider();
         }
         m_suggestionProviderSets.clear();
+        for(SuggestionProvider suggestionProvider : m_suggestionProviders) {
+            suggestionProvider.removeSuggestionsReceivedCallback(m_onSuggestionsReturnedCallback);
+        }
 
         m_searchModuleController.removeAllSuggestionProviders();
 
@@ -147,9 +166,51 @@ public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
             SearchResultsController searchResultsController = m_searchModuleController.addSuggestionProvider(suggestionProvider, searchResultSet);
             searchResultSet.addOnResultChangedHandler(searchResultsController.getUpdateCallback());
             m_suggestionProviderSets.add(searchResultSet);
+            suggestionProvider.addSuggestionsReceivedCallback(m_onSuggestionsReturnedCallback);
         }
 
         m_suggestionProviders = suggestionProviders;
+    }
+
+
+    private QueryCompletedCallback onSearchResultsReturned(){
+        return new QueryCompletedCallback() {
+            @Override
+            public void onQueryCompleted(final SearchResult[] returnedResults) {
+                m_resultsFromLastRequest.addAll(Arrays.asList(returnedResults));
+                ++m_responsesToLastRequest;
+                checkAllSearchProvidersReturned();
+            }
+        };
+    }
+
+    private QueryCompletedCallback onSuggestionsReturned(){
+        return new QueryCompletedCallback() {
+            @Override
+            public void onQueryCompleted(final SearchResult[] returnedResults) {
+                m_resultsFromLastRequest.addAll(Arrays.asList(returnedResults));
+                ++m_responsesToLastRequest;
+                checkAllSuggestionsReturned();
+            }
+        };
+    }
+
+    private void checkAllSearchProvidersReturned(){
+        if(m_responsesToLastRequest == m_searchProviders.length){
+            SearchResult[] allReturnedResults = new SearchResult[m_resultsFromLastRequest.size()];
+            for(QueryCompletedCallback callback : m_searchCompletedCallbacks){
+                callback.onQueryCompleted(m_resultsFromLastRequest.toArray(allReturnedResults));
+            }
+        }
+    }
+
+    private void checkAllSuggestionsReturned(){
+        if(m_responsesToLastRequest == m_suggestionProviders.length){
+            for(QueryCompletedCallback callback : m_suggestionsReturnedCallbacks){
+                SearchResult[] allReturnedResults = new SearchResult[m_resultsFromLastRequest.size()];
+                callback.onQueryCompleted(m_resultsFromLastRequest.toArray(allReturnedResults));
+            }
+        }
     }
 
     @Override
@@ -180,49 +241,85 @@ public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
     }
 
     @Override
-    public void addSuggestionPerformedCallback(QueryPerformedCallback queryPerformedCallback) {
+    public void addSuggestionsRequestedCallback(QueryPerformedCallback queryPerformedCallback) {
         m_suggestionPerformedHandlers.add(queryPerformedCallback);
     }
 
     @Override
-    public void removeSuggestionPerformedCallback(QueryPerformedCallback queryPerformedCallback) {
+    public void removeSuggestionsRequestedCallback(QueryPerformedCallback queryPerformedCallback) {
         m_suggestionPerformedHandlers.remove(queryPerformedCallback);
     }
 
     @Override
     public void addSearchCompletedCallback(QueryCompletedCallback queryCompletedCallback) {
-        m_queryCompletedCallbacks.add(queryCompletedCallback);
+        m_searchCompletedCallbacks.add(queryCompletedCallback);
     }
 
     @Override
     public void removeSearchCompletedCallback(QueryCompletedCallback queryCompletedCallback) {
-        m_queryCompletedCallbacks.remove(queryCompletedCallback);
+        m_searchCompletedCallbacks.remove(queryCompletedCallback);
+    }
+
+    @Override
+    public void addSuggestionsReturnedCallback(QueryCompletedCallback queryCompletedCallback) {
+        m_suggestionsReturnedCallbacks.add(queryCompletedCallback);
+    }
+
+    @Override
+    public void removeSuggestionsReturnedCallback(QueryCompletedCallback queryCompletedCallback) {
+        m_suggestionsReturnedCallbacks.remove(queryCompletedCallback);
     }
 
     @Override
     public void addMenuVisibilityCallback(MenuVisibilityChangedCallback menuVisibilityChangedCallback) {
-        m_menuVisibilityChangedCallbacks.add(menuVisibilityChangedCallback);
+        m_searchMenuController.addMenuVisibilityCallback(menuVisibilityChangedCallback);
     }
 
     @Override
     public void removeMenuVisibilityChangedCallback(MenuVisibilityChangedCallback menuVisibilityChangedCallback) {
-        m_menuVisibilityChangedCallbacks.remove(menuVisibilityChangedCallback);
+        m_searchMenuController.removeMenuVisibilityChangedCallback(menuVisibilityChangedCallback);
     }
 
     @Override
     public void addSearchResultSelectedCallback(SearchResultSelectedCallback searchResultSelectedCallback) {
-        m_searchResultSelectedCallbacks.add(searchResultSelectedCallback);
+        m_searchModuleController.addSearchResultSelectedCallback(searchResultSelectedCallback);
     }
 
     @Override
     public void removeSearchResultSelectedCallback(SearchResultSelectedCallback searchResultSelectedCallback) {
-        m_searchResultSelectedCallbacks.remove(searchResultSelectedCallback);
+        m_searchModuleController.removeSearchResultSelectedCallback(searchResultSelectedCallback);
+    }
+
+    @Override
+    public void addSuggestionSelectedCallback(SearchResultSelectedCallback suggestionSelectedCallback) {
+        m_searchModuleController.addSuggestionSelectedCallback(suggestionSelectedCallback);
+    }
+
+    @Override
+    public void removeSuggestionSelectedCallback(SearchResultSelectedCallback suggestionSelectedCallback) {
+        m_searchModuleController.removeSuggestionSelectedCallback(suggestionSelectedCallback);
     }
 
     //endregion
 
+    private void clearRequests(){
+        for(SearchProvider provider : m_searchProviders){
+            if(provider.hasActiveRequest()){
+                provider.cancelActiveRequest();
+            }
+        }
+        for(SuggestionProvider provider : m_suggestionProviders) {
+            if (provider.hasActiveRequest()) {
+                provider.cancelActiveRequest();
+            }
+        }
+        m_responsesToLastRequest = 0;
+        m_resultsFromLastRequest.clear();
+    }
+
     @Override
     public void searchFor(String query){
+        clearRequests();
         for(SearchProvider provider : m_searchProviders){
             provider.getSearchResults(query);
         }
@@ -233,6 +330,7 @@ public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
 
     @Override
     public void getSuggestionsFor(String text){
+        clearRequests();
         for(SuggestionProvider provider : m_suggestionProviders){
             provider.getSuggestions(text);
         }

@@ -123,6 +123,8 @@ class PaginatedSearchResultsController extends BaseAdapter implements SearchResu
             SearchResultViewHolder viewHolder = m_resultsViewFactory.makeSearchResultViewHolder();
             viewHolder.initialise(convertView);
             convertView.setTag(viewHolder);
+
+            ((ViewGroup)convertView).setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         }
 
         ((SearchResultViewHolder)convertView.getTag()).populate(getResult(position));

@@ -77,13 +77,6 @@ public class WrldPoiSearchProvider extends SuggestionProviderBase {
     @Override
     public void getSearchResults(String query) {
 
-        //TODO test poi search invokes callbacks
-        //TODO test poi search response without network
-
-        if(m_currentSearch != null){
-            m_currentSearch.cancel();
-        }
-
         PoiSearchListener listener = new PoiSearchListener(
                 new SearchCompleteCallback() {
                     @Override
@@ -98,6 +91,18 @@ public class WrldPoiSearchProvider extends SuggestionProviderBase {
                         .radius(1000.0)
                         .number(60)
                         .onPoiSearchCompletedListener(listener));
+    }
+
+    @Override
+    public boolean hasActiveRequest() {
+        return m_currentSearch != null;
+    }
+
+    @Override
+    public void cancelActiveRequest() {
+        if(m_currentSearch != null){
+            m_currentSearch.cancel();
+        }
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.wrld.widgets.searchbox;
 
 import android.view.animation.Animation;
 
+import com.wrld.widgets.searchbox.api.events.SearchResultSelectedCallback;
 import com.wrld.widgets.ui.UiScreenController;
 import com.wrld.widgets.ui.UiScreenMementoOriginator;
 import com.wrld.widgets.ui.UiScreenStateList;
@@ -18,6 +19,14 @@ class SearchModuleController {
 
     private ArrayList<UiScreenMementoOriginator> m_allScreens;
     private Stack<UiScreenStateList> m_uiScreenHistory;
+
+    private ArrayList<SearchResultSelectedCallback> m_searchResultSelectedCallbacks;
+    private ArrayList<SearchResultSelectedCallback> m_suggestionSelectedCallbacks;
+
+    public SearchModuleController(){
+        m_searchResultSelectedCallbacks = new ArrayList<SearchResultSelectedCallback> ();
+        m_suggestionSelectedCallbacks = new ArrayList<SearchResultSelectedCallback> ();
+    }
 
     public void setSearchQueryHandler(SearchQueryHandler queryHandler){
         m_searchQueryHandler = queryHandler;
@@ -49,12 +58,11 @@ class SearchModuleController {
     }
 
     public void doSearch(UiScreenController caller, String query){
-
         doShowElement(m_searchController);
         doShowElement(m_searchResultScreenController);
         if(caller != m_searchController){
             doHideElement(caller);
-            m_searchController.setQuery(query);
+            m_searchController.setQuery(query, false);
         }
         m_searchResultScreenController.showResults();
         m_searchQueryHandler.searchFor(query);
@@ -92,9 +100,18 @@ class SearchModuleController {
         m_searchResultScreenController.removeAllAutocompleteProviderViews();
     }
 
-    public void focusOnResult(UiScreenController caller, SearchResult result){
+    public void autocompleteSelection(UiScreenController caller, SearchResult result){
         m_searchController.clear();
         doSearch(caller, result.getTitle());
+        for(SearchResultSelectedCallback callback : m_suggestionSelectedCallbacks){
+            callback.onSelection(result);
+        }
+    }
+
+    public void focusOnResult(UiScreenController caller, SearchResult result){
+        for(SearchResultSelectedCallback callback : m_searchResultSelectedCallbacks){
+            callback.onSelection(result);
+        }
     }
 
     public void showMenu(UiScreenController caller) {
@@ -128,5 +145,21 @@ class SearchModuleController {
         doHideElement(m_searchResultScreenController);
         doHideElement(m_searchMenuController);
         m_uiScreenHistory.clear();
+    }
+
+    public void addSearchResultSelectedCallback(SearchResultSelectedCallback searchResultSelectedCallback) {
+        m_searchResultSelectedCallbacks.add(searchResultSelectedCallback);
+    }
+
+    public void removeSearchResultSelectedCallback(SearchResultSelectedCallback searchResultSelectedCallback) {
+        m_searchResultSelectedCallbacks.remove(searchResultSelectedCallback);
+    }
+
+    public void addSuggestionSelectedCallback(SearchResultSelectedCallback suggestionSelectedCallback) {
+        m_suggestionSelectedCallbacks.add(suggestionSelectedCallback);
+    }
+
+    public void removeSuggestionSelectedCallback(SearchResultSelectedCallback suggestionSelectedCallback) {
+        m_suggestionSelectedCallbacks.remove(suggestionSelectedCallback);
     }
 }

@@ -7,11 +7,14 @@ import android.view.ViewStub;
 import android.view.animation.Animation;
 
 import com.wrld.widgets.R;
+import com.wrld.widgets.searchbox.api.events.MenuVisibilityChangedCallback;
 import com.wrld.widgets.ui.Accordion;
 import com.wrld.widgets.ui.UiScreenController;
 import com.wrld.widgets.ui.UiScreenMemento;
 import com.wrld.widgets.ui.UiScreenMementoOriginator;
 import com.wrld.widgets.ui.UiScreenVisibilityState;
+
+import java.util.ArrayList;
 
 public class SearchMenuController implements UiScreenController, UiScreenMementoOriginator<UiScreenVisibilityState> {
 
@@ -31,6 +34,7 @@ public class SearchMenuController implements UiScreenController, UiScreenMemento
     private SearchMenuContent m_contentProvider;
 
     private Accordion m_accordion;
+    private ArrayList<MenuVisibilityChangedCallback> m_menuVisibilityChangedCallbacks;
 
     public SearchMenuController(ViewStub stub, SearchModuleController searchModuleController, SearchMenuContent contentProvider){
 
@@ -51,16 +55,25 @@ public class SearchMenuController implements UiScreenController, UiScreenMemento
                 m_accordion.expandGroup(0);
                 m_rootContainer.setVisibility(View.VISIBLE);
                 m_screenState = ScreenState.VISIBLE;
+                for(MenuVisibilityChangedCallback callback : m_menuVisibilityChangedCallbacks){
+                    callback.onMenuVisibilityChange(true);
+                }
             }
         };
+
         m_hideAnim = new Animation(){
             @Override
             public void start() {
                 super.start();
                 m_rootContainer.setVisibility(View.GONE);
                 m_screenState = ScreenState.GONE;
+                for(MenuVisibilityChangedCallback callback : m_menuVisibilityChangedCallbacks){
+                    callback.onMenuVisibilityChange(false);
+                }
             }
         };
+
+        m_menuVisibilityChangedCallbacks = new ArrayList<MenuVisibilityChangedCallback> ();
     }
 
     @Override
@@ -129,6 +142,14 @@ public class SearchMenuController implements UiScreenController, UiScreenMemento
     @Override
     public void resetTo(UiScreenMemento<UiScreenVisibilityState> memento) {
         memento.getState().apply();
+    }
+
+    public void addMenuVisibilityCallback(MenuVisibilityChangedCallback menuVisibilityChangedCallback) {
+        m_menuVisibilityChangedCallbacks.add(menuVisibilityChangedCallback);
+    }
+
+    public void removeMenuVisibilityChangedCallback(MenuVisibilityChangedCallback menuVisibilityChangedCallback) {
+        m_menuVisibilityChangedCallbacks.remove(menuVisibilityChangedCallback);
     }
 }
 

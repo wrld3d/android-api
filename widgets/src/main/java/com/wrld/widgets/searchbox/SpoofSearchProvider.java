@@ -25,6 +25,16 @@ public class SpoofSearchProvider extends SearchProviderBase {
         performSearchCompletedCallbacks(results);
     }
 
+    @Override
+    public boolean hasActiveRequest() {
+        return false;
+    }
+
+    @Override
+    public void cancelActiveRequest() {
+
+    }
+
     private SearchResult generateDebugResult(int id, String query)
     {
         return new DefaultSearchResult(m_title + ": " + query + " result (" + id + ")", new SearchResultPropertyString("Description", LOREM_IPSUM));

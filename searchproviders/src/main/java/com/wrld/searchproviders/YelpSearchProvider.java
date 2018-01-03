@@ -58,7 +58,7 @@ public class YelpSearchProvider extends SuggestionProviderBase {
     private Map<String, String> m_authHeaders;
     private boolean m_hasRaisedAuthError = false;
 
-    private enum SearchType {SEARCH, AUTOCOMPLETE };
+    private enum SearchType {SEARCH, AUTOCOMPLETE};
     private SearchType m_deferredSearchType;
     private String m_deferredQuery;
 
@@ -147,10 +147,6 @@ public class YelpSearchProvider extends SuggestionProviderBase {
 
         if(isAuthenticated()) {
 
-            if(m_currentRequest != null && !m_currentRequest.hasHadResponseDelivered()){
-                m_currentRequest.cancel();
-            }
-
             LatLngAlt cameraPosition = m_map.getCameraPosition().target;
 
             try {
@@ -173,6 +169,18 @@ public class YelpSearchProvider extends SuggestionProviderBase {
             m_deferredQuery = query;
             m_deferredSearchType = SearchType.SEARCH;
             handleUnauthorisedRequest();
+        }
+    }
+
+    @Override
+    public boolean hasActiveRequest() {
+        return m_currentRequest != null && m_currentRequest.hasHadResponseDelivered();
+    }
+
+    @Override
+    public void cancelActiveRequest() {
+        if(hasActiveRequest()){
+            m_currentRequest.cancel();
         }
     }
 

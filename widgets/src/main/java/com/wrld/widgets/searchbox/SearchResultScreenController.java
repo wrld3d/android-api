@@ -97,6 +97,7 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
 
         m_searchResultControllers.add(resultsController);
         listView.setAdapter(resultsController);
+        listView.setOnItemClickListener(onResultClickListener(resultSet));
         return resultsController;
     }
 
@@ -113,7 +114,7 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
 
         m_suggestionControllers.add(resultsController);
         listView.setAdapter(resultsController);
-        listView.setOnItemClickListener(onClickListener(resultSet));
+        listView.setOnItemClickListener(onSuggestionClickListener(resultSet));
         return resultsController;
     }
 
@@ -155,12 +156,22 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
         }
     }
 
-    private AdapterView.OnItemClickListener onClickListener (final SearchResultSet resultSet){
+    private AdapterView.OnItemClickListener onResultClickListener (final SearchResultSet resultSet){
         final UiScreenController selfAsUiScreenController = this;
         return new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 m_searchModuleMediator.focusOnResult(selfAsUiScreenController, resultSet.getResult(position));
+            }
+        };
+    }
+
+    private AdapterView.OnItemClickListener onSuggestionClickListener (final SearchResultSet resultSet){
+        final UiScreenController selfAsUiScreenController = this;
+        return new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                m_searchModuleMediator.autocompleteSelection(selfAsUiScreenController, resultSet.getResult(position));
             }
         };
     }
