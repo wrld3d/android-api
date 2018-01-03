@@ -3,31 +3,35 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/search_result"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="48dp"
     android:background="@color/searchbox_background"
+    android:padding="8dp"
     android:orientation="vertical">
 
     <ImageView
         android:id="@+id/search_result_icon"
         android:layout_centerVertical="true"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:adjustViewBounds="true"
+        android:layout_marginRight="8dp"
         app:srcCompat="@android:drawable/ic_menu_search" />
 
     <TextView
         android:id="@+id/search_result_title"
         android:layout_toRightOf="@id/search_result_icon"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/font_size_title" />
+        android:layout_height="18dp"
+        android:textSize="@dimen/font_size_title"
+        android:textColor="@color/searchbox_autcomplete_list_header_font_matched"/>
 
     <TextView
         android:id="@+id/search_result_description"
         android:layout_toRightOf="@id/search_result_icon"
         android:layout_below="@id/search_result_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/font_size_subtitle" />
+        android:layout_height="14dp"
+        android:textSize="@dimen/font_size_subtitle"
+        android:textColor="@color/searchbox_autcomplete_list_header_font_unmatched"/>
 
 </RelativeLayout>

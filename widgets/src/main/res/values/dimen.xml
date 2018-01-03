@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="font_size_title">16sp</dimen>
-    <dimen name="font_size_subtitle">12sp</dimen>
-    <dimen name="font_size_suggestions_title">10sp</dimen>
+    <dimen name="font_size_subtitle">11sp</dimen>
+    <dimen name="font_size_suggestions_title">11sp</dimen>
     <dimen name="search_query_height">40dp</dimen>
     <dimen name="search_query_button_size">32dp</dimen>
     <dimen name="search_query_clear_button_touch_size">24dp</dimen>
@@ -42,7 +42,7 @@
     <dimen name="search_suggestions_result_text_height">24dp</dimen>
     <dimen name="search_suggestions_result_vertical_padding">4dp</dimen>
     <dimen name="search_suggestions_result_horizontal_padding">8dp</dimen>
-    <dimen name="search_suggestions_result_icon_size">32dp</dimen>
+    <dimen name="search_suggestions_result_icon_size">24dp</dimen>
     <dimen name="search_suggestions_shadow_size">4dp</dimen>
     <dimen name="search_suggestions_set_vertical_spacing">4dp</dimen>
     <dimen name="search_suggestions_set_bottom_padding">8dp</dimen>

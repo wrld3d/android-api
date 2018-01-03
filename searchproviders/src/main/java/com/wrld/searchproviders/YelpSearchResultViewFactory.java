@@ -54,6 +54,7 @@ public class YelpSearchResultViewFactory implements SearchResultViewFactory {
 
     private class SearchResultViewHolderImpl implements SearchResultViewHolder {
         private TextView m_title;
+        private TextView m_subtitle;
         private ImageButton m_rating;
         private ImageButton m_yelpLogo;
         private TextView m_reviewCount;
@@ -63,6 +64,7 @@ public class YelpSearchResultViewFactory implements SearchResultViewFactory {
 
         public void initialise(View view) {
             m_title = (TextView) view.findViewById(R.id.search_result_title);
+            m_subtitle = (TextView) view.findViewById(R.id.search_result_description);
             m_rating = (ImageButton) view.findViewById(R.id.yelp_rating);
             m_yelpLogo = (ImageButton) view.findViewById(R.id.yelp_logo);
             m_reviewCount = (TextView) view.findViewById(R.id.yelp_reviews);
@@ -80,6 +82,9 @@ public class YelpSearchResultViewFactory implements SearchResultViewFactory {
 
         public void populate(SearchResult result) {
             m_title.setText(result.getTitle());
+            if(result.hasProperty(YelpSearchResult.AddressKey)) {
+                m_subtitle.setText((String)result.getProperty(YelpSearchResult.AddressKey).getValue());
+            }
 
             if(result.hasProperty(YelpSearchResult.RatingKey)) {
                 m_rating.setImageResource(m_starCache.get(result.getProperty(YelpSearchResult.RatingKey).getValue()));

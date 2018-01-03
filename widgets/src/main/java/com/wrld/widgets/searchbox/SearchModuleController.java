@@ -93,6 +93,7 @@ class SearchModuleController {
     }
 
     public void focusOnResult(UiScreenController caller, SearchResult result){
+        m_searchController.clear();
         doSearch(caller, result.getTitle());
     }
 
