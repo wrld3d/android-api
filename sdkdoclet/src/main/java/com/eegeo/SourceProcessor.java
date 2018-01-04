@@ -61,7 +61,7 @@ public class SourceProcessor extends Doclet {
             "PoiSearchResult",
             "TextSearchOptions",
             "TagSearchOptions",
-            "AutocompleteOptions,",
+            "AutocompleteOptions",
             "MapsceneService",
             "MapsceneRequest",
             "OnMapsceneRequestCompletedListener",
