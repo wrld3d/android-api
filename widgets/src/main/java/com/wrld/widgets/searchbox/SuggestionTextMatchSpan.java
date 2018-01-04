@@ -1,6 +1,5 @@
 package com.wrld.widgets.searchbox;
 
-import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -8,7 +7,7 @@ import android.text.TextPaint;
 import android.text.style.CharacterStyle;
 import android.widget.TextView;
 
-public class SuggestionTextMatchSpan extends CharacterStyle {
+class SuggestionTextMatchSpan extends CharacterStyle {
     private final int m_colour;
 
     private Typeface m_highlightTypeface;

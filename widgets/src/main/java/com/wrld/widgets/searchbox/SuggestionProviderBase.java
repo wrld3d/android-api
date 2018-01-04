@@ -1,29 +1,31 @@
 package com.wrld.widgets.searchbox;
 
+import com.wrld.widgets.searchbox.api.events.QueryCompletedCallback;
+
 import java.util.ArrayList;
 
 public abstract class SuggestionProviderBase extends SearchProviderBase implements SuggestionProvider {
     private SearchResultViewFactory m_suggestionViewFactory;
-    private ArrayList<OnResultsReceivedCallback> m_onSuggestionsReceivedCallback;
+    private ArrayList<QueryCompletedCallback> m_suggestionsReceivedCallbacks;
 
     public SuggestionProviderBase(String title) {
         super(title);
-        m_onSuggestionsReceivedCallback = new ArrayList<OnResultsReceivedCallback>();
+        m_suggestionsReceivedCallbacks = new ArrayList<QueryCompletedCallback>();
     }
 
     @Override
-    public void addOnSuggestionsReceivedCallback(OnResultsReceivedCallback callback) {
-        m_onSuggestionsReceivedCallback.add(callback);
+    public void addSuggestionsReceivedCallback(QueryCompletedCallback queryCompletedCallback) {
+        m_suggestionsReceivedCallbacks.add(queryCompletedCallback);
     }
 
     @Override
-    public void removeOnSuggestionsReceivedCallback(OnResultsReceivedCallback callback) {
-        m_onSuggestionsReceivedCallback.remove(callback);
+    public void removeSuggestionsReceivedCallback(QueryCompletedCallback queryCompletedCallback) {
+        m_suggestionsReceivedCallbacks.remove(queryCompletedCallback);
     }
 
     protected void performSuggestionCompletedCallbacks(SearchResult[] results){
-        for(OnResultsReceivedCallback callback: m_onSuggestionsReceivedCallback) {
-            callback.onResultsReceived(results);
+        for(QueryCompletedCallback queryCompletedCallback : m_suggestionsReceivedCallbacks) {
+            queryCompletedCallback.onQueryCompleted(results);
         }
     }
 

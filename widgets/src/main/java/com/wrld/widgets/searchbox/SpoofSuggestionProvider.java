@@ -1,11 +1,13 @@
 package com.wrld.widgets.searchbox;
 
+import com.wrld.widgets.searchbox.api.events.QueryCompletedCallback;
+
 import java.util.ArrayList;
 
 public class SpoofSuggestionProvider extends SuggestionProviderBase implements SuggestionProvider{
 
     private SearchResultViewFactory m_suggestionViewFactory;
-    private ArrayList<OnResultsReceivedCallback> m_onSuggestionsReceivedCallback;
+    private ArrayList<QueryCompletedCallback> m_onSuggestionsReceivedCallback;
 
     private final String LOREM_IPSUM =
             "ex vis nusquam tincidunt, Lorem ipsum dolor sit amet.";

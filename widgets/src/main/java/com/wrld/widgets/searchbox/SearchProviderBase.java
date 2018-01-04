@@ -1,9 +1,11 @@
 package com.wrld.widgets.searchbox;
 
+import com.wrld.widgets.searchbox.api.events.QueryCompletedCallback;
+
 import java.util.ArrayList;
 
 public abstract class SearchProviderBase implements SearchProvider {
-    private ArrayList<OnResultsReceivedCallback> m_onResultsReceivedCallbacks;
+    private ArrayList<QueryCompletedCallback> m_searchCompletedCallbacks;
 
     private SearchResultViewFactory m_resultViewFactory;
 
@@ -11,25 +13,25 @@ public abstract class SearchProviderBase implements SearchProvider {
 
     public SearchProviderBase(String title){
         m_title = title;
-        m_onResultsReceivedCallbacks = new ArrayList<OnResultsReceivedCallback>();
+        m_searchCompletedCallbacks = new ArrayList<QueryCompletedCallback>();
     }
 
     @Override
     public String getTitle() {return m_title;}
 
     @Override
-    public void addOnResultsReceivedCallback(OnResultsReceivedCallback callback) {
-        m_onResultsReceivedCallbacks.add(callback);
+    public void addSearchCompletedCallback(QueryCompletedCallback queryCompletedCallback) {
+        m_searchCompletedCallbacks.add(queryCompletedCallback);
     }
 
     @Override
-    public void removeOnResultsReceivedCallback(OnResultsReceivedCallback callback) {
-        m_onResultsReceivedCallbacks.remove(callback);
+    public void removeSearchCompletedCallback(QueryCompletedCallback queryCompletedCallback) {
+        m_searchCompletedCallbacks.remove(queryCompletedCallback);
     }
 
     protected void performSearchCompletedCallbacks(SearchResult[] results){
-        for(OnResultsReceivedCallback callback: m_onResultsReceivedCallbacks) {
-            callback.onResultsReceived(results);
+        for(QueryCompletedCallback queryCompletedCallback : m_searchCompletedCallbacks) {
+            queryCompletedCallback.onQueryCompleted(results);
         }
     }
 
