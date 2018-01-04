@@ -1,8 +1,8 @@
 package com.wrld.searchproviders;
 
 import com.eegeo.mapapi.geometry.LatLng;
-import com.wrld.widgets.searchbox.DefaultSearchResult;
-import com.wrld.widgets.searchbox.SearchResultPropertyString;
+import com.wrld.widgets.searchbox.api.DefaultSearchResult;
+import com.wrld.widgets.searchbox.api.SearchResultPropertyString;
 
 import org.json.JSONObject;
 

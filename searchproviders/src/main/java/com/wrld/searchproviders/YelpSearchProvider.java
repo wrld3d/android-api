@@ -12,9 +12,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.eegeo.mapapi.EegeoMap;
 import com.eegeo.mapapi.geometry.LatLngAlt;
-import com.wrld.widgets.searchbox.DefaultSearchResult;
-import com.wrld.widgets.searchbox.SearchResult;
-import com.wrld.widgets.searchbox.SuggestionProviderBase;
+import com.wrld.widgets.searchbox.api.DefaultSearchResult;
+import com.wrld.widgets.searchbox.api.SearchResult;
+import com.wrld.widgets.searchbox.api.SuggestionProviderBase;
 
 import org.json.JSONArray;
 import org.json.JSONException;

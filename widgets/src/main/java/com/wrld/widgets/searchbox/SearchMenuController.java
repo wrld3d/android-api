@@ -8,6 +8,9 @@ import android.view.animation.Animation;
 
 import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.api.events.MenuVisibilityChangedCallback;
+import com.wrld.widgets.searchbox.menu.SearchBoxMenuChild;
+import com.wrld.widgets.searchbox.menu.SearchBoxMenuGroup;
+import com.wrld.widgets.searchbox.menu.SearchBoxMenuItem;
 import com.wrld.widgets.ui.Accordion;
 import com.wrld.widgets.ui.UiScreenController;
 import com.wrld.widgets.ui.UiScreenMemento;
@@ -16,7 +19,7 @@ import com.wrld.widgets.ui.UiScreenVisibilityState;
 
 import java.util.ArrayList;
 
-public class SearchMenuController implements UiScreenController, UiScreenMementoOriginator<UiScreenVisibilityState> {
+class SearchMenuController implements UiScreenController, UiScreenMementoOriginator<UiScreenVisibilityState> {
 
     private Animation m_showAnim;
     private Animation m_hideAnim;

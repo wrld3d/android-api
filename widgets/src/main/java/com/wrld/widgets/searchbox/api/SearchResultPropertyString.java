@@ -1,4 +1,4 @@
-package com.wrld.widgets.searchbox;
+package com.wrld.widgets.searchbox.api;
 
 public class SearchResultPropertyString implements SearchResultProperty<String> {
 

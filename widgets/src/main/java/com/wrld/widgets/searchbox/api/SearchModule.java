@@ -1,11 +1,12 @@
-package com.wrld.widgets.searchbox;
+package com.wrld.widgets.searchbox.api;
 
 import com.wrld.widgets.searchbox.api.events.MenuVisibilityChangedCallback;
 import com.wrld.widgets.searchbox.api.events.QueryPerformedCallback;
 import com.wrld.widgets.searchbox.api.events.QueryCompletedCallback;
 import com.wrld.widgets.searchbox.api.events.SearchResultSelectedCallback;
+import com.wrld.widgets.searchbox.menu.SearchBoxMenuGroup;
 
-interface SearchModuleFacade {
+public interface SearchModule extends SearchQueryHandler {
     void setDefaultSearchResultViewFactory(SearchResultViewFactory factory);
     void setDefaultSuggestionViewFactory(SearchResultViewFactory factory);
 

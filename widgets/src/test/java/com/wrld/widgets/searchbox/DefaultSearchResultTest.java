@@ -2,6 +2,10 @@
 
 package com.wrld.widgets.searchbox;
 
+import com.wrld.widgets.searchbox.api.DefaultSearchResult;
+import com.wrld.widgets.searchbox.api.SearchResult;
+import com.wrld.widgets.searchbox.api.SearchResultProperty;
+
 public class DefaultSearchResultTest extends SearchResultTest {
     @Override
     SearchResult CreateSearchResult(String title, SearchResultProperty... additionalProperties) {

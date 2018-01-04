@@ -1,4 +1,4 @@
-package com.wrld.widgets.searchbox;
+package com.wrld.widgets.searchbox.api;
 
 import com.wrld.widgets.searchbox.api.events.QueryCompletedCallback;
 

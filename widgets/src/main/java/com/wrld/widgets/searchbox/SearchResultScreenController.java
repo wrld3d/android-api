@@ -9,10 +9,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.wrld.widgets.R;
+import com.wrld.widgets.searchbox.api.SearchProvider;
+import com.wrld.widgets.searchbox.api.SuggestionProvider;
 import com.wrld.widgets.ui.UiScreenController;
 import com.wrld.widgets.ui.UiScreenMemento;
 import com.wrld.widgets.ui.UiScreenMementoOriginator;
-import com.wrld.widgets.ui.UiScreenVisibilityState;
 
 import java.util.ArrayList;
 

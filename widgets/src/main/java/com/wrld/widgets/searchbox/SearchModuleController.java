@@ -2,6 +2,10 @@ package com.wrld.widgets.searchbox;
 
 import android.view.animation.Animation;
 
+import com.wrld.widgets.searchbox.api.SearchProvider;
+import com.wrld.widgets.searchbox.api.SearchQueryHandler;
+import com.wrld.widgets.searchbox.api.SearchResult;
+import com.wrld.widgets.searchbox.api.SuggestionProvider;
 import com.wrld.widgets.searchbox.api.events.SearchResultSelectedCallback;
 import com.wrld.widgets.ui.UiScreenController;
 import com.wrld.widgets.ui.UiScreenMementoOriginator;

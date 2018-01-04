@@ -1,6 +1,4 @@
-package com.wrld.widgets.searchbox;
-
-import android.view.View;
+package com.wrld.widgets.searchbox.menu;
 
 import java.util.ArrayList;
 

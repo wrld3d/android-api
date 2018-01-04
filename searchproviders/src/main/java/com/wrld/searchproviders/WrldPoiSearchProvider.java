@@ -10,8 +10,8 @@ import com.eegeo.mapapi.services.poi.PoiSearchResponse;
 import com.eegeo.mapapi.services.poi.PoiSearchResult;
 import com.eegeo.mapapi.services.poi.PoiService;
 import com.eegeo.mapapi.services.poi.TextSearchOptions;
-import com.wrld.widgets.searchbox.SearchResult;
-import com.wrld.widgets.searchbox.SuggestionProviderBase;
+import com.wrld.widgets.searchbox.api.SearchResult;
+import com.wrld.widgets.searchbox.api.SuggestionProviderBase;
 
 import java.util.List;
 

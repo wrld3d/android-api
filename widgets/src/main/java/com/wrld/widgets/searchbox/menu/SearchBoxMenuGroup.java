@@ -1,4 +1,4 @@
-package com.wrld.widgets.searchbox;
+package com.wrld.widgets.searchbox.menu;
 
 import java.util.ArrayList;
 

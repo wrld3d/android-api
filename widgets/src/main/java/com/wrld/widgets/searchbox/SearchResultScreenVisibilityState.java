@@ -5,7 +5,7 @@ import android.view.View;
 import com.wrld.widgets.ui.UiScreenController.ScreenState;
 import com.wrld.widgets.ui.UiScreenMemento;
 
-public class SearchResultScreenVisibilityState implements UiScreenMemento<SearchResultScreenVisibilityState> {
+class SearchResultScreenVisibilityState implements UiScreenMemento<SearchResultScreenVisibilityState> {
 
     private int m_resultsVisibility;
     private int m_autocompleteVisibility;

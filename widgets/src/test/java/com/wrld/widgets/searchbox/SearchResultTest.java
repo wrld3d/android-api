@@ -2,6 +2,10 @@
 
 package com.wrld.widgets.searchbox;
 
+import com.wrld.widgets.searchbox.api.SearchResult;
+import com.wrld.widgets.searchbox.api.SearchResultProperty;
+import com.wrld.widgets.searchbox.api.SearchResultPropertyString;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;

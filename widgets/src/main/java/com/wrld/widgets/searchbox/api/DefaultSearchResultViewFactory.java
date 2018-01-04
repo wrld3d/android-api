@@ -1,4 +1,4 @@
-package com.wrld.widgets.searchbox;
+package com.wrld.widgets.searchbox.api;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,11 +19,11 @@ public class DefaultSearchResultViewFactory implements SearchResultViewFactory {
         return inflater.inflate(m_layoutId, parent, false);
     }
 
-    private class SearchResultViewHolderImpl implements SearchResultViewHolder {
+    private class SearchResultViewHolder implements com.wrld.widgets.searchbox.api.SearchResultViewHolder {
         private TextView m_title;
         private TextView m_description;
 
-        public SearchResultViewHolderImpl(){}
+        public SearchResultViewHolder(){}
 
         public void initialise(View view) {
             m_title = (TextView) view.findViewById(R.id.search_result_title);
@@ -37,7 +37,7 @@ public class DefaultSearchResultViewFactory implements SearchResultViewFactory {
     }
 
     @Override
-    public SearchResultViewHolder makeSearchResultViewHolder() {
-        return new SearchResultViewHolderImpl();
+    public com.wrld.widgets.searchbox.api.SearchResultViewHolder makeSearchResultViewHolder() {
+        return new SearchResultViewHolder();
     }
 }

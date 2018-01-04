@@ -1,9 +1,14 @@
 package com.wrld.widgets.searchbox;
 
+import com.wrld.widgets.searchbox.api.DefaultSearchResult;
+import com.wrld.widgets.searchbox.api.SearchProviderBase;
+import com.wrld.widgets.searchbox.api.SearchResult;
+import com.wrld.widgets.searchbox.api.SearchResultPropertyString;
+
 /**
  * Returns a random number of results for any query
  */
-public class SpoofSearchProvider extends SearchProviderBase {
+class SpoofSearchProvider extends SearchProviderBase {
     private final String LOREM_IPSUM =
             "Lorem ipsum dolor sit amet, ex vis nusquam tincidunt.";
 

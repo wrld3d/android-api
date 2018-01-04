@@ -10,9 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.wrld.widgets.searchbox.SearchResult;
-import com.wrld.widgets.searchbox.SearchResultViewFactory;
-import com.wrld.widgets.searchbox.SearchResultViewHolder;
+import com.wrld.widgets.searchbox.api.SearchResult;
+import com.wrld.widgets.searchbox.api.SearchResultViewFactory;
+import com.wrld.widgets.searchbox.api.SearchResultViewHolder;
 
 import java.util.HashMap;
 

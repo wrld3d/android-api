@@ -7,6 +7,9 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.wrld.widgets.R;
+import com.wrld.widgets.searchbox.api.SearchResult;
+import com.wrld.widgets.searchbox.api.SearchResultViewFactory;
+import com.wrld.widgets.searchbox.api.SearchResultViewHolder;
 
 class SuggestionSearchResultController extends BaseAdapter implements SearchResultsController {
     private LayoutInflater m_inflater;

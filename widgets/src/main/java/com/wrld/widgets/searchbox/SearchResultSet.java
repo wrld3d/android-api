@@ -1,5 +1,8 @@
 package com.wrld.widgets.searchbox;
 
+import com.wrld.widgets.searchbox.api.SearchProvider;
+import com.wrld.widgets.searchbox.api.SearchResult;
+import com.wrld.widgets.searchbox.api.SuggestionProvider;
 import com.wrld.widgets.searchbox.api.events.QueryCompletedCallback;
 
 import java.util.ArrayList;

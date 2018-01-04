@@ -1,4 +1,4 @@
-package com.wrld.widgets.searchbox;
+package com.wrld.widgets.ui;
 
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
@@ -7,12 +7,12 @@ import android.text.TextPaint;
 import android.text.style.CharacterStyle;
 import android.widget.TextView;
 
-class SuggestionTextMatchSpan extends CharacterStyle {
+public class TextHighlighter extends CharacterStyle {
     private final int m_colour;
 
     private Typeface m_highlightTypeface;
 
-    public SuggestionTextMatchSpan(int colour) {
+    public TextHighlighter(int colour) {
         super();
         m_colour = colour;
 

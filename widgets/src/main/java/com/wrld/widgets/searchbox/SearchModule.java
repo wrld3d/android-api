@@ -9,15 +9,24 @@ import android.view.ViewStub;
 import android.widget.TextView;
 
 import com.wrld.widgets.R;
+import com.wrld.widgets.searchbox.api.DefaultSearchResultViewFactory;
+import com.wrld.widgets.searchbox.api.DefaultSuggestionViewFactory;
+import com.wrld.widgets.searchbox.api.SearchProvider;
+import com.wrld.widgets.searchbox.api.SearchQueryHandler;
+import com.wrld.widgets.searchbox.api.SearchResult;
+import com.wrld.widgets.searchbox.api.SearchResultViewFactory;
+import com.wrld.widgets.searchbox.api.SuggestionProvider;
 import com.wrld.widgets.searchbox.api.events.MenuVisibilityChangedCallback;
 import com.wrld.widgets.searchbox.api.events.QueryCompletedCallback;
 import com.wrld.widgets.searchbox.api.events.QueryPerformedCallback;
 import com.wrld.widgets.searchbox.api.events.SearchResultSelectedCallback;
+import com.wrld.widgets.searchbox.menu.SearchBoxMenuGroup;
+import com.wrld.widgets.ui.TextHighlighter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
+class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, SearchQueryHandler {
 
     private SearchModuleController m_searchModuleController;
     private SearchMenuController m_searchMenuController;
@@ -45,15 +54,7 @@ public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
     private QueryCompletedCallback m_onSearchResultsReturnedCallback;
     private QueryCompletedCallback m_onSuggestionsReturnedCallback;
 
-    public SearchModule(ViewGroup appSearchAreaView) {
-        initialiseMembers();
-        inflateViewsAndAssignControllers(appSearchAreaView);
-
-        m_onSearchResultsReturnedCallback = onSearchResultsReturned();
-        m_onSuggestionsReturnedCallback = onSuggestionsReturned();
-    }
-
-    private void initialiseMembers(){
+    public SearchModule() {
         m_searchProviders                   = new SearchProvider[0];
         m_suggestionProviders               = new SuggestionProvider[0];
 
@@ -67,9 +68,12 @@ public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
         m_suggestionsReturnedCallbacks      = new ArrayList<QueryCompletedCallback> ();
 
         m_resultsFromLastRequest            = new ArrayList<SearchResult>();
+
+        m_onSearchResultsReturnedCallback   = onSearchResultsReturned();
+        m_onSuggestionsReturnedCallback     = onSuggestionsReturned();
     }
 
-    private void inflateViewsAndAssignControllers(ViewGroup container) {
+    public void inflateViewsAndAssignControllers(ViewGroup container) {
         Context context = container.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -105,7 +109,7 @@ public class SearchModule implements SearchModuleFacade, SearchQueryHandler {
         DefaultSuggestionViewFactory suggestionViewFactory = new DefaultSuggestionViewFactory(
                 R.layout.search_suggestion,
                 this,
-                matchedTextColor);
+                new TextHighlighter(matchedTextColor));
 
         setDefaultSuggestionViewFactory(suggestionViewFactory);
 

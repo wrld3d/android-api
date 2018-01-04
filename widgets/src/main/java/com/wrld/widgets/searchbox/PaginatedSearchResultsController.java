@@ -6,9 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 import com.wrld.widgets.R;
+import com.wrld.widgets.searchbox.api.SearchResult;
+import com.wrld.widgets.searchbox.api.SearchResultViewFactory;
+import com.wrld.widgets.searchbox.api.SearchResultViewHolder;
 
 class PaginatedSearchResultsController extends BaseAdapter implements SearchResultsController {
 
@@ -106,7 +108,7 @@ class PaginatedSearchResultsController extends BaseAdapter implements SearchResu
 
     @Override
     public Object getItem(int position) {
-        return  getResult(position);
+        return getResult(position);
     }
 
     @Override

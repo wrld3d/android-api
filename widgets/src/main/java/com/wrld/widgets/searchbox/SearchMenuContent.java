@@ -4,6 +4,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.wrld.widgets.R;
+import com.wrld.widgets.searchbox.menu.SearchBoxMenuChildViewHolder;
+import com.wrld.widgets.searchbox.menu.SearchBoxMenuGroup;
+import com.wrld.widgets.searchbox.menu.SearchBoxMenuGroupViewHolder;
 import com.wrld.widgets.ui.AccordionDataProvider;
 import com.wrld.widgets.ui.AccordionItem;
 

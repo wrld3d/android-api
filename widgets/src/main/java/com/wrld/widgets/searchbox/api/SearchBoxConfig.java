@@ -1,4 +1,4 @@
-package com.wrld.widgets.searchbox;
+package com.wrld.widgets.searchbox.api;
 import android.graphics.Color;
 
 public class SearchBoxConfig {

@@ -1,26 +1,27 @@
-package com.wrld.widgets.searchbox;
+package com.wrld.widgets.searchbox.api;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.wrld.widgets.R;
+import com.wrld.widgets.ui.TextHighlighter;
 
 public class DefaultSuggestionViewFactory implements SearchResultViewFactory {
 
     private int m_layoutId;
     private SearchQueryHandler m_queryHandler;
 
-    private SuggestionTextMatchSpan m_highlighter;
+    private TextHighlighter m_highlighter;
 
     public DefaultSuggestionViewFactory(int layoutId) {
         m_layoutId = layoutId;
     }
 
-    public DefaultSuggestionViewFactory(int layoutId, SearchQueryHandler queryHandler, int matchedColor){
+    public DefaultSuggestionViewFactory(int layoutId, SearchQueryHandler queryHandler, TextHighlighter highlighter){
         m_layoutId = layoutId;
         m_queryHandler = queryHandler;
-        m_highlighter = new SuggestionTextMatchSpan(matchedColor);
+        m_highlighter = highlighter;
     }
 
     @Override
@@ -28,7 +29,7 @@ public class DefaultSuggestionViewFactory implements SearchResultViewFactory {
         return inflater.inflate(m_layoutId, parent, false);
     }
 
-    private class SearchResultViewHolder implements com.wrld.widgets.searchbox.SearchResultViewHolder {
+    private class SearchResultViewHolder implements com.wrld.widgets.searchbox.api.SearchResultViewHolder {
         private TextView m_title;
 
         public SearchResultViewHolder(){}
@@ -53,7 +54,7 @@ public class DefaultSuggestionViewFactory implements SearchResultViewFactory {
     }
 
     @Override
-    public com.wrld.widgets.searchbox.SearchResultViewHolder makeSearchResultViewHolder() {
+    public com.wrld.widgets.searchbox.api.SearchResultViewHolder makeSearchResultViewHolder() {
         return new SearchResultViewHolder();
     }
 

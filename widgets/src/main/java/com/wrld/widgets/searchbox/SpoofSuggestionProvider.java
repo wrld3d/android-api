@@ -1,10 +1,16 @@
 package com.wrld.widgets.searchbox;
 
+import com.wrld.widgets.searchbox.api.DefaultSearchResult;
+import com.wrld.widgets.searchbox.api.SearchResult;
+import com.wrld.widgets.searchbox.api.SearchResultPropertyString;
+import com.wrld.widgets.searchbox.api.SearchResultViewFactory;
+import com.wrld.widgets.searchbox.api.SuggestionProvider;
+import com.wrld.widgets.searchbox.api.SuggestionProviderBase;
 import com.wrld.widgets.searchbox.api.events.QueryCompletedCallback;
 
 import java.util.ArrayList;
 
-public class SpoofSuggestionProvider extends SuggestionProviderBase implements SuggestionProvider{
+class SpoofSuggestionProvider extends SuggestionProviderBase implements SuggestionProvider {
 
     private SearchResultViewFactory m_suggestionViewFactory;
     private ArrayList<QueryCompletedCallback> m_onSuggestionsReceivedCallback;
