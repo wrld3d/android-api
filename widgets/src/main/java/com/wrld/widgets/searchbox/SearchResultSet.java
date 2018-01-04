@@ -3,7 +3,7 @@ package com.wrld.widgets.searchbox;
 import com.wrld.widgets.searchbox.api.SearchProvider;
 import com.wrld.widgets.searchbox.api.SearchResult;
 import com.wrld.widgets.searchbox.api.SuggestionProvider;
-import com.wrld.widgets.searchbox.api.events.QueryCompletedCallback;
+import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,29 +23,29 @@ class SearchResultSet {
     private ArrayList<OnResultChanged> m_onResultChangedCallbackList;
 
     private DeregisterCallback m_deregisterCallback;
-    private QueryCompletedCallback m_queryCompletedCallback;
+    private QueryResultsReadyCallback m_queryResultsReadyCallback;
 
     public SearchResultSet() {
         m_results = new ArrayList<SearchResult>();
         m_onResultChangedCallbackList = new ArrayList<OnResultChanged>();
     }
 
-    public QueryCompletedCallback getUpdateCallback() {
-        m_queryCompletedCallback = new QueryCompletedCallback() {
+    public QueryResultsReadyCallback getUpdateCallback() {
+        m_queryResultsReadyCallback = new QueryResultsReadyCallback() {
             @Override
             public void onQueryCompleted(SearchResult[] returnedResults) {
                 updateSetResults(returnedResults);
             }
         };
 
-        return m_queryCompletedCallback;
+        return m_queryResultsReadyCallback;
     }
 
     public void createSearchProviderDeregistrationCallback(final SearchProvider provider){
         m_deregisterCallback = new DeregisterCallback(){
             @Override
             public void deregister() {
-                provider.removeSearchCompletedCallback(m_queryCompletedCallback);
+                provider.removeSearchCompletedCallback(m_queryResultsReadyCallback);
             }
         };
     }
@@ -54,7 +54,7 @@ class SearchResultSet {
         m_deregisterCallback = new DeregisterCallback(){
             @Override
             public void deregister() {
-                provider.removeSuggestionsReceivedCallback(m_queryCompletedCallback);
+                provider.removeSuggestionsReceivedCallback(m_queryResultsReadyCallback);
             }
         };
     }

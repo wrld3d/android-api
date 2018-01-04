@@ -150,13 +150,8 @@ class SearchController implements UiScreenController, UiScreenMementoOriginator<
         }
     }
 
-    public void setQuery(CharSequence query){
-        m_searchView.setText(query);
-        m_searchView.setSelection(m_searchView.getText().length());
-    }
-
-    public void setQuery(CharSequence query, boolean performSuggestion){
-        m_performSuggestionOnChange = performSuggestion;
+    public void setQueryDisplayString(CharSequence query){
+        m_performSuggestionOnChange = false;
         m_searchView.setText(query);
         m_searchView.setSelection(m_searchView.getText().length());
         m_performSuggestionOnChange = true;

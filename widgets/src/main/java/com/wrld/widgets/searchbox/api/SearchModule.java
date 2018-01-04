@@ -2,7 +2,7 @@ package com.wrld.widgets.searchbox.api;
 
 import com.wrld.widgets.searchbox.api.events.MenuVisibilityChangedCallback;
 import com.wrld.widgets.searchbox.api.events.QueryPerformedCallback;
-import com.wrld.widgets.searchbox.api.events.QueryCompletedCallback;
+import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
 import com.wrld.widgets.searchbox.api.events.SearchResultSelectedCallback;
 import com.wrld.widgets.searchbox.menu.SearchBoxMenuGroup;
 
@@ -24,11 +24,11 @@ public interface SearchModule extends SearchQueryHandler {
     void addSuggestionsRequestedCallback(QueryPerformedCallback queryPerformedCallback);
     void removeSuggestionsRequestedCallback(QueryPerformedCallback queryPerformedCallback);
 
-    void addSearchCompletedCallback(QueryCompletedCallback queryCompletedCallback);
-    void removeSearchCompletedCallback(QueryCompletedCallback queryCompletedCallback);
+    void addSearchCompletedCallback(QueryResultsReadyCallback queryResultsReadyCallback);
+    void removeSearchCompletedCallback(QueryResultsReadyCallback queryResultsReadyCallback);
 
-    void addSuggestionsReturnedCallback(QueryCompletedCallback queryCompletedCallback);
-    void removeSuggestionsReturnedCallback(QueryCompletedCallback queryCompletedCallback);
+    void addSuggestionsReturnedCallback(QueryResultsReadyCallback queryResultsReadyCallback);
+    void removeSuggestionsReturnedCallback(QueryResultsReadyCallback queryResultsReadyCallback);
 
     void addMenuVisibilityCallback(MenuVisibilityChangedCallback menuVisibilityChangedCallback);
     void removeMenuVisibilityChangedCallback(MenuVisibilityChangedCallback menuVisibilityChangedCallback);

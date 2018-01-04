@@ -6,14 +6,14 @@ import com.wrld.widgets.searchbox.api.SearchResultPropertyString;
 import com.wrld.widgets.searchbox.api.SearchResultViewFactory;
 import com.wrld.widgets.searchbox.api.SuggestionProvider;
 import com.wrld.widgets.searchbox.api.SuggestionProviderBase;
-import com.wrld.widgets.searchbox.api.events.QueryCompletedCallback;
+import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
 
 import java.util.ArrayList;
 
 class SpoofSuggestionProvider extends SuggestionProviderBase implements SuggestionProvider {
 
     private SearchResultViewFactory m_suggestionViewFactory;
-    private ArrayList<QueryCompletedCallback> m_onSuggestionsReceivedCallback;
+    private ArrayList<QueryResultsReadyCallback> m_onSuggestionsReceivedCallback;
 
     private final String LOREM_IPSUM =
             "ex vis nusquam tincidunt, Lorem ipsum dolor sit amet.";
@@ -28,39 +28,29 @@ class SpoofSuggestionProvider extends SuggestionProviderBase implements Suggesti
     }
 
     @Override
-    public void getSuggestions(String query) {
+    public void getSuggestions(com.wrld.widgets.searchbox.api.Query query) {
 
         int numResults = 5;
 
         SearchResult[] results = new SearchResult[numResults];
         results[0] = new DefaultSearchResult(m_title + " " + query);
         for(int i = 1; i < numResults; ++i){
-            results[i] = generateDebugSuggestion(i, query);
+            results[i] = generateDebugSuggestion(i, query.getQueryString());
         }
 
         performSuggestionCompletedCallbacks(results);
     }
 
     @Override
-    public void getSearchResults(String query) {
+    public void getSearchResults(com.wrld.widgets.searchbox.api.Query query) {
         int numResults = 100;
         SearchResult[] results = new SearchResult[numResults];
         results[0] = new DefaultSearchResult(m_title + ": " + query, new SearchResultPropertyString("Description", LOREM_IPSUM));
         for(int i = 1; i < numResults; ++i){
-            results[i] = generateDebugResult(i, query);
+            results[i] = generateDebugResult(i, query.getQueryString());
         }
 
         performSearchCompletedCallbacks(results);
-    }
-
-    @Override
-    public boolean hasActiveRequest() {
-        return false;
-    }
-
-    @Override
-    public void cancelActiveRequest() {
-
     }
 
     private SearchResult generateDebugResult(int id, String query)

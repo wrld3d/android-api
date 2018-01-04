@@ -66,7 +66,7 @@ class SearchModuleController {
         doShowElement(m_searchResultScreenController);
         if(caller != m_searchController){
             doHideElement(caller);
-            m_searchController.setQuery(query, false);
+            m_searchController.setQueryDisplayString(query);
         }
         m_searchResultScreenController.showResults();
         m_searchQueryHandler.searchFor(query);
@@ -107,13 +107,17 @@ class SearchModuleController {
     public void autocompleteSelection(UiScreenController caller, SearchResult result){
         m_searchController.clear();
         doSearch(caller, result.getTitle());
-        for(SearchResultSelectedCallback callback : m_suggestionSelectedCallbacks){
+        SearchResultSelectedCallback callbacks [] = new SearchResultSelectedCallback[m_suggestionSelectedCallbacks.size()];
+        m_suggestionSelectedCallbacks.toArray(callbacks);
+        for(SearchResultSelectedCallback callback : callbacks){
             callback.onSelection(result);
         }
     }
 
     public void focusOnResult(UiScreenController caller, SearchResult result){
-        for(SearchResultSelectedCallback callback : m_searchResultSelectedCallbacks){
+        SearchResultSelectedCallback callbacks [] = new SearchResultSelectedCallback[m_searchResultSelectedCallbacks.size()];
+        m_searchResultSelectedCallbacks.toArray(callbacks);
+        for(SearchResultSelectedCallback callback : callbacks){
             callback.onSelection(result);
         }
     }

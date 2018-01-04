@@ -1,15 +1,13 @@
 package com.wrld.widgets.searchbox.api;
 
-import com.wrld.widgets.searchbox.api.events.QueryCompletedCallback;
+import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
 
 public interface SuggestionProvider extends SearchProvider {
-
     String getSuggestionTitleFormatting();
+    void getSuggestions(com.wrld.widgets.searchbox.api.Query query);
 
-    void getSuggestions(String text);
-
-    void addSuggestionsReceivedCallback(QueryCompletedCallback queryCompletedCallback);
-    void removeSuggestionsReceivedCallback(QueryCompletedCallback queryCompletedCallback);
+    void addSuggestionsReceivedCallback(QueryResultsReadyCallback queryResultsReadyCallback);
+    void removeSuggestionsReceivedCallback(QueryResultsReadyCallback queryResultsReadyCallback);
 
     void setSuggestionViewFactory(SearchResultViewFactory factory);
     SearchResultViewFactory getSuggestionViewFactory();

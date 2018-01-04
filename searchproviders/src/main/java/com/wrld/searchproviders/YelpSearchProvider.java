@@ -13,6 +13,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.eegeo.mapapi.EegeoMap;
 import com.eegeo.mapapi.geometry.LatLngAlt;
 import com.wrld.widgets.searchbox.api.DefaultSearchResult;
+import com.wrld.widgets.searchbox.api.Query;
 import com.wrld.widgets.searchbox.api.SearchResult;
 import com.wrld.widgets.searchbox.api.SuggestionProviderBase;
 
@@ -60,7 +61,7 @@ public class YelpSearchProvider extends SuggestionProviderBase {
 
     private enum SearchType {SEARCH, AUTOCOMPLETE};
     private SearchType m_deferredSearchType;
-    private String m_deferredQuery;
+    private Query m_deferredQuery;
 
     private RequestQueue m_requestQueue;
 
@@ -132,7 +133,7 @@ public class YelpSearchProvider extends SuggestionProviderBase {
             m_authHeaders = new HashMap<String, String>();
             m_authHeaders.put("Authorization", "Bearer " + accessToken);
 
-            if(!TextUtils.isEmpty(m_deferredQuery)){
+            if(m_deferredQuery != null){
                 sendDeferredQuery();
             }
         }
@@ -143,19 +144,20 @@ public class YelpSearchProvider extends SuggestionProviderBase {
     }
 
     @Override
-    public void getSearchResults(String query) {
+    public void getSearchResults(Query query) {
 
         if(isAuthenticated()) {
 
             LatLngAlt cameraPosition = m_map.getCameraPosition().target;
 
+            String queryText = query.getQueryString();
             try {
-                query = URLEncoder.encode(query, "utf-8");
+                queryText = URLEncoder.encode(queryText, "utf-8");
             }
             catch (UnsupportedEncodingException ex){
                 m_errorHandler.handleError(R.string.yelp_search_error_title, R.string.yelp_error_badly_formatted_query);
             }
-            String queryUrl = m_searchUrl + queryParams(query, cameraPosition, m_searchRadiusInMeters);
+            String queryUrl = m_searchUrl + queryParams(queryText, cameraPosition, m_searchRadiusInMeters);
 
             m_currentRequest = new VolleyStringRequestBuilder(
                     Request.Method.GET, queryUrl, m_searchResponseListener)
@@ -173,19 +175,7 @@ public class YelpSearchProvider extends SuggestionProviderBase {
     }
 
     @Override
-    public boolean hasActiveRequest() {
-        return m_currentRequest != null && m_currentRequest.hasHadResponseDelivered();
-    }
-
-    @Override
-    public void cancelActiveRequest() {
-        if(hasActiveRequest()){
-            m_currentRequest.cancel();
-        }
-    }
-
-    @Override
-    public void getSuggestions(String text) {
+    public void getSuggestions(Query query) {
 
         if(isAuthenticated()) {
 
@@ -194,15 +184,15 @@ public class YelpSearchProvider extends SuggestionProviderBase {
             }
 
             LatLngAlt cameraPosition = m_map.getCameraPosition().target;
-
+            String queryString = query.getQueryString();
             try {
-                text = URLEncoder.encode(text, "utf-8");
+                queryString = URLEncoder.encode(queryString, "utf-8");
             }
             catch (UnsupportedEncodingException ex){
                 return;
             }
 
-            String queryUrl = m_autocompleteUrl + queryParams(text, cameraPosition);
+            String queryUrl = m_autocompleteUrl + queryParams(queryString, cameraPosition);
 
             m_currentRequest = new VolleyStringRequestBuilder(
                     Request.Method.GET, queryUrl, m_autocompleteResponseListener)
@@ -212,7 +202,7 @@ public class YelpSearchProvider extends SuggestionProviderBase {
             m_requestQueue.add(m_currentRequest);
         }
         else {
-            m_deferredQuery = text;
+            m_deferredQuery = query;
             m_deferredSearchType = SearchType.AUTOCOMPLETE;
             handleUnauthorisedRequest();
         }

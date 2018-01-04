@@ -1,11 +1,11 @@
 package com.wrld.widgets.searchbox.api;
 
-import com.wrld.widgets.searchbox.api.events.QueryCompletedCallback;
+import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
 
 import java.util.ArrayList;
 
 public abstract class SearchProviderBase implements SearchProvider {
-    private ArrayList<QueryCompletedCallback> m_searchCompletedCallbacks;
+    private ArrayList<QueryResultsReadyCallback> m_searchCompletedCallbacks;
 
     private SearchResultViewFactory m_resultViewFactory;
 
@@ -13,25 +13,27 @@ public abstract class SearchProviderBase implements SearchProvider {
 
     public SearchProviderBase(String title){
         m_title = title;
-        m_searchCompletedCallbacks = new ArrayList<QueryCompletedCallback>();
+        m_searchCompletedCallbacks = new ArrayList<QueryResultsReadyCallback>();
     }
 
     @Override
     public String getTitle() {return m_title;}
 
     @Override
-    public void addSearchCompletedCallback(QueryCompletedCallback queryCompletedCallback) {
-        m_searchCompletedCallbacks.add(queryCompletedCallback);
+    public void addSearchCompletedCallback(QueryResultsReadyCallback queryResultsReadyCallback) {
+        m_searchCompletedCallbacks.add(queryResultsReadyCallback);
     }
 
     @Override
-    public void removeSearchCompletedCallback(QueryCompletedCallback queryCompletedCallback) {
-        m_searchCompletedCallbacks.remove(queryCompletedCallback);
+    public void removeSearchCompletedCallback(QueryResultsReadyCallback queryResultsReadyCallback) {
+        m_searchCompletedCallbacks.remove(queryResultsReadyCallback);
     }
 
     protected void performSearchCompletedCallbacks(SearchResult[] results){
-        for(QueryCompletedCallback queryCompletedCallback : m_searchCompletedCallbacks) {
-            queryCompletedCallback.onQueryCompleted(results);
+        QueryResultsReadyCallback[] queryResultsReadyCallbacks = new QueryResultsReadyCallback[m_searchCompletedCallbacks.size()];
+        m_searchCompletedCallbacks.toArray(queryResultsReadyCallbacks);
+        for(QueryResultsReadyCallback queryResultsReadyCallback : queryResultsReadyCallbacks) {
+            queryResultsReadyCallback.onQueryCompleted(results);
         }
     }
 

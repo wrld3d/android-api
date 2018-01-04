@@ -1,31 +1,33 @@
 package com.wrld.widgets.searchbox.api;
 
-import com.wrld.widgets.searchbox.api.events.QueryCompletedCallback;
+import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
 
 import java.util.ArrayList;
 
 public abstract class SuggestionProviderBase extends SearchProviderBase implements SuggestionProvider {
     private SearchResultViewFactory m_suggestionViewFactory;
-    private ArrayList<QueryCompletedCallback> m_suggestionsReceivedCallbacks;
+    private ArrayList<QueryResultsReadyCallback> m_suggestionsReceivedCallbacks;
 
     public SuggestionProviderBase(String title) {
         super(title);
-        m_suggestionsReceivedCallbacks = new ArrayList<QueryCompletedCallback>();
+        m_suggestionsReceivedCallbacks = new ArrayList<QueryResultsReadyCallback>();
     }
 
     @Override
-    public void addSuggestionsReceivedCallback(QueryCompletedCallback queryCompletedCallback) {
-        m_suggestionsReceivedCallbacks.add(queryCompletedCallback);
+    public void addSuggestionsReceivedCallback(QueryResultsReadyCallback queryResultsReadyCallback) {
+        m_suggestionsReceivedCallbacks.add(queryResultsReadyCallback);
     }
 
     @Override
-    public void removeSuggestionsReceivedCallback(QueryCompletedCallback queryCompletedCallback) {
-        m_suggestionsReceivedCallbacks.remove(queryCompletedCallback);
+    public void removeSuggestionsReceivedCallback(QueryResultsReadyCallback queryResultsReadyCallback) {
+        m_suggestionsReceivedCallbacks.remove(queryResultsReadyCallback);
     }
 
     protected void performSuggestionCompletedCallbacks(SearchResult[] results){
-        for(QueryCompletedCallback queryCompletedCallback : m_suggestionsReceivedCallbacks) {
-            queryCompletedCallback.onQueryCompleted(results);
+        QueryResultsReadyCallback[] queryResultsReadyCallbacks = new QueryResultsReadyCallback[m_suggestionsReceivedCallbacks.size()];
+        m_suggestionsReceivedCallbacks.toArray(queryResultsReadyCallbacks);
+        for(QueryResultsReadyCallback queryResultsReadyCallback : queryResultsReadyCallbacks) {
+            queryResultsReadyCallback.onQueryCompleted(results);
         }
     }
 

@@ -1,15 +1,13 @@
 package com.wrld.widgets.searchbox.api;
 
-import com.wrld.widgets.searchbox.api.events.QueryCompletedCallback;
+import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
 
 public interface SearchProvider {
     String getTitle();
-    void getSearchResults(String query);
-    boolean hasActiveRequest();
-    void cancelActiveRequest();
+    void getSearchResults(Query query);
 
-    void addSearchCompletedCallback(QueryCompletedCallback queryCompletedCallback);
-    void removeSearchCompletedCallback(QueryCompletedCallback queryCompletedCallback);
+    void addSearchCompletedCallback(QueryResultsReadyCallback queryResultsReadyCallback);
+    void removeSearchCompletedCallback(QueryResultsReadyCallback queryResultsReadyCallback);
 
     void setResultViewFactory(SearchResultViewFactory factory);
     SearchResultViewFactory getResultViewFactory();

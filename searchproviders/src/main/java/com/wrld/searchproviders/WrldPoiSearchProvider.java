@@ -10,6 +10,7 @@ import com.eegeo.mapapi.services.poi.PoiSearchResponse;
 import com.eegeo.mapapi.services.poi.PoiSearchResult;
 import com.eegeo.mapapi.services.poi.PoiService;
 import com.eegeo.mapapi.services.poi.TextSearchOptions;
+import com.wrld.widgets.searchbox.api.Query;
 import com.wrld.widgets.searchbox.api.SearchResult;
 import com.wrld.widgets.searchbox.api.SuggestionProviderBase;
 
@@ -75,7 +76,7 @@ public class WrldPoiSearchProvider extends SuggestionProviderBase {
     }
 
     @Override
-    public void getSearchResults(String query) {
+    public void getSearchResults(Query query) {
 
         PoiSearchListener listener = new PoiSearchListener(
                 new SearchCompleteCallback() {
@@ -87,29 +88,14 @@ public class WrldPoiSearchProvider extends SuggestionProviderBase {
         );
 
         m_currentSearch = m_poiService.searchText(
-                new TextSearchOptions(query, m_map.getCameraPosition().target.toLatLng())
+                new TextSearchOptions(query.getQueryString(), m_map.getCameraPosition().target.toLatLng())
                         .radius(1000.0)
                         .number(60)
                         .onPoiSearchCompletedListener(listener));
     }
 
     @Override
-    public boolean hasActiveRequest() {
-        return m_currentSearch != null;
-    }
-
-    @Override
-    public void cancelActiveRequest() {
-        if(m_currentSearch != null){
-            m_currentSearch.cancel();
-        }
-    }
-
-    @Override
-    public void getSuggestions(String query) {
-
-        //TODO test poi search invokes callbacks
-        //TODO test poi search response without network
+    public void getSuggestions(Query query) {
 
         if(m_currentSearch != null){
             m_currentSearch.cancel();
@@ -125,7 +111,7 @@ public class WrldPoiSearchProvider extends SuggestionProviderBase {
         );
 
         m_currentSearch = m_poiService.searchAutocomplete(
-                new AutocompleteOptions(query, m_map.getCameraPosition().target.toLatLng())
+                new AutocompleteOptions(query.getQueryString(), m_map.getCameraPosition().target.toLatLng())
                         .number(5)
                         .onPoiSearchCompletedListener(listener));
     }

@@ -18,26 +18,16 @@ class SpoofSearchProvider extends SearchProviderBase {
     }
 
     @Override
-    public void getSearchResults(String query) {
+    public void getSearchResults(com.wrld.widgets.searchbox.api.Query query) {
 
         int numResults = 100;
         SearchResult[] results = new SearchResult[numResults];
         results[0] = new DefaultSearchResult(m_title + ": " + query, new SearchResultPropertyString("Description", LOREM_IPSUM));
         for(int i = 1; i < numResults; ++i){
-            results[i] = generateDebugResult(i, query);
+            results[i] = generateDebugResult(i, query.getQueryString());
         }
 
         performSearchCompletedCallbacks(results);
-    }
-
-    @Override
-    public boolean hasActiveRequest() {
-        return false;
-    }
-
-    @Override
-    public void cancelActiveRequest() {
-
     }
 
     private SearchResult generateDebugResult(int id, String query)

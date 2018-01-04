@@ -58,9 +58,7 @@ class SearchMenuController implements UiScreenController, UiScreenMementoOrigina
                 m_accordion.expandGroup(0);
                 m_rootContainer.setVisibility(View.VISIBLE);
                 m_screenState = ScreenState.VISIBLE;
-                for(MenuVisibilityChangedCallback callback : m_menuVisibilityChangedCallbacks){
-                    callback.onMenuVisibilityChange(true);
-                }
+                invokeMenuVisibilityChangedCallbacks(m_screenState == ScreenState.VISIBLE);
             }
         };
 
@@ -70,13 +68,20 @@ class SearchMenuController implements UiScreenController, UiScreenMementoOrigina
                 super.start();
                 m_rootContainer.setVisibility(View.GONE);
                 m_screenState = ScreenState.GONE;
-                for(MenuVisibilityChangedCallback callback : m_menuVisibilityChangedCallbacks){
-                    callback.onMenuVisibilityChange(false);
-                }
+                invokeMenuVisibilityChangedCallbacks(m_screenState == ScreenState.VISIBLE);
             }
         };
 
         m_menuVisibilityChangedCallbacks = new ArrayList<MenuVisibilityChangedCallback> ();
+    }
+
+    private void invokeMenuVisibilityChangedCallbacks(boolean isVisible){
+
+        MenuVisibilityChangedCallback[] callbacks = new MenuVisibilityChangedCallback[m_menuVisibilityChangedCallbacks.size()];
+        m_menuVisibilityChangedCallbacks.toArray(callbacks);
+        for(MenuVisibilityChangedCallback callback : callbacks){
+            callback.onMenuVisibilityChange(isVisible);
+        }
     }
 
     @Override
