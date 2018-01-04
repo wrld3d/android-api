@@ -6,14 +6,14 @@
     android:layout_height="0dp"
     android:layout_marginTop="@dimen/search_padding"
     android:layout_weight="1.0"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/searchbox_background">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/searchbox_set_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1.0"
-        android:orientation="vertical">
+        android:layout_weight="1.0">
 
         <ProgressBar
             android:id="@+id/searchbox_set_search_in_progress_view"
@@ -30,14 +30,25 @@
             android:footerDividersEnabled="false"
             android:headerDividersEnabled="false" />
 
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/search_suggestions_shadow_size"
+            android:layout_alignParentBottom="true"
+            android:rotation="0"
+            android:scaleType="fitXY"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/gradientshadow" />
 
-    </LinearLayout>
+    </RelativeLayout>
+
+
 
     <LinearLayout
         android:id="@+id/searchbox_set_footer"
         android:layout_width="match_parent"
         android:layout_height="@dimen/search_results_footer_height"
-        android:background="@color/searchbox_background"
+        android:background="@color/searchbox_autcomplete_list_header_background"
         android:minHeight="@dimen/search_results_footer_height"
         android:orientation="vertical">
 
@@ -60,7 +71,8 @@
                 android:id="@+id/searchbox_set_expand_info"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/search_results_text_area_height"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textColor="@color/searchbox_link"/>
         </LinearLayout>
 
         <LinearLayout
@@ -95,6 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/search_results_text_area_height"
                 android:gravity="end"
+                android:textColor="@color/searchbox_link"
                 android:textAlignment="textEnd" />
         </LinearLayout>
     </LinearLayout>

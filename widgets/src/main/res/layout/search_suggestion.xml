@@ -24,6 +24,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginRight="@dimen/search_suggestions_result_horizontal_padding"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:textColor="@color/searchbox_autcomplete_list_header_font_unmatched"
         android:textSize="@dimen/font_size_title" />
 </LinearLayout>

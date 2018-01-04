@@ -22,6 +22,8 @@
         android:layout_toRightOf="@id/search_result_icon"
         android:layout_width="match_parent"
         android:layout_height="18dp"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:textSize="@dimen/font_size_title"
         android:textColor="@color/searchbox_autcomplete_list_header_font_matched"/>
 
@@ -31,6 +33,8 @@
         android:layout_below="@id/search_result_title"
         android:layout_width="match_parent"
         android:layout_height="14dp"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:textSize="@dimen/font_size_subtitle"
         android:textColor="@color/searchbox_autcomplete_list_header_font_unmatched"/>
 
