@@ -46,7 +46,7 @@ class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, Searc
 
     private Query m_currentQuery;
 
-    private CurrentQueryResultsObserver m_currentQueryResultsObserver;
+    private CurrentQueryObserver m_currentQueryObserver;
 
     public SearchModule() {
         m_searchProviders                   = new SearchProvider[0];
@@ -58,7 +58,7 @@ class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, Searc
         m_queryPerformedCallbacks           = new ArrayList<QueryPerformedCallback> ();
         m_suggestionPerformedCallbacks      = new ArrayList<QueryPerformedCallback> ();
 
-        m_currentQueryResultsObserver = new CurrentQueryResultsObserver();
+        m_currentQueryObserver = new CurrentQueryObserver();
     }
 
     public void inflateViewsAndAssignControllers(ViewGroup container) {
@@ -136,7 +136,7 @@ class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, Searc
             m_searchProviderSets.add(searchResultSet);
         }
 
-        m_currentQueryResultsObserver.registerWithSearchProviders(searchProviders);
+        m_currentQueryObserver.registerWithSearchProviders(searchProviders);
 
         m_searchProviders = searchProviders;
     }
@@ -161,7 +161,7 @@ class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, Searc
             m_suggestionProviderSets.add(searchResultSet);
         }
 
-        m_currentQueryResultsObserver.registerWithSuggestionProviders(suggestionProviders);
+        m_currentQueryObserver.registerWithSuggestionProviders(suggestionProviders);
 
         m_suggestionProviders = suggestionProviders;
     }
@@ -205,22 +205,22 @@ class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, Searc
 
     @Override
     public void addSearchCompletedCallback(QueryResultsReadyCallback queryResultsReadyCallback) {
-        m_currentQueryResultsObserver.addSearchCompletedCallback(queryResultsReadyCallback);
+        m_currentQueryObserver.addSearchCompletedCallback(queryResultsReadyCallback);
     }
 
     @Override
     public void removeSearchCompletedCallback(QueryResultsReadyCallback queryResultsReadyCallback) {
-        m_currentQueryResultsObserver.removeSearchCompletedCallback(queryResultsReadyCallback);
+        m_currentQueryObserver.removeSearchCompletedCallback(queryResultsReadyCallback);
     }
 
     @Override
     public void addSuggestionsReturnedCallback(QueryResultsReadyCallback queryResultsReadyCallback) {
-        m_currentQueryResultsObserver.addSuggestionsReturnedCallback(queryResultsReadyCallback);
+        m_currentQueryObserver.addSuggestionsReturnedCallback(queryResultsReadyCallback);
     }
 
     @Override
     public void removeSuggestionsReturnedCallback(QueryResultsReadyCallback queryResultsReadyCallback) {
-        m_currentQueryResultsObserver.removeSuggestionsReturnedCallback(queryResultsReadyCallback);
+        m_currentQueryObserver.removeSuggestionsReturnedCallback(queryResultsReadyCallback);
     }
 
     @Override
@@ -262,8 +262,8 @@ class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, Searc
             m_currentQuery.cancel();
         }
 
-        m_currentQuery = new Query(queryText, m_currentQueryResultsObserver.onAllResultsReturned(), m_searchProviders.length);
-        m_currentQueryResultsObserver.setCurrentQuery(m_currentQuery);
+        m_currentQuery = new Query(queryText, m_currentQueryObserver.onAllResultsReturned(), m_searchProviders.length);
+        m_currentQueryObserver.setCurrentQuery(m_currentQuery);
 
         for(SearchProvider provider : m_searchProviders){
             provider.getSearchResults(m_currentQuery);
@@ -283,8 +283,8 @@ class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, Searc
             m_currentQuery.cancel();
         }
 
-        m_currentQuery = new Query(text, m_currentQueryResultsObserver.onAllSuggestionsReturned(), m_suggestionProviders.length);
-        m_currentQueryResultsObserver.setCurrentQuery(m_currentQuery);
+        m_currentQuery = new Query(text, m_currentQueryObserver.onAllSuggestionsReturned(), m_suggestionProviders.length);
+        m_currentQueryObserver.setCurrentQuery(m_currentQuery);
 
         for(SuggestionProvider provider : m_suggestionProviders){
             provider.getSuggestions(m_currentQuery);

@@ -7,7 +7,7 @@ import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
 
 import java.util.ArrayList;
 
-class CurrentQueryResultsObserver {
+class CurrentQueryObserver {
     private Query m_currentQuery;
 
     private ArrayList<RemoveCallbackFromProvider> m_searchProviderCallbackDeregistrations;
@@ -26,7 +26,7 @@ class CurrentQueryResultsObserver {
         void removeFromProvider();
     }
 
-    public CurrentQueryResultsObserver(){
+    public CurrentQueryObserver(){
         m_onAllResultsReturned = createOnAllResultsReturnedCallback();
         m_onAllSuggestionsReturned = createOnAllSuggestionsReturnedCallback();
 
