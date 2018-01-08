@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.wrld.widgets.R;
@@ -39,7 +40,7 @@ class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, Searc
 
     private SearchMenuContent m_menuContent;
 
-    private TextView m_queryDisplay;
+    private SearchView m_queryDisplay;
 
     private ArrayList<QueryPerformedCallback> m_queryPerformedCallbacks;
     private ArrayList<QueryPerformedCallback> m_suggestionPerformedCallbacks;
@@ -77,7 +78,7 @@ class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, Searc
         inflater.inflate(R.layout.searchbox_query, searchContainer);
         SearchController searchController = new SearchController(searchContainer, m_searchModuleController);
         m_searchModuleController.setQueryBoxController(searchController);
-        m_queryDisplay = (TextView) searchContainer.findViewById(R.id.searchbox_search_querybox);
+        m_queryDisplay = (SearchView) searchContainer.findViewById(R.id.searchbox_search_searchview);
 
         SearchResultScreenController resultSetController = new SearchResultScreenController(
                 root,
@@ -300,6 +301,6 @@ class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, Searc
 
     @Override
     public CharSequence getCurrentQuery(){
-        return m_queryDisplay.getText();
+        return m_queryDisplay.getQuery();
     }
 }

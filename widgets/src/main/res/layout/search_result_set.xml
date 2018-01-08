@@ -28,7 +28,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:footerDividersEnabled="false"
-            android:headerDividersEnabled="false" />
+            android:headerDividersEnabled="false"
+            android:scrollbarFadeDuration="0"
+            android:requiresFadingEdge="vertical"
+            android:fadingEdgeLength="96dp"
+            android:background="@android:color/darker_gray"
+            android:fadeScrollbars="false"/>
 
         <ImageView
             android:id="@+id/imageView"

@@ -12,6 +12,7 @@ import android.view.animation.Animation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.wrld.widgets.R;
@@ -23,8 +24,7 @@ import com.wrld.widgets.ui.UiScreenVisibilityState;
 class SearchController implements UiScreenController, UiScreenMementoOriginator<UiScreenVisibilityState> {
 
     private View m_rootView;
-    private EditText m_searchView;
-    private View m_clearText;
+    private SearchView m_searchView;
 
     private Animation m_showAnim;
     private Animation m_hideAnim;
@@ -43,36 +43,30 @@ class SearchController implements UiScreenController, UiScreenMementoOriginator<
         m_performSuggestionOnChange = true;
 
         m_rootView = searchBoxRootContainer;
-        m_searchView = (EditText) searchBoxRootContainer.findViewById(R.id.searchbox_search_querybox);
-        m_clearText = searchBoxRootContainer.findViewById(R.id.searchbox_search_clear);
+        m_searchView = (SearchView) searchBoxRootContainer.findViewById(R.id.searchbox_search_searchview);
 
         final UiScreenController selfAsScreenController = this;
 
-        m_searchView.addTextChangedListener(
-            new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        m_searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                                                @Override
+                                                public boolean onQueryTextSubmit(String query) {
+                                                    performSearch();
+                                                    return true;
+                                                }
 
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if (!TextUtils.isEmpty(s)) {
-                        if(m_performSuggestionOnChange) {
-                            m_searchModuleMediator.doAutocomplete(s.toString());
-                        }
-                        m_clearText.setVisibility(View.VISIBLE);
-                    }
-                    else {
-                        m_searchModuleMediator.hideResults(selfAsScreenController);
-                        m_clearText.setVisibility(View.GONE);
-                    }
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                }
-            }
+                                                @Override
+                                                public boolean onQueryTextChange(String newText) {
+                                                    if (!TextUtils.isEmpty(newText)) {
+                                                        if(m_performSuggestionOnChange) {
+                                                            m_searchModuleMediator.doAutocomplete(newText);
+                                                        }
+                                                    }
+                                                    else {
+                                                        m_searchModuleMediator.hideResults(selfAsScreenController);
+                                                    }
+                                                    return false;
+                                                }
+                                            }
         );
 
         m_searchView.setOnFocusChangeListener(new OnFocusChangeListener() {
@@ -81,32 +75,6 @@ class SearchController implements UiScreenController, UiScreenMementoOriginator<
                 if (!hasFocus) {
                     hideKeyboard();
                 }
-            }
-        });
-
-        m_clearText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clear();
-            }
-        });
-        m_clearText.setVisibility(View.GONE);
-
-        m_searchView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    performSearch();
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        final View performSearchButton = searchBoxRootContainer.findViewById(R.id.searchbox_search_perform);
-        performSearchButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                performSearch();
             }
         });
 
@@ -144,21 +112,20 @@ class SearchController implements UiScreenController, UiScreenMementoOriginator<
 
     private void performSearch(){
         m_searchView.clearFocus();
-        if(!TextUtils.isEmpty(m_searchView.getText()))
+        if(!TextUtils.isEmpty(m_searchView.getQuery()))
         {
-            m_searchModuleMediator.doSearch(this, m_searchView.getText().toString());
+            m_searchModuleMediator.doSearch(this, m_searchView.getQuery().toString());
         }
     }
 
     public void setQueryDisplayString(CharSequence query){
         m_performSuggestionOnChange = false;
-        m_searchView.setText(query);
-        m_searchView.setSelection(m_searchView.getText().length());
+        m_searchView.setQuery(query, false);
         m_performSuggestionOnChange = true;
     }
 
     public void clear(){
-        m_searchView.setText("");
+        m_searchView.setQuery("", false);
         m_searchView.clearFocus();
     }
 
