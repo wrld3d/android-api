@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wrld.widgets.R;
@@ -39,13 +40,22 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
     private class GroupFooterViewHolder {
 
         private TextView m_text;
+        private ImageView m_icon;
 
         public GroupFooterViewHolder(View view) {
             m_text = (TextView)view.findViewById(R.id.searchbox_set_expand_info);
+            m_icon = (ImageView)view.findViewById(R.id.searchbox_set_expand_button);
         }
 
-        public void setText(String text){
-            m_text.setText(text);
+        public void configure(SearchResultSet set){
+            if(set.isExpanded()){
+                m_text.setText("Back");
+                m_icon.setImageResource(R.drawable.back_btn);
+            }
+            else{
+                m_text.setText("See More results (" + (set.getResultCount() - set.getVisibleResultCount()) + ") results");
+                m_icon.setImageResource(R.drawable.moreresults_butn);
+            }
         }
     }
 
@@ -82,7 +92,9 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return m_sets.getChildrenInSetCount(groupPosition) + 1;
+
+        SearchResultSet set = m_sets.getSet(groupPosition);
+        return set.getVisibleResultCount() + (set.hasFooter() ? 1 : 0);
     }
 
     @Override
@@ -123,7 +135,8 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
             convertView.setTag(viewHolder);
         }
 
-        ((GroupHeaderViewHolder)convertView.getTag()).showProgressBar(!isExpanded);
+        GroupHeaderViewHolder viewHolder = (GroupHeaderViewHolder)convertView.getTag();
+        viewHolder.showProgressBar(!isExpanded);
 
         return convertView;
     }
@@ -131,8 +144,9 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent){
 
+        SearchResultSet set = m_sets.getSet(groupPosition);
         if(convertView == null) {
-            if(isLastChild){
+            if(isLastChild && set.hasFooter()){
                 convertView = m_inflater.inflate(R.layout.search_result_group_footer, parent, false);
                 GroupFooterViewHolder footerViewHolder = new GroupFooterViewHolder(convertView);
                 convertView.setTag(footerViewHolder);
@@ -148,14 +162,13 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
             }
         }
 
-        if(!isLastChild) {
-            SearchResult searchResult = m_sets.getResultAtIndex(groupPosition, childPosition);
-            ((SearchResultViewHolder) convertView.getTag()).populate(searchResult);
+        if(isLastChild && set.hasFooter() ) {
+            GroupFooterViewHolder footerViewHolder = ((GroupFooterViewHolder) convertView.getTag());
+            footerViewHolder.configure(set);
         }
         else{
-            SearchResultSet set = m_sets.getSet(groupPosition);
-            GroupFooterViewHolder footerViewHolder = ((GroupFooterViewHolder) convertView.getTag());
-            footerViewHolder.setText("See More results (" + (set.getResultCount() - set.getVisibleResultCount()) + ") results");
+            SearchResult searchResult = m_sets.getResultAtIndex(groupPosition, childPosition);
+            ((SearchResultViewHolder) convertView.getTag()).populate(searchResult);
         }
 
         return convertView;
@@ -163,8 +176,9 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
 
     @Override
     public int getChildType(int groupPosition, int childPosition){
+        SearchResultSet set = m_sets.getSet(groupPosition);
         int childrenInSet = m_sets.getChildrenInSetCount(groupPosition);
-        if(childPosition == childrenInSet){
+        if(set.hasFooter() && childPosition == childrenInSet){
             return m_viewFactories.size();
         }
         return groupPosition;

@@ -28,17 +28,19 @@ class SearchResultSet {
 
     private int m_collapsedResults = 3;
 
-    private ExpansionState m_expansionState = ExpansionState.HIDDEN;
+    private ExpansionState m_expansionState;
 
     public SearchResultSet() {
         m_results = new ArrayList<SearchResult>();
         m_onResultChangedCallbackList = new ArrayList<OnResultChanged>();
+        m_expansionState = ExpansionState.COLLAPSED;
     }
 
     public SearchResultSet(int collapsedResults) {
         m_results = new ArrayList<SearchResult>();
         m_onResultChangedCallbackList = new ArrayList<OnResultChanged>();
         m_collapsedResults = collapsedResults;
+        m_expansionState = ExpansionState.COLLAPSED;
     }
 
     public QueryResultsReadyCallback getUpdateCallback() {
@@ -73,10 +75,7 @@ class SearchResultSet {
     public void updateSetResults(SearchResult[] results) {
         m_results.clear();
         m_results.addAll(Arrays.asList(results));
-
-        for(OnResultChanged callback:m_onResultChangedCallbackList){
-            callback.invoke();
-        }
+        notifyObserversOnResultsChange();
     }
 
     public SearchResult getResult(int index) {
@@ -85,10 +84,7 @@ class SearchResultSet {
 
     public void setExpansionState(ExpansionState state){
         m_expansionState = state;
-
-        for(OnResultChanged callback:m_onResultChangedCallbackList){
-            callback.invoke();
-        }
+        notifyObserversOnResultsChange();
     }
 
     public int getVisibleResultCount() {
@@ -139,5 +135,25 @@ class SearchResultSet {
 
     public void addOnResultChangedHandler(OnResultChanged callback) {
         m_onResultChangedCallbackList.add(callback);
+    }
+
+    public boolean isExpanded(){
+        return m_expansionState == ExpansionState.EXPANDED;
+    }
+
+    public boolean hasFooter(){
+        if(m_expansionState == ExpansionState.EXPANDED){
+            return true;
+        }
+        if(m_expansionState == ExpansionState.COLLAPSED) {
+            return getResultCount() - getVisibleResultCount() > 0;
+        }
+        return false;
+    }
+
+    private void notifyObserversOnResultsChange(){
+        for(OnResultChanged callback:m_onResultChangedCallbackList){
+            callback.invoke();
+        }
     }
 }

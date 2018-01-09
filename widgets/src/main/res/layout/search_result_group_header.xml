@@ -4,13 +4,12 @@
     android:layout_height="wrap_content"
     android:paddingTop="4dp"
     android:minHeight="4dp"
-    android:background="@color/wrld_blue"
-    android:orientation="vertical">
+    android:background="@color/wrld_blue">
+
     <ProgressBar
         android:id="@+id/searchbox_set_search_in_progress_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/searchbox_background"
-        android:indeterminate="true"
-        android:visibility="gone" />
+        android:indeterminate="true"/>
 </RelativeLayout>
