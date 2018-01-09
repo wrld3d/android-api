@@ -77,7 +77,6 @@ class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, Searc
         m_searchModuleController.setSearchQueryHandler(this);
 
         ViewGroup searchContainer = (ViewGroup) root.findViewById(R.id.searchbox_search_container);
-        inflater.inflate(R.layout.searchbox_query, searchContainer);
         SearchController searchController = new SearchController(searchContainer, m_searchModuleController);
         m_searchModuleController.setQueryBoxController(searchController);
         m_queryDisplay = (SearchView) searchContainer.findViewById(R.id.searchbox_search_searchview);
