@@ -48,7 +48,7 @@ public class YelpSearchResultViewFactory implements SearchResultViewFactory {
     }
 
     @Override
-    public View makeSearchResultView(LayoutInflater inflater, SearchResult model, ViewGroup parent) {
+    public View makeSearchResultView(LayoutInflater inflater, ViewGroup parent) {
         return inflater.inflate(m_layoutId, parent, false);
     }
 

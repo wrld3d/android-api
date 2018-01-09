@@ -70,16 +70,15 @@ class SuggestionSearchResultController extends BaseAdapter implements SearchResu
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        SearchResult result = m_sets.getResultAtIndex(position);
-
         if(convertView == null) {
             SearchResultViewFactory viewFactory = m_viewFactories.get(getItemViewType(position));
-            convertView = viewFactory.makeSearchResultView(m_inflater, result, parent);
+            convertView = viewFactory.makeSearchResultView(m_inflater, parent);
             SearchResultViewHolder viewHolder = viewFactory.makeSearchResultViewHolder();
             viewHolder.initialise(convertView);
             convertView.setTag(viewHolder);
         }
 
+        SearchResult result = m_sets.getResultAtIndex(position);
         ((SearchResultViewHolder)convertView.getTag()).populate(result);
 
         return convertView;

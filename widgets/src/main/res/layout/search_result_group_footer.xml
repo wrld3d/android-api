@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/searchbox_set_expand_controls"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/search_results_footer_height"
+        android:orientation="horizontal"
+        android:padding="@dimen/search_results_more_margin"
+        android:visibility="visible">
+
+        <ImageButton
+            android:id="@+id/searchbox_set_expand_button"
+            android:layout_width="@dimen/search_results_more_icon_size"
+            android:layout_height="@dimen/search_results_more_icon_size"
+            android:visibility="visible"
+            app:srcCompat="@drawable/moreresults_butn" />
+
+        <TextView
+            android:id="@+id/searchbox_set_expand_info"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/search_results_text_area_height"
+            android:textAlignment="center"
+            android:textColor="@color/searchbox_link"/>
+    </LinearLayout>
+</RelativeLayout>

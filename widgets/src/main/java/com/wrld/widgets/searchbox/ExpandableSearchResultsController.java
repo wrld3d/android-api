@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.api.SearchResult;
@@ -32,6 +33,20 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
 
         public void showProgressBar(boolean isVisible){
             m_progressBar.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+        }
+    }
+
+
+    private class GroupFooterViewHolder {
+
+        private TextView m_text;
+
+        public GroupFooterViewHolder(View view) {
+            m_text = (TextView)view.findViewById(R.id.searchbox_set_expand_info);
+        }
+
+        public void setText(String text){
+            m_text.setText(text);
         }
     }
 
@@ -67,7 +82,7 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return m_sets.getChildrenInSetCount(groupPosition);
+        return m_sets.getChildrenInSetCount(groupPosition) + 1;
     }
 
     @Override
@@ -77,6 +92,11 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
+
+        int childType = getChildType(groupPosition, childPosition);
+        if(childType == getChildTypeCount()){
+            return null;
+        }
         return m_sets.getResultAtIndex(groupPosition, childPosition);
     }
 
@@ -111,30 +131,48 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent){
 
-        SearchResult searchResult = m_sets.getResultAtIndex(groupPosition, childPosition);
         if(convertView == null) {
-            SearchResultViewFactory viewFactory = m_viewFactories.get(groupPosition);
-            convertView = viewFactory.makeSearchResultView(m_inflater, searchResult, parent);
-            SearchResultViewHolder viewHolder = viewFactory.makeSearchResultViewHolder();
-            viewHolder.initialise(convertView);
-            convertView.setTag(viewHolder);
+            if(isLastChild){
+                convertView = m_inflater.inflate(R.layout.search_result_group_footer, parent, false);
+                GroupFooterViewHolder footerViewHolder = new GroupFooterViewHolder(convertView);
+                convertView.setTag(footerViewHolder);
+            }
+            else{
+                SearchResultViewFactory viewFactory = m_viewFactories.get(groupPosition);
+                convertView = viewFactory.makeSearchResultView(m_inflater, parent);
+                SearchResultViewHolder viewHolder = viewFactory.makeSearchResultViewHolder();
+                viewHolder.initialise(convertView);
+                convertView.setTag(viewHolder);
 
-            ((ViewGroup)convertView).setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+                ((ViewGroup)convertView).setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+            }
         }
 
-        ((SearchResultViewHolder)convertView.getTag()).populate(searchResult);
+        if(!isLastChild) {
+            SearchResult searchResult = m_sets.getResultAtIndex(groupPosition, childPosition);
+            ((SearchResultViewHolder) convertView.getTag()).populate(searchResult);
+        }
+        else{
+            SearchResultSet set = m_sets.getSet(groupPosition);
+            GroupFooterViewHolder footerViewHolder = ((GroupFooterViewHolder) convertView.getTag());
+            footerViewHolder.setText("See More results (" + set.getResultCount() + ") results");
+        }
 
         return convertView;
     }
 
     @Override
     public int getChildType(int groupPosition, int childPosition){
+        int childrenInSet = m_sets.getChildrenInSetCount(groupPosition);
+        if(childPosition == childrenInSet){
+            return m_viewFactories.size();
+        }
         return groupPosition;
     }
 
     @Override
     public int getChildTypeCount(){
-        return m_viewFactories.size();
+        return m_viewFactories.size() + 1;
     }
 
     @Override

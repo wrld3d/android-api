@@ -25,7 +25,7 @@ public class DefaultSuggestionViewFactory implements SearchResultViewFactory {
     }
 
     @Override
-    public View makeSearchResultView(LayoutInflater inflater, SearchResult searchResult, ViewGroup parent) {
+    public View makeSearchResultView(LayoutInflater inflater, ViewGroup parent) {
         return inflater.inflate(m_layoutId, parent, false);
     }
 

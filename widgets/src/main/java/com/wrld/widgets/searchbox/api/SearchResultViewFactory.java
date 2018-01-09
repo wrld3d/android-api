@@ -5,6 +5,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public interface SearchResultViewFactory {
-    View makeSearchResultView(LayoutInflater inflater, SearchResult model, ViewGroup parent);
+    View makeSearchResultView(LayoutInflater inflater, ViewGroup parent);
     SearchResultViewHolder makeSearchResultViewHolder();
 }
