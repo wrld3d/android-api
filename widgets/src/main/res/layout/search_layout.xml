@@ -34,20 +34,24 @@
             android:queryHint="@string/searchbox_query_hint" />
     </LinearLayout>
 
-    <ExpandableListView
-        android:id="@+id/searchbox_search_results_container"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/searchbox_search_container"
-        android:orientation="vertical"
-        android:visibility="gone"
-        android:footerDividersEnabled="false"
-        android:headerDividersEnabled="false"
-        android:scrollbarFadeDuration="0"
-        android:requiresFadingEdge="vertical"
-        android:fadingEdgeLength="96dp"
-        android:background="@android:color/darker_gray"
-        android:fadeScrollbars="false" />
+        android:layout_height="500dp"
+        android:layout_below="@+id/searchbox_search_container">
+        <ExpandableListView
+            android:id="@+id/searchbox_search_results_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:footerDividersEnabled="false"
+            android:headerDividersEnabled="false"
+            android:scrollbarFadeDuration="0"
+            android:requiresFadingEdge="vertical"
+            android:fadingEdgeLength="96dp"
+            android:background="@android:color/darker_gray"
+            android:fadeScrollbars="false" />
+    </LinearLayout>
 
     <ListView
         android:id="@+id/searchbox_autocomplete_container"

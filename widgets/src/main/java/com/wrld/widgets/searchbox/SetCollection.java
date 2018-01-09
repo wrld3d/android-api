@@ -1,10 +1,17 @@
 package com.wrld.widgets.searchbox;
 
 import com.wrld.widgets.searchbox.api.SearchResult;
+import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
 
 import java.util.ArrayList;
 
 class SetCollection {
+
+    public interface OnResultChanged{
+        void invoke(int setChangedIndex);
+    }
+
+    private ArrayList<OnResultChanged> m_onResultChangedCallbacks;
 
     private class SearchResultIndex{
         private int m_setIndex;
@@ -20,12 +27,27 @@ class SetCollection {
     ArrayList<SearchResultSet> m_sets;
 
     public SetCollection() {
+
         m_sets= new ArrayList<SearchResultSet>();
+        m_onResultChangedCallbacks = new ArrayList<OnResultChanged>();
     }
 
     public void setSets(ArrayList<SearchResultSet> sets){
         m_sets.clear();
         m_sets.addAll(sets);
+
+        for(int i = 0; i < sets.size(); ++i){
+            SearchResultSet set = sets.get(i);
+            final int setId = i;
+            set.addOnResultChangedHandler(new SearchResultSet.OnResultChanged(){
+                @Override
+                public void invoke() {
+                    for(OnResultChanged callback : m_onResultChangedCallbacks){
+                        callback.invoke(setId);
+                    }
+                }
+            });
+        }
     }
 
     private SearchResultIndex getSearchResultIndex(int position){
@@ -47,9 +69,13 @@ class SetCollection {
         return null;
     }
 
-    public int getSetAtIndex(int position){
+    public int getSetForAbsolutePosition(int position){
         SearchResultIndex index = getSearchResultIndex(position);
         return index.getSet();
+    }
+
+    public SearchResultSet getSet(int index){
+        return m_sets.get(index);
     }
 
     public SearchResult getResultAtIndex(int position){
@@ -75,5 +101,9 @@ class SetCollection {
             totalResults += set.getResultCount();
         }
         return totalResults;
+    }
+
+    public void addOnResultChangedHandler(OnResultChanged callback) {
+        m_onResultChangedCallbacks.add(callback);
     }
 }

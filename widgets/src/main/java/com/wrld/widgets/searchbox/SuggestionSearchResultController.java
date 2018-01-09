@@ -64,7 +64,7 @@ class SuggestionSearchResultController extends BaseAdapter implements SearchResu
 
     @Override
     public int getItemViewType(int position){
-        return m_sets.getSetAtIndex(position);
+        return m_sets.getSetForAbsolutePosition(position);
     }
 
     @Override

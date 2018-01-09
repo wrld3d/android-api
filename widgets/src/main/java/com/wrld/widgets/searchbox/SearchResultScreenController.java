@@ -3,14 +3,12 @@ package com.wrld.widgets.searchbox;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
 import com.wrld.widgets.R;
-import com.wrld.widgets.searchbox.api.SearchProvider;
 import com.wrld.widgets.searchbox.api.SearchResult;
 import com.wrld.widgets.searchbox.api.SearchResultViewFactory;
 import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;

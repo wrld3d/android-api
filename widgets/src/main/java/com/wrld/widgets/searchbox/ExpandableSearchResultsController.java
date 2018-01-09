@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ProgressBar;
 
 import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.api.SearchResult;
@@ -21,6 +22,19 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
     private SetCollection m_sets;
     private ArrayList<SearchResultViewFactory> m_viewFactories;
 
+    private class GroupHeaderViewHolder {
+
+        private View m_progressBar;
+
+        public GroupHeaderViewHolder(View view) {
+            m_progressBar = view.findViewById(R.id.searchbox_set_search_in_progress_view);
+        }
+
+        public void showProgressBar(boolean isVisible){
+            m_progressBar.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+        }
+    }
+
     public ExpandableSearchResultsController(ExpandableListView container,
                                             SetCollection resultSets) {
 
@@ -28,6 +42,12 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
         m_container = container;
         m_inflater = LayoutInflater.from(context);
         m_sets = resultSets;
+        m_sets.addOnResultChangedHandler(new SetCollection.OnResultChanged() {
+            @Override
+            public void invoke(int setCompleted) {
+                m_container.expandGroup(setCompleted);
+            }
+        });
     }
 
     @Override
@@ -51,9 +71,8 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
     }
 
     @Override
-    // TODO This sucks
     public Object getGroup(int groupPosition) {
-        return groupPosition;
+        return m_sets.getSet(groupPosition);
     }
 
     @Override
@@ -79,8 +98,12 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         if(convertView == null){
-            convertView = m_inflater.inflate(R.layout.searchbox_menu_group_header, parent, false);
+            convertView = m_inflater.inflate(R.layout.search_result_group_header, parent, false);
+            GroupHeaderViewHolder viewHolder = new GroupHeaderViewHolder(convertView);
+            convertView.setTag(viewHolder);
         }
+
+        ((GroupHeaderViewHolder)convertView.getTag()).showProgressBar(!isExpanded);
 
         return convertView;
     }
@@ -120,7 +143,7 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
     }
 
     public void searchStarted() {
-
+        expandGroups(false);
     }
 
     @Override
@@ -131,5 +154,16 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
     public void setViewFactories(ArrayList<SearchResultViewFactory> factories){
         m_viewFactories = factories;
         m_container.setAdapter(this);
+    }
+
+    private void expandGroups(boolean isExpanded){
+        for(int i = 0; i < getGroupCount(); ++i){
+            if(isExpanded){
+                m_container.expandGroup(i);
+            }
+            else {
+                m_container.collapseGroup(i);
+            }
+        }
     }
 }
