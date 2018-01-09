@@ -49,7 +49,7 @@
             android:scrollbarFadeDuration="0"
             android:requiresFadingEdge="vertical"
             android:fadingEdgeLength="96dp"
-            android:background="@android:color/darker_gray"
+            android:background="@android:color/white"
             android:fadeScrollbars="false" />
     </LinearLayout>
 

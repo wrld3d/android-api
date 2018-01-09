@@ -10,6 +10,8 @@ import java.util.Arrays;
 
 class SearchResultSet {
 
+    public enum ExpansionState { HIDDEN, COLLAPSED, EXPANDED };
+
     interface OnResultChanged{
         void invoke();
     }
@@ -24,17 +26,19 @@ class SearchResultSet {
     private DeregisterCallback m_deregisterCallback;
     private QueryResultsReadyCallback m_queryResultsReadyCallback;
 
-    private int m_maxResults = 3;
+    private int m_collapsedResults = 3;
+
+    private ExpansionState m_expansionState = ExpansionState.HIDDEN;
 
     public SearchResultSet() {
         m_results = new ArrayList<SearchResult>();
         m_onResultChangedCallbackList = new ArrayList<OnResultChanged>();
     }
 
-    public SearchResultSet(int maxResults) {
+    public SearchResultSet(int collapsedResults) {
         m_results = new ArrayList<SearchResult>();
         m_onResultChangedCallbackList = new ArrayList<OnResultChanged>();
-        m_maxResults = maxResults;
+        m_collapsedResults = collapsedResults;
     }
 
     public QueryResultsReadyCallback getUpdateCallback() {
@@ -79,8 +83,28 @@ class SearchResultSet {
         return m_results.get(index);
     }
 
-    public int getResultCount() {
-        return Math.min(m_results.size(), m_maxResults);
+    public void setExpansionState(ExpansionState state){
+        m_expansionState = state;
+
+        for(OnResultChanged callback:m_onResultChangedCallbackList){
+            callback.invoke();
+        }
+    }
+
+    public int getVisibleResultCount() {
+        switch(m_expansionState){
+            case EXPANDED:
+                return getResultCount();
+            case COLLAPSED:
+                return Math.min(m_results.size(), m_collapsedResults);
+            case HIDDEN:
+            default:
+                return 0;
+        }
+    }
+
+    public int getResultCount(){
+        return m_results.size();
     }
 
     public SearchResult[] getResultsInRange(int min, int max) {

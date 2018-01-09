@@ -1,7 +1,6 @@
 package com.wrld.widgets.searchbox;
 
 import com.wrld.widgets.searchbox.api.SearchResult;
-import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
 
 import java.util.ArrayList;
 
@@ -12,6 +11,8 @@ class SetCollection {
     }
 
     private ArrayList<OnResultChanged> m_onResultChangedCallbacks;
+
+    private boolean m_hasExpandedSet = false;
 
     private class SearchResultIndex{
         private int m_setIndex;
@@ -56,7 +57,7 @@ class SetCollection {
         int setIndex = 0;
         for(SearchResultSet set : m_sets){
             int actualPositionInSet = position - count;
-            int setSize = set.getResultCount();
+            int setSize = set.getVisibleResultCount();
             if(actualPositionInSet >= setSize){
                 count += setSize;
                 ++setIndex;
@@ -92,18 +93,36 @@ class SetCollection {
     }
 
     public int getChildrenInSetCount(int set){
-        return m_sets.get(set).getResultCount();
+        return m_sets.get(set).getVisibleResultCount();
     }
 
     public int getAllResultsCount() {
         int totalResults = 0;
         for(SearchResultSet set : m_sets){
-            totalResults += set.getResultCount();
+            totalResults += set.getVisibleResultCount();
         }
         return totalResults;
     }
 
     public void addOnResultChangedHandler(OnResultChanged callback) {
         m_onResultChangedCallbacks.add(callback);
+    }
+
+    public void expandResultSet(int groupPosition) {
+        m_hasExpandedSet = true;
+        for(int i = 0; i < m_sets.size(); ++i){
+            m_sets.get(i).setExpansionState(i == groupPosition ? SearchResultSet.ExpansionState.EXPANDED : SearchResultSet.ExpansionState.HIDDEN);
+        }
+    }
+
+    public boolean hasExpandedSet(){
+        return m_hasExpandedSet;
+    }
+
+    public void collapseResultSets(){
+        m_hasExpandedSet = false;
+        for(int i = 0; i < m_sets.size(); ++i){
+            m_sets.get(i).setExpansionState(SearchResultSet.ExpansionState.COLLAPSED);
+        }
     }
 }

@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.wrld.widgets.R;
@@ -61,6 +60,7 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
             @Override
             public void invoke(int setCompleted) {
                 m_container.expandGroup(setCompleted);
+                notifyDataSetChanged();
             }
         });
     }
@@ -155,7 +155,7 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
         else{
             SearchResultSet set = m_sets.getSet(groupPosition);
             GroupFooterViewHolder footerViewHolder = ((GroupFooterViewHolder) convertView.getTag());
-            footerViewHolder.setText("See More results (" + set.getResultCount() + ") results");
+            footerViewHolder.setText("See More results (" + (set.getResultCount() - set.getVisibleResultCount()) + ") results");
         }
 
         return convertView;
@@ -177,10 +177,11 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
 
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return false;
+        return true;
     }
 
     public void searchStarted() {
+        m_sets.collapseResultSets();
         expandGroups(false);
     }
 

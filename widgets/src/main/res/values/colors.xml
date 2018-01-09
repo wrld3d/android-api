@@ -6,5 +6,6 @@
     <color name="searchbox_autcomplete_list_header_background">#F0F0F0</color>
     <color name="searchbox_autcomplete_list_header_font_unmatched">#606060</color>
     <color name="searchbox_autcomplete_list_header_font_matched">#202020</color>
+    <color name="searchbox_result_see_more_background">#F0F0F0</color>
     <color name="searchbox_link">#0071bc</color>
 </resources>

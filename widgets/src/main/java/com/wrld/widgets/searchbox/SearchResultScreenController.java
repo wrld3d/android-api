@@ -71,6 +71,7 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
         };
 
         m_searchResultController = new ExpandableSearchResultsController(m_searchResultContainer, searchResultSetCollection);
+        m_searchResultContainer.setOnChildClickListener(onResultClickListener(searchResultSetCollection));
         m_suggestionController = new SuggestionSearchResultController(m_autoCompleteResultContainer, suggestionSetCollection);
         m_autoCompleteResultContainer.setOnItemClickListener(onSuggestionClickListener(suggestionSetCollection));
 
@@ -120,12 +121,25 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
         m_autoCompleteResultContainer.setVisibility(View.GONE);
     }
 
-    private AdapterView.OnItemClickListener onResultClickListener (final SearchResultSet resultSet){
+    private ExpandableListView.OnChildClickListener onResultClickListener (final SetCollection resultSet){
+        // TODO change scope of external result exposure
         final UiScreenController selfAsUiScreenController = this;
-        return new AdapterView.OnItemClickListener() {
+        return new ExpandableListView.OnChildClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                m_searchModuleMediator.focusOnResult(selfAsUiScreenController, resultSet.getResult(position));
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                SearchResultSet set = resultSet.getSet(groupPosition);
+                if(childPosition == set.getVisibleResultCount()){
+                    if(resultSet.hasExpandedSet()){
+                        resultSet.collapseResultSets();
+                    }
+                    else {
+                        resultSet.expandResultSet(groupPosition);
+                    }
+                }
+                else {
+                    m_searchModuleMediator.focusOnResult(selfAsUiScreenController, resultSet.getResultAtIndex(groupPosition, childPosition));
+                }
+                return true;
             }
         };
     }
