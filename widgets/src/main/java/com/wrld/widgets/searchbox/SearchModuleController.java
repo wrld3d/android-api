@@ -85,14 +85,8 @@ class SearchModuleController {
         doHideElement(m_searchResultScreenController);
     }
 
-    public SearchResultsController addSearchProvider(SearchProvider searchProvider, SearchResultSet searchResultSet) {
-        return m_searchResultScreenController.inflateViewForSearchProvider(
-                searchProvider,
-                searchResultSet);
-    }
-
-    public void removeAllSearchProviders(){
-        m_searchResultScreenController.removeAllSearchProviderViews();
+    public void setSearchResultViewFactories(ArrayList<SearchResultViewFactory> factories){
+        m_searchResultScreenController.setSearchResultViewFactories(factories);
     }
 
     public void setSuggestionViewFactories(ArrayList<SearchResultViewFactory> factories){

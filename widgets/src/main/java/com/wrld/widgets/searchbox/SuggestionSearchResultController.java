@@ -44,7 +44,7 @@ class SuggestionSearchResultController extends BaseAdapter implements SearchResu
 
     @Override
     public int getCount() {
-        return m_sets.getCount();
+        return m_sets.getAllResultsCount();
     }
 
     @Override

@@ -34,13 +34,20 @@
             android:queryHint="@string/searchbox_query_hint" />
     </LinearLayout>
 
-    <LinearLayout
+    <ExpandableListView
         android:id="@+id/searchbox_search_results_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_below="@+id/searchbox_search_container"
-        android:visibility="gone" />
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:footerDividersEnabled="false"
+        android:headerDividersEnabled="false"
+        android:scrollbarFadeDuration="0"
+        android:requiresFadingEdge="vertical"
+        android:fadingEdgeLength="96dp"
+        android:background="@android:color/darker_gray"
+        android:fadeScrollbars="false" />
 
     <ListView
         android:id="@+id/searchbox_autocomplete_container"

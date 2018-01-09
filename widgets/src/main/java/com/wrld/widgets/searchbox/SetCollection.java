@@ -57,7 +57,19 @@ class SetCollection {
         return m_sets.get(index.getSet()).getResult(index.getPosition());
     }
 
-    public int getCount() {
+    public SearchResult getResultAtIndex(int groupIndex, int childIndex){
+        return m_sets.get(groupIndex).getResult(childIndex);
+    }
+
+    public int getSetCount(){
+        return m_sets.size();
+    }
+
+    public int getChildrenInSetCount(int set){
+        return m_sets.get(set).getResultCount();
+    }
+
+    public int getAllResultsCount() {
         int totalResults = 0;
         for(SearchResultSet set : m_sets){
             totalResults += set.getResultCount();

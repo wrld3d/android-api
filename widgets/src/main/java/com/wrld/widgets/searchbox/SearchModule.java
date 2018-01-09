@@ -49,6 +49,7 @@ class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, Searc
 
     private CurrentQueryObserver m_currentQueryObserver;
 
+    private SetCollection m_searchResultSetCollection;
     private SetCollection m_suggestionSetCollection;
 
     public SearchModule() {
@@ -82,10 +83,12 @@ class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, Searc
         m_queryDisplay = (SearchView) searchContainer.findViewById(R.id.searchbox_search_searchview);
 
         m_suggestionSetCollection = new SetCollection();
+        m_searchResultSetCollection = new SetCollection();
 
         SearchResultScreenController resultSetController = new SearchResultScreenController(
                 root,
                 m_searchModuleController,
+                m_searchResultSetCollection,
                 m_suggestionSetCollection,
                 m_currentQueryObserver);
 
@@ -134,17 +137,18 @@ class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, Searc
         }
         m_searchProviderSets.clear();
 
-        m_searchModuleController.removeAllSearchProviders();
-
+        ArrayList<SearchResultViewFactory> searchResultViewFactories = new ArrayList<SearchResultViewFactory>();
         for(SearchProvider searchProvider : searchProviders) {
             SearchResultSet searchResultSet = m_searchResultSetFactory.createResultSetForSearchProvider(searchProvider);
-            SearchResultsController searchResultsController = m_searchModuleController.addSearchProvider(searchProvider, searchResultSet);
-            searchResultSet.addOnResultChangedHandler(searchResultsController.getUpdateCallback());
             m_searchProviderSets.add(searchResultSet);
+            searchResultViewFactories.add(searchProvider.getResultViewFactory());
         }
 
-        m_currentQueryObserver.registerWithSearchProviders(searchProviders);
+        m_searchResultSetCollection.setSets(m_searchProviderSets);
 
+        m_searchModuleController.setSearchResultViewFactories(searchResultViewFactories);
+
+        m_currentQueryObserver.registerWithSearchProviders(searchProviders);
         m_searchProviders = searchProviders;
     }
 

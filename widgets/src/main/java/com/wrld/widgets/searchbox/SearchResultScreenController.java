@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.AdapterView;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 
 import com.wrld.widgets.R;
@@ -23,10 +24,10 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
 
     private LayoutInflater m_inflater;
 
-    private ViewGroup m_searchResultContainer;
+    private ExpandableListView m_searchResultContainer;
     private ListView m_autoCompleteResultContainer;
 
-    private ArrayList<PaginatedSearchResultsController> m_searchResultControllers;
+    private ExpandableSearchResultsController m_searchResultController;
     private SuggestionSearchResultController m_suggestionController;
 
     private Animation m_showAnim;
@@ -43,11 +44,12 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
     SearchResultScreenController(
             View resultSetsContainer,
             SearchModuleController searchModuleMediator,
+            SetCollection searchResultSetCollection,
             SetCollection suggestionSetCollection,
             CurrentQueryObserver currentQueryObserver){
         m_context = resultSetsContainer.getContext();
         m_inflater = LayoutInflater.from(resultSetsContainer.getContext());
-        m_searchResultContainer = (ViewGroup)resultSetsContainer.findViewById(R.id.searchbox_search_results_container);
+        m_searchResultContainer = (ExpandableListView) resultSetsContainer.findViewById(R.id.searchbox_search_results_container);
         m_autoCompleteResultContainer = (ListView)resultSetsContainer.findViewById(R.id.searchbox_autocomplete_container);
 
         m_searchModuleMediator = searchModuleMediator;
@@ -70,7 +72,7 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
             }
         };
 
-        m_searchResultControllers = new ArrayList<PaginatedSearchResultsController>();
+        m_searchResultController = new ExpandableSearchResultsController(m_searchResultContainer, searchResultSetCollection);
         m_suggestionController = new SuggestionSearchResultController(m_autoCompleteResultContainer, suggestionSetCollection);
         m_autoCompleteResultContainer.setOnItemClickListener(onSuggestionClickListener(suggestionSetCollection));
 
@@ -84,47 +86,19 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
         m_screenState = ScreenState.GONE;
     }
 
-    public void removeAllSearchProviderViews(){
-        m_searchResultContainer.removeAllViews();
-        m_searchResultControllers.clear();
+    public void setSearchResultViewFactories(ArrayList<SearchResultViewFactory> factories){
+        m_searchResultController.setViewFactories(factories);
     }
 
     public void setSuggestionViewFactories(ArrayList<SearchResultViewFactory> factories){
         m_suggestionController.setViewFactories(factories);
     }
 
-    public SearchResultsController inflateViewForSearchProvider(
-            SearchProvider searchProvider,
-            SearchResultSet resultSet
-            ){
-
-        // Cannot add view here with flag as we need to specify the index for layout to work
-        View setView = m_inflater.inflate(R.layout.search_result_set, m_searchResultContainer, false);
-        m_searchResultContainer.addView(setView, m_searchResultControllers.size());
-        View setContent = setView.findViewById(R.id.searchbox_set_content);
-        ListView listView = (ListView) setContent.findViewById(R.id.searchbox_set_result_list);
-
-        PaginatedSearchResultsController resultsController = new PaginatedSearchResultsController(
-                setView,
-                resultSet,
-                searchProvider.getResultViewFactory(),
-                m_context.getString(R.string.search_shared_results_info, searchProvider.getTitle(), "%d")
-        );
-
-        m_searchResultControllers.add(resultsController);
-        listView.setAdapter(resultsController);
-        listView.setOnItemClickListener(onResultClickListener(resultSet));
-        return resultsController;
-    }
-
     public void showResults(){
         hideSuggestionSets();
 
         m_searchResultContainer.setVisibility(View.VISIBLE);
-
-        for(PaginatedSearchResultsController searchResultController : m_searchResultControllers){
-            searchResultController.searchStarted();
-        }
+        m_searchResultController.searchStarted();
     }
 
     public void showAutoComplete(String text){

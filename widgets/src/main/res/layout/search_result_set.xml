@@ -47,8 +47,6 @@
 
     </RelativeLayout>
 
-
-
     <LinearLayout
         android:id="@+id/searchbox_set_footer"
         android:layout_width="match_parent"
