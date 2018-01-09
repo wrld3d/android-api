@@ -25,13 +25,18 @@
         android:layout_below="@+id/searchbox_search_container"
         android:visibility="gone" />
 
-    <LinearLayout
+    <ListView
         android:id="@+id/searchbox_autocomplete_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/searchbox_search_container"
-        android:orientation="vertical"
-        android:visibility="gone" />
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:footerDividersEnabled="false"
+        android:headerDividersEnabled="false"
+        android:paddingBottom="@dimen/search_suggestions_result_vertical_padding"
+        android:paddingLeft="@dimen/search_suggestions_result_horizontal_padding"
+        android:paddingRight="@dimen/search_suggestions_result_horizontal_padding" />
 
     <ViewStub
         android:id="@+id/searchbox_menu_container_stub"

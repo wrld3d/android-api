@@ -49,6 +49,8 @@ class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, Searc
 
     private CurrentQueryObserver m_currentQueryObserver;
 
+    private SetCollection m_suggestionSetCollection;
+
     public SearchModule() {
         m_searchProviders                   = new SearchProvider[0];
         m_suggestionProviders               = new SuggestionProvider[0];
@@ -80,9 +82,14 @@ class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, Searc
         m_searchModuleController.setQueryBoxController(searchController);
         m_queryDisplay = (SearchView) searchContainer.findViewById(R.id.searchbox_search_searchview);
 
+        m_suggestionSetCollection = new SetCollection();
+
         SearchResultScreenController resultSetController = new SearchResultScreenController(
                 root,
-                m_searchModuleController);
+                m_searchModuleController,
+                m_suggestionSetCollection,
+                m_currentQueryObserver);
+
         m_searchModuleController.setSearchResultsSetController(resultSetController);
 
         m_searchMenuController = new SearchMenuController(
@@ -152,15 +159,19 @@ class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, Searc
         for(SearchResultSet set : m_suggestionProviderSets){
             set.deregisterWithProvider();
         }
-        m_suggestionProviderSets.clear();
-        m_searchModuleController.removeAllSuggestionProviders();
 
+        m_suggestionProviderSets.clear();
+
+        ArrayList<SearchResultViewFactory> suggestionViewFactories = new ArrayList<SearchResultViewFactory>();
         for(SuggestionProvider suggestionProvider : suggestionProviders) {
             SearchResultSet searchResultSet = m_searchResultSetFactory.createResultSetForSuggestionProvider(suggestionProvider);
-            SearchResultsController searchResultsController = m_searchModuleController.addSuggestionProvider(suggestionProvider, searchResultSet);
-            searchResultSet.addOnResultChangedHandler(searchResultsController.getUpdateCallback());
             m_suggestionProviderSets.add(searchResultSet);
+            suggestionViewFactories.add(suggestionProvider.getSuggestionViewFactory());
         }
+
+        m_searchModuleController.setSuggestionViewFactories(suggestionViewFactories);
+
+        m_suggestionSetCollection.setSets(m_suggestionProviderSets);
 
         m_currentQueryObserver.registerWithSuggestionProviders(suggestionProviders);
 

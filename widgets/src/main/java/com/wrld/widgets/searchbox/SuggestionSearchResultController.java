@@ -4,33 +4,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.TextView;
+import android.widget.ListView;
 
-import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.api.SearchResult;
 import com.wrld.widgets.searchbox.api.SearchResultViewFactory;
 import com.wrld.widgets.searchbox.api.SearchResultViewHolder;
 
+import java.util.ArrayList;
+
 class SuggestionSearchResultController extends BaseAdapter implements SearchResultsController {
+
     private LayoutInflater m_inflater;
 
-    private SearchResultSet m_searchResultSet;
-    private SearchResultViewFactory m_resultsViewFactory;
-    private View m_container;
-    private TextView m_titleView;
-    private String m_titleFormatText;
+    private ListView m_container;
 
-    private int m_maxSuggestions = 4;
+    private SetCollection m_sets;
+    private ArrayList<SearchResultViewFactory> m_viewFactories;
 
-    public SuggestionSearchResultController(String titleFormatText, View container, SearchResultSet resultSet, SearchResultViewFactory viewFactory) {
+    private int m_maxSuggestions = 3;
+
+    public SuggestionSearchResultController( ListView container, SetCollection resultSet) {
         m_container = container;
         m_inflater = LayoutInflater.from(container.getContext());
-        m_searchResultSet = resultSet;
-        m_resultsViewFactory = viewFactory;
-        m_container.setVisibility(View.GONE);
-
-        m_titleFormatText = titleFormatText;
-        m_titleView = (TextView)container.findViewById(R.id.search_set_title);
+        m_sets = resultSet;
     }
 
     @Override
@@ -43,14 +39,19 @@ class SuggestionSearchResultController extends BaseAdapter implements SearchResu
         };
     }
 
+    public void setViewFactories(ArrayList<SearchResultViewFactory> factories){
+        m_viewFactories = factories;
+        m_container.setAdapter(this);
+    }
+
     @Override
     public int getCount() {
-        return Math.min(m_maxSuggestions, m_searchResultSet.getResultCount());
+        return m_sets.getCount();
     }
 
     @Override
     public Object getItem(int position) {
-        return  getResult(position);
+        return m_sets.getResultAtIndex(position);
     }
 
     @Override
@@ -59,16 +60,29 @@ class SuggestionSearchResultController extends BaseAdapter implements SearchResu
     }
 
     @Override
+    public int getViewTypeCount(){
+        return m_viewFactories.size();
+    }
+
+    @Override
+    public int getItemViewType(int position){
+        return m_sets.getSetAtIndex(position);
+    }
+
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
+        SearchResult result = m_sets.getResultAtIndex(position);
+
         if(convertView == null) {
-            convertView = m_resultsViewFactory.makeSearchResultView(m_inflater, getResult(position), parent);
-            SearchResultViewHolder viewHolder = m_resultsViewFactory.makeSearchResultViewHolder();
+            SearchResultViewFactory viewFactory = m_viewFactories.get(getItemViewType(position));
+            convertView = viewFactory.makeSearchResultView(m_inflater, result, parent);
+            SearchResultViewHolder viewHolder = viewFactory.makeSearchResultViewHolder();
             viewHolder.initialise(convertView);
             convertView.setTag(viewHolder);
         }
 
-        ((SearchResultViewHolder)convertView.getTag()).populate(getResult(position));
+        ((SearchResultViewHolder)convertView.getTag()).populate(result);
 
         return convertView;
     }
@@ -81,17 +95,5 @@ class SuggestionSearchResultController extends BaseAdapter implements SearchResu
         }
 
         notifyDataSetChanged();
-    }
-
-    public void updateTitle(String queryText){
-        m_titleView.setText(String.format(m_titleFormatText, queryText));
-    }
-
-    public void hide(){
-        m_container.setVisibility(View.GONE);
-    }
-
-    private SearchResult getResult(int position) {
-        return m_searchResultSet.getResult(position);
     }
 }

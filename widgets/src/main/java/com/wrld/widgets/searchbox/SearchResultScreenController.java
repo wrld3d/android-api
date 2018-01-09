@@ -10,7 +10,9 @@ import android.widget.ListView;
 
 import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.api.SearchProvider;
-import com.wrld.widgets.searchbox.api.SuggestionProvider;
+import com.wrld.widgets.searchbox.api.SearchResult;
+import com.wrld.widgets.searchbox.api.SearchResultViewFactory;
+import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
 import com.wrld.widgets.ui.UiScreenController;
 import com.wrld.widgets.ui.UiScreenMemento;
 import com.wrld.widgets.ui.UiScreenMementoOriginator;
@@ -22,10 +24,10 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
     private LayoutInflater m_inflater;
 
     private ViewGroup m_searchResultContainer;
-    private ViewGroup m_autoCompleteResultContainer;
+    private ListView m_autoCompleteResultContainer;
 
     private ArrayList<PaginatedSearchResultsController> m_searchResultControllers;
-    private ArrayList<SuggestionSearchResultController> m_suggestionControllers;
+    private SuggestionSearchResultController m_suggestionController;
 
     private Animation m_showAnim;
     private Animation m_hideAnim;
@@ -38,11 +40,15 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
 
     private Context m_context;
 
-    SearchResultScreenController(View resultSetsContainer, SearchModuleController searchModuleMediator){
+    SearchResultScreenController(
+            View resultSetsContainer,
+            SearchModuleController searchModuleMediator,
+            SetCollection suggestionSetCollection,
+            CurrentQueryObserver currentQueryObserver){
         m_context = resultSetsContainer.getContext();
         m_inflater = LayoutInflater.from(resultSetsContainer.getContext());
         m_searchResultContainer = (ViewGroup)resultSetsContainer.findViewById(R.id.searchbox_search_results_container);
-        m_autoCompleteResultContainer = (ViewGroup)resultSetsContainer.findViewById(R.id.searchbox_autocomplete_container);
+        m_autoCompleteResultContainer = (ListView)resultSetsContainer.findViewById(R.id.searchbox_autocomplete_container);
 
         m_searchModuleMediator = searchModuleMediator;
 
@@ -65,7 +71,16 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
         };
 
         m_searchResultControllers = new ArrayList<PaginatedSearchResultsController>();
-        m_suggestionControllers = new ArrayList<SuggestionSearchResultController>();
+        m_suggestionController = new SuggestionSearchResultController(m_autoCompleteResultContainer, suggestionSetCollection);
+        m_autoCompleteResultContainer.setOnItemClickListener(onSuggestionClickListener(suggestionSetCollection));
+
+        currentQueryObserver.addSuggestionsReturnedCallback(new QueryResultsReadyCallback() {
+            @Override
+            public void onQueryCompleted(SearchResult[] returnedResults) {
+                m_suggestionController.refreshContent();
+            }
+        });
+
         m_screenState = ScreenState.GONE;
     }
 
@@ -74,15 +89,15 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
         m_searchResultControllers.clear();
     }
 
-    public void removeAllAutocompleteProviderViews(){
-        m_autoCompleteResultContainer.removeAllViews();
-        m_suggestionControllers.clear();
+    public void setSuggestionViewFactories(ArrayList<SearchResultViewFactory> factories){
+        m_suggestionController.setViewFactories(factories);
     }
 
     public SearchResultsController inflateViewForSearchProvider(
             SearchProvider searchProvider,
             SearchResultSet resultSet
             ){
+
         // Cannot add view here with flag as we need to specify the index for layout to work
         View setView = m_inflater.inflate(R.layout.search_result_set, m_searchResultContainer, false);
         m_searchResultContainer.addView(setView, m_searchResultControllers.size());
@@ -102,23 +117,6 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
         return resultsController;
     }
 
-    public SearchResultsController inflateViewForAutoCompleteProvider(
-            SuggestionProvider suggestionProvider,
-            SearchResultSet resultSet){
-        // Cannot add view here with flag as we need to specify the index for layout to work
-        View setView = m_inflater.inflate(R.layout.search_suggestion_set, m_autoCompleteResultContainer, false);
-        m_autoCompleteResultContainer.addView(setView, m_suggestionControllers.size());
-        ListView listView = (ListView) setView.findViewById(R.id.searchbox_set_result_list);
-
-        final SuggestionSearchResultController resultsController = new SuggestionSearchResultController(
-                suggestionProvider.getSuggestionTitleFormatting(), setView, resultSet, suggestionProvider.getSuggestionViewFactory());
-
-        m_suggestionControllers.add(resultsController);
-        listView.setAdapter(resultsController);
-        listView.setOnItemClickListener(onSuggestionClickListener(resultSet));
-        return resultsController;
-    }
-
     public void showResults(){
         hideSuggestionSets();
 
@@ -132,10 +130,6 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
     public void showAutoComplete(String text){
         m_autoCompleteResultContainer.setVisibility(View.VISIBLE);
         m_searchResultContainer.setVisibility(View.GONE);
-
-        for(SuggestionSearchResultController suggestionController : m_suggestionControllers){
-            suggestionController.updateTitle(text);
-        }
     }
 
     @Override
@@ -152,9 +146,6 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
 
     private void hideSuggestionSets(){
         m_autoCompleteResultContainer.setVisibility(View.GONE);
-        for(SuggestionSearchResultController suggestionController : m_suggestionControllers){
-            suggestionController.hide();
-        }
     }
 
     private AdapterView.OnItemClickListener onResultClickListener (final SearchResultSet resultSet){
@@ -167,12 +158,12 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
         };
     }
 
-    private AdapterView.OnItemClickListener onSuggestionClickListener (final SearchResultSet resultSet){
+    private AdapterView.OnItemClickListener onSuggestionClickListener (final SetCollection resultSet){
         final UiScreenController selfAsUiScreenController = this;
         return new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                m_searchModuleMediator.autocompleteSelection(selfAsUiScreenController, resultSet.getResult(position));
+                m_searchModuleMediator.autocompleteSelection(selfAsUiScreenController, resultSet.getResultAtIndex(position));
             }
         };
     }

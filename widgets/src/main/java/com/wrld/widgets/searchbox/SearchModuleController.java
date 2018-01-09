@@ -5,6 +5,7 @@ import android.view.animation.Animation;
 import com.wrld.widgets.searchbox.api.SearchProvider;
 import com.wrld.widgets.searchbox.api.SearchQueryHandler;
 import com.wrld.widgets.searchbox.api.SearchResult;
+import com.wrld.widgets.searchbox.api.SearchResultViewFactory;
 import com.wrld.widgets.searchbox.api.SuggestionProvider;
 import com.wrld.widgets.searchbox.api.events.SearchResultSelectedCallback;
 import com.wrld.widgets.ui.UiScreenController;
@@ -94,14 +95,8 @@ class SearchModuleController {
         m_searchResultScreenController.removeAllSearchProviderViews();
     }
 
-    public SearchResultsController addSuggestionProvider(SuggestionProvider suggestionProvider, SearchResultSet searchResultSet){
-       return m_searchResultScreenController.inflateViewForAutoCompleteProvider(
-               suggestionProvider,
-               searchResultSet);
-    }
-
-    public void removeAllSuggestionProviders(){
-        m_searchResultScreenController.removeAllAutocompleteProviderViews();
+    public void setSuggestionViewFactories(ArrayList<SearchResultViewFactory> factories){
+        m_searchResultScreenController.setSuggestionViewFactories(factories);
     }
 
     public void autocompleteSelection(UiScreenController caller, SearchResult result){

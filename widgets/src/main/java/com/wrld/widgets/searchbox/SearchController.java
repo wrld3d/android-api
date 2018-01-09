@@ -1,19 +1,13 @@
 package com.wrld.widgets.searchbox;
 
 import android.content.Context;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import com.wrld.widgets.R;
 import com.wrld.widgets.ui.UiScreenController;

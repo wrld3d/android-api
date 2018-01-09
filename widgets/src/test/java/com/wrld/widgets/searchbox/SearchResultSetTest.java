@@ -31,49 +31,6 @@ public abstract class SearchResultSetTest {
     }
 
     @Test
-    public void testSortOnTitle() {
-
-        int resultCount = 5;
-        SearchResult[] mockResults = new SearchResult[resultCount];
-        for(int i = 0; i < resultCount; ++i){
-            mockResults[i] = mock(SearchResult.class);
-            when(mockResults[i].getTitle()).thenReturn("Title " + (resultCount-(i+1)));
-        }
-
-        populateWithResults(mockResults);
-
-        SearchResult[] results = m_searchResultSet.sortOn("Title");
-
-        assertEquals(resultCount, results.length);
-
-        for(int i = 0; i < resultCount; ++i){
-            assertEquals("Title " + i, results[i].getTitle());
-        }
-    }
-
-    @Test
-    public void testSortOnDescriptionProperty() {
-
-        int resultCount = 5;
-        SearchResult[] mockResults = new SearchResult[resultCount];
-        for(int i = 0; i < resultCount; ++i){
-            mockResults[i] = mock(SearchResult.class);
-            SearchResultProperty mockDescription = createMockProperty("Description", "Description " + (resultCount-(i+1)));
-            when(mockResults[i].getProperty("Description")).thenReturn(mockDescription);
-        }
-
-        populateWithResults(mockResults);
-
-        SearchResult[] results = m_searchResultSet.sortOn("Description");
-
-        assertEquals(resultCount, results.length);
-
-        for(int i = 0; i < resultCount; ++i){
-            assertEquals("Description " + i, results[i].getProperty("Description").getValue());
-        }
-    }
-
-    @Test
     public void testAddSearchResultIncreasesCountBy1() {
         SearchResult result = mock(SearchResult.class);
         int count = m_searchResultSet.getResultCount();

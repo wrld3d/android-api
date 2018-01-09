@@ -7,7 +7,6 @@ import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 
 class SearchResultSet {
 
@@ -70,54 +69,6 @@ class SearchResultSet {
 
     public void addResult(SearchResult result) {
         m_results.add(result);
-    }
-
-    public SearchResult[] sortOn(String propertyKey) {
-        if(propertyKey == "Title"){
-            return sortOnTitle();
-        }
-
-        return sortOnProperty(propertyKey);
-    }
-
-    private SearchResult[] sortOnTitle() {
-
-        SearchResult[] allResults = getAllResults();
-
-        Arrays.sort(allResults, new Comparator<SearchResult>() {
-            @Override
-            public int compare(SearchResult o1, SearchResult o2) {
-                return o1.getTitle().compareTo(o2.getTitle());
-            }
-        });
-
-        return allResults;
-    }
-
-    private SearchResult[] sortOnProperty(final String property) {
-
-        SearchResult[] allResults = getAllResults();
-
-        Arrays.sort(allResults, new Comparator<SearchResult>() {
-            @Override
-            public int compare(SearchResult o1, SearchResult o2) {
-                if(o1.getProperty(property) == null && o2.getProperty(property) == null){
-                    return 0;
-                }
-
-                if(o1.getProperty(property) == null){
-                    return 1;
-                }
-
-                if(o2.getProperty(property) == null){
-                    return -1;
-                }
-
-                return o1.getProperty(property).compareTo(o2.getProperty(property));
-            }
-        });
-
-        return allResults;
     }
 
     public SearchResult[] getAllResults() {
