@@ -50,6 +50,8 @@ import com.eegeo.mapapi.services.mapscene.MapsceneService;
 import com.eegeo.mapapi.services.poi.PoiApi;
 import com.eegeo.mapapi.services.poi.PoiSearchResult;
 import com.eegeo.mapapi.services.poi.PoiService;
+import com.eegeo.mapapi.services.tag.TagApi;
+import com.eegeo.mapapi.services.tag.TagService;
 import com.eegeo.mapapi.services.routing.RoutingQueryResponse;
 import com.eegeo.mapapi.services.routing.RoutingApi;
 import com.eegeo.mapapi.services.routing.RoutingService;
@@ -94,6 +96,7 @@ public final class EegeoMap {
     private RenderingApi m_renderingApi;
     private RenderingState m_renderingState;
     private PoiApi m_poiApi;
+    private TagApi m_tagApi;
     private MapsceneApi m_mapsceneApi;
     private RoutingApi m_routingApi;
     private BlueSphere m_blueSphere = null;
@@ -125,6 +128,7 @@ public final class EegeoMap {
         boolean mapCollapsed = false;
         this.m_renderingState = new RenderingState(m_renderingApi, m_allowApiAccess, mapCollapsed);
         this.m_poiApi = new PoiApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_tagApi = new TagApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_mapsceneApi = new MapsceneApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_routingApi = new RoutingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
@@ -801,6 +805,16 @@ public final class EegeoMap {
     }
 
     /**
+     * Creates and returns a TagService for this map
+     * @return A new TagService object.
+     */
+    @UiThread
+    public TagService createTagService() {
+        TagService tagService = new TagService(m_tagApi);
+        return tagService;
+    }
+
+    /**
      * Creates and returns a MapsceneService for this map.
      *
      * @return A new MapsceneService object.
@@ -887,10 +901,13 @@ public final class EegeoMap {
     }
 
     @WorkerThread
+    private void jniOnSearchTagsLoaded() {
+        m_tagApi.notifyTagsLoaded();
+    }
+
     private void jniOnRoutingQueryCompleted(final int routingQueryId, RoutingQueryResponse response) {
         m_routingApi.notifyQueryComplete(routingQueryId, response);
     }
-
 
     /**
      * Registers a listener to an event raised when the initial map scene has completed streaming all resources

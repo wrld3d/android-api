@@ -18,7 +18,7 @@ allprojects {
         jcenter()
         flatDir {
             dirs 'libs'
-        }		
+        }
     }
 }
 
