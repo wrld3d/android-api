@@ -21,8 +21,6 @@ class SuggestionSearchResultController extends BaseAdapter implements SearchResu
     private SetCollection m_sets;
     private ArrayList<SearchResultViewFactory> m_viewFactories;
 
-    private int m_maxSuggestions = 3;
-
     public SuggestionSearchResultController( ListView container, SetCollection resultSet) {
         m_container = container;
         m_inflater = LayoutInflater.from(container.getContext());

@@ -24,9 +24,17 @@ class SearchResultSet {
     private DeregisterCallback m_deregisterCallback;
     private QueryResultsReadyCallback m_queryResultsReadyCallback;
 
+    private int m_maxResults = 3;
+
     public SearchResultSet() {
         m_results = new ArrayList<SearchResult>();
         m_onResultChangedCallbackList = new ArrayList<OnResultChanged>();
+    }
+
+    public SearchResultSet(int maxResults) {
+        m_results = new ArrayList<SearchResult>();
+        m_onResultChangedCallbackList = new ArrayList<OnResultChanged>();
+        m_maxResults = maxResults;
     }
 
     public QueryResultsReadyCallback getUpdateCallback() {
@@ -67,21 +75,12 @@ class SearchResultSet {
         }
     }
 
-    public void addResult(SearchResult result) {
-        m_results.add(result);
-    }
-
-    public SearchResult[] getAllResults() {
-        SearchResult[] results = new SearchResult[m_results.size()];
-        return m_results.toArray(results);
-    }
-
     public SearchResult getResult(int index) {
         return m_results.get(index);
     }
 
     public int getResultCount() {
-        return m_results.size();
+        return Math.min(m_results.size(), m_maxResults);
     }
 
     public SearchResult[] getResultsInRange(int min, int max) {
@@ -108,18 +107,6 @@ class SearchResultSet {
             results[i-min] = m_results.get(i);
         }
         return results;
-    }
-
-    public void removeResult(SearchResult result) {
-        m_results.remove(result);
-    }
-
-    public void removeResult(int resultIndex) {
-        m_results.remove(resultIndex);
-    }
-
-    public void clear() {
-        m_results.clear();
     }
 
     public void deregisterWithProvider(){

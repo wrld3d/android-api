@@ -47,6 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/searchbox_search_container"
+        android:background="@color/searchbox_background"
         android:divider="@null"
         android:dividerHeight="0dp"
         android:footerDividersEnabled="false"

@@ -1,6 +1,7 @@
 package com.wrld.widgets.searchbox;
 
 import com.wrld.widgets.searchbox.api.DefaultSearchResult;
+import com.wrld.widgets.searchbox.api.DefaultSearchResultViewFactory;
 import com.wrld.widgets.searchbox.api.SearchResult;
 import com.wrld.widgets.searchbox.api.SearchResultPropertyString;
 import com.wrld.widgets.searchbox.api.SearchResultViewFactory;
@@ -10,16 +11,22 @@ import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
 
 import java.util.ArrayList;
 
-class SpoofSuggestionProvider extends SuggestionProviderBase implements SuggestionProvider {
+public class SpoofSuggestionProvider extends SuggestionProviderBase implements SuggestionProvider {
 
-    private SearchResultViewFactory m_suggestionViewFactory;
-    private ArrayList<QueryResultsReadyCallback> m_onSuggestionsReceivedCallback;
+    private int m_suggestionsReturned = 3;
+    private int m_searchResultsReturned = 100;
 
-    private final String LOREM_IPSUM =
-            "ex vis nusquam tincidunt, Lorem ipsum dolor sit amet.";
-
-    public SpoofSuggestionProvider(String uid) {
+    public SpoofSuggestionProvider(String uid, SearchResultViewFactory viewFactory) {
         super(uid);
+        setSuggestionViewFactory(viewFactory);
+    }
+
+
+    public SpoofSuggestionProvider(String uid, SearchResultViewFactory viewFactory, int suggestionsReturned, int searchResultsReturned) {
+        super(uid);
+        setSuggestionViewFactory(viewFactory);
+        m_suggestionsReturned = suggestionsReturned;
+        m_searchResultsReturned = searchResultsReturned;
     }
 
     @Override
@@ -30,12 +37,9 @@ class SpoofSuggestionProvider extends SuggestionProviderBase implements Suggesti
     @Override
     public void getSuggestions(com.wrld.widgets.searchbox.api.Query query) {
 
-        int numResults = 5;
-
-        SearchResult[] results = new SearchResult[numResults];
-        results[0] = new DefaultSearchResult(m_title + " " + query);
-        for(int i = 1; i < numResults; ++i){
-            results[i] = generateDebugSuggestion(i, query.getQueryString());
+        SearchResult[] results = new SearchResult[m_suggestionsReturned];
+        for(int i = 0; i < m_suggestionsReturned; ++i){
+            results[i] = generateDebugSuggestion(i+1, query.getQueryString());
         }
 
         performSuggestionCompletedCallbacks(results);
@@ -43,11 +47,9 @@ class SpoofSuggestionProvider extends SuggestionProviderBase implements Suggesti
 
     @Override
     public void getSearchResults(com.wrld.widgets.searchbox.api.Query query) {
-        int numResults = 100;
-        SearchResult[] results = new SearchResult[numResults];
-        results[0] = new DefaultSearchResult(m_title + ": " + query, new SearchResultPropertyString("Description", LOREM_IPSUM));
-        for(int i = 1; i < numResults; ++i){
-            results[i] = generateDebugResult(i, query.getQueryString());
+        SearchResult[] results = new SearchResult[m_searchResultsReturned];
+        for(int i = 0; i < m_searchResultsReturned; ++i){
+            results[i] = generateDebugResult(i+1, query.getQueryString());
         }
 
         performSearchCompletedCallbacks(results);
@@ -55,7 +57,7 @@ class SpoofSuggestionProvider extends SuggestionProviderBase implements Suggesti
 
     private SearchResult generateDebugResult(int id, String query)
     {
-        return new DefaultSearchResult(m_title + ": " + query + " result (" + id + ")", new SearchResultPropertyString("Description", LOREM_IPSUM));
+        return new DefaultSearchResult(m_title + ": " + query + " result (" + id + ")");
     }
 
     private SearchResult generateDebugSuggestion(int id, String query)
