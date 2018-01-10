@@ -26,13 +26,15 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
     private class GroupHeaderViewHolder {
 
         private View m_progressBar;
+        private int m_expandedHeight;
 
         public GroupHeaderViewHolder(View view) {
             m_progressBar = view.findViewById(R.id.searchbox_set_search_in_progress_view);
+            m_expandedHeight = (int)m_progressBar.getContext().getResources().getDimension(R.dimen.search_results_spinner_height);
         }
 
         public void showProgressBar(boolean isVisible){
-            m_progressBar.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+            m_progressBar.getLayoutParams().height = isVisible ? m_expandedHeight:0;
         }
     }
 
@@ -71,6 +73,13 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
             public void invoke(int setCompleted) {
                 m_container.expandGroup(setCompleted);
                 notifyDataSetChanged();
+            }
+        });
+
+        m_container.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                return true;
             }
         });
     }
