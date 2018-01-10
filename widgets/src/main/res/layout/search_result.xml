@@ -6,6 +6,7 @@
     android:layout_height="48dp"
     android:background="@color/searchbox_background"
     android:padding="8dp"
+    android:animateLayoutChanges="true"
     android:orientation="vertical">
 
     <ImageView

@@ -1,9 +1,13 @@
 package com.wrld.widgets.searchbox;
 
+import android.animation.LayoutTransition;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LayoutAnimationController;
+import android.view.animation.ScaleAnimation;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
@@ -38,7 +42,6 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
         }
     }
 
-
     private class GroupFooterViewHolder {
 
         private TextView m_text;
@@ -71,11 +74,20 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
         m_sets.addOnResultChangedHandler(new SetCollection.OnResultChanged() {
             @Override
             public void invoke(int setCompleted) {
-                m_container.expandGroup(setCompleted);
+                m_container.expandGroup(setCompleted, true);
                 notifyDataSetChanged();
             }
         });
 
+        LayoutTransition lt = new LayoutTransition();
+        ObjectAnimator scaleObjectAnimator = new ObjectAnimator();
+        scaleObjectAnimator.setPropertyName("scaleY");
+        scaleObjectAnimator.setFloatValues(0, 1);
+
+        lt.setAnimator(LayoutTransition.APPEARING, scaleObjectAnimator);
+        lt.setStagger(LayoutTransition.APPEARING, 1000);
+
+        m_container.setLayoutTransition(lt);
         m_container.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
@@ -221,7 +233,7 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
     private void expandGroups(boolean isExpanded){
         for(int i = 0; i < getGroupCount(); ++i){
             if(isExpanded){
-                m_container.expandGroup(i);
+                m_container.expandGroup(i, true);
             }
             else {
                 m_container.collapseGroup(i);

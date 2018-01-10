@@ -38,8 +38,8 @@ class SuggestionSearchResultController extends BaseAdapter implements SearchResu
         m_resultsOnScreen = false;
         m_container.setAlpha(0);
 
-        m_animateInDurationMs = (int)m_container.getContext().getResources().getDimension(R.dimen.suggestion_animate_in_duration_in_ms);
-        m_animateOutDurationMs = (int)m_container.getContext().getResources().getDimension(R.dimen.suggestion_animate_out_duration_in_ms);
+        m_animateInDurationMs = m_container.getContext().getResources().getInteger(R.integer.suggestion_animate_in_duration_in_ms);
+        m_animateOutDurationMs = m_container.getContext().getResources().getInteger(R.integer.suggestion_animate_out_duration_in_ms);
     }
 
     @Override

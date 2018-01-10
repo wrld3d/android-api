@@ -36,7 +36,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="match_parent"
         android:layout_below="@+id/searchbox_search_container">
         <ExpandableListView
             android:id="@+id/searchbox_search_results_container"
@@ -50,7 +50,8 @@
             android:requiresFadingEdge="vertical"
             android:fadingEdgeLength="96dp"
             android:background="@android:color/white"
-            android:fadeScrollbars="false" />
+            android:fadeScrollbars="false"
+            android:animateLayoutChanges="true"/>
     </LinearLayout>
 
     <ListView
