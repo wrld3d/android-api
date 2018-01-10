@@ -1,6 +1,5 @@
 package com.wrld.widgets.searchbox;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -20,10 +19,8 @@ import java.util.ArrayList;
 
 class SearchResultScreenController implements UiScreenController, UiScreenMementoOriginator<SearchResultScreenVisibilityState> {
 
-    private LayoutInflater m_inflater;
-
     private ExpandableListView m_searchResultContainer;
-    private ListView m_autoCompleteResultContainer;
+    private ListView m_suggestionResultContainer;
 
     private ExpandableSearchResultsController m_searchResultController;
     private SuggestionSearchResultController m_suggestionController;
@@ -37,18 +34,14 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
 
     private SearchModuleController m_searchModuleMediator;
 
-    private Context m_context;
-
     SearchResultScreenController(
             View resultSetsContainer,
             SearchModuleController searchModuleMediator,
             SetCollection searchResultSetCollection,
             SetCollection suggestionSetCollection,
             CurrentQueryObserver currentQueryObserver){
-        m_context = resultSetsContainer.getContext();
-        m_inflater = LayoutInflater.from(resultSetsContainer.getContext());
         m_searchResultContainer = (ExpandableListView) resultSetsContainer.findViewById(R.id.searchbox_search_results_container);
-        m_autoCompleteResultContainer = (ListView)resultSetsContainer.findViewById(R.id.searchbox_autocomplete_container);
+        m_suggestionResultContainer = (ListView)resultSetsContainer.findViewById(R.id.searchbox_autocomplete_container);
 
         m_searchModuleMediator = searchModuleMediator;
 
@@ -64,7 +57,7 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
             public void start() {
                 super.start();
                 m_searchResultContainer.setVisibility(View.GONE);
-                m_autoCompleteResultContainer.setVisibility(View.GONE);
+                m_suggestionController.hide();
 
                 m_screenState = ScreenState.GONE;
             }
@@ -72,8 +65,8 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
 
         m_searchResultController = new ExpandableSearchResultsController(m_searchResultContainer, searchResultSetCollection);
         m_searchResultContainer.setOnChildClickListener(onResultClickListener(searchResultSetCollection));
-        m_suggestionController = new SuggestionSearchResultController(m_autoCompleteResultContainer, suggestionSetCollection);
-        m_autoCompleteResultContainer.setOnItemClickListener(onSuggestionClickListener(suggestionSetCollection));
+        m_suggestionController = new SuggestionSearchResultController(m_suggestionResultContainer, suggestionSetCollection);
+        m_suggestionResultContainer.setOnItemClickListener(onSuggestionClickListener(suggestionSetCollection));
 
         currentQueryObserver.addSuggestionsReturnedCallback(new QueryResultsReadyCallback() {
             @Override
@@ -94,15 +87,19 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
     }
 
     public void showResults(){
-        hideSuggestionSets();
+        hideSuggestions();
 
-        m_searchResultContainer.setVisibility(View.VISIBLE);
         m_searchResultController.searchStarted();
+        m_searchResultContainer.setVisibility(View.VISIBLE);
     }
 
-    public void showAutoComplete(String text){
-        m_autoCompleteResultContainer.setVisibility(View.VISIBLE);
+    public void showSuggestions(String text){
+        m_suggestionController.show();
         m_searchResultContainer.setVisibility(View.GONE);
+    }
+
+    private void hideSuggestions() {
+        m_suggestionController.hide();
     }
 
     @Override
@@ -115,10 +112,6 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
     public Animation transitionToGone() {
         m_hideAnim.reset();
         return m_hideAnim;
-    }
-
-    private void hideSuggestionSets(){
-        m_autoCompleteResultContainer.setVisibility(View.GONE);
     }
 
     private ExpandableListView.OnChildClickListener onResultClickListener (final SetCollection resultSet){
@@ -158,13 +151,13 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
     public UiScreenMemento<SearchResultScreenVisibilityState> generateMemento() {
         return new SearchResultScreenVisibilityState(
                 m_searchResultContainer.getVisibility(),
-                m_autoCompleteResultContainer.getVisibility(),
+                m_suggestionResultContainer.getVisibility(),
                 m_screenState);
     }
 
     @Override
     public void resetTo(UiScreenMemento<SearchResultScreenVisibilityState> memento) {
-        memento.getState().apply(m_searchResultContainer, m_autoCompleteResultContainer);
+        memento.getState().apply(m_searchResultContainer, m_suggestionResultContainer);
         m_screenState = memento.getState().getScreenState();
     }
 }

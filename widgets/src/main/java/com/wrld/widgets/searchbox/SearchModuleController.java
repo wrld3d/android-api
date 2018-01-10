@@ -73,10 +73,10 @@ class SearchModuleController {
         m_searchQueryHandler.searchFor(query);
     }
 
-    public void doAutocomplete(String text){
+    public void doSuggestions(String text){
         m_searchQueryHandler.getSuggestionsFor(text);
 
-        m_searchResultScreenController.showAutoComplete(text);
+        m_searchResultScreenController.showSuggestions(text);
         doShowElement(m_searchResultScreenController);
     }
 

@@ -1,11 +1,14 @@
 package com.wrld.widgets.searchbox;
 
+import android.animation.Animator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
+import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.api.SearchResult;
 import com.wrld.widgets.searchbox.api.SearchResultViewFactory;
 import com.wrld.widgets.searchbox.api.SearchResultViewHolder;
@@ -21,10 +24,22 @@ class SuggestionSearchResultController extends BaseAdapter implements SearchResu
     private SetCollection m_sets;
     private ArrayList<SearchResultViewFactory> m_viewFactories;
 
+    private boolean m_canBeShown;
+    private boolean m_resultsOnScreen;
+
+    private int m_animateInDurationMs;
+    private int m_animateOutDurationMs;
+
     public SuggestionSearchResultController( ListView container, SetCollection resultSet) {
         m_container = container;
         m_inflater = LayoutInflater.from(container.getContext());
         m_sets = resultSet;
+        m_canBeShown = false;
+        m_resultsOnScreen = false;
+        m_container.setAlpha(0);
+
+        m_animateInDurationMs = (int)m_container.getContext().getResources().getDimension(R.dimen.suggestion_animate_in_duration_in_ms);
+        m_animateOutDurationMs = (int)m_container.getContext().getResources().getDimension(R.dimen.suggestion_animate_out_duration_in_ms);
     }
 
     @Override
@@ -86,11 +101,62 @@ class SuggestionSearchResultController extends BaseAdapter implements SearchResu
 
     @Override
     public void refreshContent() {
-        int containerVisibility = getCount() > 0 ? View.VISIBLE: View.GONE;
-        if(containerVisibility != m_container.getVisibility()) {
-            m_container.setVisibility(containerVisibility);
+        if(m_canBeShown && !m_resultsOnScreen && getCount() > 0){
+            animateIn();
+        }
+        else if(getCount() == 0){
+            animateOut();
         }
 
         notifyDataSetChanged();
+    }
+
+    public void show(){
+        if(!m_canBeShown) {
+            m_container.setVisibility(View.VISIBLE);
+            m_canBeShown = true;
+        }
+    }
+
+    public void hide() {
+        if(m_canBeShown){
+            m_canBeShown = false;
+            if(m_resultsOnScreen) {
+                animateOut();
+            }
+        }
+    }
+
+    private void animateIn(){
+        m_container.animate().alpha(1.0f).setDuration(m_animateInDurationMs);
+        m_resultsOnScreen = true;
+    }
+
+    private void animateOut(){
+        ViewPropertyAnimator out = m_container.animate().alpha(0.0f).setDuration(m_animateOutDurationMs);
+        out.setListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if(!m_canBeShown){
+                    m_container.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        m_resultsOnScreen = false;
     }
 }

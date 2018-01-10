@@ -52,7 +52,7 @@ class SearchController implements UiScreenController, UiScreenMementoOriginator<
                                                 public boolean onQueryTextChange(String newText) {
                                                     if (!TextUtils.isEmpty(newText)) {
                                                         if(m_performSuggestionOnChange) {
-                                                            m_searchModuleMediator.doAutocomplete(newText);
+                                                            m_searchModuleMediator.doSuggestions(newText);
                                                         }
                                                     }
                                                     else {
