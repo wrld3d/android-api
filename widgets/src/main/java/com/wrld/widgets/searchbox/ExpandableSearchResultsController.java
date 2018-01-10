@@ -6,9 +6,9 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.LayoutAnimationController;
-import android.view.animation.ScaleAnimation;
+import android.view.ViewTreeObserver;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -64,6 +64,35 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
         }
     }
 
+    private int getListViewHeight() {
+
+        ExpandableListAdapter listAdapter = (ExpandableListAdapter) this;
+        int totalHeight = 0;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(m_container.getWidth(),
+                View.MeasureSpec.EXACTLY);
+        for (int i = 0; i < listAdapter.getGroupCount(); i++) {
+            View groupItem = listAdapter.getGroupView(i, false, null, m_container);
+            groupItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+
+            totalHeight += 8;
+
+            totalHeight += m_container.getDividerHeight() * listAdapter.getChildrenCount(i) - 1;
+
+            for (int j = 0; j < listAdapter.getChildrenCount(i); j++) {
+                View listItem = listAdapter.getChildView(i, j, j == listAdapter.getChildrenCount(i)-1, null,
+                        m_container);
+                listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+
+                totalHeight += listItem.getMeasuredHeight();
+                android.util.Log.v("MOD", "Measureing child: " + i + "-" + j + "("+listItem.getMeasuredHeight()+")");
+            }
+        }
+        android.util.Log.v("MOD", "totalHeight: " + totalHeight);
+        int height = totalHeight
+                + (m_container.getDividerHeight() * (listAdapter.getGroupCount() - 1));
+        return height;
+    }
+
     public ExpandableSearchResultsController(ExpandableListView container,
                                             SetCollection resultSets) {
 
@@ -75,23 +104,30 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
             @Override
             public void invoke(int setCompleted) {
                 m_container.expandGroup(setCompleted, true);
-                notifyDataSetChanged();
+                refreshContent();
             }
         });
 
-        LayoutTransition lt = new LayoutTransition();
+        /*LayoutTransition lt = new LayoutTransition();
         ObjectAnimator scaleObjectAnimator = new ObjectAnimator();
         scaleObjectAnimator.setPropertyName("scaleY");
         scaleObjectAnimator.setFloatValues(0, 1);
 
         lt.setAnimator(LayoutTransition.APPEARING, scaleObjectAnimator);
-        lt.setStagger(LayoutTransition.APPEARING, 1000);
+        lt.setStagger(LayoutTransition.APPEARING, 3000);
 
-        m_container.setLayoutTransition(lt);
+        m_container.setLayoutTransition(lt);*/
         m_container.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 return true;
+            }
+        });
+
+        m_container.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                android.util.Log.v("MOD", "height: " + m_container.getMeasuredHeight());
             }
         });
     }
@@ -223,6 +259,9 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
     @Override
     public void refreshContent() {
         notifyDataSetChanged();
+        ExpandAnimation4 ea = new ExpandAnimation4(m_container, 0, getListViewHeight());
+        ea.setDuration(1000);
+        m_container.startAnimation(ea);
     }
 
     public void setViewFactories(ArrayList<SearchResultViewFactory> factories){
