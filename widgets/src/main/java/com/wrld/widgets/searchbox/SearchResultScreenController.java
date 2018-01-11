@@ -88,7 +88,7 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
     }
 
     public void showResults(){
-        hideSuggestions();
+        m_suggestionController.hide();
 
         m_searchResultController.searchStarted();
         m_searchResultController.show();
@@ -97,10 +97,6 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
     public void showSuggestions(String text){
         m_suggestionController.show();
         m_searchResultController.hide();
-    }
-
-    private void hideSuggestions() {
-        m_suggestionController.hide();
     }
 
     @Override

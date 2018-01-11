@@ -108,7 +108,9 @@ class SuggestionSearchResultController extends BaseAdapter implements SearchResu
             animateOut();
         }
 
-        notifyDataSetChanged();
+        if(m_canBeShown){
+            notifyDataSetChanged();
+        }
     }
 
     public void show(){
@@ -128,8 +130,10 @@ class SuggestionSearchResultController extends BaseAdapter implements SearchResu
     }
 
     private void animateIn(){
-        m_container.animate().alpha(1.0f).setDuration(m_animateInDurationMs);
-        m_resultsOnScreen = true;
+        if(m_canBeShown) {
+            m_container.animate().alpha(1.0f).setDuration(m_animateInDurationMs);
+            m_resultsOnScreen = true;
+        }
     }
 
     private void animateOut(){
