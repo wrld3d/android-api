@@ -45,6 +45,12 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
 
         m_searchModuleMediator = searchModuleMediator;
 
+
+        m_searchResultController = new ExpandableSearchResultsController(m_searchResultContainer, searchResultSetCollection);
+        m_searchResultContainer.setOnChildClickListener(onResultClickListener(searchResultSetCollection));
+        m_suggestionController = new SuggestionSearchResultController(m_suggestionResultContainer, suggestionSetCollection);
+        m_suggestionResultContainer.setOnItemClickListener(onSuggestionClickListener(suggestionSetCollection));
+
         m_showAnim = new Animation(){
             @Override
             public void start() {
@@ -56,17 +62,12 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
             @Override
             public void start() {
                 super.start();
-                m_searchResultContainer.setVisibility(View.GONE);
+                m_searchResultController.hide();
                 m_suggestionController.hide();
 
                 m_screenState = ScreenState.GONE;
             }
         };
-
-        m_searchResultController = new ExpandableSearchResultsController(m_searchResultContainer, searchResultSetCollection);
-        m_searchResultContainer.setOnChildClickListener(onResultClickListener(searchResultSetCollection));
-        m_suggestionController = new SuggestionSearchResultController(m_suggestionResultContainer, suggestionSetCollection);
-        m_suggestionResultContainer.setOnItemClickListener(onSuggestionClickListener(suggestionSetCollection));
 
         currentQueryObserver.addSuggestionsReturnedCallback(new QueryResultsReadyCallback() {
             @Override
@@ -90,12 +91,12 @@ class SearchResultScreenController implements UiScreenController, UiScreenMement
         hideSuggestions();
 
         m_searchResultController.searchStarted();
-        m_searchResultContainer.setVisibility(View.VISIBLE);
+        m_searchResultController.show();
     }
 
     public void showSuggestions(String text){
         m_suggestionController.show();
-        m_searchResultContainer.setVisibility(View.GONE);
+        m_searchResultController.hide();
     }
 
     private void hideSuggestions() {

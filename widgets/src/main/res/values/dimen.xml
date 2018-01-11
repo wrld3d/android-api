@@ -49,5 +49,7 @@
     <dimen name="search_suggestions_set_bottom_padding">8dp</dimen>
     <integer name="suggestion_animate_in_duration_in_ms">100</integer>
     <integer name="suggestion_animate_out_duration_in_ms">100</integer>
+    <integer name="search_result_animate_in_duration_in_ms">100</integer>
+    <integer name="search_result_animate_out_duration_in_ms">100</integer>
 
 </resources>

@@ -1,11 +1,13 @@
 package com.wrld.widgets.searchbox;
 
+import android.animation.Animator;
 import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 import android.view.ViewTreeObserver;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListAdapter;
@@ -27,14 +29,18 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
     private SetCollection m_sets;
     private ArrayList<SearchResultViewFactory> m_viewFactories;
 
+    private boolean m_canBeShown;
+    private boolean m_resultsOnScreen;
+
+    private int m_animateInDurationMs;
+    private int m_animateOutDurationMs;
+
     private class GroupHeaderViewHolder {
 
-        private View m_header;
         private View m_progressBar;
         private int m_expandedHeight;
 
         public GroupHeaderViewHolder(View view) {
-            m_header = view;
             m_progressBar = view.findViewById(R.id.searchbox_set_search_in_progress_view);
             m_expandedHeight = (int)m_progressBar.getContext().getResources().getDimension(R.dimen.search_results_spinner_height);
         }
@@ -110,6 +116,12 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
                 refreshContent();
             }
         });
+
+        m_canBeShown = false;
+        m_resultsOnScreen = false;
+
+        m_animateInDurationMs = m_container.getContext().getResources().getInteger(R.integer.search_result_animate_in_duration_in_ms);
+        m_animateOutDurationMs = m_container.getContext().getResources().getInteger(R.integer.search_result_animate_out_duration_in_ms);
 
         /*LayoutTransition lt = new LayoutTransition();
         ObjectAnimator scaleObjectAnimator = new ObjectAnimator();
@@ -201,6 +213,55 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
         return convertView;
     }
 
+    public void show(){
+        if(!m_canBeShown) {
+            m_container.setVisibility(View.VISIBLE);
+            m_canBeShown = true;
+        }
+    }
+
+    public void hide() {
+        if(m_canBeShown){
+            m_canBeShown = false;
+            if(m_resultsOnScreen) {
+                animateOut();
+            }
+        }
+    }
+
+    private void animateIn(){
+        m_container.animate().alpha(1.0f).setDuration(m_animateInDurationMs);
+        m_resultsOnScreen = true;
+    }
+
+    private void animateOut(){
+        ViewPropertyAnimator out = m_container.animate().alpha(0.0f).setDuration(m_animateOutDurationMs);
+        out.setListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if(!m_canBeShown){
+                    m_container.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        m_resultsOnScreen = false;
+    }
+
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent){
 
@@ -262,11 +323,12 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
     @Override
     public void refreshContent() {
         notifyDataSetChanged();
-//        ExpandAnimation4 ea = new ExpandAnimation4(m_container, m_container.getHeight(), getListViewHeight());
-//        ea.setDuration(250);
-//        android.util.Log.v("MOD", "starting new animation");
-//        m_container.clearAnimation();
-//        m_container.startAnimation(ea);
+        if(m_canBeShown && !m_resultsOnScreen && m_sets.getAllResultsCount() > 0){
+            animateIn();
+        }
+        else if(m_sets.getAllResultsCount() == 0){
+            animateOut();
+        }
     }
 
     public void setViewFactories(ArrayList<SearchResultViewFactory> factories){
