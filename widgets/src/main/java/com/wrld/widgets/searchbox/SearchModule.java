@@ -1,11 +1,14 @@
 package com.wrld.widgets.searchbox;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.support.v4.content.ContextCompat;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -25,7 +28,7 @@ import com.wrld.widgets.ui.TextHighlighter;
 
 import java.util.ArrayList;
 
-class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, SearchQueryHandler {
+class SearchModule extends RelativeLayout implements com.wrld.widgets.searchbox.api.SearchModule, SearchQueryHandler {
 
     private SearchModuleController m_searchModuleController;
     private SearchMenuController m_searchMenuController;
@@ -52,7 +55,38 @@ class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, Searc
     private SetCollection m_searchResultSetCollection;
     private SetCollection m_suggestionSetCollection;
 
-    public SearchModule() {
+    private int m_numSuggestions;
+    private int m_maxResults;
+
+    public SearchModule(Context context) {
+        super(context);
+
+        initialise();
+
+        m_numSuggestions = 3;
+    }
+
+    public SearchModule(Context context, AttributeSet attributeSet) {
+        super(context, attributeSet);
+
+        initialise();
+
+        TypedArray a = context.getTheme().obtainStyledAttributes(
+                attributeSet,
+                R.styleable.SearchModule,
+                0, 0);
+
+        m_numSuggestions = a.getInteger(R.styleable.SearchModule_maxSuggestions, 3);
+        m_maxResults  = a.getInteger(R.styleable.SearchModule_maxResults, 3);
+    }
+
+    @Override
+    public void onFinishInflate(){
+        super.onFinishInflate();
+        inflateViewsAndAssignControllers();
+    }
+
+    private void initialise(){
         m_searchProviders                   = new SearchProvider[0];
         m_suggestionProviders               = new SuggestionProvider[0];
 
@@ -65,15 +99,16 @@ class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, Searc
         m_currentQueryObserver = new CurrentQueryObserver();
     }
 
-    public void inflateViewsAndAssignControllers(ViewGroup container) {
-        Context context = container.getContext();
+
+    public void inflateViewsAndAssignControllers() {
+        Context context = this.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
         m_menuContent                       = new SearchMenuContent(inflater);
         m_searchModuleController            = new SearchModuleController();
-        m_searchResultSetFactory            = new SearchResultSetFactory();
+        m_searchResultSetFactory            = new SearchResultSetFactory(m_numSuggestions, m_maxResults);
 
-        View root = inflater.inflate(R.layout.search_layout, container, true);
+        View root = inflater.inflate(R.layout.search_layout, this, true);
 
         m_searchModuleController.setSearchQueryHandler(this);
 
@@ -269,6 +304,11 @@ class SearchModule implements com.wrld.widgets.searchbox.api.SearchModule, Searc
     }
 
     //endregion
+
+    @Override
+    public void doSearch(String search) {
+        m_searchModuleController.doSearch(m_searchMenuController, search);
+    }
 
     @Override
     public void searchFor(String queryText){

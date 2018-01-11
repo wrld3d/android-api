@@ -18,6 +18,8 @@ public interface SearchModule extends SearchQueryHandler {
     void showDefaultView();
     SearchBoxMenuGroup addGroup(String title);
 
+    void doSearch(String search);
+
     void addSearchPerformedCallback(QueryPerformedCallback queryPerformedCallback);
     void removeSearchPerformedCallback(QueryPerformedCallback queryPerformedCallback);
 
