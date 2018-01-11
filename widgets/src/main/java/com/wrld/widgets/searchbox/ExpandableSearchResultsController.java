@@ -29,10 +29,12 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
 
     private class GroupHeaderViewHolder {
 
+        private View m_header;
         private View m_progressBar;
         private int m_expandedHeight;
 
         public GroupHeaderViewHolder(View view) {
+            m_header = view;
             m_progressBar = view.findViewById(R.id.searchbox_set_search_in_progress_view);
             m_expandedHeight = (int)m_progressBar.getContext().getResources().getDimension(R.dimen.search_results_spinner_height);
         }
@@ -68,26 +70,27 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
 
         ExpandableListAdapter listAdapter = (ExpandableListAdapter) this;
         int totalHeight = 0;
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(m_container.getWidth(),
-                View.MeasureSpec.EXACTLY);
+        /*int desiredWidth = View.MeasureSpec.makeMeasureSpec(m_container.getWidth(),
+                View.MeasureSpec.EXACTLY);*/
         for (int i = 0; i < listAdapter.getGroupCount(); i++) {
-            View groupItem = listAdapter.getGroupView(i, false, null, m_container);
-            groupItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            //View groupItem = listAdapter.getGroupView(i, false, null, m_container);
+            //groupItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
 
             totalHeight += 8;
 
             totalHeight += m_container.getDividerHeight() * listAdapter.getChildrenCount(i) - 1;
 
-            for (int j = 0; j < listAdapter.getChildrenCount(i); j++) {
+            int childHeight = i == 0 ? 96 : 128;
+            totalHeight += (listAdapter.getChildrenCount(i)-1) * childHeight + 64;
+
+            /*for (int j = 0; j < listAdapter.getChildrenCount(i); j++) {
                 View listItem = listAdapter.getChildView(i, j, j == listAdapter.getChildrenCount(i)-1, null,
                         m_container);
                 listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
 
                 totalHeight += listItem.getMeasuredHeight();
-                android.util.Log.v("MOD", "Measureing child: " + i + "-" + j + "("+listItem.getMeasuredHeight()+")");
-            }
+            }*/
         }
-        android.util.Log.v("MOD", "totalHeight: " + totalHeight);
         int height = totalHeight
                 + (m_container.getDividerHeight() * (listAdapter.getGroupCount() - 1));
         return height;
@@ -103,7 +106,7 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
         m_sets.addOnResultChangedHandler(new SetCollection.OnResultChanged() {
             @Override
             public void invoke(int setCompleted) {
-                m_container.expandGroup(setCompleted, true);
+                m_container.expandGroup(setCompleted);
                 refreshContent();
             }
         });
@@ -121,13 +124,6 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 return true;
-            }
-        });
-
-        m_container.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                android.util.Log.v("MOD", "height: " + m_container.getMeasuredHeight());
             }
         });
     }
@@ -149,7 +145,6 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
 
     @Override
     public int getChildrenCount(int groupPosition) {
-
         SearchResultSet set = m_sets.getSet(groupPosition);
         return set.getVisibleResultCount() + (set.hasFooter() ? 1 : 0);
     }
@@ -194,6 +189,14 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
 
         GroupHeaderViewHolder viewHolder = (GroupHeaderViewHolder)convertView.getTag();
         viewHolder.showProgressBar(!isExpanded);
+
+        SearchResultSet set = m_sets.getSet(groupPosition);
+        if(set.isHidden()){
+            convertView.setVisibility(View.GONE);
+        }
+        else{
+            convertView.setVisibility(View.VISIBLE);
+        }
 
         return convertView;
     }
@@ -259,9 +262,11 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
     @Override
     public void refreshContent() {
         notifyDataSetChanged();
-        ExpandAnimation4 ea = new ExpandAnimation4(m_container, 0, getListViewHeight());
-        ea.setDuration(1000);
-        m_container.startAnimation(ea);
+//        ExpandAnimation4 ea = new ExpandAnimation4(m_container, m_container.getHeight(), getListViewHeight());
+//        ea.setDuration(250);
+//        android.util.Log.v("MOD", "starting new animation");
+//        m_container.clearAnimation();
+//        m_container.startAnimation(ea);
     }
 
     public void setViewFactories(ArrayList<SearchResultViewFactory> factories){
@@ -272,11 +277,12 @@ class ExpandableSearchResultsController extends BaseExpandableListAdapter implem
     private void expandGroups(boolean isExpanded){
         for(int i = 0; i < getGroupCount(); ++i){
             if(isExpanded){
-                m_container.expandGroup(i, true);
+                m_container.expandGroup(i);
             }
             else {
                 m_container.collapseGroup(i);
             }
         }
+        m_container.setSelectedGroup(0);
     }
 }

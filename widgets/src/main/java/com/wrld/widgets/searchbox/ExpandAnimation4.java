@@ -12,17 +12,19 @@ class ExpandAnimation4 extends Animation {
 
     private View m_view;
 
+    private LayoutParams lp;
+
     public ExpandAnimation4(View view, int start, int end) {
         m_view = view;
         m_startHeight = start;
         m_deltaHeight = end - start;
+        lp = (LayoutParams) m_view.getLayoutParams();
     }
 
     @Override
     protected void applyTransformation(float interpolatedTime, Transformation t) {
-        LayoutParams lp = (LayoutParams) m_view.getLayoutParams();
         lp.height = (int)(m_startHeight + (m_deltaHeight * interpolatedTime));
-        m_view.setLayoutParams(lp);
+        //m_view.setLayoutParams(lp);
     }
 
     @Override

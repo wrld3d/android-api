@@ -141,6 +141,10 @@ class SearchResultSet {
         return m_expansionState == ExpansionState.EXPANDED;
     }
 
+    public boolean isHidden(){
+        return m_expansionState == ExpansionState.HIDDEN;
+    }
+
     public boolean hasFooter(){
         if(m_expansionState == ExpansionState.EXPANDED){
             return true;

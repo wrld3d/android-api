@@ -47,8 +47,7 @@
         android:requiresFadingEdge="vertical"
         android:fadingEdgeLength="96dp"
         android:background="@android:color/white"
-        android:fadeScrollbars="false"
-        android:animateLayoutChanges="true"/>
+        android:fadeScrollbars="false"/>
 
     <ListView
         android:id="@+id/searchbox_autocomplete_container"
