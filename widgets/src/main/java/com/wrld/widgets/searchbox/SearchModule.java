@@ -1,16 +1,19 @@
 package com.wrld.widgets.searchbox;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
+import android.os.Bundle;
+import android.speech.RecognizerIntent;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.widget.RelativeLayout;
+import android.widget.ImageButton;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.api.DefaultSearchResultViewFactory;
@@ -27,8 +30,13 @@ import com.wrld.widgets.searchbox.menu.SearchBoxMenuGroup;
 import com.wrld.widgets.ui.TextHighlighter;
 
 import java.util.ArrayList;
+import java.util.List;
 
-class SearchModule extends RelativeLayout implements com.wrld.widgets.searchbox.api.SearchModule, SearchQueryHandler {
+import static android.app.Activity.RESULT_OK;
+
+public class SearchModule extends Fragment implements com.wrld.widgets.searchbox.api.SearchModule, SearchQueryHandler {
+
+    private static final int SPEECH_REQUEST_CODE = 0;
 
     private SearchModuleController m_searchModuleController;
     private SearchMenuController m_searchMenuController;
@@ -58,35 +66,11 @@ class SearchModule extends RelativeLayout implements com.wrld.widgets.searchbox.
     private int m_numSuggestions;
     private int m_maxResults;
 
-    public SearchModule(Context context) {
-        super(context);
+    private Context m_context;
 
-        initialise();
+    public SearchModule() {
+        super();
 
-        m_numSuggestions = 3;
-    }
-
-    public SearchModule(Context context, AttributeSet attributeSet) {
-        super(context, attributeSet);
-
-        initialise();
-
-        TypedArray a = context.getTheme().obtainStyledAttributes(
-                attributeSet,
-                R.styleable.SearchModule,
-                0, 0);
-
-        m_numSuggestions = a.getInteger(R.styleable.SearchModule_maxSuggestions, 3);
-        m_maxResults  = a.getInteger(R.styleable.SearchModule_maxResults, 3);
-    }
-
-    @Override
-    public void onFinishInflate(){
-        super.onFinishInflate();
-        inflateViewsAndAssignControllers();
-    }
-
-    private void initialise(){
         m_searchProviders                   = new SearchProvider[0];
         m_suggestionProviders               = new SuggestionProvider[0];
 
@@ -99,16 +83,31 @@ class SearchModule extends RelativeLayout implements com.wrld.widgets.searchbox.
         m_currentQueryObserver = new CurrentQueryObserver();
     }
 
+    @Override
+    public void onInflate(Context context, AttributeSet attrs, Bundle savedInstanceState) {
+        super.onInflate(context, attrs, savedInstanceState);
 
-    public void inflateViewsAndAssignControllers() {
-        Context context = this.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
+        TypedArray a = context.getTheme().obtainStyledAttributes(
+                attrs,
+                R.styleable.SearchModule,
+                0, 0);
+
+        m_numSuggestions = a.getInteger(R.styleable.SearchModule_maxSuggestions, 3);
+        m_maxResults  = a.getInteger(R.styleable.SearchModule_maxResults, 3);
+
+        m_context = context;
+    }
+
+    @Override
+    public View onCreateView (LayoutInflater inflater,
+                                              ViewGroup container,
+                                              Bundle savedInstanceState) {
 
         m_menuContent                       = new SearchMenuContent(inflater);
         m_searchModuleController            = new SearchModuleController();
         m_searchResultSetFactory            = new SearchResultSetFactory(m_numSuggestions, m_maxResults);
 
-        View root = inflater.inflate(R.layout.search_layout, this, true);
+        View root = inflater.inflate(R.layout.search_layout, container, true);
 
         m_searchModuleController.setSearchQueryHandler(this);
 
@@ -137,7 +136,7 @@ class SearchModule extends RelativeLayout implements com.wrld.widgets.searchbox.
 
         setDefaultSearchResultViewFactory(new DefaultSearchResultViewFactory(R.layout.search_result));
 
-        int matchedTextColor = ContextCompat.getColor(context, R.color.searchbox_autcomplete_list_header_font_matched);
+        int matchedTextColor = ContextCompat.getColor(m_context, R.color.searchbox_autcomplete_list_header_font_matched);
 
         DefaultSuggestionViewFactory suggestionViewFactory = new DefaultSuggestionViewFactory(
                 R.layout.search_suggestion,
@@ -150,6 +149,34 @@ class SearchModule extends RelativeLayout implements com.wrld.widgets.searchbox.
         m_searchModuleController.hideResults(searchController);
 
         m_searchMenuController.setDefaultMenuContent(root.getContext());
+
+        ImageButton voice = (ImageButton) root.findViewById(R.id.searchbox_search_voice);
+        voice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                // Start the activity, the intent will be populated with the speech text
+                startActivityForResult(intent, SPEECH_REQUEST_CODE);
+            }
+        });
+
+        return root;
+    }
+
+    // This callback is invoked when the Speech Recognizer returns.
+    // This is where you process the intent and extract the speech text from the intent.
+    @Override
+    public void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
+            List<String> results = data.getStringArrayListExtra(
+                    RecognizerIntent.EXTRA_RESULTS);
+            String spokenText = results.get(0);
+            doSearch(spokenText);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
