@@ -9,7 +9,7 @@ import com.eegeo.mapapi.INativeMessageRunner;
 /**
  * A service which allows you to find routes between locations. Created by the createRoutingService method of the EegeoMap object.
  *
- * This is a Java interface to the WRLD Routing REST API (https://github.com/wrld3d/wrld-routing-api).
+ * This is a Java interface to the <a href="https://github.com/wrld3d/wrld-routing-api">WRLD Routing REST API</a>.
  */
 public class RoutingService {
 

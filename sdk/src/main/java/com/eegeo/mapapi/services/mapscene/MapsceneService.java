@@ -10,7 +10,7 @@ import com.eegeo.mapapi.services.poi.TextSearchOptions;
  * A service which allows you to request Mapscenes, as created by the WRLD Map Designer.
  * Created by the createMapsceneService method of the EegeoMap object.
  *
- * This is a Java interface to the WRLD MAPSCENE REST API (https://github.com/wrld3d/wrld-mapscene-api).
+ * This is a Java interface to the <a href="https://github.com/wrld3d/wrld-mapscene-api">WRLD MAPSCENE REST API</a>.
  *
  * It also supports additional options for applying a Mapscene to a map when you successfully load it.
  */

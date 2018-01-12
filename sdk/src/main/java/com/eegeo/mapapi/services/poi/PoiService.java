@@ -9,7 +9,7 @@ import com.eegeo.mapapi.INativeMessageRunner;
 /**
  * A service which allows you to search for POIs. Created by the createPoiService method of the EegeoMap object.
  *
- * This is a Java interface to the WRLD POI REST API (https://github.com/wrld3d/wrld-poi-api).
+ * This is a Java interface to the <a href="https://github.com/wrld3d/wrld-poi-api">WRLD POI REST API</a>
  *
  * It currently supports three different kinds of search: free-text search, tag search, and autocomplete search.
  */
