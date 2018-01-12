@@ -185,9 +185,15 @@ public final class CameraPosition {
 
             double lat = typedArray.getFloat(R.styleable.eegeo_MapView_camera_target_latitude, 0.0f);
             double lng = typedArray.getFloat(R.styleable.eegeo_MapView_camera_target_longitude, 0.0f);
-            double altitude = typedArray.getFloat(R.styleable.eegeo_MapView_camera_target_altitude, 0.0f);
 
-            target(lat, lng, altitude);
+            target(lat, lng);
+
+            if (typedArray.hasValue(R.styleable.eegeo_MapView_camera_target_altitude)) {
+                double altitude = typedArray.getFloat(R.styleable.eegeo_MapView_camera_target_altitude, 0.0f);
+                elevationMode(ElevationMode.HeightAboveSeaLevel);
+                elevation(altitude);
+            }
+
             // camera_distance attribute takes precedence over zoom
             if (typedArray.hasValue(R.styleable.eegeo_MapView_camera_distance)) {
                 double distance = typedArray.getFloat(R.styleable.eegeo_MapView_camera_distance, 0.0f);
@@ -207,6 +213,12 @@ public final class CameraPosition {
                 bearing(bearing);
             }
 
+            if (typedArray.hasValue(R.styleable.eegeo_MapView_camera_indoor_map_id) &&
+                    typedArray.hasValue(R.styleable.eegeo_MapView_camera_indoor_map_floor_id)) {
+                String indoorMapId = typedArray.getString(R.styleable.eegeo_MapView_camera_indoor_map_id);
+                int indoorMapFloorId = typedArray.getInt(R.styleable.eegeo_MapView_camera_indoor_map_floor_id, 0);
+                indoor(indoorMapId, indoorMapFloorId);
+            }
 
         }
 
@@ -300,6 +312,7 @@ public final class CameraPosition {
 
         /**
          * Sets the targetElevation for the CameraPosition. The default targetElevation is 0.
+         * Note that this is an experimental field - values other than 0 may have unexpected effects on camera control
          *
          * @param elevation The elevation, in meters.
          * @return Updated CameraPosition.Builder object.
@@ -311,6 +324,7 @@ public final class CameraPosition {
 
         /**
          * Sets the targetElevationMode for the CameraPosition. The default targetElevationMode is ElevationMode.HeightAboveGround.
+         * Note that this is an experimental field - values other than ElevationMode.HeightAboveGround may have unexpected effects on camera control
          *
          * @param elevationMode The ElevationMode used to interpret the targetElevation.
          * @return Updated CameraPosition.Builder object.
