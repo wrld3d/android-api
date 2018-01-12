@@ -50,103 +50,45 @@ public class YelpSearchProvider extends SuggestionProviderBase {
 
     private EegeoMap m_map;
 
-    private String m_yelpApiClientKey;
-    private String m_yelpApiClientSecret;
+    private String m_yelpApiKey;
 
-    private enum AuthStatus {UNAUTHENTICATED, AUTHENTICATING, AUTHENTICATED, TIMED_OUT, REJECTED };
-    private AuthStatus m_authStatus;
-    public boolean isAuthenticated () { return m_authStatus == AuthStatus.AUTHENTICATED; }
     private Map<String, String> m_authHeaders;
     private boolean m_hasRaisedAuthError = false;
-
-    private enum SearchType {SEARCH, AUTOCOMPLETE};
-    private SearchType m_deferredSearchType;
-    private Query m_deferredQuery;
 
     private RequestQueue m_requestQueue;
 
     private ErrorHandler m_errorHandler;
 
-    private Response.Listener<String> m_authResponseListener;
     private Response.Listener<String> m_searchResponseListener;
     private Response.Listener<String> m_autocompleteResponseListener;
-    private Response.ErrorListener m_authErrorListener;
+
+    private boolean m_assignedApiKey;
 
     private Request m_currentRequest;
 
     public YelpSearchProvider(Context context, RequestQueue requestQueue, EegeoMap map, ErrorHandler errorHandler){
         super(context.getString(R.string.yelp_search_result_title));
         m_suggestionsTitleFormatting = context.getString(R.string.yelp_suggestion_formatting);
-        m_authStatus = AuthStatus.UNAUTHENTICATED;
 
         m_requestQueue = requestQueue;
         m_map = map;
         m_errorHandler = errorHandler;
         m_hasRaisedAuthError = false;
 
+        m_assignedApiKey = false;
         createCallbacks();
     }
 
-    public void authenticate(String yelpApiClientKey, String yelpApiClientSecret) {
-
-        m_yelpApiClientKey = yelpApiClientKey;
-        m_yelpApiClientSecret = yelpApiClientSecret;
-
-        if(m_authStatus == AuthStatus.AUTHENTICATING){
-            m_errorHandler.handleError(R.string.yelp_auth_error_title, R.string.yelp_error_auth_retry_while_in_progress);
-            return;
-        }
-
-        if(m_authStatus == AuthStatus.AUTHENTICATED){
-            m_errorHandler.handleError(R.string.yelp_auth_error_title, R.string.yelp_error_auth_retry_while_authenticated);
-            return;
-        }
-
-        HashMap<String, String> postArgs = new HashMap<String, String>();
-
-        postArgs.put("grant_type", "client_credentials");
-        postArgs.put("client_id", yelpApiClientKey);
-        postArgs.put("client_secret", yelpApiClientSecret);
-
-        StringRequest request =  new VolleyStringRequestBuilder(
-                Request.Method.POST,
-                m_authUrl,
-                m_authResponseListener)
-                .setParams(postArgs)
-                .setErrorListener(m_authErrorListener)
-                .setRetryPolicy(m_timeoutMs, m_maxRetries)
-                .build();
-
-        m_authStatus = AuthStatus.AUTHENTICATING;
-        m_requestQueue.add(request);
-    }
-
-    private void authenticationResponseHandler(JSONObject response) {
-        if(response.has(m_authTokenKey)) {
-            String accessToken = response.optString(m_authTokenKey);
-            if(TextUtils.isEmpty(accessToken)){
-                m_errorHandler.handleError(R.string.yelp_auth_error_title, R.string.yelp_error_empty_auth_token);
-                m_authStatus = AuthStatus.REJECTED;
-                return;
-            }
-            m_authStatus = AuthStatus.AUTHENTICATED;
-            m_authHeaders = new HashMap<String, String>();
-            m_authHeaders.put("Authorization", "Bearer " + accessToken);
-
-            if(m_deferredQuery != null){
-                sendDeferredQuery();
-            }
-        }
-        else{
-            m_errorHandler.handleError(R.string.yelp_auth_error_title, R.string.yelp_error_no_auth_token);
-            m_authStatus = AuthStatus.REJECTED;
-        }
+    public void authenticate(String yelpApiKey) {
+        m_yelpApiKey = yelpApiKey;
+        m_assignedApiKey = true;
+        m_authHeaders = new HashMap<String, String>();
+        m_authHeaders.put("Authorization", "Bearer " + m_yelpApiKey);
     }
 
     @Override
     public void getSearchResults(Query query) {
-
-        if(isAuthenticated()) {
+        if(m_assignedApiKey) {
 
             LatLngAlt cameraPosition = m_map.getCameraPosition().target;
 
@@ -168,8 +110,6 @@ public class YelpSearchProvider extends SuggestionProviderBase {
             m_requestQueue.add(m_currentRequest);
         }
         else {
-            m_deferredQuery = query;
-            m_deferredSearchType = SearchType.SEARCH;
             handleUnauthorisedRequest();
         }
     }
@@ -177,7 +117,7 @@ public class YelpSearchProvider extends SuggestionProviderBase {
     @Override
     public void getSuggestions(Query query) {
 
-        if(isAuthenticated()) {
+        if(m_assignedApiKey) {
 
             if(m_currentRequest != null && !m_currentRequest.hasHadResponseDelivered()){
                 m_currentRequest.cancel();
@@ -202,8 +142,6 @@ public class YelpSearchProvider extends SuggestionProviderBase {
             m_requestQueue.add(m_currentRequest);
         }
         else {
-            m_deferredQuery = query;
-            m_deferredSearchType = SearchType.AUTOCOMPLETE;
             handleUnauthorisedRequest();
         }
     }
@@ -246,18 +184,6 @@ public class YelpSearchProvider extends SuggestionProviderBase {
 
     private void createCallbacks(){
 
-        m_authResponseListener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    authenticationResponseHandler(new JSONObject(response));
-                }
-                catch(JSONException e){
-                    m_errorHandler.handleError(R.string.yelp_auth_error_title, R.string.yelp_error_auth_invalid_response);
-                }
-            }
-        };
-
         m_searchResponseListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -281,57 +207,12 @@ public class YelpSearchProvider extends SuggestionProviderBase {
                 }
             }
         };
-
-        m_authErrorListener = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if(error instanceof TimeoutError){
-                    m_errorHandler.handleError(R.string.yelp_auth_error_title, R.string.yelp_error_auth_timed_out);
-                    m_authStatus = AuthStatus.TIMED_OUT;
-                    return;
-                }
-                if(error instanceof NoConnectionError){
-                    m_errorHandler.handleError(R.string.yelp_auth_error_title, R.string.yelp_error_no_connection);
-                    m_authStatus = AuthStatus.TIMED_OUT;
-                    return;
-                }
-                if(error.networkResponse.statusCode == 400) {
-                    m_errorHandler.handleError(R.string.yelp_auth_error_title, R.string.yelp_error_auth_rejected);
-                }
-                if(error.networkResponse.statusCode == 404) {
-                    m_errorHandler.handleError(R.string.yelp_auth_error_title, R.string.yelp_error_auth_404);
-                }
-                m_authStatus = AuthStatus.REJECTED;
-            }
-        };
-    }
-
-    private void sendDeferredQuery(){
-        if(m_deferredSearchType == SearchType.SEARCH){
-            getSearchResults(m_deferredQuery);
-        }
-        else{
-            getSuggestions(m_deferredQuery);
-        }
     }
 
     private void handleUnauthorisedRequest(){
-        switch(m_authStatus){
-            case TIMED_OUT:
-                authenticate(m_yelpApiClientKey, m_yelpApiClientSecret);
-                break;
-            case REJECTED:
-                if(!m_hasRaisedAuthError){
-                    m_errorHandler.handleError(R.string.yelp_search_error_title, R.string.yelp_error_rejected_authorisation_search);
-                    m_hasRaisedAuthError = true;
-                }
-                break;
-            case UNAUTHENTICATED:
-                if(!m_hasRaisedAuthError) {
-                    m_errorHandler.handleError(R.string.yelp_search_error_title, R.string.yelp_error_unauthorised_search);
-                    m_hasRaisedAuthError = true;
-                }
-                break;
+        if(!m_hasRaisedAuthError) {
+            m_errorHandler.handleError(R.string.yelp_search_error_title, R.string.yelp_error_unauthorised_search);
+            m_hasRaisedAuthError = true;
         }
     }
 }

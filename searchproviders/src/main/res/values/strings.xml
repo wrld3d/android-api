@@ -7,7 +7,7 @@
     <string name="yelp_review_text">From %d reviews</string>
     <string name="yelp_auth_error_title">Yelp Authentication</string>
     <string name="yelp_search_error_title">Yelp Search</string>
-    <string name="yelp_error_unauthorised_search">Cannot run requests without valid API key and secret</string>
+    <string name="yelp_error_unauthorised_search">Cannot run requests without valid API key</string>
     <string name="yelp_error_rejected_authorisation_search">Cannot run requests until authenticated</string>
     <string name="yelp_error_empty_auth_token">Authentication token is empty</string>
     <string name="yelp_error_no_auth_token">Response does not contain authentication token</string>

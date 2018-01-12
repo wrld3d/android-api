@@ -100,8 +100,8 @@ public class SearchModule extends Fragment implements com.wrld.widgets.searchbox
 
     @Override
     public View onCreateView (LayoutInflater inflater,
-                                              ViewGroup container,
-                                              Bundle savedInstanceState) {
+                              ViewGroup container,
+                              Bundle savedInstanceState) {
 
         m_menuContent                       = new SearchMenuContent(inflater);
         m_searchModuleController            = new SearchModuleController();
