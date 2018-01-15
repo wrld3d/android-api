@@ -24,8 +24,15 @@ extern "C"
     JNIEXPORT void JNICALL Java_com_eegeo_mapapi_EegeoNativeMapView_nativeResumeApiRunner(JNIEnv* jenv, jobject obj, jlong jniApiRunnerPtr);
     JNIEXPORT void JNICALL Java_com_eegeo_mapapi_EegeoNativeMapView_nativeSetSurface(JNIEnv* jenv, jobject obj, jlong jniApiRunnerPtr, jobject surface);
 
-    JNIEXPORT jlong JNICALL Java_com_eegeo_mapapi_EegeoNativeMapView_nativeCreateEegeoMapApi(JNIEnv* jenv, jobject obj, jlong jniApiRunnerPtr, jobject eegeoMap,
-                                                                                             jstring apiKey, jstring coverageTreeManifest, jstring environmentThemesManifest);
+    JNIEXPORT jlong JNICALL Java_com_eegeo_mapapi_EegeoNativeMapView_nativeCreateEegeoMapApi(
+        JNIEnv* jenv,
+        jobject obj,
+        jlong jniApiRunnerPtr,
+        jobject eegeoMap,
+        jstring apiKey,
+        jstring coverageTreeManifest,
+        jstring environmentThemesManifest
+    );
 
     JNIEXPORT void JNICALL Java_com_eegeo_mapapi_EegeoNativeMapView_nativeUpdateApiRunner(JNIEnv* jenv,
                                                                                   jobject obj,
