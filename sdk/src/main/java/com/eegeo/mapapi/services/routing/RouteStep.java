@@ -39,6 +39,9 @@ public class RouteStep {
      */
     public final int indoorFloorId;
 
+    /**
+     * If indoors, this step represents moving between the floors of the previous and next steps
+     */
     public final boolean isMultiFloor;
 
     /**
