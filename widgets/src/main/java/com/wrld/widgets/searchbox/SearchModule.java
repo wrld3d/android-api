@@ -162,18 +162,21 @@ public class SearchModule extends Fragment implements com.wrld.widgets.searchbox
         return root;
     }
 
-    // This callback is invoked when the Speech Recognizer returns.
-    // This is where you process the intent and extract the speech text from the intent.
     @Override
-    public void onActivityResult(int requestCode, int resultCode,
-                                    Intent data) {
-        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
-            List<String> results = data.getStringArrayListExtra(
-                    RecognizerIntent.EXTRA_RESULTS);
-            String spokenText = results.get(0);
-            doSearch(spokenText);
+    public boolean handleSearchIntent(Intent intent){
+        if(Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            if(query != null) {
+                doSearch(query);
+                return true;
+            }
         }
-        super.onActivityResult(requestCode, resultCode, data);
+        if(Intent.ACTION_VIEW.equals(intent.getAction())) {
+            Uri data = intent.getData();
+            doSearch(data.toString());
+            return true;
+        }
+        return false;
     }
 
     @Override

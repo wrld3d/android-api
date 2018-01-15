@@ -1,5 +1,7 @@
 package com.wrld.widgets.searchbox.api;
 
+import android.content.Intent;
+
 import com.wrld.widgets.searchbox.api.events.MenuVisibilityChangedCallback;
 import com.wrld.widgets.searchbox.api.events.QueryPerformedCallback;
 import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
@@ -17,6 +19,8 @@ public interface SearchModule extends SearchQueryHandler {
 
     void showDefaultView();
     SearchBoxMenuGroup addGroup(String title);
+
+    boolean handleSearchIntent(Intent intent);
 
     void doSearch(String search);
 
