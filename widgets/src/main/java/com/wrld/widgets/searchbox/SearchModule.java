@@ -1,8 +1,12 @@
 package com.wrld.widgets.searchbox;
 
+import android.app.SearchManager;
+import android.app.SearchableInfo;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.v4.app.Fragment;
@@ -116,6 +120,11 @@ public class SearchModule extends Fragment implements com.wrld.widgets.searchbox
         m_searchModuleController.setQueryBoxController(searchController);
         m_queryDisplay = (SearchView) searchContainer.findViewById(R.id.searchbox_search_searchview);
 
+        SearchManager searchManager = (SearchManager) m_context.getSystemService(Context.SEARCH_SERVICE);
+        ComponentName componentName = getActivity().getComponentName();
+        SearchableInfo searchableInfo = searchManager.getSearchableInfo(componentName);
+        m_queryDisplay.setSearchableInfo(searchableInfo);
+
         m_suggestionSetCollection = new SetCollection();
         m_searchResultSetCollection = new SetCollection();
 
@@ -149,18 +158,6 @@ public class SearchModule extends Fragment implements com.wrld.widgets.searchbox
         m_searchModuleController.hideResults(searchController);
 
         m_searchMenuController.setDefaultMenuContent(root.getContext());
-
-        ImageButton voice = (ImageButton) root.findViewById(R.id.searchbox_search_voice);
-        voice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                // Start the activity, the intent will be populated with the speech text
-                startActivityForResult(intent, SPEECH_REQUEST_CODE);
-            }
-        });
 
         return root;
     }

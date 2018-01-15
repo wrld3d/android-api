@@ -25,22 +25,12 @@
             app:srcCompat="@drawable/menu_btn"
             tools:text="Options" />
 
-        <ImageButton
-            android:id="@+id/searchbox_search_voice"
-            android:layout_width="@dimen/search_query_button_size"
-            android:layout_height="@dimen/search_query_button_size"
-            android:layout_margin="@dimen/search_query_margin"
-            android:layout_alignParentRight="true"
-            app:srcCompat="@android:drawable/ic_btn_speak_now"
-            tools:text="Would you like to know more?" />
-
         <SearchView
             android:id="@+id/searchbox_search_searchview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:iconifiedByDefault="false"
             android:layout_margin="@dimen/search_query_margin"
-            android:layout_toLeftOf="@id/searchbox_search_voice"
             android:layout_toRightOf="@id/searchbox_search_menu"
             android:background="@drawable/searchbox_border"
             android:queryHint="@string/searchbox_query_hint"
