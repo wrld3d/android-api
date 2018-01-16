@@ -11,12 +11,16 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 
 import com.wrld.widgets.R;
@@ -119,6 +123,21 @@ public class SearchModule extends Fragment implements com.wrld.widgets.searchbox
         SearchController searchController = new SearchController(searchContainer, m_searchModuleController);
         m_searchModuleController.setQueryBoxController(searchController);
         m_queryDisplay = (SearchView) searchContainer.findViewById(R.id.searchbox_search_searchview);
+
+        int searchImgId = getResources().getIdentifier("android:id/search_mag_icon", null, null);
+        ImageView iv = (ImageView)m_queryDisplay.findViewById(searchImgId);
+//        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) iv.getLayoutParams();
+//        lp.setMarginStart(0);
+//        iv.setLayoutParams(lp);
+        iv.setLayoutParams(new LinearLayout.LayoutParams(0,0));
+
+        int searchMicId = getResources().getIdentifier("android:id/search_voice_btn", null, null);
+        iv = (ImageView)m_queryDisplay.findViewById(searchMicId);
+        iv.setPadding(0, iv.getPaddingTop(), 0, iv.getPaddingBottom());
+
+        int search_close_btn = getResources().getIdentifier("android:id/search_close_btn", null, null);
+        iv = (ImageView)m_queryDisplay.findViewById(search_close_btn);
+        iv.setPadding(0, iv.getPaddingTop(), 0, iv.getPaddingBottom());
 
         SearchManager searchManager = (SearchManager) m_context.getSystemService(Context.SEARCH_SERVICE);
         ComponentName componentName = getActivity().getComponentName();

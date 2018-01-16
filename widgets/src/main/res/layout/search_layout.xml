@@ -34,7 +34,6 @@
             android:layout_toRightOf="@id/searchbox_search_menu"
             android:background="@drawable/searchbox_border"
             android:queryHint="@string/searchbox_query_hint"
-            android:searchIcon="@null"
             />
     </RelativeLayout>
 
