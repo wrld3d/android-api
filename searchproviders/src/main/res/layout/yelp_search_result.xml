@@ -13,7 +13,7 @@
         android:id="@+id/search_result_icon"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:layout_centerVertical="false"
+        android:layout_centerVertical="true"
         android:adjustViewBounds="true"
         android:layout_marginRight="8dp"
         app:srcCompat="@android:drawable/ic_menu_search" />
