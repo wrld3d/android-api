@@ -20,8 +20,9 @@
         android:id="@+id/searchbox_set_expand_info"
         android:layout_width="match_parent"
         android:layout_height="@dimen/search_results_text_area_height"
-        android:textAlignment="center"
+        android:textAlignment="textStart"
         android:textColor="@color/searchbox_link"
-        android:gravity="center"
+        android:gravity="center_vertical|start"
+        android:layout_marginLeft="8dp"
         android:layout_gravity="center_vertical"/>
 </LinearLayout>
