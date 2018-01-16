@@ -21,11 +21,12 @@ public class MapsceneApplier
         /* Ideally also updated to apply all features of a Mapscene via corresponding APIs */
 
         LatLngAlt startLocation = mapscene.startLocation.startLocation;
+        double zoom = CameraPosition.Builder.DistanceToZoom(mapscene.startLocation.startLocationDistanceToInterest);
 
         CameraPosition position = new CameraPosition.Builder()
                 .target(startLocation.latitude, startLocation.longitude)
                 .bearing(mapscene.startLocation.startLocationBearing)
-                .distance(mapscene.startLocation.startLocationDistanceToInterest)
+                .zoom(zoom)
                 .build();
 
         m_map.moveCamera(CameraUpdateFactory.newCameraPosition(position));
