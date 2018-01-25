@@ -9,6 +9,8 @@
         <attr name="camera_zoom" format="float"/>
         <attr name="camera_bearing" format="float"/>
         <attr name="camera_tilt" format="float"/>
+        <attr name="camera_indoor_map_id" format="float"/>
+        <attr name="camera_indoor_map_floor_id" format="float"/>
         <attr name="coverage_tree_manifest" format="string"/>
         <attr name="environment_themes_manifest" format="string"/>
 

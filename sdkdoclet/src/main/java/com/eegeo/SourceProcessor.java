@@ -33,6 +33,7 @@ public class SourceProcessor extends Doclet {
             "OnMarkerClickListener",
             "CameraPosition",
             "CameraUpdate",
+            "CameraAnimationOptions",
             "CameraUpdateFactory",
             "IndoorMap",
             "OnFloorChangedListener",
@@ -90,6 +91,7 @@ public class SourceProcessor extends Doclet {
     private static List<String> subClasses = Arrays.asList(
             "CameraPosition.Builder",
             "CameraUpdate.CameraUpdateType",
+            "CameraAnimationOptions.Builder",
             "EegeoMap.OnCameraMoveListener",
             "EegeoMap.OnMapClickListener",
             "MarkerOptions.MarkerElevationMode",

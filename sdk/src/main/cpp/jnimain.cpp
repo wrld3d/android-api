@@ -201,8 +201,15 @@ JNIEXPORT void JNICALL Java_com_eegeo_mapapi_EegeoNativeMapView_nativeSetSurface
     }
 }
 
-JNIEXPORT jlong JNICALL Java_com_eegeo_mapapi_EegeoNativeMapView_nativeCreateEegeoMapApi(JNIEnv* jenv, jobject obj, jlong jniApiRunnerPtr, jobject eegeoMap,
-                                                                                         jstring apiKey, jstring coverageTreeManifest, jstring environmentThemesManifest)
+JNIEXPORT jlong JNICALL Java_com_eegeo_mapapi_EegeoNativeMapView_nativeCreateEegeoMapApi(
+    JNIEnv* jenv,
+    jobject obj,
+    jlong jniApiRunnerPtr,
+    jobject eegeoMap,
+    jstring apiKey,
+    jstring coverageTreeManifest,
+    jstring environmentThemesManifest
+)
 {
     Eegeo_ASSERT(jniApiRunnerPtr != 0);
     auto pAndroidApiRunner = reinterpret_cast<Eegeo::ApiHost::Android::AndroidApiRunner*>(jniApiRunnerPtr);
@@ -211,10 +218,23 @@ JNIEXPORT jlong JNICALL Java_com_eegeo_mapapi_EegeoNativeMapView_nativeCreateEeg
     const char* pCoverageTreeManifest = jenv->GetStringUTFChars( coverageTreeManifest, NULL ) ;
     const char* pEnvironmentThemesManifest = jenv->GetStringUTFChars( environmentThemesManifest, NULL ) ;
 
+
+    jclass clazzCameraPositionBuilder = jenv->FindClass("com/eegeo/mapapi/camera/CameraPosition$Builder");
+    Eegeo_ASSERT(clazzCameraPositionBuilder != nullptr);
+
+    jfieldID fid_CameraPositionBuilder_zoomLevels = jenv->GetStaticFieldID(clazzCameraPositionBuilder, "ms_zoomToDistances", "[D");
+    Eegeo_ASSERT(fid_CameraPositionBuilder_zoomLevels != nullptr);
+    jdoubleArray jZoomLevels = static_cast<jdoubleArray>(jenv->GetStaticObjectField(clazzCameraPositionBuilder, fid_CameraPositionBuilder_zoomLevels));
+    Eegeo_ASSERT(jZoomLevels != nullptr);
+
+    jsize zoomLevelDistancesCount = jenv->GetArrayLength(jZoomLevels);
+    jdouble* pZoomLevelDistances = jenv->GetDoubleArrayElements(jZoomLevels, 0);
+    const std::vector<double> zoomLevelDistances(pZoomLevelDistances, pZoomLevelDistances + zoomLevelDistancesCount);
+
     std::string apiKeyStr(pApiKey);
     std::string coverageTreeManifestStr(pCoverageTreeManifest);
     std::string environmentThemesManifestStr(pEnvironmentThemesManifest);
-    Eegeo::ApiHost::EegeoApiHostPlatformConfigOptions configOptions(apiKeyStr, coverageTreeManifestStr, environmentThemesManifestStr);
+    Eegeo::ApiHost::EegeoApiHostPlatformConfigOptions configOptions(apiKeyStr, coverageTreeManifestStr, environmentThemesManifestStr, zoomLevelDistances);
     pAndroidApiRunner->CreatePlatform(configOptions, eegeoMap);
     Eegeo::ApiHost::IEegeoApiHostModule* pEegeoApiHostModule = pAndroidApiRunner->GetEegeoApiHostModule();
 
@@ -298,24 +318,4 @@ JNIEXPORT void JNICALL Java_com_eegeo_mapapi_EegeoNativeMapView_nativeProcessPoi
     pAndroidApiRunner->HandleTouchEvent(event);
 }
 
-JNIEXPORT void JNICALL Java_com_eegeo_mapapi_NativeJniCalls_setView(JNIEnv*, jobject obj, jlong jniEegeoMapApiPtr,
-                                                                      jboolean animated, jdouble latDegrees, jdouble lonDegrees, jdouble altitude, jboolean modifyPosition,
-                                                                      jdouble distance, jboolean modifyDistance,
-                                                                      jdouble headingDegrees, jboolean modifyHeading,
-                                                                      jdouble tiltDegrees, jboolean modifyTilt,
-                                                                      jdouble transitionDurationSeconds, jboolean hasTransitionDuration,
-                                                                      jboolean jumpIfFarAway,
-                                                                      jboolean allowInterruption)
-{
-    Eegeo_ASSERT(jniEegeoMapApiPtr != 0);
-    auto pEegeoMapApi = reinterpret_cast<Eegeo::Api::EegeoMapApi*>(jniEegeoMapApiPtr);
-
-    pEegeoMapApi->GetCameraApi().SetView(animated, latDegrees, lonDegrees, altitude, modifyPosition,
-                                         distance, modifyDistance,
-                                         headingDegrees, modifyHeading,
-                                         tiltDegrees, modifyTilt,
-                                         transitionDurationSeconds, hasTransitionDuration,
-                                         jumpIfFarAway,
-                                         allowInterruption);
-}
 
