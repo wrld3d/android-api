@@ -3,9 +3,9 @@ package com.wrld.widgets.searchbox.model;
 import com.wrld.widgets.searchbox.api.SearchResult;
 
 /**
- * Created by malcolm.brown on 19/01/2018.
+ * A result from an individual SearchProviderQuery. Contains the results (if any), information on if it
+ * was successful, and an id to map it back to the original provider.
  */
-
 class SearchProviderQueryResult
 {
     public SearchProviderQueryResult(int providerId, SearchResult[] results, boolean success)

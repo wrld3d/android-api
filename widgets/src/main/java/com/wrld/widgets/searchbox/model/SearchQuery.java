@@ -6,16 +6,6 @@ import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by malcolm.brown on 19/01/2018.
- */
-
-
-interface SearchQueryListener
-{
-    void onSearchQueryCompleted(List<SearchProviderQueryResult> results);
-    void onSearchQueryCancelled();
-}
 
 public class SearchQuery implements SearchProviderQueryListener{
 
@@ -31,14 +21,17 @@ public class SearchQuery implements SearchProviderQueryListener{
     public String getQueryString() { return m_queryString; }
     public Object getQueryContext() { return m_queryContext; }
 
-    public SearchQuery(String queryString, Object queryContext, SearchQueryListener listener)
+    public SearchQuery(String queryString,
+                       Object queryContext,
+                       SearchQueryListener listener,
+                       List<SearchProviderQuery> providerQueries)
     {
         m_queryString = queryString;
         m_queryContext = queryContext;
         m_listener = listener;
         m_cancelled = false;
         m_inProgress = false;
-        m_providerQueries = new ArrayList<SearchProviderQuery>();
+        m_providerQueries = providerQueries;
         m_results = new ArrayList<SearchProviderQueryResult>();
     }
 
@@ -48,37 +41,26 @@ public class SearchQuery implements SearchProviderQueryListener{
         m_inProgress = true;
         for(SearchProviderQuery providerQuery : m_providerQueries)
         {
-            providerQuery.start(this);
+            providerQuery.setListener(this);
+            providerQuery.start(m_queryString, m_queryContext);
         }
     }
 
 
     public void cancel()
     {
-        // Cancel all inflight queries and notify cancelled.
-        m_cancelled = true;
-        m_inProgress = false;
-        for (SearchProviderQuery query : m_providerQueries)
+        if(m_inProgress && !m_cancelled)
         {
-            if(query.getState() == SearchProviderQueryState.InProgress)
+            // Cancel all inflight queries and notify cancelled.
+            m_cancelled = true;
+            m_inProgress = false;
+            for (SearchProviderQuery query : m_providerQueries)
             {
                 query.cancel();
             }
+
+            m_listener.onSearchQueryCancelled();
         }
-
-        m_listener.onSearchQueryCancelled();
-    }
-
-    public void addProvider(MappedSearchProvider provider)
-    {
-        // TODO: Calling this while in progress is bogus.
-        if(m_inProgress)
-        {
-            return;
-        }
-
-        SearchProviderQuery providerQuery = new SearchProviderQuery(provider, this);
-        m_providerQueries.add(providerQuery);
     }
 
     @Override
@@ -90,7 +72,6 @@ public class SearchQuery implements SearchProviderQueryListener{
         }
 
         m_results.add(result);
-        // Check to see who else is still to go.
         checkIsComplete();
     }
 
@@ -115,8 +96,5 @@ public class SearchQuery implements SearchProviderQueryListener{
         return true;
     }
 
-    @Override
-    public void onSearchProviderQueryCancelled() {
 
-    }
 }

@@ -1,18 +1,12 @@
 package com.wrld.widgets.searchbox.model;
 
 import com.wrld.widgets.searchbox.api.SearchResult;
+import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
 
 /**
- * Created by malcolm.brown on 19/01/2018.
+ * Shared base logic for calling and tracking a call to a SearchProvider
  */
-
-interface SearchProviderQueryListener
-{
-    void onSearchProviderQueryCompleted(SearchProviderQueryResult result);
-    void onSearchProviderQueryCancelled();
-}
-
-public class SearchProviderQueryBase {
+public class SearchProviderQueryBase implements QueryResultsReadyCallback {
 
 
     public enum SearchProviderQueryState {
@@ -21,26 +15,29 @@ public class SearchProviderQueryBase {
 
     protected SearchProviderQueryState m_state;
 
-    private final SearchProviderQueryListener m_listener;
+    private SearchProviderQueryListener m_listener;
     private final int m_providerId;
-    private SearchQuery m_query;
 
-    SearchProviderQueryState getState() { return m_state; }
+    public SearchProviderQueryState getState() { return m_state; }
 
     boolean isCompleted() {
         return  m_state != SearchProviderQueryState.NotStarted &&
                 m_state != SearchProviderQueryState.InProgress;
     }
 
-    SearchProviderQueryBase(SearchProviderQueryListener listener, int providerId)
+    SearchProviderQueryBase(int providerId)
     {
-        //m_provider = provider;
         m_providerId = providerId;
-        m_listener = listener;
         m_state = SearchProviderQueryState.NotStarted;
+        m_listener = null;
     }
 
-    void start(SearchQuery query)
+    public void setListener(SearchProviderQueryListener listener)
+    {
+        m_listener = listener;
+    }
+
+    public void start(String queryText, Object queryContext)
     {
         // Internal guard against starting twice
         if(m_state != SearchProviderQueryState.NotStarted)
@@ -48,16 +45,13 @@ public class SearchProviderQueryBase {
             // !!
         }
         m_state = SearchProviderQueryState.InProgress;
-
-        m_query = query;
-        doSearch(query);
-
+        doSearch(queryText, queryContext);
     }
 
 
-    public void doSearch(SearchQuery query)
+    protected void doSearch(String queryText, Object queryContext)
     {
-        // m_provider.getSearchProvider().getSearchResults(m_query);
+        // override this.
         onQueryCompleted(new SearchResult[0], true);
     }
 
@@ -74,17 +68,15 @@ public class SearchProviderQueryBase {
     public void onQueryCancelled() {
         m_state = SearchProviderQueryState.Cancelled;
         if(m_listener != null) {
-            m_listener.onSearchProviderQueryCancelled();
+            SearchResult[] results = new SearchResult[0];
+            m_listener.onSearchProviderQueryCompleted(new SearchProviderQueryResult(m_providerId, results, false));
         }
     }
 
-    void cancel() {
+    public void cancel() {
         if (m_state == SearchProviderQueryState.InProgress)
         {
             onQueryCancelled();
-
-            // TODO: Implement cancelling.
-            //m_provider.getSearchProvider().cancelCurrentQuery();
         }
     }
 }

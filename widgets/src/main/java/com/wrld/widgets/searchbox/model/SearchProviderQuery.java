@@ -4,34 +4,33 @@ import com.wrld.widgets.searchbox.api.SearchResult;
 import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
 
 /**
- * Created by malcolm.brown on 19/01/2018.
+ * A model of an individual call to an ISearchProvider for a given SearchQuery
  */
-
-class SearchProviderQuery extends SearchProviderQueryBase implements QueryResultsReadyCallback {
+class SearchProviderQuery extends SearchProviderQueryBase  {
 
     private MappedSearchProvider m_provider;
 
-    SearchProviderQuery(MappedSearchProvider provider, SearchProviderQueryListener listener)
+    SearchProviderQuery(MappedSearchProvider provider)
     {
-        super(listener, provider.getId());
+        super(provider.getId());
         m_provider = provider;
 
-        // TODO: Does this need removing?
+        // How to remove callback?
         m_provider.getSearchProvider().addSearchCompletedCallback(this);
     }
 
     @Override
-    public void doSearch(SearchQuery query)
+    protected void doSearch(String queryText, Object queryContext)
     {
-        m_provider.getSearchProvider().getSearchResults(query);
+        m_provider.getSearchProvider().getSearchResults(queryText, queryContext);
     }
 
     @Override
-    void cancel() {
+    public void cancel() {
         if (m_state == SearchProviderQueryState.InProgress)
         {
-            // TODO: Implement cancelling.
-            //m_provider.getSearchProvider().cancelCurrentQuery();
+            m_state = SearchProviderQueryState.Cancelled;
+            m_provider.getSearchProvider().cancelSearch();
         }
     }
 }

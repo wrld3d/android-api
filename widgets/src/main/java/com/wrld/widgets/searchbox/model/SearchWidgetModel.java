@@ -13,60 +13,59 @@ import java.util.Map;
 
 class MappedSearchProvider
 {
-    public MappedSearchProvider(SearchProvider provider, int id)
+    public MappedSearchProvider(ISearchProvider provider, int id)
     {
         m_providerId = id;
         m_searchProvider = provider;
     }
 
     public int getId() { return m_providerId; }
-    public SearchProvider getSearchProvider() { return m_searchProvider; }
+    public ISearchProvider getSearchProvider() { return m_searchProvider; }
 
-    private SearchProvider m_searchProvider;
+    private ISearchProvider m_searchProvider;
     public int m_providerId;
 }
 
 class MappedSuggestionProvider
 {
-    public MappedSuggestionProvider(SuggestionProvider provider, int id)
+    public MappedSuggestionProvider(ISuggestionProvider provider, int id)
     {
         m_providerId = id;
         m_searchProvider = provider;
     }
 
     public int getId() { return m_providerId; }
-    public SuggestionProvider getSuggestionProvider() { return m_searchProvider; }
+    public ISuggestionProvider getSuggestionProvider() { return m_searchProvider; }
 
-    private SuggestionProvider m_searchProvider;
+    private ISuggestionProvider m_searchProvider;
     public int m_providerId;
 }
 
 public class SearchWidgetModel implements SearchQueryListener
 {
 
-    SearchQuery m_currentQuery;
-    List<SearchProviderQueryResult> m_currentQueryResults;
-    Map<Integer, MappedSearchProvider> m_searchProviderMap;
-    Map<Integer, MappedSuggestionProvider> m_suggestionProviderMap;
+    private SearchQuery m_currentQuery;
+    private List<SearchProviderQueryResult> m_currentQueryResults;
+    private Map<Integer, MappedSearchProvider> m_searchProviderMap;
+    private Map<Integer, MappedSuggestionProvider> m_suggestionProviderMap;
 
-
-
-    int m_nextProviderId = 0;
+    private int m_nextProviderId = 0;
 
     public SearchWidgetModel()
     {
-        m_searchProviderMap = new HashMap();
+        m_searchProviderMap = new HashMap<>();
+        m_suggestionProviderMap = new HashMap<>();
     }
 
     // Add providers.
-    public void addSearchProvider(SearchProvider provider)
+    public void addSearchProvider(ISearchProvider provider)
     {
         // NOTE: Guard against adding
         int providerId = m_nextProviderId++;
         m_searchProviderMap.put(providerId, new MappedSearchProvider(provider, providerId));
     }
 
-    public void removeSearchProvider(SearchProvider provider)
+    public void removeSearchProvider(ISearchProvider provider)
     {
         // TODO: Observer clearing any results or queries belong to this provider.
 
@@ -82,16 +81,17 @@ public class SearchWidgetModel implements SearchQueryListener
         }
     }
 
-    public void addSuggestionProvider(SuggestionProvider provider)
+    public void addSuggestionProvider(ISuggestionProvider provider)
     {
         // NOTE: Guard against adding
         int providerId = m_nextProviderId++;
-        m_searchProviderMap.put(providerId, new MappedSearchProvider(provider, providerId));
+        m_suggestionProviderMap.put(providerId, new MappedSuggestionProvider(provider, providerId));
     }
 
-    public void removeSuggestionProvider(SuggestionProvider provider)
+    public void removeSuggestionProvider(ISuggestionProvider provider)
     {
         // TODO: Observer clearing any results or queries belong to this provider.
+        // Might be easier to cancel current query, remove, and re-run the query
 
         // TODO: This seems nonsense - cleaner way of doing this.
         if(m_suggestionProviderMap.containsValue(provider))
@@ -112,29 +112,39 @@ public class SearchWidgetModel implements SearchQueryListener
 
     public void doSearch(String queryText, Object queryContext)
     {
-        // cancel existing.
-        if(m_currentQuery != null)
-        {
-            m_currentQuery.cancel();
-            m_currentQuery = null;
-        }
+        cancelCurrentQuery();
 
-        m_currentQuery = new SearchQuery(queryText, queryContext, this);
-        for(MappedSearchProvider mappedProvider : m_searchProviderMap.values()) {
-            // TODO: Change this to add a ProviderQuery of either type (Search/Suggestions)
-            // (And then factor this out do a general 'doQuery'?)
-            m_currentQuery.addProvider(mappedProvider);
-        }
-
+        SearchQueryListener listener = this;
+        m_currentQuery = BuildSearchQuery(queryText, queryContext, listener, m_searchProviderMap);
         m_currentQuery.start();
+    }
+
+    private SearchQuery BuildSearchQuery(String queryText,
+                                         Object queryContext,
+                                         SearchQueryListener listener,
+                                         Map<Integer, MappedSearchProvider> providerMap)
+    {
+        List<SearchProviderQuery> providerQueries = new ArrayList<SearchProviderQuery>(providerMap.size());
+        for(MappedSearchProvider mappedProvider : m_searchProviderMap.values()) {
+            providerQueries.add(new SearchProviderQuery(mappedProvider));
+        }
+        return new SearchQuery(queryText, queryContext, listener, providerQueries);
     }
 
     public void doSuggestions(String queryText) {
 
     }
 
+    public void cancelCurrentQuery()
+    {
+        if(m_currentQuery != null) {
+            m_currentQuery.cancel();
+        }
+    }
+
     public void clear()
     {
+        cancelCurrentQuery();
         m_currentQuery = null;
         m_currentQueryResults = null;
         //m_listener.notifyQueryCleared();
@@ -142,13 +152,12 @@ public class SearchWidgetModel implements SearchQueryListener
 
     @Override
     public void onSearchQueryCompleted(List<SearchProviderQueryResult> results) {
-        // Populate results view model.
         m_currentQueryResults = results;
-        //m_listener.notifyQueryCompleted(m_currentQuery, m_currentQueryResults);
+        //m_listener.onSearchQueryCompleted(m_currentQuery, m_currentQueryResults);
     }
 
     @Override
     public void onSearchQueryCancelled() {
-       // m_listener.notifyQueryCancelled();
+       // m_listener.onSearchQueryCancelled();
     }
 }

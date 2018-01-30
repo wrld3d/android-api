@@ -2,16 +2,12 @@ package com.wrld.widgets.searchbox.model;
 
 import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
 
-/**
- * Created by malcolm.brown on 19/01/2018.
- */
-
 class SearchSuggestionProviderQuery extends SearchProviderQueryBase implements QueryResultsReadyCallback {
 
-    private MappedSearchSuggestionProvider m_provider;
+    private MappedSuggestionProvider m_provider;
 
-    public SearchSuggestionProviderQuery(MappedSearchSuggestionProvider provider, SearchProviderQueryListener listener) {
-        super(listener, provider.getId());
+    public SearchSuggestionProviderQuery(MappedSuggestionProvider provider, SearchProviderQueryListener listener) {
+        super(provider.getId());
         m_provider = provider;
 
         // TODO: Does this need removing?
@@ -19,15 +15,14 @@ class SearchSuggestionProviderQuery extends SearchProviderQueryBase implements Q
     }
 
     @Override
-    public void doSearch(SearchQuery query) {
-        m_provider.getSuggestionProvider().getSuggestions(query);
+    public void doSearch(String queryText, Object queryContext) {
+        m_provider.getSuggestionProvider().getSuggestions(queryText,queryContext);
     }
 
     @Override
-    void cancel() {
+    public void cancel() {
         if (m_state == SearchProviderQueryState.InProgress) {
-            // TODO: Implement cancelling.
-            //m_provider.getSearchProvider().cancelCurrentQuery();
+            m_provider.getSuggestionProvider().cancelSuggestions();
         }
     }
 
