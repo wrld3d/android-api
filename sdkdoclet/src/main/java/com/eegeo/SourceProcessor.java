@@ -33,6 +33,7 @@ public class SourceProcessor extends Doclet {
             "OnMarkerClickListener",
             "CameraPosition",
             "CameraUpdate",
+            "CameraAnimationOptions",
             "CameraUpdateFactory",
             "IndoorMap",
             "OnFloorChangedListener",
@@ -61,7 +62,7 @@ public class SourceProcessor extends Doclet {
             "PoiSearchResult",
             "TextSearchOptions",
             "TagSearchOptions",
-            "AutocompleteOptions,",
+            "AutocompleteOptions",
             "MapsceneService",
             "MapsceneRequest",
             "OnMapsceneRequestCompletedListener",
@@ -82,12 +83,15 @@ public class SourceProcessor extends Doclet {
             "RoutingQueryOptions",
             "TransportationMode",
             "RouteView",
-            "RouteViewOptions"
+            "RouteViewOptions",
+            "TagService",
+            "OnTagsLoadCompletedListener"
     );
     // Would be nicer to extract this list automatically, but that would require two passes
     private static List<String> subClasses = Arrays.asList(
             "CameraPosition.Builder",
             "CameraUpdate.CameraUpdateType",
+            "CameraAnimationOptions.Builder",
             "EegeoMap.OnCameraMoveListener",
             "EegeoMap.OnMapClickListener",
             "MarkerOptions.MarkerElevationMode",

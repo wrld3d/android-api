@@ -19,7 +19,7 @@ public final class MarkerOptions {
     private String m_title = "";
     private String m_styleName = "marker_default";
     private String m_userData = "";
-    private String m_iconKey = "misc";
+    private String m_iconKey = "pin";
     private String m_indoorMapId = "";
     private int m_indoorFloorId;
     /**
