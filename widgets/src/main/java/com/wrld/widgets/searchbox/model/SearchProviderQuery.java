@@ -1,8 +1,5 @@
 package com.wrld.widgets.searchbox.model;
 
-import com.wrld.widgets.searchbox.api.SearchResult;
-import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
-
 /**
  * A model of an individual call to an ISearchProvider for a given SearchQuery
  */

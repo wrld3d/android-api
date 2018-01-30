@@ -1,8 +1,9 @@
-package com.wrld.widgets.searchbox.api;
+package com.wrld.widgets.searchbox.model;
 
-public interface SearchResult {
+public interface ISearchResult {
     String getTitle();
 
     boolean hasProperty(String propertyKey);
     SearchResultProperty getProperty(String propertyKey);
 }
+

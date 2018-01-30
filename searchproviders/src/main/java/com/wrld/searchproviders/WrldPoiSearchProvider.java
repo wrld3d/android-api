@@ -10,13 +10,11 @@ import com.eegeo.mapapi.services.poi.PoiSearchResponse;
 import com.eegeo.mapapi.services.poi.PoiSearchResult;
 import com.eegeo.mapapi.services.poi.PoiService;
 import com.eegeo.mapapi.services.poi.TextSearchOptions;
-import com.wrld.widgets.searchbox.api.Query;
-import com.wrld.widgets.searchbox.api.SearchResult;
-import com.wrld.widgets.searchbox.api.SuggestionProviderBase;
+import com.wrld.widgets.searchbox.model.ISearchResult;
 
 import java.util.List;
 
-public class WrldPoiSearchProvider extends SuggestionProviderBase {
+public class WrldPoiSearchProvider extends SearchProviderBase {
 
     private EegeoMap m_map;
     private PoiService m_poiService;
@@ -27,7 +25,7 @@ public class WrldPoiSearchProvider extends SuggestionProviderBase {
     private String m_suggestionTitleFormatting;
 
     private interface SearchCompleteCallback {
-        void invoke(SearchResult[] results);
+        void invoke(ISearchResult[] results);
     }
 
     @Override
@@ -56,7 +54,7 @@ public class WrldPoiSearchProvider extends SuggestionProviderBase {
             List<PoiSearchResult> results = response.getResults();
 
             if (response.succeeded()) {
-                SearchResult[] resultsArray = new SearchResult[results.size()];
+                ISearchResult[] resultsArray = new ISearchResult[results.size()];
                 for (int i = 0; i < results.size(); ++i) {
                     PoiSearchResult poi = results.get(i);
                     resultsArray[i] = new PositionalSearchResult(poi.title, poi.latLng, poi.subtitle);
@@ -69,33 +67,40 @@ public class WrldPoiSearchProvider extends SuggestionProviderBase {
 
                 if (m_failedSearches >= 1) {
                     m_currentSearch = null;
-                    m_searchCompleteCallback.invoke(new SearchResult[0]);
+                    m_searchCompleteCallback.invoke(new ISearchResult[0]);
                 }
             }
         }
     }
 
     @Override
-    public void getSearchResults(Query query) {
+    public void getSearchResults(String searchQuery, Object searchContext) {
 
         PoiSearchListener listener = new PoiSearchListener(
                 new SearchCompleteCallback() {
                     @Override
-                    public void invoke(SearchResult[] results) {
-                        performSearchCompletedCallbacks(results);
+                    public void invoke(ISearchResult[] results) {
+                        performSearchCompletedCallbacks(results, true);
                     }
                 }
         );
 
+        // TODO: Check searchContext for tag searches
+
         m_currentSearch = m_poiService.searchText(
-                new TextSearchOptions(query.getQueryString(), m_map.getCameraPosition().target.toLatLng())
+                new TextSearchOptions(searchQuery, m_map.getCameraPosition().target.toLatLng())
                         .radius(1000.0)
                         .number(60)
                         .onPoiSearchCompletedListener(listener));
     }
 
     @Override
-    public void getSuggestions(Query query) {
+    public void cancelSearch() {
+        m_currentSearch.cancel();
+    }
+
+    @Override
+    public void getSuggestions(String searchQuery, Object searchContext) {
 
         if(m_currentSearch != null){
             m_currentSearch.cancel();
@@ -104,15 +109,21 @@ public class WrldPoiSearchProvider extends SuggestionProviderBase {
         PoiSearchListener listener = new PoiSearchListener(
                 new SearchCompleteCallback() {
                     @Override
-                    public void invoke(SearchResult[] results) {
-                        performSuggestionCompletedCallbacks(results);
+                    public void invoke(ISearchResult[] results) {
+                        performSuggestionCompletedCallbacks(results, true);
                     }
                 }
         );
 
         m_currentSearch = m_poiService.searchAutocomplete(
-                new AutocompleteOptions(query.getQueryString(), m_map.getCameraPosition().target.toLatLng())
+                new AutocompleteOptions(searchQuery, m_map.getCameraPosition().target.toLatLng())
                         .number(5)
                         .onPoiSearchCompletedListener(listener));
+    }
+
+    @Override
+    public void cancelSuggestions() {
+        // TODO: Separate Suggestions and Search providers to be more modular.
+        m_currentSearch.cancel();
     }
 }

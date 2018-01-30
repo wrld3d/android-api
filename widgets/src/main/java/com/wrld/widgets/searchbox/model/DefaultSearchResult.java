@@ -1,8 +1,8 @@
-package com.wrld.widgets.searchbox.api;
+package com.wrld.widgets.searchbox.model;
 
 import java.util.HashMap;
 
-public class DefaultSearchResult implements SearchResult {
+public class DefaultSearchResult implements ISearchResult {
 
     private String m_title;
 

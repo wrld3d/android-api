@@ -1,13 +1,11 @@
 package com.wrld.widgets.searchbox.model;
 
-import com.wrld.widgets.searchbox.api.SearchResult;
-import com.wrld.widgets.searchbox.api.SearchResultProperty;
-import com.wrld.widgets.searchbox.api.SearchResultViewFactory;
-import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
+import com.wrld.widgets.searchbox.view.ISearchResultViewFactory;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class SearchWidgetModelTests {
 
@@ -46,42 +44,55 @@ public class SearchWidgetModelTests {
         assertEquals(provider.searchedContext(), "Context");
     }
 
+    @Test
+    public void testCurrentQueryWasSet() throws Exception {
+        SearchWidgetModel widgetModel = createSearchWidgetModel();
+        MockSearchProvider provider = createValidSearchProvider();
+        widgetModel.addSearchProvider(provider);
+
+        widgetModel.doSearch("Hello", "Context");
+
+        assertNotEquals(widgetModel.getCurrentQuery(), null);
+        assertEquals(widgetModel.getCurrentQuery().getQueryString(), "Hello");
+        assertEquals(widgetModel.getCurrentQuery().getQueryContext(), "Context");
+    }
+
+    @Test
+    public void testCurrentQueryResultsWereReturned() throws Exception {
+        SearchWidgetModel widgetModel = createSearchWidgetModel();
+        MockSearchProvider provider = createValidSearchProvider();
+        widgetModel.addSearchProvider(provider);
+
+        widgetModel.doSearch("Hello", "Context");
+
+        assertNotEquals(widgetModel.getCurrentQueryResults(), null);
+        assertEquals(widgetModel.getCurrentQueryResults().size(), 1);
+        assertEquals(widgetModel.getCurrentQueryResults().get(0).wasSuccess(), true);
+        assertEquals(widgetModel.getCurrentQueryResults().get(0).getResults().length, 1);
+        assertEquals(widgetModel.getCurrentQueryResults().get(0).getResults()[0].getTitle(), "Search Result");
+    }
+
+    // Test clearing results
+
+    // Test cancelling query in progress
+
+    // Test cancelling query before started
+
+    // Test doing search twice cancels previous
+
+    // And everything else./
+
 }
 
 class MockSearchProvider implements ISearchProvider
 {
     Boolean m_willSucceed;
     String m_title;
-    QueryResultsReadyCallback m_callback;
+    ISearchProviderResultsReadyCallback m_callback;
     private boolean m_cancelled;
 
     public String m_searchedQuery;
     public Object m_searchedContext;
-
-    public class MockSearchResult implements SearchResult
-    {
-        String m_title;
-
-        public MockSearchResult(String title)
-        {
-            m_title = title;
-        }
-
-        @Override
-        public String getTitle() {
-            return m_title;
-        }
-
-        @Override
-        public boolean hasProperty(String propertyKey) {
-            return false;
-        }
-
-        @Override
-        public SearchResultProperty getProperty(String propertyKey) {
-            return null;
-        }
-    }
 
     public MockSearchProvider(String title, Boolean willSuceed)
     {
@@ -106,12 +117,12 @@ class MockSearchProvider implements ISearchProvider
 
         if(!m_willSucceed)
         {
-            m_callback.onQueryCompleted(new MockSearchResult[0], false);
+            m_callback.onQueryCompleted(new DefaultSearchResult[0], false);
         }
         else
         {
-            MockSearchResult[] results = new MockSearchResult[1];
-            results[0] = new MockSearchResult("Search Result");
+            DefaultSearchResult[] results = new DefaultSearchResult[1];
+            results[0] = new DefaultSearchResult("Search Result");
             m_callback.onQueryCompleted(results, true);
         }
     }
@@ -119,21 +130,21 @@ class MockSearchProvider implements ISearchProvider
     @Override
     public void cancelSearch() {
         m_cancelled = true;
-        m_callback.onQueryCancelled();
+        //m_callback.onQueryCancelled();
     }
 
     @Override
-    public void addSearchCompletedCallback(QueryResultsReadyCallback queryResultsReadyCallback) {
+    public void addSearchCompletedCallback(ISearchProviderResultsReadyCallback queryResultsReadyCallback) {
         m_callback = queryResultsReadyCallback;
     }
 
     @Override
-    public void removeSearchCompletedCallback(QueryResultsReadyCallback queryResultsReadyCallback) {
+    public void removeSearchCompletedCallback(ISearchProviderResultsReadyCallback queryResultsReadyCallback) {
         m_callback = null;
     }
 
     @Override
-    public SearchResultViewFactory getResultViewFactory() {
+    public ISearchResultViewFactory getResultViewFactory() {
         return null;
     }
 }

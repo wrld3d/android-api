@@ -1,16 +1,16 @@
 package com.wrld.widgets.searchbox.model;
 
-import com.wrld.widgets.searchbox.api.SearchResultViewFactory;
-import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
+
+import com.wrld.widgets.searchbox.view.ISearchResultViewFactory;
 
 public interface ISearchProvider {
     String getTitle();
     void getSearchResults(String queryText, Object queryContext);
     void cancelSearch();
 
-    void addSearchCompletedCallback(QueryResultsReadyCallback queryResultsReadyCallback);
-    void removeSearchCompletedCallback(QueryResultsReadyCallback queryResultsReadyCallback);
+    void addSearchCompletedCallback(ISearchProviderResultsReadyCallback searchProviderResultsReadyCallback);
+    void removeSearchCompletedCallback(ISearchProviderResultsReadyCallback searchProviderResultsReadyCallback);
 
-    SearchResultViewFactory getResultViewFactory();
+    ISearchResultViewFactory getResultViewFactory();
 }
 

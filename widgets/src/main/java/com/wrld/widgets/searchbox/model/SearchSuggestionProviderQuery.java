@@ -1,8 +1,6 @@
 package com.wrld.widgets.searchbox.model;
 
-import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
-
-class SearchSuggestionProviderQuery extends SearchProviderQueryBase implements QueryResultsReadyCallback {
+class SearchSuggestionProviderQuery extends SearchProviderQueryBase {
 
     private MappedSuggestionProvider m_provider;
 

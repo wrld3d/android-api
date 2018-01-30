@@ -1,12 +1,9 @@
 package com.wrld.widgets.searchbox.model;
 
-import com.wrld.widgets.searchbox.api.SearchResult;
-import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
-
 /**
  * Shared base logic for calling and tracking a call to a SearchProvider
  */
-public class SearchProviderQueryBase implements QueryResultsReadyCallback {
+public class SearchProviderQueryBase implements ISearchProviderResultsReadyCallback {
 
 
     public enum SearchProviderQueryState {
@@ -52,10 +49,10 @@ public class SearchProviderQueryBase implements QueryResultsReadyCallback {
     protected void doSearch(String queryText, Object queryContext)
     {
         // override this.
-        onQueryCompleted(new SearchResult[0], true);
+        onQueryCompleted(new ISearchResult[0], true);
     }
 
-    public void onQueryCompleted(SearchResult[] searchResults, boolean success)
+    public void onQueryCompleted(ISearchResult[] searchResults, Boolean success)
     {
         m_state = success ? SearchProviderQueryState.Success : SearchProviderQueryState.Failed;
 
@@ -68,7 +65,8 @@ public class SearchProviderQueryBase implements QueryResultsReadyCallback {
     public void onQueryCancelled() {
         m_state = SearchProviderQueryState.Cancelled;
         if(m_listener != null) {
-            SearchResult[] results = new SearchResult[0];
+            // Use default search result.
+            ISearchResult[] results = new ISearchResult[0];
             m_listener.onSearchProviderQueryCompleted(new SearchProviderQueryResult(m_providerId, results, false));
         }
     }

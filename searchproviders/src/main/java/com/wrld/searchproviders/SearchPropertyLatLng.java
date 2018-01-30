@@ -1,7 +1,7 @@
 package com.wrld.searchproviders;
 
 import com.eegeo.mapapi.geometry.LatLng;
-import com.wrld.widgets.searchbox.api.SearchResultProperty;
+import com.wrld.widgets.searchbox.model.SearchResultProperty;
 
 public class SearchPropertyLatLng implements SearchResultProperty<LatLng> {
 

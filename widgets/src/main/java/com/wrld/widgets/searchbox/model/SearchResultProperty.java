@@ -1,4 +1,4 @@
-package com.wrld.widgets.searchbox.api;
+package com.wrld.widgets.searchbox.model;
 
 public interface SearchResultProperty<T> {
     String getKey();

@@ -1,8 +1,8 @@
 package com.wrld.searchproviders;
 
 import com.eegeo.mapapi.geometry.LatLng;
-import com.wrld.widgets.searchbox.api.DefaultSearchResult;
-import com.wrld.widgets.searchbox.api.SearchResultPropertyString;
+import com.wrld.widgets.searchbox.model.DefaultSearchResult;
+import com.wrld.widgets.searchbox.model.SearchResultPropertyString;
 
 class PositionalSearchResult extends DefaultSearchResult {
 

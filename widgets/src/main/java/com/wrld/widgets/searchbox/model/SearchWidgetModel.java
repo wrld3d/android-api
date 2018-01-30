@@ -1,10 +1,5 @@
 package com.wrld.widgets.searchbox.model;
 
-import com.wrld.widgets.searchbox.api.SearchProvider;
-import com.wrld.widgets.searchbox.api.SearchResult;
-import com.wrld.widgets.searchbox.api.SuggestionProvider;
-import com.wrld.widgets.searchbox.api.events.QueryResultsReadyCallback;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,33 +8,34 @@ import java.util.Map;
 
 class MappedSearchProvider
 {
-    public MappedSearchProvider(ISearchProvider provider, int id)
+    MappedSearchProvider(ISearchProvider provider, int id)
     {
         m_providerId = id;
         m_searchProvider = provider;
     }
 
     public int getId() { return m_providerId; }
-    public ISearchProvider getSearchProvider() { return m_searchProvider; }
+    ISearchProvider getSearchProvider() { return m_searchProvider; }
 
     private ISearchProvider m_searchProvider;
-    public int m_providerId;
+    private int m_providerId;
 }
 
 class MappedSuggestionProvider
 {
-    public MappedSuggestionProvider(ISuggestionProvider provider, int id)
+    MappedSuggestionProvider(ISuggestionProvider provider, int id)
     {
         m_providerId = id;
         m_searchProvider = provider;
     }
 
     public int getId() { return m_providerId; }
-    public ISuggestionProvider getSuggestionProvider() { return m_searchProvider; }
+    ISuggestionProvider getSuggestionProvider() { return m_searchProvider; }
 
     private ISuggestionProvider m_searchProvider;
-    public int m_providerId;
+    private int m_providerId;
 }
+
 
 public class SearchWidgetModel implements SearchQueryListener
 {
@@ -48,6 +44,7 @@ public class SearchWidgetModel implements SearchQueryListener
     private List<SearchProviderQueryResult> m_currentQueryResults;
     private Map<Integer, MappedSearchProvider> m_searchProviderMap;
     private Map<Integer, MappedSuggestionProvider> m_suggestionProviderMap;
+    private ISearchWidgetModelListener m_listener;
 
     private int m_nextProviderId = 0;
 
@@ -55,7 +52,16 @@ public class SearchWidgetModel implements SearchQueryListener
     {
         m_searchProviderMap = new HashMap<>();
         m_suggestionProviderMap = new HashMap<>();
+        m_listener = null;
     }
+
+    public void setListener(ISearchWidgetModelListener listener)
+    {
+        m_listener = listener;
+    }
+
+    public final SearchQuery getCurrentQuery() { return m_currentQuery; }
+    public final List<SearchProviderQueryResult> getCurrentQueryResults() { return m_currentQueryResults; }
 
     // Add providers.
     public void addSearchProvider(ISearchProvider provider)
@@ -116,7 +122,15 @@ public class SearchWidgetModel implements SearchQueryListener
 
         SearchQueryListener listener = this;
         m_currentQuery = BuildSearchQuery(queryText, queryContext, listener, m_searchProviderMap);
+
+        // NOTE: Search query hasn't actually started yet, but is about to - this is to avoid issues
+        // where queries will complete immediately, and the Started event will occur after Complete
+        if(m_listener != null) {
+            m_listener.onSearchQueryStarted(m_currentQuery);
+        }
+
         m_currentQuery.start();
+
     }
 
     private SearchQuery BuildSearchQuery(String queryText,
@@ -147,17 +161,24 @@ public class SearchWidgetModel implements SearchQueryListener
         cancelCurrentQuery();
         m_currentQuery = null;
         m_currentQueryResults = null;
-        //m_listener.notifyQueryCleared();
+        if(m_listener != null) {
+            m_listener.onSearchResultsCleared();
+        }
     }
 
     @Override
     public void onSearchQueryCompleted(List<SearchProviderQueryResult> results) {
         m_currentQueryResults = results;
-        //m_listener.onSearchQueryCompleted(m_currentQuery, m_currentQueryResults);
+        if(m_listener != null) {
+            m_listener.onSearchQueryCompleted(m_currentQuery, m_currentQueryResults);
+        }
     }
 
     @Override
     public void onSearchQueryCancelled() {
-       // m_listener.onSearchQueryCancelled();
+
+        if(m_listener != null) {
+            m_listener.onSearchQueryCancelled();
+        }
     }
 }
