@@ -10,13 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.wrld.widgets.searchbox.api.SearchResult;
-import com.wrld.widgets.searchbox.api.SearchResultViewFactory;
-import com.wrld.widgets.searchbox.api.SearchResultViewHolder;
+import com.wrld.widgets.searchbox.model.ISearchResult;
+import com.wrld.widgets.searchbox.view.ISearchResultViewFactory;
+import com.wrld.widgets.searchbox.view.ISearchResultViewHolder;
 
 import java.util.HashMap;
 
-public class YelpSearchResultViewFactory implements SearchResultViewFactory {
+public class YelpSearchResultViewFactory implements ISearchResultViewFactory {
 
     private int m_layoutId;
     private String m_reviewText;
@@ -52,7 +52,7 @@ public class YelpSearchResultViewFactory implements SearchResultViewFactory {
         return inflater.inflate(m_layoutId, parent, false);
     }
 
-    private class SearchResultViewHolderImpl implements SearchResultViewHolder {
+    private class SearchResultViewHolderImpl implements ISearchResultViewHolder {
         private TextView m_title;
         private TextView m_subtitle;
         private ImageButton m_rating;
@@ -80,7 +80,7 @@ public class YelpSearchResultViewFactory implements SearchResultViewFactory {
             m_rating.setOnClickListener(onClickListener);
         }
 
-        public void populate(SearchResult result) {
+        public void populate(ISearchResult result) {
             m_title.setText(result.getTitle());
             if(result.hasProperty(YelpSearchResult.AddressKey)) {
                 m_subtitle.setText((String)result.getProperty(YelpSearchResult.AddressKey).getValue());
@@ -109,7 +109,7 @@ public class YelpSearchResultViewFactory implements SearchResultViewFactory {
     }
 
     @Override
-    public SearchResultViewHolder makeSearchResultViewHolder() {
+    public ISearchResultViewHolder makeSearchResultViewHolder() {
         return new YelpSearchResultViewFactory.SearchResultViewHolderImpl();
     }
 }

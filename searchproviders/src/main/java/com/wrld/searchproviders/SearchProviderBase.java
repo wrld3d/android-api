@@ -38,7 +38,7 @@ public abstract class SearchProviderBase implements ISearchProvider, ISuggestion
 
     protected void performSuggestionCompletedCallbacks(ISearchResult[] results, Boolean success){
         // TODO: Threading concern?
-        for(ISearchProviderResultsReadyCallback queryResultsReadyCallback : m_searchCompletedCallbacks) {
+        for(ISearchProviderResultsReadyCallback queryResultsReadyCallback : m_suggestionCompletedCallbacks) {
             queryResultsReadyCallback.onQueryCompleted(results, success);
         }
     }

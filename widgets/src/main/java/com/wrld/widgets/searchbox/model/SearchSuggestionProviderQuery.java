@@ -4,7 +4,7 @@ class SearchSuggestionProviderQuery extends SearchProviderQueryBase {
 
     private MappedSuggestionProvider m_provider;
 
-    public SearchSuggestionProviderQuery(MappedSuggestionProvider provider, SearchProviderQueryListener listener) {
+    public SearchSuggestionProviderQuery(MappedSuggestionProvider provider) {
         super(provider.getId());
         m_provider = provider;
 

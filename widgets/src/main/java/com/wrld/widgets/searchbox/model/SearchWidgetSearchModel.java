@@ -37,9 +37,8 @@ class MappedSuggestionProvider
 }
 
 
-public class SearchWidgetModel implements SearchQueryListener
+public class SearchWidgetSearchModel implements SearchQueryListener
 {
-
     private SearchQuery m_currentQuery;
     private List<SearchProviderQueryResult> m_currentQueryResults;
     private Map<Integer, MappedSearchProvider> m_searchProviderMap;
@@ -48,7 +47,7 @@ public class SearchWidgetModel implements SearchQueryListener
 
     private int m_nextProviderId = 0;
 
-    public SearchWidgetModel()
+    public SearchWidgetSearchModel()
     {
         m_searchProviderMap = new HashMap<>();
         m_suggestionProviderMap = new HashMap<>();
@@ -63,7 +62,6 @@ public class SearchWidgetModel implements SearchQueryListener
     public final SearchQuery getCurrentQuery() { return m_currentQuery; }
     public final List<SearchProviderQueryResult> getCurrentQueryResults() { return m_currentQueryResults; }
 
-    // Add providers.
     public void addSearchProvider(ISearchProvider provider)
     {
         // NOTE: Guard against adding
@@ -138,15 +136,36 @@ public class SearchWidgetModel implements SearchQueryListener
                                          SearchQueryListener listener,
                                          Map<Integer, MappedSearchProvider> providerMap)
     {
-        List<SearchProviderQuery> providerQueries = new ArrayList<SearchProviderQuery>(providerMap.size());
-        for(MappedSearchProvider mappedProvider : m_searchProviderMap.values()) {
+        List<SearchProviderQueryBase> providerQueries = new ArrayList<>(providerMap.size());
+        for(MappedSearchProvider mappedProvider : providerMap.values()) {
             providerQueries.add(new SearchProviderQuery(mappedProvider));
         }
-        return new SearchQuery(queryText, queryContext, listener, providerQueries);
+        return new SearchQuery(queryText, queryContext, SearchQuery.QueryType.Search, listener, providerQueries);
+    }
+
+    private SearchQuery BuildSuggestionQuery(String queryText,
+                                             Object queryContext,
+                                             SearchQueryListener listener,
+                                             Map<Integer, MappedSuggestionProvider> providerMap)
+    {
+        List<SearchProviderQueryBase> providerQueries = new ArrayList<>(providerMap.size());
+        for(MappedSuggestionProvider mappedProvider : providerMap.values()) {
+            providerQueries.add(new SearchSuggestionProviderQuery(mappedProvider));
+        }
+        return new SearchQuery(queryText, queryContext, SearchQuery.QueryType.Suggestion, listener, providerQueries);
     }
 
     public void doSuggestions(String queryText) {
+        cancelCurrentQuery();
 
+        SearchQueryListener listener = this;
+        m_currentQuery = BuildSuggestionQuery(queryText, null, listener, m_suggestionProviderMap);
+
+        if(m_listener != null) {
+            m_listener.onSuggestionQueryStarted(m_currentQuery);
+        }
+
+        m_currentQuery.start();
     }
 
     public void cancelCurrentQuery()
@@ -159,8 +178,10 @@ public class SearchWidgetModel implements SearchQueryListener
     public void clear()
     {
         cancelCurrentQuery();
+
         m_currentQuery = null;
         m_currentQueryResults = null;
+
         if(m_listener != null) {
             m_listener.onSearchResultsCleared();
         }
@@ -170,7 +191,12 @@ public class SearchWidgetModel implements SearchQueryListener
     public void onSearchQueryCompleted(List<SearchProviderQueryResult> results) {
         m_currentQueryResults = results;
         if(m_listener != null) {
-            m_listener.onSearchQueryCompleted(m_currentQuery, m_currentQueryResults);
+            if(m_currentQuery.getQueryType() == SearchQuery.QueryType.Search) {
+                m_listener.onSearchQueryCompleted(m_currentQuery, m_currentQueryResults);
+            }
+            else {
+                m_listener.onSuggestionQueryCompleted(m_currentQuery, m_currentQueryResults);
+            }
         }
     }
 

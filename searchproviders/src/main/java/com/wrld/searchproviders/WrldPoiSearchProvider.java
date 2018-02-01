@@ -88,7 +88,7 @@ public class WrldPoiSearchProvider extends SearchProviderBase {
         // TODO: Check searchContext for tag searches
 
         m_currentSearch = m_poiService.searchText(
-                new TextSearchOptions(searchQuery, m_map.getCameraPosition().target.toLatLng())
+                new TextSearchOptions(searchQuery, m_map.getCameraPosition().target)
                         .radius(1000.0)
                         .number(60)
                         .onPoiSearchCompletedListener(listener));
@@ -116,7 +116,7 @@ public class WrldPoiSearchProvider extends SearchProviderBase {
         );
 
         m_currentSearch = m_poiService.searchAutocomplete(
-                new AutocompleteOptions(searchQuery, m_map.getCameraPosition().target.toLatLng())
+                new AutocompleteOptions(searchQuery, m_map.getCameraPosition().target)
                         .number(5)
                         .onPoiSearchCompletedListener(listener));
     }

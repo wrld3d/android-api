@@ -72,8 +72,18 @@ public class SearchWidgetModelTests {
         assertEquals(widgetModel.getCurrentQueryResults().get(0).getResults()[0].getTitle(), "Search Result");
     }
 
-    // Test clearing results
+    @Test
+    public void testCurrentQueryResultsAreEmptyAfterClear() throws Exception {
 
+        SearchWidgetModel widgetModel = createSearchWidgetModel();
+        MockSearchProvider provider = createValidSearchProvider();
+        widgetModel.addSearchProvider(provider);
+
+        widgetModel.doSearch("Hello", "Context");
+        widgetModel.clear();
+
+        assertEquals(widgetModel.getCurrentQueryResults(), null);
+    }
     // Test cancelling query in progress
 
     // Test cancelling query before started

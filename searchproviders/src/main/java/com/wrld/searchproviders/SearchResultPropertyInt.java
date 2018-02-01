@@ -1,6 +1,6 @@
 package com.wrld.searchproviders;
 
-import com.wrld.widgets.searchbox.api.SearchResultProperty;
+import com.wrld.widgets.searchbox.model.SearchResultProperty;
 
 public class SearchResultPropertyInt implements SearchResultProperty<Integer> {
 

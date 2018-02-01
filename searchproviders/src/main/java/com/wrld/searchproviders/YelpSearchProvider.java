@@ -1,21 +1,15 @@
 package com.wrld.searchproviders;
 
 import android.content.Context;
-import android.text.TextUtils;
 
-import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.eegeo.mapapi.EegeoMap;
-import com.eegeo.mapapi.geometry.LatLngAlt;
-import com.wrld.widgets.searchbox.api.DefaultSearchResult;
-import com.wrld.widgets.searchbox.api.Query;
-import com.wrld.widgets.searchbox.api.SearchResult;
-import com.wrld.widgets.searchbox.api.SuggestionProviderBase;
+import com.eegeo.mapapi.geometry.LatLng;
+import com.wrld.widgets.searchbox.model.DefaultSearchResult;
+import com.wrld.widgets.searchbox.model.ISearchResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,9 +20,10 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-public class YelpSearchProvider extends SuggestionProviderBase {
+public class YelpSearchProvider extends SearchProviderBase {
 
     private String m_suggestionsTitleFormatting;
+
 
     @Override
     public String getSuggestionTitleFormatting() {
@@ -61,6 +56,7 @@ public class YelpSearchProvider extends SuggestionProviderBase {
 
     private Response.Listener<String> m_searchResponseListener;
     private Response.Listener<String> m_autocompleteResponseListener;
+    private Response.ErrorListener m_errorListener;
 
     private boolean m_assignedApiKey;
 
@@ -87,12 +83,12 @@ public class YelpSearchProvider extends SuggestionProviderBase {
     }
 
     @Override
-    public void getSearchResults(Query query) {
+    public void getSearchResults(String queryString, Object queryContext) {
         if(m_assignedApiKey) {
 
-            LatLngAlt cameraPosition = m_map.getCameraPosition().target;
+            LatLng cameraPosition = m_map.getCameraPosition().target;
 
-            String queryText = query.getQueryString();
+            String queryText = queryString;
             try {
                 queryText = URLEncoder.encode(queryText, "utf-8");
             }
@@ -105,7 +101,47 @@ public class YelpSearchProvider extends SuggestionProviderBase {
                     Request.Method.GET, queryUrl, m_searchResponseListener)
                     .setHeaders(m_authHeaders)
                     .setRetryPolicy(m_timeoutMs, m_maxRetries)
+                    .setErrorListener(m_errorListener)
                     .build();
+
+            m_requestQueue.add(m_currentRequest);
+        }
+        else {
+            handleUnauthorisedRequest();
+            performSuggestionCompletedCallbacks(new ISearchResult[0], false);
+        }
+    }
+
+    @Override
+    public void cancelSearch() {
+        m_currentRequest.cancel();
+    }
+
+    @Override
+    public void getSuggestions(String queryString, Object queryContext) {
+
+        if(m_assignedApiKey) {
+
+            if(m_currentRequest != null && !m_currentRequest.hasHadResponseDelivered()){
+                m_currentRequest.cancel();
+            }
+
+            LatLng cameraPosition = m_map.getCameraPosition().target;
+            String queryText = queryString;
+            try {
+                queryText = URLEncoder.encode(queryText, "utf-8");
+            }
+            catch (UnsupportedEncodingException ex){
+                return;
+            }
+
+            String queryUrl = m_autocompleteUrl + queryParams(queryText, cameraPosition);
+
+            m_currentRequest = new VolleyStringRequestBuilder(
+                    Request.Method.GET, queryUrl, m_autocompleteResponseListener)
+                    .setRetryPolicy(m_timeoutMs, m_maxRetries)
+                    .setHeaders(m_authHeaders)
+                    .setErrorListener(m_errorListener).build();
 
             m_requestQueue.add(m_currentRequest);
         }
@@ -115,44 +151,17 @@ public class YelpSearchProvider extends SuggestionProviderBase {
     }
 
     @Override
-    public void getSuggestions(Query query) {
-
-        if(m_assignedApiKey) {
-
-            if(m_currentRequest != null && !m_currentRequest.hasHadResponseDelivered()){
-                m_currentRequest.cancel();
-            }
-
-            LatLngAlt cameraPosition = m_map.getCameraPosition().target;
-            String queryString = query.getQueryString();
-            try {
-                queryString = URLEncoder.encode(queryString, "utf-8");
-            }
-            catch (UnsupportedEncodingException ex){
-                return;
-            }
-
-            String queryUrl = m_autocompleteUrl + queryParams(queryString, cameraPosition);
-
-            m_currentRequest = new VolleyStringRequestBuilder(
-                    Request.Method.GET, queryUrl, m_autocompleteResponseListener)
-                    .setRetryPolicy(m_timeoutMs, m_maxRetries)
-                    .setHeaders(m_authHeaders).build();
-
-            m_requestQueue.add(m_currentRequest);
-        }
-        else {
-            handleUnauthorisedRequest();
-        }
+    public void cancelSuggestions() {
+        m_currentRequest.cancel();
     }
 
-    private String queryParams(String text, LatLngAlt location){
+    private String queryParams(String text, LatLng location){
         return "?text=" + text +
                 "&latitude=" + location.latitude +
                 "&longitude=" + location.longitude;
     }
 
-    private String queryParams(String text, LatLngAlt location, int radiusMeters){
+    private String queryParams(String text, LatLng location, int radiusMeters){
         return "?term=" + text +
                 "&latitude=" + location.latitude +
                 "&longitude=" + location.longitude +
@@ -162,24 +171,24 @@ public class YelpSearchProvider extends SuggestionProviderBase {
 
     private void suggestionResponseHandler(JSONObject response){
         JSONArray businesses = response.optJSONArray(m_resultsArrayKey);
-        SearchResult[] results = new SearchResult[businesses.length()];
+        ISearchResult[] results = new ISearchResult[businesses.length()];
         for(int i = 0; i < businesses.length(); ++i){
             JSONObject businessJson = businesses.optJSONObject(i);
             results[i] = new DefaultSearchResult(businessJson.optString("name"));
         }
 
-        performSuggestionCompletedCallbacks(results);
+        performSuggestionCompletedCallbacks(results, true);
     }
 
     private void searchResponseHandler(JSONObject response){
         JSONArray businesses = response.optJSONArray(m_resultsArrayKey);
-        SearchResult[] results = new SearchResult[businesses.length()];
+        ISearchResult[] results = new ISearchResult[businesses.length()];
         for(int i = 0; i < businesses.length(); ++i){
             JSONObject businessJson = businesses.optJSONObject(i);
             results[i] = new YelpSearchResult(businessJson);
         }
 
-        performSearchCompletedCallbacks(results);
+        performSearchCompletedCallbacks(results, true);
     }
 
     private void createCallbacks(){
@@ -191,8 +200,16 @@ public class YelpSearchProvider extends SuggestionProviderBase {
                     searchResponseHandler(new JSONObject(response));
                 } catch (JSONException e) {
                     android.util.Log.w("Yelp Search", "Search Response Error: " +  response);
-                    performSearchCompletedCallbacks(new SearchResult[0]);
+                    performSearchCompletedCallbacks(new ISearchResult[0], false);
                 }
+            }
+        };
+
+        m_errorListener = new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                performSearchCompletedCallbacks(new ISearchResult[0], false);
             }
         };
 
@@ -203,7 +220,7 @@ public class YelpSearchProvider extends SuggestionProviderBase {
                     suggestionResponseHandler(new JSONObject(response));
                 } catch (JSONException e) {
                     android.util.Log.w("Yelp Search", "Suggestion Response Error: " +  response);
-                    performSuggestionCompletedCallbacks(new SearchResult[0]);
+                    performSuggestionCompletedCallbacks(new ISearchResult[0], false);
                 }
             }
         };

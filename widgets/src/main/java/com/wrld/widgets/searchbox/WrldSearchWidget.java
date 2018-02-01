@@ -10,20 +10,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.wrld.widgets.R;
-import com.wrld.widgets.searchbox.model.SearchWidgetModel;
+import com.wrld.widgets.searchbox.model.SearchWidgetSearchModel;
 
-/**
- * Created by malcolm.brown on 19/01/2018.
- */
 
 public class WrldSearchWidget extends Fragment {
 
-    private final SearchWidgetModel m_model;
+    private final SearchWidgetSearchModel m_model;
 
     public WrldSearchWidget() {
         super();
 
-        m_model = new SearchWidgetModel();
+        m_model = new SearchWidgetSearchModel();
+        //m_model.setListener(this);
     }
 
     @Override

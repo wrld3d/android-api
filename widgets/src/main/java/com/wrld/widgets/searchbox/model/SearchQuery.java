@@ -8,23 +8,32 @@ public class SearchQuery implements SearchProviderQueryListener{
 
     private String m_queryString;
     private Object m_queryContext;
+    private QueryType m_queryType;
     private boolean m_cancelled;
     private boolean m_inProgress;
     private final SearchQueryListener m_listener;
 
-    private List<SearchProviderQuery> m_providerQueries;
+    private List<SearchProviderQueryBase> m_providerQueries;
     private List<SearchProviderQueryResult> m_results;
 
-    public String getQueryString() { return m_queryString; }
-    public Object getQueryContext() { return m_queryContext; }
+    public final String getQueryString() { return m_queryString; }
+    public final Object getQueryContext() { return m_queryContext; }
+    public final QueryType getQueryType() { return m_queryType; }
+
+    enum QueryType {
+        Search,
+        Suggestion
+    }
 
     public SearchQuery(String queryString,
                        Object queryContext,
+                       QueryType queryType,
                        SearchQueryListener listener,
-                       List<SearchProviderQuery> providerQueries)
+                       List<SearchProviderQueryBase> providerQueries)
     {
         m_queryString = queryString;
         m_queryContext = queryContext;
+        m_queryType = queryType;
         m_listener = listener;
         m_cancelled = false;
         m_inProgress = false;
@@ -34,9 +43,15 @@ public class SearchQuery implements SearchProviderQueryListener{
 
     public void start()
     {
+        if(m_providerQueries.size() == 0)
+        {
+            checkIsComplete();
+            return;
+        }
+
         // Loop through all SearchProviderQueries, observe and kick them off.
         m_inProgress = true;
-        for(SearchProviderQuery providerQuery : m_providerQueries)
+        for(SearchProviderQueryBase providerQuery : m_providerQueries)
         {
             providerQuery.setListener(this);
             providerQuery.start(m_queryString, m_queryContext);
@@ -51,7 +66,7 @@ public class SearchQuery implements SearchProviderQueryListener{
             // Cancel all inflight queries and notify cancelled.
             m_cancelled = true;
             m_inProgress = false;
-            for (SearchProviderQuery query : m_providerQueries)
+            for (SearchProviderQueryBase query : m_providerQueries)
             {
                 query.cancel();
             }
@@ -77,13 +92,12 @@ public class SearchQuery implements SearchProviderQueryListener{
         if(isComplete())
         {
             m_inProgress = false;
-            // TODO: What is the definition of 'success' for a set of provider queries?
             m_listener.onSearchQueryCompleted(m_results);
         }
     }
 
     public boolean isComplete() {
-        for (SearchProviderQuery query : m_providerQueries)
+        for (SearchProviderQueryBase query : m_providerQueries)
         {
             if(!query.isCompleted())
             {
