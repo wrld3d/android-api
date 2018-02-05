@@ -3,41 +3,35 @@ package com.wrld.widgets.searchbox.model;
 import java.util.ArrayList;
 import java.util.List;
 
-// Not quite sure how callbacks work in Java
+interface OnMenuOptionSelectedCallback {
 
-interface OnMenuOptionSelectedCallbackInterface {
-
-    public void onMenuOptionSelected(MenuOption option);
+    public void onMenuOptionSelected(final String text, final Object context);
 }
 
-class OnMenuOptionSelectedCallbackImpl implements OnMenuOptionSelectedCallbackInterface {
-    private final OnMenuOptionSelectedCallbackInterface m_callback;
+class OnMenuOptionSelectedCallbackImpl implements OnMenuOptionSelectedCallback {
+    private final OnMenuOptionSelectedCallback m_callback;
 
-    public OnMenuOptionSelectedCallbackImpl(OnMenuOptionSelectedCallbackInterface callback) {
+    public OnMenuOptionSelectedCallbackImpl(OnMenuOptionSelectedCallback callback) {
         m_callback = callback;
     }
 
     @Override
-    public void onMenuOptionSelected(MenuOption option) {
-        m_callback.onMenuOptionSelected(option);
+    public void onMenuOptionSelected(String text, Object context) {
+        m_callback.onMenuOptionSelected(text, context);
     }
 }
 
-// This modelling of menu options and their possible children might be a bit convoluted
-
-class MenuOption {
-
+class MenuChild {
     private String m_text;
     private String m_icon;
     private Object m_context;
-    private OnMenuOptionSelectedCallbackInterface m_callback;
+    private OnMenuOptionSelectedCallback m_callback;
 
     public final String getText() { return m_text; }
     public final String getIcon() { return m_icon; }
     public final Object getContext() { return m_context; }
-    public Boolean hasChildren() { return false; }
 
-    public MenuOption(String text, String icon, Object context, final OnMenuOptionSelectedCallbackInterface callback) {
+    public MenuChild(String text, String icon, Object context, final OnMenuOptionSelectedCallback callback) {
         m_text = text;
         m_icon = icon;
         m_context = context;
@@ -46,63 +40,72 @@ class MenuOption {
 
     void executeCallback() {
         if (m_callback != null) {
-            m_callback.onMenuOptionSelected(this);
+            m_callback.onMenuOptionSelected(m_text, m_context);
         }
     }
 }
 
-class ExpandableMenuOption extends MenuOption {
+class MenuGroup {
+    private String m_text;
+    private Object m_context;
+    private OnMenuOptionSelectedCallback m_callback;
+    private List<MenuChild> m_children;
 
-    private List<MenuOption> m_children;
+    public final String getText() { return m_text; }
+    public final Object getContext() { return m_context; }
+    public final List<MenuChild> getChildren() { return m_children; }
 
-    public final List<MenuOption> getChildren() { return m_children; }
-
-    public ExpandableMenuOption(String text, String icon) {
-        super(text, icon, null, null);
-
-        m_children = new ArrayList<MenuOption>();
+    public MenuGroup(String text, Object context, final OnMenuOptionSelectedCallback callback) {
+        m_text = text;
+        m_context = context;
+        m_callback = callback;
+        m_children = new ArrayList<MenuChild>();
     }
 
-    public void addChild(String text, String icon, Object context, final OnMenuOptionSelectedCallbackInterface callback) {
-        MenuOption option = new MenuOption(text, icon, context, callback);
-        m_children.add(option);
+    public void addChild(String text, String icon, Object context, final OnMenuOptionSelectedCallback callback) {
+        MenuChild child = new MenuChild(text, icon, context, callback);
+        m_children.add(child);
     }
 
-    public void addChild(MenuOption option) {
-        m_children.add(option);
+    public void addChild(MenuChild child) {
+        m_children.add(child);
     }
 
-    @Override
-    public Boolean hasChildren() {
-        return true;
+    void executeCallback() {
+        if (m_callback != null) {
+            m_callback.onMenuOptionSelected(m_text, m_context);
+        }
     }
 }
 
 public class SearchWidgetMenuModel {
 
-    private List<MenuOption> m_options;
+    private List<MenuGroup> m_groups;
 
-    public final List<MenuOption> getOptions() { return m_options; }
+    public final List<MenuGroup> getGroups() { return m_groups; }
 
     public SearchWidgetMenuModel() {
-        m_options = new ArrayList<MenuOption>();
+        m_groups = new ArrayList<MenuGroup>();
     }
 
-    public void addMenuOption(MenuOption option) {
-        m_options.add(option);
+    public void addMenuGroup(MenuGroup group) {
+        m_groups.add(group);
     }
 
-    public void addMenuOption(ExpandableMenuOption option) {
-        m_options.add(option);
-    }
-
-    public void selectMenuOption(int index) {
-
-        MenuOption selectedMenuOption = m_options.get(index);
-        if (selectedMenuOption.hasChildren()) {
-            // expand menu option
+    public void executeMenuGroupCallback(int groupIndex) {
+        if (groupIndex > -1 && groupIndex < m_groups.size()) {
+            MenuGroup group = m_groups.get(groupIndex);
+            group.executeCallback();
         }
+    }
 
-        selectedMenuOption.executeCallback();
+    public void executeMenuOptionCallback(int groupIndex, int childIndex) {
+        if (groupIndex > -1 && groupIndex < m_groups.size()) {
+            MenuGroup group = m_groups.get(groupIndex);
+            if (childIndex > -1 && childIndex < group.getChildren().size()) {
+                MenuChild child = group.getChildren().get(childIndex);
+                child.executeCallback();
+            }
+        }
     }
 }
