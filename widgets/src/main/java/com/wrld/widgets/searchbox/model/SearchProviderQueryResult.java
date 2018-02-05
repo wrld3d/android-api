@@ -4,7 +4,7 @@ package com.wrld.widgets.searchbox.model;
  * A result from an individual SearchProviderQuery. Contains the results (if any), information on if it
  * was successful, and an id to map it back to the original provider.
  */
-class SearchProviderQueryResult
+public class SearchProviderQueryResult
 {
     public SearchProviderQueryResult(int providerId, ISearchResult[] results, boolean success)
     {

@@ -7,8 +7,6 @@ class SearchSuggestionProviderQuery extends SearchProviderQueryBase {
     public SearchSuggestionProviderQuery(MappedSuggestionProvider provider) {
         super(provider.getId());
         m_provider = provider;
-
-        // TODO: Does this need removing?
         m_provider.getSuggestionProvider().addSuggestionsReceivedCallback(this);
     }
 
@@ -22,6 +20,11 @@ class SearchSuggestionProviderQuery extends SearchProviderQueryBase {
         if (m_state == SearchProviderQueryState.InProgress) {
             m_provider.getSuggestionProvider().cancelSuggestions();
         }
+    }
+
+    @Override
+    public void cleanup() {
+        m_provider.getSuggestionProvider().removeSuggestionsReceivedCallback(this);
     }
 
 }

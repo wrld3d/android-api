@@ -10,6 +10,8 @@ import com.eegeo.mapapi.EegeoMap;
 import com.eegeo.mapapi.geometry.LatLng;
 import com.wrld.widgets.searchbox.model.DefaultSearchResult;
 import com.wrld.widgets.searchbox.model.ISearchResult;
+import com.wrld.widgets.searchbox.view.DefaultSuggestionViewFactory;
+import com.wrld.widgets.searchbox.view.TextHighlighter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,7 +65,7 @@ public class YelpSearchProvider extends SearchProviderBase {
     private Request m_currentRequest;
 
     public YelpSearchProvider(Context context, RequestQueue requestQueue, EegeoMap map, ErrorHandler errorHandler){
-        super(context.getString(R.string.yelp_search_result_title));
+        super(context.getString(R.string.yelp_search_result_title), new DefaultSuggestionViewFactory(R.layout.search_suggestion, new TextHighlighter(R.color.black)));
         m_suggestionsTitleFormatting = context.getString(R.string.yelp_suggestion_formatting);
 
         m_requestQueue = requestQueue;

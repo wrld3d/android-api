@@ -12,7 +12,7 @@ class SearchProviderQuery extends SearchProviderQueryBase  {
         super(provider.getId());
         m_provider = provider;
 
-        // How to remove callback?
+        // How to remove callback? IMPORTANT !!!
         m_provider.getSearchProvider().addSearchCompletedCallback(this);
     }
 
@@ -29,5 +29,11 @@ class SearchProviderQuery extends SearchProviderQueryBase  {
             m_state = SearchProviderQueryState.Cancelled;
             m_provider.getSearchProvider().cancelSearch();
         }
+    }
+
+    @Override
+    public void cleanup()
+    {
+        m_provider.getSearchProvider().removeSearchCompletedCallback(this);
     }
 }

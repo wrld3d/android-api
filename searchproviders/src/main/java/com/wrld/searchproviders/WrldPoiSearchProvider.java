@@ -35,7 +35,7 @@ public class WrldPoiSearchProvider extends SearchProviderBase {
 
     public WrldPoiSearchProvider(Context context, PoiService poiApi, EegeoMap map)
     {
-        super(context.getString(R.string.wrld_poi_search_result_title));
+        super(context.getString(R.string.wrld_poi_search_result_title), null);
         m_suggestionTitleFormatting = context.getString(R.string.wrld_poi_suggestion_result_title_formatting);
         m_poiService = poiApi;
         m_map = map;

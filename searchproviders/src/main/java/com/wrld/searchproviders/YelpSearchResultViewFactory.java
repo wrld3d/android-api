@@ -80,7 +80,7 @@ public class YelpSearchResultViewFactory implements ISearchResultViewFactory {
             m_rating.setOnClickListener(onClickListener);
         }
 
-        public void populate(ISearchResult result) {
+        public void populate(ISearchResult result, String searchTerm) {
             m_title.setText(result.getTitle());
             if(result.hasProperty(YelpSearchResult.AddressKey)) {
                 m_subtitle.setText((String)result.getProperty(YelpSearchResult.AddressKey).getValue());

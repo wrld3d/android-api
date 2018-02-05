@@ -20,7 +20,7 @@ public class SearchQuery implements SearchProviderQueryListener{
     public final Object getQueryContext() { return m_queryContext; }
     public final QueryType getQueryType() { return m_queryType; }
 
-    enum QueryType {
+    public enum QueryType {
         Search,
         Suggestion
     }
@@ -63,12 +63,12 @@ public class SearchQuery implements SearchProviderQueryListener{
     {
         if(m_inProgress && !m_cancelled)
         {
-            // Cancel all inflight queries and notify cancelled.
             m_cancelled = true;
             m_inProgress = false;
             for (SearchProviderQueryBase query : m_providerQueries)
             {
                 query.cancel();
+                query.cleanup();
             }
 
             m_listener.onSearchQueryCancelled();
@@ -91,6 +91,8 @@ public class SearchQuery implements SearchProviderQueryListener{
 
         if(isComplete())
         {
+            cleanup();
+
             m_inProgress = false;
             m_listener.onSearchQueryCompleted(m_results);
         }
@@ -105,6 +107,13 @@ public class SearchQuery implements SearchProviderQueryListener{
             }
         }
         return true;
+    }
+
+    private void cleanup() {
+        for (SearchProviderQueryBase query : m_providerQueries)
+        {
+            query.cleanup();
+        }
     }
 
 

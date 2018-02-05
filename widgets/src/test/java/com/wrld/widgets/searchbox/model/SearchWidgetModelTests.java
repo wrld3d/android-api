@@ -14,15 +14,15 @@ public class SearchWidgetModelTests {
         return new MockSearchProvider("Valid Search Provider", true);
     }
 
-    public SearchWidgetModel createSearchWidgetModel()
+    public SearchWidgetSearchModel createSearchWidgetModel()
     {
-        return new SearchWidgetModel();
+        return new SearchWidgetSearchModel();
     }
 
 
     @Test
     public void testQueryTextWasSearchedFor() throws Exception {
-        SearchWidgetModel widgetModel = createSearchWidgetModel();
+        SearchWidgetSearchModel widgetModel = createSearchWidgetModel();
         MockSearchProvider provider = createValidSearchProvider();
         widgetModel.addSearchProvider(provider);
 
@@ -34,7 +34,7 @@ public class SearchWidgetModelTests {
 
     @Test
     public void testQueryContextWasSearchedFor() throws Exception {
-        SearchWidgetModel widgetModel = createSearchWidgetModel();
+        SearchWidgetSearchModel widgetModel = createSearchWidgetModel();
         MockSearchProvider provider = createValidSearchProvider();
         widgetModel.addSearchProvider(provider);
 
@@ -46,7 +46,7 @@ public class SearchWidgetModelTests {
 
     @Test
     public void testCurrentQueryWasSet() throws Exception {
-        SearchWidgetModel widgetModel = createSearchWidgetModel();
+        SearchWidgetSearchModel widgetModel = createSearchWidgetModel();
         MockSearchProvider provider = createValidSearchProvider();
         widgetModel.addSearchProvider(provider);
 
@@ -59,7 +59,7 @@ public class SearchWidgetModelTests {
 
     @Test
     public void testCurrentQueryResultsWereReturned() throws Exception {
-        SearchWidgetModel widgetModel = createSearchWidgetModel();
+        SearchWidgetSearchModel widgetModel = createSearchWidgetModel();
         MockSearchProvider provider = createValidSearchProvider();
         widgetModel.addSearchProvider(provider);
 
@@ -75,7 +75,7 @@ public class SearchWidgetModelTests {
     @Test
     public void testCurrentQueryResultsAreEmptyAfterClear() throws Exception {
 
-        SearchWidgetModel widgetModel = createSearchWidgetModel();
+        SearchWidgetSearchModel widgetModel = createSearchWidgetModel();
         MockSearchProvider provider = createValidSearchProvider();
         widgetModel.addSearchProvider(provider);
 

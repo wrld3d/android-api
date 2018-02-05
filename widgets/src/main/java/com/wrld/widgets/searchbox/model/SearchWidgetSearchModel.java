@@ -1,5 +1,9 @@
 package com.wrld.widgets.searchbox.model;
 
+import android.util.Log;
+
+import com.wrld.widgets.searchbox.view.ISearchResultViewFactory;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -190,6 +194,7 @@ public class SearchWidgetSearchModel implements SearchQueryListener
     @Override
     public void onSearchQueryCompleted(List<SearchProviderQueryResult> results) {
         m_currentQueryResults = results;
+        Log.d("EEGEO", "You got " + results.size() + " results via " + m_currentQuery.getQueryType());
         if(m_listener != null) {
             if(m_currentQuery.getQueryType() == SearchQuery.QueryType.Search) {
                 m_listener.onSearchQueryCompleted(m_currentQuery, m_currentQueryResults);
@@ -206,5 +211,31 @@ public class SearchWidgetSearchModel implements SearchQueryListener
         if(m_listener != null) {
             m_listener.onSearchQueryCancelled();
         }
+    }
+
+    public int getSuggestionProviderCount() {
+        return m_suggestionProviderMap.size();
+    }
+
+    public int getTotalCurrentQueryResults() {
+        if(m_currentQueryResults == null) {
+            return 0;
+        }
+        int total = 0;
+        for(SearchProviderQueryResult result : m_currentQueryResults) {
+            if(result.getResults() != null && result.wasSuccess()) {
+                total += result.getResults().length;
+            }
+        }
+        return total;
+    }
+
+    // Shouldn't have this - move providers to external repository and expose bits with interfaces.
+    public ISearchResultViewFactory getViewFactoryForProvider(int providerId) {
+         if(!m_suggestionProviderMap.containsKey(providerId))  {
+             return null;
+         }
+
+        return m_suggestionProviderMap.get(providerId).getSuggestionProvider().getSuggestionViewFactory();
     }
 }

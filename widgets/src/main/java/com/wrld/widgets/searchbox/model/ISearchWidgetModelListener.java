@@ -2,7 +2,7 @@ package com.wrld.widgets.searchbox.model;
 
 import java.util.List;
 
-interface ISearchWidgetModelListener
+public interface ISearchWidgetModelListener
 {
     void onSearchQueryStarted(final SearchQuery query);
     void onSearchQueryCompleted(final SearchQuery query, final List<SearchProviderQueryResult> results);

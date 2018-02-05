@@ -77,4 +77,8 @@ public class SearchProviderQueryBase implements ISearchProviderResultsReadyCallb
             onQueryCancelled();
         }
     }
+
+    public void cleanup() {
+        //throw new
+    }
 }
