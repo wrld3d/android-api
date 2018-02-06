@@ -11,6 +11,8 @@ import com.eegeo.mapapi.services.poi.PoiSearchResult;
 import com.eegeo.mapapi.services.poi.PoiService;
 import com.eegeo.mapapi.services.poi.TextSearchOptions;
 import com.wrld.widgets.searchbox.model.ISearchResult;
+import com.wrld.widgets.searchbox.view.DefaultSuggestionViewFactory;
+import com.wrld.widgets.searchbox.view.TextHighlighter;
 
 import java.util.List;
 
@@ -35,7 +37,8 @@ public class WrldPoiSearchProvider extends SearchProviderBase {
 
     public WrldPoiSearchProvider(Context context, PoiService poiApi, EegeoMap map)
     {
-        super(context.getString(R.string.wrld_poi_search_result_title), null);
+        super(context.getString(R.string.wrld_poi_search_result_title),
+              new DefaultSuggestionViewFactory(R.layout.search_suggestion, new TextHighlighter(R.color.black)));
         m_suggestionTitleFormatting = context.getString(R.string.wrld_poi_suggestion_result_title_formatting);
         m_poiService = poiApi;
         m_map = map;

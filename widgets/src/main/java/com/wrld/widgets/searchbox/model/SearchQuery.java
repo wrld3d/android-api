@@ -54,8 +54,8 @@ public class SearchQuery implements SearchProviderQueryListener{
         for(SearchProviderQueryBase providerQuery : m_providerQueries)
         {
             providerQuery.setListener(this);
-            providerQuery.start(m_queryString, m_queryContext);
-        }
+        providerQuery.start(m_queryString, m_queryContext);
+    }
     }
 
 

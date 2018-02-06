@@ -14,6 +14,7 @@ import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.model.ISearchProvider;
 import com.wrld.widgets.searchbox.model.ISuggestionProvider;
 import com.wrld.widgets.searchbox.model.SearchWidgetSearchModel;
+import com.wrld.widgets.searchbox.model.SearchWidgetSuggestionModel;
 import com.wrld.widgets.searchbox.view.SearchViewController;
 import com.wrld.widgets.searchbox.view.SuggestionResultsController;
 
@@ -21,6 +22,7 @@ import com.wrld.widgets.searchbox.view.SuggestionResultsController;
 public class WrldSearchWidget extends Fragment {
 
     private SearchWidgetSearchModel m_searchModel;
+    private SearchWidgetSuggestionModel m_suggestionModel;
     private SearchView m_searchView;
     private SearchViewController m_searchViewController;
     private SuggestionResultsController m_searchSuggestionResultsController;
@@ -36,7 +38,7 @@ public class WrldSearchWidget extends Fragment {
 
     public void addSuggestionProvider(ISuggestionProvider suggestionProvider)
     {
-        m_searchModel.addSuggestionProvider(suggestionProvider);
+        m_suggestionModel.addSuggestionProvider(suggestionProvider);
     }
 
     @Override
@@ -64,10 +66,13 @@ public class WrldSearchWidget extends Fragment {
         ListView suggestionResultsView = (ListView)getView().findViewById(R.id.searchbox_autocomplete_container);
 
         m_searchModel = new SearchWidgetSearchModel();
-        //m_model.setListener(this);
+        m_suggestionModel = new SearchWidgetSuggestionModel();
 
-        m_searchViewController = new SearchViewController(m_searchModel, m_searchView);
-        m_searchSuggestionResultsController = new SuggestionResultsController(m_searchModel, suggestionResultsView);
+        m_searchViewController = new SearchViewController(m_searchModel, m_suggestionModel, m_searchView);
+        m_searchSuggestionResultsController = new SuggestionResultsController(
+                m_suggestionModel,
+                suggestionResultsView,
+                m_searchView);
     }
 
     public void doSearch() {
