@@ -8,9 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.ExpandableListView;
 
 import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.model.ISearchProvider;
@@ -32,7 +32,6 @@ public class WrldSearchWidget extends Fragment {
     private SuggestionResultsController m_searchSuggestionResultsController;
 
     private SearchWidgetMenuModel m_menuModel;
-    private ExpandableListView m_menuView;
     private MenuViewController m_menuViewController;
 
     public SearchWidgetMenuModel getMenuModel() { return m_menuModel; }
@@ -84,11 +83,11 @@ public class WrldSearchWidget extends Fragment {
                 suggestionResultsView,
                 m_searchView);
 
-        ((ViewStub)getView().findViewById(R.id.searchbox_menu_container_stub)).inflate();
-        m_menuView = (ExpandableListView)getView().findViewById(R.id.searchbox_menu_groups);
+        ImageButton openMenuButtonView = (ImageButton)getView().findViewById(R.id.searchbox_search_menu);
+        View menuView = ((ViewStub)getView().findViewById(R.id.searchbox_menu_container_stub)).inflate();
 
         m_menuModel = new SearchWidgetMenuModel();
-        m_menuViewController = new MenuViewController(m_menuModel, m_menuView);
+        m_menuViewController = new MenuViewController(m_menuModel, menuView, openMenuButtonView);
     }
 
     public void doSearch() {
@@ -97,6 +96,14 @@ public class WrldSearchWidget extends Fragment {
 
     public void repeatSearch() {
 
+    }
+
+    public void openMenu() {
+        m_menuViewController.open();
+    }
+
+    public void closeMenu() {
+        m_menuViewController.close();
     }
 
 

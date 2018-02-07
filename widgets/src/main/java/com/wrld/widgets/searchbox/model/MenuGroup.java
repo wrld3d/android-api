@@ -11,8 +11,8 @@ class OnMenuOptionSelectedCallbackImpl implements IOnMenuOptionSelectedCallback 
     }
 
     @Override
-    public void onMenuOptionSelected(String text, Object context) {
-        m_callback.onMenuOptionSelected(text, context);
+    public boolean onMenuOptionSelected(String text, Object context) {
+        return m_callback.onMenuOptionSelected(text, context);
     }
 }
 
@@ -42,9 +42,10 @@ public class MenuGroup {
         m_children.add(child);
     }
 
-    public void executeCallback() {
+    public boolean executeCallback() {
         if (m_callback != null) {
-            m_callback.onMenuOptionSelected(m_text, m_context);
+            return m_callback.onMenuOptionSelected(m_text, m_context);
         }
+        return false;
     }
 }

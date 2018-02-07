@@ -17,9 +17,10 @@ public class MenuChild {
         m_callback = callback;
     }
 
-    public void executeCallback() {
+    public boolean executeCallback() {
         if (m_callback != null) {
-            m_callback.onMenuOptionSelected(m_text, m_context);
+            return m_callback.onMenuOptionSelected(m_text, m_context);
         }
+        return false;
     }
 }
