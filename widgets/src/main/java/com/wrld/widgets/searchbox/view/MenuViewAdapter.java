@@ -7,6 +7,7 @@ import android.widget.Adapter;
 import android.widget.ExpandableListAdapter;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
@@ -140,20 +141,17 @@ public class MenuViewAdapter implements ExpandableListAdapter {
 
     @Override
     public long getGroupId(int groupPosition) {
-        // TOD
-        return 0;
+        return ((Integer)groupPosition).longValue();
     }
 
     @Override
     public long getChildId(int groupPosition, int childPosition) {
-        // TODO
-        return 0;
+        return ((Integer)childPosition).longValue();
     }
 
     @Override
     public boolean hasStableIds() {
-        // TODO
-        return true;
+        return false;
     }
 
     @Override
@@ -167,6 +165,20 @@ public class MenuViewAdapter implements ExpandableListAdapter {
 
         MenuGroup group = (MenuGroup)getGroup(groupPosition);
         ((IMenuGroupViewHolder)convertView.getTag()).populate(group);
+
+        ImageView arrow = (ImageView)convertView.findViewById(R.id.searchbox_menu_group_icon);
+        if (((MenuGroup) getGroup(groupPosition)).hasChildren()) {
+            arrow.setVisibility(View.VISIBLE);
+            if (isExpanded) {
+                arrow.setRotation(270);
+            }
+            else {
+                arrow.setRotation(0);
+            }
+        }
+        else {
+            arrow.setVisibility(View.GONE);
+        }
 
         return convertView;
     }
@@ -188,41 +200,34 @@ public class MenuViewAdapter implements ExpandableListAdapter {
 
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
-        // TODO
         return true;
     }
 
     @Override
     public boolean areAllItemsEnabled() {
-        // TODO
         return true;
     }
 
     @Override
     public boolean isEmpty() {
-        // TODO
-        return false;
+        return m_model.getGroups().isEmpty();
     }
 
     @Override
     public void onGroupExpanded(int groupPosition) {
-        // TODO
     }
 
     @Override
     public void onGroupCollapsed(int groupPosition) {
-        // TODO
     }
 
     @Override
     public long getCombinedChildId(long groupId, long childId) {
-        // TODO
-        return 0;
+        return groupId * 10000L + childId;
     }
 
     @Override
     public long getCombinedGroupId(long groupId) {
-        // TODO
-        return 0;
+        return groupId * 10000L;
     }
 }

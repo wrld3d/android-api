@@ -7,9 +7,11 @@ import android.widget.ImageButton;
 
 import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.model.MenuChild;
+import com.wrld.widgets.searchbox.model.MenuGroup;
 import com.wrld.widgets.searchbox.model.SearchWidgetMenuModel;
 
-public class MenuViewController implements ExpandableListView.OnChildClickListener {
+public class MenuViewController implements ExpandableListView.OnChildClickListener, ExpandableListView.OnGroupClickListener,
+        ExpandableListView.OnGroupExpandListener, ExpandableListView.OnGroupCollapseListener {
 
     private View m_menuContainerView;
     private final MenuViewAdapter m_expandableListAdapter;
@@ -27,6 +29,7 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
 
         m_expandableListView.setAdapter(m_expandableListAdapter);
         m_expandableListView.setOnChildClickListener(this);
+        m_expandableListView.setOnGroupClickListener(this);
 
         openMenuButtonView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -78,5 +81,32 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
         return false;
     }
 
-    // TODO: Add onGroupClick, onGroupCollapse, onGroupExpand
+    @Override
+    public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+        MenuGroup group = (MenuGroup)m_expandableListAdapter.getGroup(groupPosition);
+        if (group != null && !group.hasChildren()) {
+            boolean closeMenu = group.executeOnSelectCallback();
+            if (closeMenu) {
+                close();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onGroupExpand(int groupPosition) {
+        MenuGroup group = (MenuGroup)m_expandableListAdapter.getGroup(groupPosition);
+        if (group != null) {
+            group.executeOnExpandCallback();
+        }
+    }
+
+    @Override
+    public void onGroupCollapse(int groupPosition) {
+        MenuGroup group = (MenuGroup)m_expandableListAdapter.getGroup(groupPosition);
+        if (group != null) {
+            group.executeOnCollapseCallback();
+        }
+    }
 }

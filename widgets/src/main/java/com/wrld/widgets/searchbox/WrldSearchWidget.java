@@ -15,6 +15,7 @@ import android.widget.SearchView;
 import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.model.ISearchProvider;
 import com.wrld.widgets.searchbox.model.ISuggestionProvider;
+import com.wrld.widgets.searchbox.model.MenuGroup;
 import com.wrld.widgets.searchbox.model.SearchWidgetSearchModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetSuggestionModel;
 import com.wrld.widgets.searchbox.view.SearchResultsController;
@@ -35,8 +36,6 @@ public class WrldSearchWidget extends Fragment {
 
     private SearchWidgetMenuModel m_menuModel;
     private MenuViewController m_menuViewController;
-
-    public SearchWidgetMenuModel getMenuModel() { return m_menuModel; }
 
     public WrldSearchWidget() {
         super();
@@ -113,6 +112,9 @@ public class WrldSearchWidget extends Fragment {
         m_menuViewController.close();
     }
 
+    public void addMenuGroup(MenuGroup group) {
+        m_menuModel.addMenuGroup(group);
+    }
 
 
 }
