@@ -1,5 +1,6 @@
 package com.wrld.widgets.searchbox.view;
 
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +9,6 @@ import android.widget.BaseAdapter;
 
 import com.wrld.widgets.searchbox.model.ISearchResult;
 import com.wrld.widgets.searchbox.model.SearchProviderQueryResult;
-import com.wrld.widgets.searchbox.model.SearchWidgetSearchModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetSuggestionModel;
 
 
@@ -27,8 +27,14 @@ public class SuggestionResultsAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        int max = m_model.getSuggestionProviderCount() * m_resultsPerProvider;
-        int count = Math.min(max, m_model.getTotalCurrentQueryResults());
+        if(m_model.getCurrentQueryResults() == null) {
+            return 0;
+        }
+
+        int count = 0;
+        for(SearchProviderQueryResult result : m_model.getCurrentQueryResults()) {
+            count += Math.min(m_resultsPerProvider, result.getResults().length);
+        }
         return count;
     }
 
@@ -60,9 +66,10 @@ public class SuggestionResultsAdapter extends BaseAdapter {
         }
 
         ISearchResult result = (ISearchResult)getItem(position);
-
-        String queryText = m_model.getCurrentQuery() != null ? m_model.getCurrentQuery().getQueryString() : "";
-        ((ISearchResultViewHolder)convertView.getTag()).populate(result, queryText);
+        if(result != null) {
+            String queryText = m_model.getCurrentQuery() != null ? m_model.getCurrentQuery().getQueryString() : "";
+            ((ISearchResultViewHolder) convertView.getTag()).populate(result, queryText);
+        }
 
         return convertView;
     }

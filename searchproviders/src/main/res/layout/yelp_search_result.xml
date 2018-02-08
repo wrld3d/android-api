@@ -4,7 +4,7 @@
     android:id="@+id/search_result"
     android:layout_width="match_parent"
     android:layout_height="64dp"
-    android:background="#FFFFFF"
+    android:background="@color/searchbox_background"
     android:gravity="center_vertical"
     android:padding="@dimen/search_results_more_margin"
     android:orientation="vertical">
@@ -39,7 +39,7 @@
         android:textSize="@dimen/font_size_subtitle"
         android:textColor="@color/searchbox_autcomplete_list_header_font_unmatched"/>
 
-    <ImageButton
+    <ImageView
         android:id="@+id/yelp_rating"
         android:layout_width="wrap_content"
         android:layout_height="16dp"
@@ -62,7 +62,7 @@
         android:textSize="@dimen/font_size_subtitle"
         android:text="@string/yelp_review_text" />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/yelp_logo"
         android:layout_width="24dp"
         android:layout_height="14dp"

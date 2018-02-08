@@ -15,6 +15,7 @@ import com.wrld.widgets.searchbox.model.ISearchProvider;
 import com.wrld.widgets.searchbox.model.ISuggestionProvider;
 import com.wrld.widgets.searchbox.model.SearchWidgetSearchModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetSuggestionModel;
+import com.wrld.widgets.searchbox.view.SearchResultsController;
 import com.wrld.widgets.searchbox.view.SearchViewController;
 import com.wrld.widgets.searchbox.view.SuggestionResultsController;
 
@@ -26,6 +27,7 @@ public class WrldSearchWidget extends Fragment {
     private SearchView m_searchView;
     private SearchViewController m_searchViewController;
     private SuggestionResultsController m_searchSuggestionResultsController;
+    private SearchResultsController m_searchResultsController;
 
     public WrldSearchWidget() {
         super();
@@ -64,6 +66,7 @@ public class WrldSearchWidget extends Fragment {
 
         m_searchView = (SearchView)getView().findViewById(R.id.searchbox_search_searchview);
         ListView suggestionResultsView = (ListView)getView().findViewById(R.id.searchbox_autocomplete_container);
+        ListView resultsView = (ListView)getView().findViewById(R.id.searchbox_search_results_container);
 
         m_searchModel = new SearchWidgetSearchModel();
         m_suggestionModel = new SearchWidgetSuggestionModel();
@@ -73,6 +76,10 @@ public class WrldSearchWidget extends Fragment {
                 m_suggestionModel,
                 suggestionResultsView,
                 m_searchView);
+
+        m_searchResultsController = new SearchResultsController(
+                m_searchModel,
+                resultsView);
     }
 
     public void doSearch() {

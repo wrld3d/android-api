@@ -65,7 +65,9 @@ public class YelpSearchProvider extends SearchProviderBase {
     private Request m_currentRequest;
 
     public YelpSearchProvider(Context context, RequestQueue requestQueue, EegeoMap map, ErrorHandler errorHandler){
-        super(context.getString(R.string.yelp_search_result_title), new DefaultSuggestionViewFactory(R.layout.search_suggestion, new TextHighlighter(R.color.black)));
+        super(context.getString(R.string.yelp_search_result_title),
+                new YelpSearchResultViewFactory(context),
+                new DefaultSuggestionViewFactory(R.layout.search_suggestion, new TextHighlighter(R.color.black)));
         m_suggestionsTitleFormatting = context.getString(R.string.yelp_suggestion_formatting);
 
         m_requestQueue = requestQueue;

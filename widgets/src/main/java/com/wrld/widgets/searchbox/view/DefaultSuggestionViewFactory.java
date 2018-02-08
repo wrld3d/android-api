@@ -29,8 +29,11 @@ public class DefaultSuggestionViewFactory implements ISearchResultViewFactory {
 
     private class SearchResultViewHolder implements ISearchResultViewHolder {
         private TextView m_title;
+        private TextHighlighter m_highlighter;
 
-        public SearchResultViewHolder(){}
+        public SearchResultViewHolder(TextHighlighter highlighter){
+            m_highlighter = highlighter;
+        }
 
         public void initialise(View view){
             m_title = (TextView) view.findViewById(R.id.search_result_title);
@@ -48,7 +51,7 @@ public class DefaultSuggestionViewFactory implements ISearchResultViewFactory {
 
     @Override
     public ISearchResultViewHolder makeSearchResultViewHolder() {
-        return new SearchResultViewHolder();
+        return new SearchResultViewHolder(m_highlighter);
     }
 
 }

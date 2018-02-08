@@ -17,11 +17,14 @@ public abstract class SearchProviderBase implements ISearchProvider, ISuggestion
 
     protected String m_title;
 
-    public SearchProviderBase(String title, ISearchResultViewFactory viewfactory){
+    public SearchProviderBase(String title,
+                              ISearchResultViewFactory resultViewfactory,
+                              ISearchResultViewFactory suggestionViewfactory){
         m_title = title;
         m_searchCompletedCallbacks = new ArrayList<>();
         m_suggestionCompletedCallbacks = new ArrayList<>();
-        m_suggestionResultViewFactory = viewfactory;
+        m_resultViewFactory = resultViewfactory;
+        m_suggestionResultViewFactory = suggestionViewfactory;
     }
 
     @Override

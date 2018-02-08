@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wrld.widgets.searchbox.model.ISearchResult;
@@ -55,8 +56,8 @@ public class YelpSearchResultViewFactory implements ISearchResultViewFactory {
     private class SearchResultViewHolderImpl implements ISearchResultViewHolder {
         private TextView m_title;
         private TextView m_subtitle;
-        private ImageButton m_rating;
-        private ImageButton m_yelpLogo;
+        private ImageView m_rating;
+        private ImageView m_yelpLogo;
         private TextView m_reviewCount;
         private String m_url;
 
@@ -65,19 +66,9 @@ public class YelpSearchResultViewFactory implements ISearchResultViewFactory {
         public void initialise(View view) {
             m_title = (TextView) view.findViewById(R.id.search_result_title);
             m_subtitle = (TextView) view.findViewById(R.id.search_result_description);
-            m_rating = (ImageButton) view.findViewById(R.id.yelp_rating);
-            m_yelpLogo = (ImageButton) view.findViewById(R.id.yelp_logo);
+            m_rating = (ImageView) view.findViewById(R.id.yelp_rating);
+            m_yelpLogo = (ImageView) view.findViewById(R.id.yelp_logo);
             m_reviewCount = (TextView) view.findViewById(R.id.yelp_reviews);
-
-            View.OnClickListener onClickListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openLink();
-                }
-            };
-
-            m_yelpLogo.setOnClickListener(onClickListener);
-            m_rating.setOnClickListener(onClickListener);
         }
 
         public void populate(ISearchResult result, String searchTerm) {

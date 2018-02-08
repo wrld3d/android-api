@@ -74,8 +74,6 @@ public class SearchWidgetSearchModel implements SearchQueryListener
         }
     }
 
-
-
     public void doSearch(String queryText)
     {
         doSearch(queryText, null);
@@ -110,8 +108,6 @@ public class SearchWidgetSearchModel implements SearchQueryListener
         return new SearchQuery(queryText, queryContext, SearchQuery.QueryType.Search, listener, providerQueries);
     }
 
-
-
     public void cancelCurrentQuery()
     {
         if(m_currentQuery != null) {
@@ -134,6 +130,7 @@ public class SearchWidgetSearchModel implements SearchQueryListener
     @Override
     public void onSearchQueryCompleted(List<SearchProviderQueryResult> results) {
         m_currentQueryResults = results;
+
         if(m_resultsListener != null) {
             m_resultsListener.onSearchResultsRecieved(m_currentQuery, m_currentQueryResults);
         }
@@ -162,5 +159,13 @@ public class SearchWidgetSearchModel implements SearchQueryListener
             }
         }
         return total;
+    }
+
+    public ISearchResultViewFactory getViewFactoryForProvider(int providerId) {
+        if(!m_searchProviderMap.containsKey(providerId)) {
+            return null;
+        }
+
+        return m_searchProviderMap.get(providerId).getSearchProvider().getResultViewFactory();
     }
 }
