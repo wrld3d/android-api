@@ -7,6 +7,8 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SearchView;
 
@@ -16,8 +18,10 @@ import com.wrld.widgets.searchbox.model.ISuggestionProvider;
 import com.wrld.widgets.searchbox.model.SearchWidgetSearchModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetSuggestionModel;
 import com.wrld.widgets.searchbox.view.SearchResultsController;
+import com.wrld.widgets.searchbox.view.MenuViewController;
 import com.wrld.widgets.searchbox.view.SearchViewController;
 import com.wrld.widgets.searchbox.view.SuggestionResultsController;
+import com.wrld.widgets.searchbox.model.SearchWidgetMenuModel;
 
 
 public class WrldSearchWidget extends Fragment {
@@ -28,6 +32,11 @@ public class WrldSearchWidget extends Fragment {
     private SearchViewController m_searchViewController;
     private SuggestionResultsController m_searchSuggestionResultsController;
     private SearchResultsController m_searchResultsController;
+
+    private SearchWidgetMenuModel m_menuModel;
+    private MenuViewController m_menuViewController;
+
+    public SearchWidgetMenuModel getMenuModel() { return m_menuModel; }
 
     public WrldSearchWidget() {
         super();
@@ -80,6 +89,12 @@ public class WrldSearchWidget extends Fragment {
         m_searchResultsController = new SearchResultsController(
                 m_searchModel,
                 resultsView);
+
+        ImageButton openMenuButtonView = (ImageButton)getView().findViewById(R.id.searchbox_search_menu);
+        View menuView = ((ViewStub)getView().findViewById(R.id.searchbox_menu_container_stub)).inflate();
+
+        m_menuModel = new SearchWidgetMenuModel();
+        m_menuViewController = new MenuViewController(m_menuModel, menuView, openMenuButtonView);
     }
 
     public void doSearch() {
@@ -88,6 +103,14 @@ public class WrldSearchWidget extends Fragment {
 
     public void repeatSearch() {
 
+    }
+
+    public void openMenu() {
+        m_menuViewController.open();
+    }
+
+    public void closeMenu() {
+        m_menuViewController.close();
     }
 
 

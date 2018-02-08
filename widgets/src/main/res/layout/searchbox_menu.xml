@@ -4,6 +4,7 @@
     android:id="@+id/searchbox_menu"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:elevation="8dp"
     android:orientation="vertical">
 
     <LinearLayout
@@ -40,14 +41,18 @@
         android:layout_height="@dimen/search_menu_header_spacer_height"
         android:layout_below="@id/searchbox_menu_header"/>
 
-    <LinearLayout
-        android:id="@+id/searchbox_menu_groups_space"
-        android:layout_below="@id/searchbox_menu_header_space"
+    <ExpandableListView
+        android:id="@+id/searchbox_menu_groups"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/search_menu_drop_down_padding"
-        android:paddingTop="@dimen/search_menu_drop_down_padding_top"
+        android:layout_below="@+id/searchbox_menu_header_space"
         android:background="@color/searchbox_background"
-        android:orientation="vertical"></LinearLayout>
+        android:fadeScrollbars="false"
+        android:fadingEdgeLength="96dp"
+        android:footerDividersEnabled="false"
+        android:headerDividersEnabled="false"
+        android:orientation="vertical"
+        android:requiresFadingEdge="vertical"
+        android:scrollbarFadeDuration="0" />
 
 </RelativeLayout>
