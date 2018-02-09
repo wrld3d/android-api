@@ -1,10 +1,12 @@
 package com.wrld.widgets.searchbox.model;
 
+import android.support.annotation.NonNull;
+
 /**
  * A result from an individual SearchProviderQuery. Contains the results (if any), information on if it
  * was successful, and an id to map it back to the original provider.
  */
-public class SearchProviderQueryResult
+public class SearchProviderQueryResult implements Comparable<SearchProviderQueryResult>
 {
     public SearchProviderQueryResult(int providerId, ISearchResult[] results, boolean success)
     {
@@ -20,4 +22,9 @@ public class SearchProviderQueryResult
     private ISearchResult[] m_results;
     private int m_providerId;
     private final boolean m_success;
+
+    @Override
+    public int compareTo(@NonNull SearchProviderQueryResult other) {
+        return m_providerId > other.getProviderId() ? 1 : (m_providerId < other.getProviderId() ? -1 : 0);
+    }
 }

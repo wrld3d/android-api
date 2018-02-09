@@ -3,6 +3,7 @@ package com.wrld.widgets.searchbox.model;
 import com.wrld.widgets.searchbox.view.ISearchResultViewFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,27 +28,23 @@ class MappedSuggestionProvider
 public class SearchWidgetSuggestionModel implements SearchQueryListener
 {
     private SearchQuery m_currentQuery;
-    private List<SearchProviderQueryResult> m_currentQueryResults;
+    private SearchResultsModel m_results;
     private Map<Integer, MappedSuggestionProvider> m_suggestionProviderMap;
 
-    // separate results model and make it observable
     private IOnSuggestionListener m_suggestionListener;
-    private IOnSearchResultListener m_resultsListener;
 
     private int m_nextProviderId = 0;
 
-    public SearchWidgetSuggestionModel()
+    public SearchWidgetSuggestionModel(SearchResultsModel resultsModel)
     {
         m_suggestionProviderMap = new HashMap<>();
         m_suggestionListener = null;
-        m_resultsListener = null;
+        m_results = resultsModel;
     }
 
     public void setSuggestionListener(IOnSuggestionListener listener) { m_suggestionListener = listener; }
-    public void setResultListener(IOnSearchResultListener listener) { m_resultsListener = listener; }
 
     public final SearchQuery getCurrentQuery() { return m_currentQuery; }
-    public final List<SearchProviderQueryResult> getCurrentQueryResults() { return m_currentQueryResults; }
 
     public void addSuggestionProvider(ISuggestionProvider provider)
     {
@@ -110,22 +107,15 @@ public class SearchWidgetSuggestionModel implements SearchQueryListener
         cancelCurrentQuery();
 
         m_currentQuery = null;
-        m_currentQueryResults = null;
-
-        if(m_resultsListener != null) {
-            m_resultsListener.onSearchResultsCleared();
-        }
+        m_results.clear();
     }
 
     @Override
     public void onSearchQueryCompleted(List<SearchProviderQueryResult> results) {
-        m_currentQueryResults = results;
-        if(m_resultsListener != null) {
-            m_resultsListener.onSearchResultsRecieved(m_currentQuery, m_currentQueryResults);
-        }
+        m_results.setResultsForQuery(results, m_currentQuery);
 
         if(m_suggestionListener != null) {
-            m_suggestionListener.onSuggestionQueryCompleted(m_currentQuery, m_currentQueryResults);
+            m_suggestionListener.onSuggestionQueryCompleted(m_currentQuery, results);
         }
     }
 
@@ -139,19 +129,6 @@ public class SearchWidgetSuggestionModel implements SearchQueryListener
 
     public int getSuggestionProviderCount() {
         return m_suggestionProviderMap.size();
-    }
-
-    public int getTotalCurrentQueryResults() {
-        if(m_currentQueryResults == null) {
-            return 0;
-        }
-        int total = 0;
-        for(SearchProviderQueryResult result : m_currentQueryResults) {
-            if(result.getResults() != null && result.wasSuccess()) {
-                total += result.getResults().length;
-            }
-        }
-        return total;
     }
 
     // Shouldn't have this - move providers to external repository and expose bits with interfaces.

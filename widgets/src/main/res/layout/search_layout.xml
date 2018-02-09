@@ -40,39 +40,82 @@
             android:queryHint="@string/searchbox_query_hint" />
     </RelativeLayout>
 
-    <ListView
+    <LinearLayout
         android:id="@+id/searchbox_search_results_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/searchbox_search_container"
         android:orientation="vertical"
         android:visibility="gone"
-        android:choiceMode="singleChoice"
-        android:footerDividersEnabled="false"
-        android:headerDividersEnabled="false"
-        android:scrollbarFadeDuration="0"
-        android:requiresFadingEdge="vertical"
-        android:fadingEdgeLength="96dp"
-        android:background="@android:color/white"
-        android:drawSelectorOnTop="true"
-        android:fadeScrollbars="false"
-        android:elevation="8dp"/>
+        android:background="@color/searchbox_autcomplete_list_header_background"
+        android:elevation="4dp">
 
-    <ListView
+        <include layout="@layout/search_separator"/>
+
+        <ListView
+            android:id="@+id/searchbox_search_results_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/search_padding"
+            android:paddingRight="@dimen/search_padding"
+            android:choiceMode="singleChoice"
+            android:footerDividersEnabled="false"
+            android:headerDividersEnabled="false"
+            android:divider="@color/searchbox_divider_light"
+            android:dividerHeight="1dp"
+            android:scrollbarFadeDuration="0"
+            android:requiresFadingEdge="vertical"
+            android:fadingEdgeLength="96dp"
+            android:drawSelectorOnTop="true"
+            android:fadeScrollbars="false"/>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/searchbox_autocomplete_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/searchbox_search_container"
+        android:orientation="vertical"
         android:background="@color/searchbox_background"
-        android:divider="@null"
-        android:dividerHeight="0dp"
-        android:footerDividersEnabled="false"
-        android:headerDividersEnabled="false"
-        android:paddingBottom="@dimen/search_suggestions_result_vertical_padding"
-        android:paddingLeft="@dimen/search_suggestions_result_horizontal_padding"
-        android:paddingRight="@dimen/search_suggestions_result_horizontal_padding"
-        android:drawSelectorOnTop="true"
-        android:elevation="8dp"/>
+        android:elevation="4dp">
+
+        <include layout="@layout/search_separator"/>
+
+        <ListView
+            android:id="@+id/searchbox_autocomplete_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@color/searchbox_divider_light"
+            android:dividerHeight="1dp"
+            android:footerDividersEnabled="false"
+            android:headerDividersEnabled="false"
+            android:paddingBottom="@dimen/search_suggestions_result_vertical_padding"
+            android:paddingLeft="@dimen/search_suggestions_result_horizontal_padding"
+            android:paddingRight="@dimen/search_suggestions_result_horizontal_padding"
+            android:drawSelectorOnTop="true"/>
+    </LinearLayout>
+
+    <LinearLayout android:id="@+id/searchbox_search_spinner_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/searchbox_search_container"
+        android:background="@color/searchbox_background"
+        android:orientation="vertical"
+        android:elevation="8dp">
+
+        <include layout="@layout/search_separator"/>
+
+        <ProgressBar
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:layout_margin="@dimen/search_padding"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/wrld_blue"
+            android:indeterminateTintMode="multiply"/>
+
+    </LinearLayout>
 
     <ViewStub
         android:id="@+id/searchbox_menu_container_stub"

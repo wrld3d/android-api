@@ -10,11 +10,13 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 
 import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.model.ISearchProvider;
 import com.wrld.widgets.searchbox.model.ISuggestionProvider;
+import com.wrld.widgets.searchbox.model.SearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetSearchModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetSuggestionModel;
 import com.wrld.widgets.searchbox.view.SearchResultsController;
@@ -26,6 +28,8 @@ import com.wrld.widgets.searchbox.model.SearchWidgetMenuModel;
 
 public class WrldSearchWidget extends Fragment {
 
+    private SearchResultsModel m_searchResultsModel;
+    private SearchResultsModel m_suggestionResultsModel;
     private SearchWidgetSearchModel m_searchModel;
     private SearchWidgetSuggestionModel m_suggestionModel;
     private SearchView m_searchView;
@@ -74,27 +78,41 @@ public class WrldSearchWidget extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         m_searchView = (SearchView)getView().findViewById(R.id.searchbox_search_searchview);
-        ListView suggestionResultsView = (ListView)getView().findViewById(R.id.searchbox_autocomplete_container);
-        ListView resultsView = (ListView)getView().findViewById(R.id.searchbox_search_results_container);
+        View suggestionResultsViewContainer = getView().findViewById(R.id.searchbox_autocomplete_container);
+        View searchResultsViewContainer = getView().findViewById(R.id.searchbox_search_results_container);
+        View spinnerView = getView().findViewById(R.id.searchbox_search_spinner_container);
 
-        m_searchModel = new SearchWidgetSearchModel();
-        m_suggestionModel = new SearchWidgetSuggestionModel();
+        m_searchResultsModel = new SearchResultsModel();
+        m_searchModel = new SearchWidgetSearchModel(m_searchResultsModel);
+        m_suggestionResultsModel = new SearchResultsModel();
+        m_suggestionModel = new SearchWidgetSuggestionModel(m_suggestionResultsModel);
 
-        m_searchViewController = new SearchViewController(m_searchModel, m_suggestionModel, m_searchView);
+        m_searchViewController = new SearchViewController(m_searchModel, m_suggestionModel, m_searchView, spinnerView);
         m_searchSuggestionResultsController = new SuggestionResultsController(
                 m_suggestionModel,
-                suggestionResultsView,
+                m_suggestionResultsModel,
+                suggestionResultsViewContainer,
                 m_searchView);
 
         m_searchResultsController = new SearchResultsController(
                 m_searchModel,
-                resultsView);
+                m_searchResultsModel,
+                m_suggestionResultsModel,
+                searchResultsViewContainer);
 
         ImageButton openMenuButtonView = (ImageButton)getView().findViewById(R.id.searchbox_search_menu);
         View menuView = ((ViewStub)getView().findViewById(R.id.searchbox_menu_container_stub)).inflate();
 
         m_menuModel = new SearchWidgetMenuModel();
         m_menuViewController = new MenuViewController(m_menuModel, menuView, openMenuButtonView);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        m_searchResultsController.clean();
+        m_searchSuggestionResultsController.clean();
     }
 
     public void doSearch() {

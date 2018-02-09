@@ -9,30 +9,36 @@ import android.widget.BaseAdapter;
 
 import com.wrld.widgets.searchbox.model.ISearchResult;
 import com.wrld.widgets.searchbox.model.SearchProviderQueryResult;
+import com.wrld.widgets.searchbox.model.SearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetSuggestionModel;
 
 
 public class SuggestionResultsAdapter extends BaseAdapter {
 
-    private final SearchWidgetSuggestionModel m_model;
+    private final SearchResultsModel m_results;
+    private final SearchWidgetSuggestionModel m_suggestionModel;
     private final int m_resultsPerProvider;
     private final LayoutInflater m_inflater;
 
-    public SuggestionResultsAdapter(SearchWidgetSuggestionModel model, LayoutInflater inflater, int resultsPerProvider)
+    public SuggestionResultsAdapter(SearchResultsModel results,
+                                    SearchWidgetSuggestionModel suggestionModel,
+                                    LayoutInflater inflater,
+                                    int resultsPerProvider)
     {
         m_resultsPerProvider = resultsPerProvider;
-        m_model = model;
+        m_results = results;
+        m_suggestionModel = suggestionModel;
         m_inflater = inflater;
     }
 
     @Override
     public int getCount() {
-        if(m_model.getCurrentQueryResults() == null) {
+        if(m_results.getCurrentQueryResults() == null) {
             return 0;
         }
 
         int count = 0;
-        for(SearchProviderQueryResult result : m_model.getCurrentQueryResults()) {
+        for(SearchProviderQueryResult result : m_results.getCurrentQueryResults()) {
             count += Math.min(m_resultsPerProvider, result.getResults().length);
         }
         return count;
@@ -42,7 +48,7 @@ public class SuggestionResultsAdapter extends BaseAdapter {
     public Object getItem(int position) {
         Pair<Integer,Integer> providerIndex = getProviderIndex(position);
         if(providerIndex != null) {
-            SearchProviderQueryResult providerResult = m_model.getCurrentQueryResults().get(providerIndex.first);
+            SearchProviderQueryResult providerResult = m_results.getCurrentQueryResults().get(providerIndex.first);
             return providerResult.getResults()[providerIndex.second];
         }
         return null;
@@ -57,7 +63,7 @@ public class SuggestionResultsAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         if(convertView == null) {
             // Model shouldn't have this, expose interface and give to something else.
-            ISearchResultViewFactory viewFactory = m_model.getViewFactoryForProvider(getItemViewType(position));
+            ISearchResultViewFactory viewFactory = m_suggestionModel.getViewFactoryForProvider(getItemViewType(position));
 
             convertView = viewFactory.makeSearchResultView(m_inflater, parent);
             ISearchResultViewHolder viewHolder = viewFactory.makeSearchResultViewHolder();
@@ -67,7 +73,7 @@ public class SuggestionResultsAdapter extends BaseAdapter {
 
         ISearchResult result = (ISearchResult)getItem(position);
         if(result != null) {
-            String queryText = m_model.getCurrentQuery() != null ? m_model.getCurrentQuery().getQueryString() : "";
+            String queryText = m_suggestionModel.getCurrentQuery() != null ? m_suggestionModel.getCurrentQuery().getQueryString() : "";
             ((ISearchResultViewHolder) convertView.getTag()).populate(result, queryText);
         }
 
@@ -77,14 +83,14 @@ public class SuggestionResultsAdapter extends BaseAdapter {
     @Override
     public int getViewTypeCount(){
         // Pass in an observable repository of providers.
-        return Math.max(1, m_model.getSuggestionProviderCount());
+        return Math.max(1, m_suggestionModel.getSuggestionProviderCount());
     }
 
     @Override
     public int getItemViewType(int position){
         Pair<Integer,Integer> providerIndex = getProviderIndex(position);
         if(providerIndex != null) {
-            int providerId = m_model.getCurrentQueryResults().get(providerIndex.first).getProviderId();
+            int providerId = m_results.getCurrentQueryResults().get(providerIndex.first).getProviderId();
             return providerId;
         }
         return -1;
@@ -93,12 +99,12 @@ public class SuggestionResultsAdapter extends BaseAdapter {
     private Pair<Integer, Integer> getProviderIndex(int position) {
         int count = 0;
 
-        if(m_model.getCurrentQueryResults() == null) {
+        if(m_results.getCurrentQueryResults() == null) {
             return null;
         }
 
         int setIndex = 0;
-        for(SearchProviderQueryResult queryResultSet : m_model.getCurrentQueryResults()){
+        for(SearchProviderQueryResult queryResultSet : m_results.getCurrentQueryResults()){
             int actualPositionInSet = position - count;
             int setSize = Math.min(m_resultsPerProvider, queryResultSet.getResults().length);
             if(actualPositionInSet >= setSize){

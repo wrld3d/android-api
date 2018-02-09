@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="8dp"
+    android:orientation="vertical"
+    android:background="@color/searchbox_autcomplete_list_header_background">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="@color/wrld_blue"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:scaleY="-1"
+        android:background="@drawable/gradientshadow"/>
+
+</LinearLayout>

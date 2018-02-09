@@ -38,8 +38,8 @@ public class SearchResultFooterViewFactory {
             m_iconView.setImageResource(R.drawable.back_btn);
         }
 
-        public void showExpand(int hiddenResults) {
-            m_title.setText("More Places (" + hiddenResults + ") results");
+        public void showExpand(int hiddenResults, String providerName) {
+            m_title.setText("See more " + providerName + " (" + hiddenResults + ") results");
             m_iconView.setImageResource(R.drawable.moreresults_butn);
         }
     }

@@ -2,6 +2,8 @@ package com.wrld.widgets.searchbox.model;
 
 import com.wrld.widgets.searchbox.view.ISearchResultViewFactory;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -9,80 +11,67 @@ import static org.junit.Assert.assertNotEquals;
 
 public class SearchWidgetModelTests {
 
-    public MockSearchProvider createValidSearchProvider()
-    {
-        return new MockSearchProvider("Valid Search Provider", true);
+    private SearchResultsModel m_results;
+    private SearchWidgetSearchModel m_widgetModel;
+    private MockSearchProvider m_provider;
+
+    @Before
+    public void setUp() {
+        m_results = new SearchResultsModel();
+        m_widgetModel = new SearchWidgetSearchModel(m_results);
+        m_provider = new MockSearchProvider("Valid Search Provider", true);
+        m_widgetModel.addSearchProvider(m_provider);
     }
 
-    public SearchWidgetSearchModel createSearchWidgetModel()
-    {
-        return new SearchWidgetSearchModel();
+    @After
+    public void teardown() {
+
     }
 
 
     @Test
     public void testQueryTextWasSearchedFor() throws Exception {
-        SearchWidgetSearchModel widgetModel = createSearchWidgetModel();
-        MockSearchProvider provider = createValidSearchProvider();
-        widgetModel.addSearchProvider(provider);
+        m_widgetModel.doSearch("Hello");
 
-        widgetModel.doSearch("Hello");
-
-        assertEquals(provider.searchedQuery(), "Hello");
-        assertEquals(provider.searchedContext(), null);
+        assertEquals(m_provider.searchedQuery(), "Hello");
+        assertEquals(m_provider.searchedContext(), null);
     }
 
     @Test
     public void testQueryContextWasSearchedFor() throws Exception {
-        SearchWidgetSearchModel widgetModel = createSearchWidgetModel();
-        MockSearchProvider provider = createValidSearchProvider();
-        widgetModel.addSearchProvider(provider);
+        m_widgetModel.doSearch("Hello", "Context");
 
-        widgetModel.doSearch("Hello", "Context");
-
-        assertEquals(provider.searchedQuery(), "Hello");
-        assertEquals(provider.searchedContext(), "Context");
+        assertEquals(m_provider.searchedQuery(), "Hello");
+        assertEquals(m_provider.searchedContext(), "Context");
     }
 
     @Test
     public void testCurrentQueryWasSet() throws Exception {
-        SearchWidgetSearchModel widgetModel = createSearchWidgetModel();
-        MockSearchProvider provider = createValidSearchProvider();
-        widgetModel.addSearchProvider(provider);
+        m_widgetModel.doSearch("Hello", "Context");
 
-        widgetModel.doSearch("Hello", "Context");
-
-        assertNotEquals(widgetModel.getCurrentQuery(), null);
-        assertEquals(widgetModel.getCurrentQuery().getQueryString(), "Hello");
-        assertEquals(widgetModel.getCurrentQuery().getQueryContext(), "Context");
+        assertNotEquals(m_widgetModel.getCurrentQuery(), null);
+        assertEquals(m_widgetModel.getCurrentQuery().getQueryString(), "Hello");
+        assertEquals(m_widgetModel.getCurrentQuery().getQueryContext(), "Context");
     }
 
     @Test
     public void testCurrentQueryResultsWereReturned() throws Exception {
-        SearchWidgetSearchModel widgetModel = createSearchWidgetModel();
-        MockSearchProvider provider = createValidSearchProvider();
-        widgetModel.addSearchProvider(provider);
+        m_widgetModel.doSearch("Hello", "Context");
 
-        widgetModel.doSearch("Hello", "Context");
-
-        assertNotEquals(widgetModel.getCurrentQueryResults(), null);
-        assertEquals(widgetModel.getCurrentQueryResults().size(), 1);
-        assertEquals(widgetModel.getCurrentQueryResults().get(0).wasSuccess(), true);
-        assertEquals(widgetModel.getCurrentQueryResults().get(0).getResults().length, 1);
-        assertEquals(widgetModel.getCurrentQueryResults().get(0).getResults()[0].getTitle(), "Search Result");
+        assertNotEquals(m_results.getCurrentQueryResults(), null);
+        assertEquals(m_results.getCurrentQueryResults().size(), 1);
+        assertEquals(m_results.getCurrentQueryResults().get(0).wasSuccess(), true);
+        assertEquals(m_results.getCurrentQueryResults().get(0).getResults().length, 1);
+        assertEquals(m_results.getCurrentQueryResults().get(0).getResults()[0].getTitle(), "Search Result");
     }
 
     @Test
     public void testCurrentQueryResultsAreEmptyAfterClear() throws Exception {
 
-        SearchWidgetSearchModel widgetModel = createSearchWidgetModel();
-        MockSearchProvider provider = createValidSearchProvider();
-        widgetModel.addSearchProvider(provider);
+        m_widgetModel.doSearch("Hello", "Context");
+        m_widgetModel.clear();
 
-        widgetModel.doSearch("Hello", "Context");
-        widgetModel.clear();
-
-        assertEquals(widgetModel.getCurrentQueryResults(), null);
+        assertEquals(m_results.getCurrentQueryResults(), null);
     }
     // Test cancelling query in progress
 
