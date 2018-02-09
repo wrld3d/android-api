@@ -21,6 +21,7 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
     private ExpandableListView m_expandableListView;
     private SearchWidgetMenuModel m_model;
     private boolean m_isOpen;
+    private int m_previousGroup;
 
     public MenuViewController(SearchWidgetMenuModel model, View view, ImageButton openMenuButtonView) {
         m_model = model;
@@ -35,6 +36,8 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
         m_expandableListView.setAdapter(m_expandableListAdapter);
         m_expandableListView.setOnChildClickListener(this);
         m_expandableListView.setOnGroupClickListener(this);
+        m_expandableListView.setOnGroupExpandListener(this);
+        m_expandableListView.setOnGroupCollapseListener(this);
 
         openMenuButtonView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -50,6 +53,7 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
         });
 
         m_isOpen = false;
+        m_previousGroup = -1;
 
         updateVisibility();
     }
@@ -101,6 +105,11 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
 
     @Override
     public void onGroupExpand(int groupPosition) {
+        if (groupPosition != m_previousGroup) {
+            m_expandableListView.collapseGroup(m_previousGroup);
+        }
+        m_previousGroup = groupPosition;
+
         MenuGroup group = (MenuGroup)m_expandableListAdapter.getGroup(groupPosition);
         if (group != null) {
             group.executeOnExpandCallback();
