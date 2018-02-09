@@ -2,16 +2,19 @@ package com.wrld.widgets.searchbox.view;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.BaseAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 
 import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.model.MenuChild;
 import com.wrld.widgets.searchbox.model.MenuGroup;
+import com.wrld.widgets.searchbox.model.OnMenuChangedListener;
 import com.wrld.widgets.searchbox.model.SearchWidgetMenuModel;
 
 public class MenuViewController implements ExpandableListView.OnChildClickListener, ExpandableListView.OnGroupClickListener,
-        ExpandableListView.OnGroupExpandListener, ExpandableListView.OnGroupCollapseListener {
+        ExpandableListView.OnGroupExpandListener, ExpandableListView.OnGroupCollapseListener,
+        OnMenuChangedListener {
 
     private View m_menuContainerView;
     private final MenuViewAdapter m_expandableListAdapter;
@@ -21,6 +24,8 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
 
     public MenuViewController(SearchWidgetMenuModel model, View view, ImageButton openMenuButtonView) {
         m_model = model;
+
+        m_model.setListener(this);
 
         m_menuContainerView = view;
 
@@ -108,5 +113,10 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
         if (group != null) {
             group.executeOnCollapseCallback();
         }
+    }
+
+    @Override
+    public void onMenuChanged() {
+        ((BaseAdapter) m_expandableListView.getAdapter()).notifyDataSetChanged();
     }
 }
