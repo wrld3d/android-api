@@ -4,13 +4,13 @@ public class MenuChild {
     private String m_text;
     private String m_icon;
     private Object m_context;
-    private IOnMenuOptionSelectedCallback m_callback;
+    private OnMenuOptionSelectedCallback m_callback;
 
     public final String getText() { return m_text; }
     public final String getIcon() { return m_icon; }
     public final Object getContext() { return m_context; }
 
-    public MenuChild(String text, String icon, Object context, final IOnMenuOptionSelectedCallback callback) {
+    public MenuChild(String text, String icon, Object context, final OnMenuOptionSelectedCallback callback) {
         m_text = text;
         m_icon = icon;
         m_context = context;
