@@ -42,10 +42,24 @@ public class MenuGroup {
     public final List<MenuChild> getChildren() { return m_children; }
     public final boolean hasChildren() { return !m_children.isEmpty(); }
 
-    public MenuGroup(String text, Object context, final OnMenuOptionSelectedCallback callback) {
+    public MenuGroup(String text) {
+        this(text, null, null, null, null);
+    }
+
+    public MenuGroup(String text, Object context, final OnMenuOptionSelectedCallback onSelectCallback) {
+        this(text, context, onSelectCallback, null, null);
+    }
+
+    public MenuGroup(String text, Object context, final OnMenuGroupInteractionCallback onExpandCallback, final OnMenuGroupInteractionCallback onCollapseCallback) {
+        this(text, context, null, onExpandCallback, onCollapseCallback);
+    }
+
+    private MenuGroup(String text, Object context, final OnMenuOptionSelectedCallback onSelectCallback, final OnMenuGroupInteractionCallback onExpandCallback, final OnMenuGroupInteractionCallback onCollapseCallback) {
         m_text = text;
         m_context = context;
-        m_onSelectCallback = callback;
+        m_onSelectCallback = onSelectCallback;
+        m_onExpandCallback = onExpandCallback;
+        m_onCollapseCallback = onCollapseCallback;
         m_children = new ArrayList<MenuChild>();
     }
 
