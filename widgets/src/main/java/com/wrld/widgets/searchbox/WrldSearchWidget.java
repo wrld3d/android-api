@@ -9,21 +9,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.SearchView;
 
 import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.model.ISearchProvider;
 import com.wrld.widgets.searchbox.model.ISuggestionProvider;
+import com.wrld.widgets.searchbox.model.MenuGroup;
 import com.wrld.widgets.searchbox.model.SearchResultsModel;
+import com.wrld.widgets.searchbox.model.SearchWidgetMenuModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetSearchModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetSuggestionModel;
-import com.wrld.widgets.searchbox.view.SearchResultsController;
 import com.wrld.widgets.searchbox.view.MenuViewController;
+import com.wrld.widgets.searchbox.view.SearchResultsController;
 import com.wrld.widgets.searchbox.view.SearchViewController;
 import com.wrld.widgets.searchbox.view.SuggestionResultsController;
-import com.wrld.widgets.searchbox.model.SearchWidgetMenuModel;
 
 
 public class WrldSearchWidget extends Fragment {
@@ -39,8 +38,6 @@ public class WrldSearchWidget extends Fragment {
 
     private SearchWidgetMenuModel m_menuModel;
     private MenuViewController m_menuViewController;
-
-    public SearchWidgetMenuModel getMenuModel() { return m_menuModel; }
 
     public WrldSearchWidget() {
         super();
@@ -77,15 +74,15 @@ public class WrldSearchWidget extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        m_searchView = (SearchView)getView().findViewById(R.id.searchbox_search_searchview);
-        View suggestionResultsViewContainer = getView().findViewById(R.id.searchbox_autocomplete_container);
-        View searchResultsViewContainer = getView().findViewById(R.id.searchbox_search_results_container);
-        View spinnerView = getView().findViewById(R.id.searchbox_search_spinner_container);
-
         m_searchResultsModel = new SearchResultsModel();
         m_searchModel = new SearchWidgetSearchModel(m_searchResultsModel);
         m_suggestionResultsModel = new SearchResultsModel();
         m_suggestionModel = new SearchWidgetSuggestionModel(m_suggestionResultsModel);
+
+        m_searchView = (SearchView)getView().findViewById(R.id.searchbox_search_searchview);
+        View suggestionResultsViewContainer = getView().findViewById(R.id.searchbox_autocomplete_container);
+        View searchResultsViewContainer = getView().findViewById(R.id.searchbox_search_results_container);
+        View spinnerView = getView().findViewById(R.id.searchbox_search_spinner_container);
 
         m_searchViewController = new SearchViewController(m_searchModel, m_suggestionModel, m_searchView, spinnerView);
         m_searchSuggestionResultsController = new SuggestionResultsController(
@@ -115,12 +112,8 @@ public class WrldSearchWidget extends Fragment {
         m_searchSuggestionResultsController.clean();
     }
 
-    public void doSearch() {
-
-    }
-
-    public void repeatSearch() {
-
+    public void doSearch(String queryString, Object queryContext) {
+        m_searchModel.doSearch(queryString, queryContext);
     }
 
     public void openMenu() {
@@ -131,6 +124,9 @@ public class WrldSearchWidget extends Fragment {
         m_menuViewController.close();
     }
 
+    public void addMenuGroup(MenuGroup group) {
+        m_menuModel.addMenuGroup(group);
+    }
 
 
 }

@@ -2,23 +2,31 @@ package com.wrld.widgets.searchbox.view;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.BaseAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 
 import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.model.MenuChild;
+import com.wrld.widgets.searchbox.model.MenuGroup;
+import com.wrld.widgets.searchbox.model.OnMenuChangedListener;
 import com.wrld.widgets.searchbox.model.SearchWidgetMenuModel;
 
-public class MenuViewController implements ExpandableListView.OnChildClickListener {
+public class MenuViewController implements ExpandableListView.OnChildClickListener, ExpandableListView.OnGroupClickListener,
+        ExpandableListView.OnGroupExpandListener, ExpandableListView.OnGroupCollapseListener,
+        OnMenuChangedListener {
 
     private View m_menuContainerView;
     private final MenuViewAdapter m_expandableListAdapter;
     private ExpandableListView m_expandableListView;
     private SearchWidgetMenuModel m_model;
     private boolean m_isOpen;
+    private int m_previousGroup;
 
     public MenuViewController(SearchWidgetMenuModel model, View view, ImageButton openMenuButtonView) {
         m_model = model;
+
+        m_model.setListener(this);
 
         m_menuContainerView = view;
 
@@ -27,6 +35,9 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
 
         m_expandableListView.setAdapter(m_expandableListAdapter);
         m_expandableListView.setOnChildClickListener(this);
+        m_expandableListView.setOnGroupClickListener(this);
+        m_expandableListView.setOnGroupExpandListener(this);
+        m_expandableListView.setOnGroupCollapseListener(this);
 
         openMenuButtonView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -42,6 +53,7 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
         });
 
         m_isOpen = false;
+        m_previousGroup = -1;
 
         updateVisibility();
     }
@@ -78,5 +90,42 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
         return false;
     }
 
-    // TODO: Add onGroupClick, onGroupCollapse, onGroupExpand
+    @Override
+    public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+        MenuGroup group = (MenuGroup)m_expandableListAdapter.getGroup(groupPosition);
+        if (group != null && !group.hasChildren()) {
+            boolean closeMenu = group.executeOnSelectCallback();
+            if (closeMenu) {
+                close();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onGroupExpand(int groupPosition) {
+        if (groupPosition != m_previousGroup) {
+            m_expandableListView.collapseGroup(m_previousGroup);
+        }
+        m_previousGroup = groupPosition;
+
+        MenuGroup group = (MenuGroup)m_expandableListAdapter.getGroup(groupPosition);
+        if (group != null) {
+            group.executeOnExpandCallback();
+        }
+    }
+
+    @Override
+    public void onGroupCollapse(int groupPosition) {
+        MenuGroup group = (MenuGroup)m_expandableListAdapter.getGroup(groupPosition);
+        if (group != null) {
+            group.executeOnCollapseCallback();
+        }
+    }
+
+    @Override
+    public void onMenuChanged() {
+        ((BaseAdapter) m_expandableListView.getAdapter()).notifyDataSetChanged();
+    }
 }
