@@ -151,6 +151,8 @@ public class IndoorMapView implements OnIndoorEnteredListener, OnIndoorExitedLis
                 m_scrollHandler.postDelayed(m_scrollingRunnable, 1);
             }
         };
+
+        forceViewRelayout(mapView);
     }
 
     @UiThread
@@ -162,6 +164,7 @@ public class IndoorMapView implements OnIndoorEnteredListener, OnIndoorExitedLis
         setSelectedFloorIndex(m_currentFloorIndex);
 
         m_uiRootView.setVisibility(View.VISIBLE);
+        forceViewRelayout(m_uiRootView);
         animateToActive();
     }
 
@@ -494,5 +497,12 @@ public class IndoorMapView implements OnIndoorEnteredListener, OnIndoorExitedLis
         public boolean onTouch(View view, MotionEvent event) {
             return m_target.onTouchEvent(event);
         }
+    }
+
+    @UiThread
+    private void forceViewRelayout(View view) {
+        view.measure(View.MeasureSpec.makeMeasureSpec(view.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
+                     View.MeasureSpec.makeMeasureSpec(view.getMeasuredHeight(), View.MeasureSpec.EXACTLY));
+        view.layout(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
     }
 }
