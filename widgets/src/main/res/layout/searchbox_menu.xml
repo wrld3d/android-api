@@ -47,12 +47,18 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/searchbox_menu_header_space"
         android:background="@color/searchbox_background"
+        android:childDivider="@drawable/menu_divider"
+        android:divider="@drawable/menu_divider"
+        android:dividerHeight="1dp"
         android:fadeScrollbars="false"
         android:fadingEdgeLength="96dp"
         android:footerDividersEnabled="false"
+        android:groupIndicator="@null"
         android:headerDividersEnabled="false"
         android:orientation="vertical"
         android:requiresFadingEdge="vertical"
-        android:scrollbarFadeDuration="0" />
+        android:scrollbarFadeDuration="0"
+        android:scrollbarSize="@dimen/search_menu_scrollbar_width"
+        android:scrollbarThumbVertical="@color/wrld_blue" />
 
 </RelativeLayout>

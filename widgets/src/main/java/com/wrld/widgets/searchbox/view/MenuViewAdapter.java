@@ -2,13 +2,12 @@ package com.wrld.widgets.searchbox.view;
 
 
 import android.database.DataSetObserver;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
-import android.widget.Adapter;
 import android.widget.ExpandableListAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.wrld.widgets.R;
@@ -169,15 +168,21 @@ public class MenuViewAdapter implements ExpandableListAdapter {
         ImageView arrow = (ImageView)convertView.findViewById(R.id.searchbox_menu_group_icon);
         if (((MenuGroup) getGroup(groupPosition)).hasChildren()) {
             arrow.setVisibility(View.VISIBLE);
-            if (isExpanded) {
-                arrow.setRotation(270);
-            }
-            else {
-                arrow.setRotation(0);
-            }
         }
         else {
             arrow.setVisibility(View.GONE);
+        }
+
+        TextView text = (TextView)convertView.findViewById(R.id.searchbox_menu_item_text);
+        if (isExpanded) {
+            convertView.setBackgroundColor(ContextCompat.getColor(convertView.getContext(), R.color.wrld_blue));
+            text.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.searchbox_background));
+            arrow.setRotation(270);
+        }
+        else {
+            convertView.setBackgroundColor(ContextCompat.getColor(convertView.getContext(), R.color.searchbox_background));
+            text.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.wrld_blue));
+            arrow.setRotation(0);
         }
 
         return convertView;

@@ -3,17 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
     android:layout_margin="@dimen/search_menu_drop_down_group_margin"
     android:background="@color/searchbox_background"
-    android:layout_gravity="center_vertical"
     android:orientation="vertical">
 
     <ImageView
         android:id="@+id/searchbox_menu_group_icon"
         android:layout_width="@dimen/search_menu_drop_down_group_icon_height"
         android:layout_height="@dimen/search_menu_drop_down_group_icon_height"
-        android:layout_margin="@dimen/search_menu_drop_down_group_margin"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="12dp"
         app:srcCompat="@drawable/expander" />
 
     <TextView
@@ -21,15 +23,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/search_menu_drop_down_group_text_area_height"
         android:layout_margin="@dimen/search_menu_drop_down_group_margin"
-        android:layout_toLeftOf="@id/searchbox_menu_group_icon"/>
-
-    <ImageView
-        android:id="@+id/searchbox_menu_contents_shadow"
-        android:layout_below="@id/searchbox_menu_item_text"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/search_menu_drop_down_padding"
-        android:scaleType="fitXY"
-        android:groupIndicator="@null"
-        app:srcCompat="@drawable/gradientshadow" />
+        android:layout_toLeftOf="@id/searchbox_menu_group_icon" />
 
 </RelativeLayout>
