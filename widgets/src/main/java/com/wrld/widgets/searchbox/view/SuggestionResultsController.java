@@ -27,35 +27,40 @@ public class SuggestionResultsController implements AdapterView.OnItemClickListe
 
     private SearchWidgetSuggestionModel m_model;
     private SearchResultsModel m_suggestionResults;
-    private boolean m_searchViewHasFocus;
+    private SearchResultsModel m_searchResults;
+    private final SearchViewFocusObserver m_searchViewFocusObserver;
 
     public SuggestionResultsController(SearchWidgetSuggestionModel model,
                                        SearchResultsModel suggestionResults,
+                                       SearchResultsModel searchResults,
                                        View viewContainer,
-                                       SearchView searchView) {
+                                       SearchView searchView,
+                                       SearchViewFocusObserver searchViewFocusObserver) {
         m_model = model;
+        m_searchViewFocusObserver = searchViewFocusObserver;
 
         m_suggestionResults = suggestionResults;
         m_suggestionResults.addResultListener(this);
+        m_searchResults = searchResults;
+        m_searchResults.addResultListener(this);
 
         m_viewRoot = viewContainer;
         m_listView = (ListView)viewContainer.findViewById(R.id.searchbox_autocomplete_list);
         // TODO pass in preview count.
         m_adapter = new SuggestionResultsAdapter(m_suggestionResults, m_model, LayoutInflater.from(m_viewRoot.getContext()), 3);
 
-        m_searchViewHasFocus = false;
-
         m_listView.setAdapter(m_adapter);
         m_listView.setOnItemClickListener(this);
 
         m_searchView = searchView;
-        m_searchView.setOnQueryTextFocusChangeListener(this);
+        m_searchViewFocusObserver.addListener(this);
 
         updateVisibility();
     }
 
     public void clean() {
         m_suggestionResults.removeResultListener(this);
+        m_searchViewFocusObserver.removeListener(this);
     }
 
     @Override
@@ -82,8 +87,9 @@ public class SuggestionResultsController implements AdapterView.OnItemClickListe
     }
 
     private void updateVisibility() {
-        if(m_suggestionResults.getCurrentQueryResults() != null &&
-           m_suggestionResults.getTotalCurrentQueryResults() > 0 && m_searchViewHasFocus)
+        boolean hasSuggestionResults = m_suggestionResults.getTotalCurrentQueryResults() > 0;
+        boolean hasSearchResults = m_searchResults.getTotalCurrentQueryResults() > 0;
+        if(hasSuggestionResults && !hasSearchResults && m_searchViewFocusObserver.hasFocus())
         {
             m_viewRoot.setVisibility(View.VISIBLE);
             return;
@@ -93,7 +99,6 @@ public class SuggestionResultsController implements AdapterView.OnItemClickListe
 
     @Override
     public void onFocusChange(View view, boolean hasFocus) {
-        m_searchViewHasFocus = hasFocus;
         updateVisibility();
     }
 }

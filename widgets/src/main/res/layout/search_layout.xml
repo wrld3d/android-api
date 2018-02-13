@@ -97,6 +97,28 @@
             android:drawSelectorOnTop="true"/>
     </LinearLayout>
 
+    <LinearLayout android:id="@+id/searchbox_no_results_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/searchbox_search_container"
+        android:background="@color/searchbox_result_see_more_background"
+        android:orientation="vertical"
+        android:elevation="4dp">
+
+        <include layout="@layout/search_separator"/>
+
+        <TextView
+            android:padding="@dimen/search_padding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/searchbox_no_results"
+            android:textColor="@color/searchbox_no_results_warning_textcolor"
+            android:layout_gravity="center"
+            android:background="@color/searchbox_background"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
     <LinearLayout android:id="@+id/searchbox_search_spinner_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

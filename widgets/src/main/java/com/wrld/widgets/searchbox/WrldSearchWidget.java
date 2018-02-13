@@ -22,6 +22,7 @@ import com.wrld.widgets.searchbox.model.SearchWidgetSuggestionModel;
 import com.wrld.widgets.searchbox.view.MenuViewController;
 import com.wrld.widgets.searchbox.view.SearchResultsController;
 import com.wrld.widgets.searchbox.view.SearchViewController;
+import com.wrld.widgets.searchbox.view.SearchViewFocusObserver;
 import com.wrld.widgets.searchbox.view.SuggestionResultsController;
 
 
@@ -35,6 +36,7 @@ public class WrldSearchWidget extends Fragment {
     private SearchViewController m_searchViewController;
     private SuggestionResultsController m_searchSuggestionResultsController;
     private SearchResultsController m_searchResultsController;
+
 
     private SearchWidgetMenuModel m_menuModel;
     private MenuViewController m_menuViewController;
@@ -82,20 +84,30 @@ public class WrldSearchWidget extends Fragment {
         m_searchView = (SearchView)getView().findViewById(R.id.searchbox_search_searchview);
         View suggestionResultsViewContainer = getView().findViewById(R.id.searchbox_autocomplete_container);
         View searchResultsViewContainer = getView().findViewById(R.id.searchbox_search_results_container);
+        View noResultsViewContainer = getView().findViewById(R.id.searchbox_no_results_container);
         View spinnerView = getView().findViewById(R.id.searchbox_search_spinner_container);
 
-        m_searchViewController = new SearchViewController(m_searchModel, m_suggestionModel, m_searchView, spinnerView);
+        SearchViewFocusObserver m_searchViewFocusObserver = new SearchViewFocusObserver(m_searchView);
+        m_searchViewController = new SearchViewController(m_searchModel,
+                m_suggestionModel,
+                m_searchView,
+                m_searchViewFocusObserver,
+                spinnerView);
         m_searchSuggestionResultsController = new SuggestionResultsController(
                 m_suggestionModel,
                 m_suggestionResultsModel,
+                m_searchResultsModel,
                 suggestionResultsViewContainer,
-                m_searchView);
+                m_searchView,
+                m_searchViewFocusObserver);
 
         m_searchResultsController = new SearchResultsController(
                 m_searchModel,
                 m_searchResultsModel,
-                m_suggestionResultsModel,
-                searchResultsViewContainer);
+                searchResultsViewContainer,
+                m_searchView,
+                m_searchViewFocusObserver,
+                noResultsViewContainer);
 
         ImageButton openMenuButtonView = (ImageButton)getView().findViewById(R.id.searchbox_search_menu);
         View menuView = ((ViewStub)getView().findViewById(R.id.searchbox_menu_container_stub)).inflate();
@@ -128,5 +140,5 @@ public class WrldSearchWidget extends Fragment {
         m_menuModel.addMenuGroup(group);
     }
 
-
+    public void removeMenuGroup(MenuGroup group) { m_menuModel.removeMenuGroup(group); }
 }

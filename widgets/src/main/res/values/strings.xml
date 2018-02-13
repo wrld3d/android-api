@@ -5,6 +5,7 @@
     <string name="search_expanded_results_count">(%1$s) results</string>
     <string name="searchbox_query_hint">Search the WRLD</string>
     <string name="searchbox_query_button_description">Perform a search</string>
+    <string name="searchbox_no_results">Sorry, we cannot find any matches for your search.</string>
     <string name="searchbox_menu_find_header">Find:</string>
     <string name="searchbox_menu_title">[Map Name] Menu</string>
     <string name="searchbox_menu_about_title">About</string>

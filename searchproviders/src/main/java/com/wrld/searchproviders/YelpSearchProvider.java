@@ -7,9 +7,12 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.eegeo.mapapi.EegeoMap;
+import com.eegeo.mapapi.camera.CameraPosition;
 import com.eegeo.mapapi.geometry.LatLng;
 import com.wrld.widgets.searchbox.model.DefaultSearchResult;
 import com.wrld.widgets.searchbox.model.ISearchResult;
+import com.wrld.widgets.searchbox.model.OnSearchResultSelectedListener;
+import com.wrld.widgets.searchbox.model.SearchResultProperty;
 import com.wrld.widgets.searchbox.view.DefaultSuggestionViewFactory;
 import com.wrld.widgets.searchbox.view.TextHighlighter;
 
@@ -22,7 +25,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-public class YelpSearchProvider extends SearchProviderBase {
+public class YelpSearchProvider extends SearchProviderBase implements OnSearchResultSelectedListener {
 
     private String m_suggestionsTitleFormatting;
 
@@ -189,7 +192,9 @@ public class YelpSearchProvider extends SearchProviderBase {
         ISearchResult[] results = new ISearchResult[businesses.length()];
         for(int i = 0; i < businesses.length(); ++i){
             JSONObject businessJson = businesses.optJSONObject(i);
-            results[i] = new YelpSearchResult(businessJson);
+            YelpSearchResult result = new YelpSearchResult(businessJson);
+            result.setSelectedListener(this);
+            results[i] = result;
         }
 
         performSearchCompletedCallbacks(results, true);
@@ -235,5 +240,16 @@ public class YelpSearchProvider extends SearchProviderBase {
             m_errorHandler.handleError(R.string.yelp_search_error_title, R.string.yelp_error_unauthorised_search);
             m_hasRaisedAuthError = true;
         }
+    }
+
+    @Override
+    public void onSearchResultSelected(ISearchResult result) {
+        SearchResultProperty<LatLng> position = result.getProperty(SearchPropertyLatLng.Key);
+        int defaultZoomLevel = 18;
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(position.getValue())
+                .zoom(defaultZoomLevel)
+                .build();
+        m_map.setCameraPosition(cameraPosition);
     }
 }

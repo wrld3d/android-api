@@ -3,12 +3,14 @@ package com.wrld.widgets.searchbox.view;
 
 import android.os.Build;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -18,22 +20,27 @@ import com.wrld.widgets.searchbox.model.SearchQuery;
 import com.wrld.widgets.searchbox.model.SearchWidgetSearchModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetSuggestionModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class SearchViewController implements SearchView.OnQueryTextListener, IOnSearchListener {
+public class SearchViewController implements SearchView.OnQueryTextListener, IOnSearchListener, View.OnClickListener {
 
     private SearchView m_view;
     private SearchWidgetSearchModel m_searchModel;
     private SearchWidgetSuggestionModel m_suggestionModel;
+    private SearchViewFocusObserver m_searchViewFocusObserver;
     private View m_spinnerView;
+    private ImageView m_clearButton;
 
     public SearchViewController(SearchWidgetSearchModel searchModel,
                                 SearchWidgetSuggestionModel suggestionModel,
                                 SearchView view,
+                                SearchViewFocusObserver searchViewFocusObserver,
                                 View spinnerView)
     {
         m_searchModel = searchModel;
         m_suggestionModel = suggestionModel;
+        m_searchViewFocusObserver = searchViewFocusObserver;
         m_searchModel.setSearchListener(this);
 
         m_view = view;
@@ -43,6 +50,9 @@ public class SearchViewController implements SearchView.OnQueryTextListener, IOn
 
         initialiseView();
         hideSpinner();
+
+        m_clearButton.setOnClickListener(this);
+
     }
 
     private void initialiseView() {
@@ -54,6 +64,9 @@ public class SearchViewController implements SearchView.OnQueryTextListener, IOn
         TextView textView = (TextView)m_view.findViewById(searchMicId);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         ViewGroup.LayoutParams params =  textView.getLayoutParams();
+
+        int searchClearButtonId = m_view.getResources().getIdentifier("android:id/search_close_btn", null, null);
+        m_clearButton = (ImageView)m_view.findViewById(searchClearButtonId);
 
         int textPadding = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, m_view.getResources().getDisplayMetrics()));
         params.height = ViewGroup.MarginLayoutParams.MATCH_PARENT;//
@@ -92,7 +105,11 @@ public class SearchViewController implements SearchView.OnQueryTextListener, IOn
 
     @Override
     public boolean onQueryTextChange(String s) {
-        m_searchModel.clear();
+        boolean hasQueryAndNewTextDiffers = (m_searchModel.getCurrentQuery() != null &&
+                !s.contentEquals(m_searchModel.getCurrentQuery().getQueryString()));
+        if(m_searchViewFocusObserver.hasFocus() && hasQueryAndNewTextDiffers) {
+            m_searchModel.clear();
+        }
 
         if(!s.isEmpty())
         {
@@ -182,5 +199,14 @@ public class SearchViewController implements SearchView.OnQueryTextListener, IOn
 
         a.setDuration(200);
         v.startAnimation(a);
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view == m_clearButton) {
+            m_view.setQuery("", false);
+            m_searchModel.clear();
+            m_suggestionModel.clear();
+        }
     }
 }

@@ -1,40 +1,48 @@
 package com.wrld.widgets.searchbox.view;
 
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.model.IOnSearchResultListener;
+import com.wrld.widgets.searchbox.model.ISearchResult;
 import com.wrld.widgets.searchbox.model.SearchProviderQueryResult;
 import com.wrld.widgets.searchbox.model.SearchQuery;
 import com.wrld.widgets.searchbox.model.SearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetSearchModel;
 
 import java.util.List;
+import java.util.Locale;
 
-public class SearchResultsController implements IOnSearchResultListener, AdapterView.OnItemClickListener {
+public class SearchResultsController implements IOnSearchResultListener, AdapterView.OnItemClickListener, View.OnFocusChangeListener {
 
     private final SearchWidgetSearchModel m_model;
     private final SearchResultsModel m_searchResultsModel;
-    private final SearchResultsModel m_suggestionResultsModel;
+    private View m_noResultsViewContainer;
+    private SearchView m_searchView;
+    private SearchViewFocusObserver m_searchViewFocusObserver;
     private final View m_viewRoot;
     private final ListView m_listView;
     private final SearchResultsAdapter m_adapter;
+    private boolean m_resultsHidden;
 
     public SearchResultsController(SearchWidgetSearchModel searchModel,
                                    SearchResultsModel searchResultsModel,
-                                   SearchResultsModel suggestionResultsModel,
-                                   View viewRoot)
+                                   View viewRoot,
+                                   SearchView searchView,
+                                   SearchViewFocusObserver searchViewFocusObserver,
+                                   View noResultsViewContainer)
     {
         m_model = searchModel;
         m_searchResultsModel = searchResultsModel;
-        m_searchResultsModel.addResultListener(this);
+        m_noResultsViewContainer = noResultsViewContainer;
 
-        m_suggestionResultsModel = suggestionResultsModel;
-        m_suggestionResultsModel.addResultListener(this);
+        m_searchResultsModel.addResultListener(this);
 
         // TODO Pass the 3 in.
         m_adapter = new SearchResultsAdapter(m_searchResultsModel, m_model, LayoutInflater.from(viewRoot.getContext()), 3);
@@ -44,16 +52,23 @@ public class SearchResultsController implements IOnSearchResultListener, Adapter
         m_listView.setOnItemClickListener(this);
         m_listView.setAdapter(m_adapter);
 
+        m_resultsHidden = false;
+
+        m_searchView = searchView;
+        m_searchViewFocusObserver = searchViewFocusObserver;
+        m_searchViewFocusObserver.addListener(this);
+
         updateVisibility();
     }
 
     public void clean() {
+        m_searchViewFocusObserver.removeListener(this);
         m_searchResultsModel.removeResultListener(this);
-        m_suggestionResultsModel.removeResultListener(this);
     }
 
     @Override
     public void onSearchResultsRecieved(SearchQuery query, List<SearchProviderQueryResult> results) {
+        m_resultsHidden = false;
         updateVisibility();
         m_adapter.refresh(true);
     }
@@ -65,14 +80,21 @@ public class SearchResultsController implements IOnSearchResultListener, Adapter
     }
 
     private void updateVisibility() {
-        boolean hasSuggestionResults = m_suggestionResultsModel.getTotalCurrentQueryResults() > 0;
         boolean hasSearchResults = m_searchResultsModel.getTotalCurrentQueryResults() > 0;
-        if(!hasSuggestionResults && hasSearchResults) {
+        if(hasSearchResults && !m_resultsHidden) {
             m_viewRoot.setVisibility(View.VISIBLE);
+            m_noResultsViewContainer.setVisibility(View.GONE);
         }
         else {
             m_viewRoot.setVisibility(View.GONE);
         }
+
+        boolean showingNoResults = !m_resultsHidden &&
+                m_model.getCurrentQuery() != null &&
+                m_model.getCurrentQuery().isComplete() &&
+                m_searchResultsModel.getTotalCurrentQueryResults() == 0;
+        m_noResultsViewContainer.setVisibility(showingNoResults ? View.VISIBLE : View.GONE);
+
     }
 
     @Override
@@ -86,8 +108,31 @@ public class SearchResultsController implements IOnSearchResultListener, Adapter
                 m_adapter.toggleState(result.getProviderId());
             }
             else {
-                // search result callback.
+                ISearchResult searchResult = result.getResults()[providerIndex.second];
+                selectSearchResult(searchResult);
             }
+        }
+    }
+
+    private void selectSearchResult(ISearchResult searchResult) {
+        searchResult.select();
+        m_resultsHidden = true;
+        String hiddenResultsQueryString = String.format(Locale.getDefault(), "%s  (%d)",
+                m_model.getCurrentQuery().getQueryString(),
+                m_searchResultsModel.getTotalCurrentQueryResults());
+        m_searchView.clearFocus();
+        m_searchView.setQuery(hiddenResultsQueryString, false);
+        updateVisibility();
+    }
+
+    @Override
+    public void onFocusChange(View view, boolean hasFocus) {
+        if(m_resultsHidden && hasFocus && m_model.getCurrentQuery() != null) {
+
+            m_resultsHidden = false;
+            String originalQueryString = m_model.getCurrentQuery().getQueryString();
+            m_searchView.setQuery(originalQueryString, false);
+            updateVisibility();
         }
     }
 }

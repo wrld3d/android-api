@@ -1,8 +1,12 @@
 package com.wrld.searchproviders;
 
 import android.content.Context;
+import android.net.Uri;
 
 import com.eegeo.mapapi.EegeoMap;
+import com.eegeo.mapapi.camera.CameraPosition;
+import com.eegeo.mapapi.geometry.ElevationMode;
+import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.services.poi.AutocompleteOptions;
 import com.eegeo.mapapi.services.poi.OnPoiSearchCompletedListener;
 import com.eegeo.mapapi.services.poi.PoiSearch;
@@ -11,10 +15,14 @@ import com.eegeo.mapapi.services.poi.PoiSearchResult;
 import com.eegeo.mapapi.services.poi.PoiService;
 import com.eegeo.mapapi.services.poi.TextSearchOptions;
 import com.wrld.widgets.searchbox.model.ISearchResult;
+import com.wrld.widgets.searchbox.model.OnSearchResultSelectedListener;
+import com.wrld.widgets.searchbox.model.SearchResultProperty;
+import com.wrld.widgets.searchbox.model.SearchResultPropertyString;
 import com.wrld.widgets.searchbox.view.DefaultSearchResultViewFactory;
 import com.wrld.widgets.searchbox.view.DefaultSuggestionViewFactory;
 import com.wrld.widgets.searchbox.view.TextHighlighter;
 
+import java.net.URLEncoder;
 import java.util.List;
 
 public class WrldPoiSearchProvider extends SearchProviderBase {
@@ -46,7 +54,7 @@ public class WrldPoiSearchProvider extends SearchProviderBase {
         m_map = map;
     }
 
-    private class PoiSearchListener implements OnPoiSearchCompletedListener {
+    private class PoiSearchListener implements OnPoiSearchCompletedListener, OnSearchResultSelectedListener {
 
         private SearchCompleteCallback m_searchCompleteCallback;
 
@@ -62,7 +70,10 @@ public class WrldPoiSearchProvider extends SearchProviderBase {
                 ISearchResult[] resultsArray = new ISearchResult[results.size()];
                 for (int i = 0; i < results.size(); ++i) {
                     PoiSearchResult poi = results.get(i);
-                    resultsArray[i] = new PositionalSearchResult(poi.title, poi.latLng, poi.subtitle);
+                    PositionalSearchResult result = new PositionalSearchResult(poi.title, poi.latLng, poi.subtitle, poi.indoorId, poi.floorId);
+                    result.setSelectedListener(this);
+                    resultsArray[i] = result;
+
                 }
                 m_currentSearch = null;
                 m_searchCompleteCallback.invoke(resultsArray);
@@ -75,6 +86,21 @@ public class WrldPoiSearchProvider extends SearchProviderBase {
                     m_searchCompleteCallback.invoke(new ISearchResult[0]);
                 }
             }
+        }
+
+        @Override
+        public void onSearchResultSelected(ISearchResult result) {
+            SearchResultProperty<LatLng> position = result.getProperty(SearchPropertyLatLng.Key);
+            SearchResultProperty<String> indoorMap = result.getProperty(PositionalSearchResult.IndoorMapKey);
+            SearchResultProperty<Integer> indoorFloor = result.getProperty(PositionalSearchResult.IndoorFloorKey);
+            int defaultZoomLevel = 18;
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(position.getValue())
+                    .zoom(defaultZoomLevel)
+                    .indoor(indoorMap != null ? indoorMap.getValue() : "",
+                            indoorFloor != null ? indoorFloor.getValue() : 0)
+                    .build();
+            m_map.setCameraPosition(cameraPosition);
         }
     }
 
@@ -93,9 +119,8 @@ public class WrldPoiSearchProvider extends SearchProviderBase {
         // TODO: Check searchContext for tag searches
 
         m_currentSearch = m_poiService.searchText(
-                new TextSearchOptions(searchQuery, m_map.getCameraPosition().target)
-                        .radius(1000.0)
-                        .number(60)
+                new TextSearchOptions(Uri.encode(searchQuery), m_map.getCameraPosition().target)
+                        .number(20)
                         .onPoiSearchCompletedListener(listener));
     }
 

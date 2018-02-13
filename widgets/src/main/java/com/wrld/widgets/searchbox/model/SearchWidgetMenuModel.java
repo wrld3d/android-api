@@ -26,4 +26,13 @@ public class SearchWidgetMenuModel {
             m_listener.onMenuChanged();
         }
     }
+
+    public void removeMenuGroup(MenuGroup group) {
+        if(m_groups.contains(group)) {
+            m_groups.remove(group);
+            if(m_listener != null) {
+                m_listener.onMenuChanged();
+            }
+        }
+    }
 }

@@ -7,9 +7,11 @@ public class DefaultSearchResult implements ISearchResult {
     private String m_title;
 
     private HashMap<String, SearchResultProperty> m_additionalProperties;
+    private OnSearchResultSelectedListener m_listener;
 
     public DefaultSearchResult(String title, SearchResultProperty... additionalProperties) {
         m_title = title;
+        m_listener = null;
 
         m_additionalProperties = new HashMap<String, SearchResultProperty>();
 
@@ -34,6 +36,17 @@ public class DefaultSearchResult implements ISearchResult {
             return m_additionalProperties.get(propertyKey);
         }
         return null;
+    }
+
+    @Override
+    public void select() {
+        if(m_listener != null) {
+            m_listener.onSearchResultSelected(this);
+        }
+    }
+
+    public void setSelectedListener(OnSearchResultSelectedListener listener) {
+        m_listener = listener;
     }
 
     protected void addProperty(String key, SearchResultProperty property){

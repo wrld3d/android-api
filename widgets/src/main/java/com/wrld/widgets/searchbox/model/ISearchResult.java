@@ -5,5 +5,7 @@ public interface ISearchResult {
 
     boolean hasProperty(String propertyKey);
     SearchResultProperty getProperty(String propertyKey);
+
+    void select();
 }
 
