@@ -74,7 +74,8 @@ public class SuggestionResultsAdapter extends BaseAdapter {
         ISearchResult result = (ISearchResult)getItem(position);
         if(result != null) {
             String queryText = m_suggestionModel.getCurrentQuery() != null ? m_suggestionModel.getCurrentQuery().getQueryString() : "";
-            ((ISearchResultViewHolder) convertView.getTag()).populate(result, queryText);
+            // TODO optional styling for first/last result - not used for suggestion default styles.
+            ((ISearchResultViewHolder) convertView.getTag()).populate(result, queryText, false, false);
         }
 
         return convertView;

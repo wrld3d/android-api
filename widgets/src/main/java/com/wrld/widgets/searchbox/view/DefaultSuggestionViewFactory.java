@@ -39,7 +39,10 @@ public class DefaultSuggestionViewFactory implements ISearchResultViewFactory {
             m_title = (TextView) view.findViewById(R.id.search_result_title);
         }
 
-        public void populate(ISearchResult result, String searchTerm) {
+        public void populate(ISearchResult result,
+                             String searchTerm,
+                             boolean firstResultInSet,
+                             boolean lastResultInSet) {
             if(m_highlighter != null) {
                 m_highlighter.format(m_title, result.getTitle(), searchTerm);
             }

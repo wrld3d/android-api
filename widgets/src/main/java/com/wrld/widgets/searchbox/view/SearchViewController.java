@@ -56,20 +56,26 @@ public class SearchViewController implements SearchView.OnQueryTextListener, IOn
     }
 
     private void initialiseView() {
-        clearMargins("android:id/search_edit_frame");
-        clearMargins("android:id/search_mag_icon");
-        clearMargins("android:id/search_plate");
+        // Manually override and fetch some of the child components of the Android SearchView
+        String searchViewEditFrameId = "android:id/search_edit_frame";
+        String searchViewSearchIconId = "android:id/search_mag_icon";
+        String searchViewSearchPlateId = "android:id/search_plate";
+        String searchViewTextViewId = "android:id/search_src_text";
+        String searchViewClearButtonId = "android:id/search_close_btn";
+        clearMargins(searchViewEditFrameId);
+        clearMargins(searchViewSearchIconId);
+        clearMargins(searchViewSearchPlateId);
 
-        int searchMicId = m_view.getResources().getIdentifier("android:id/search_src_text", null, null);
+        int searchMicId = m_view.getResources().getIdentifier(searchViewTextViewId, null, null);
         TextView textView = (TextView)m_view.findViewById(searchMicId);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         ViewGroup.LayoutParams params =  textView.getLayoutParams();
 
-        int searchClearButtonId = m_view.getResources().getIdentifier("android:id/search_close_btn", null, null);
+        int searchClearButtonId = m_view.getResources().getIdentifier(searchViewClearButtonId, null, null);
         m_clearButton = (ImageView)m_view.findViewById(searchClearButtonId);
 
         int textPadding = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, m_view.getResources().getDisplayMetrics()));
-        params.height = ViewGroup.MarginLayoutParams.MATCH_PARENT;//
+        params.height = ViewGroup.MarginLayoutParams.MATCH_PARENT;
         textView.setLayoutParams(params);
         textView.setPadding(0,0,textPadding,0);
         textView.setGravity(Gravity.CENTER_VERTICAL);

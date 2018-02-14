@@ -1,5 +1,6 @@
 package com.wrld.widgets.searchbox.view;
 
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -87,8 +88,8 @@ public class SearchResultsAdapter extends BaseAdapter {
         for(SearchProviderQueryResult result : results) {
             int providerId = result.getProviderId();
             total += getVisibleCountForProvider(providerId);
-
         }
+
         return total;
     }
 
@@ -106,17 +107,21 @@ public class SearchResultsAdapter extends BaseAdapter {
                 continue;
             }
 
+            int resultCount = result.getResults().length;
+
+            if(resultCount == 0) {
+                return 0;
+            }
+
             ResultSetState state = m_providerIdToResultSetStateMap.get(providerId);
             switch(state) {
                 case Hidden:
                     return 0;
                 case Preview:
-                    if(result.getResults().length > m_previewCountPerProvider) {
-                        return m_previewCountPerProvider + footerChildCount;
-                    }
-                    else {
-                        return result.getResults().length;
-                    }
+                    return resultCount > m_previewCountPerProvider
+                            ? m_previewCountPerProvider + footerChildCount
+                            : resultCount;
+
                 case Full:
                     return result.getResults().length + footerChildCount;
             }
@@ -126,6 +131,10 @@ public class SearchResultsAdapter extends BaseAdapter {
 
     boolean isFooter(int position) {
         Pair<Integer,Integer> providerIndex = getProviderIndex(position);
+        if(providerIndex == null) {
+            return false;
+        }
+
         SearchProviderQueryResult result = m_results.getCurrentQueryResults().get(providerIndex.first);
         int providerId = result.getProviderId();
 
@@ -138,7 +147,7 @@ public class SearchResultsAdapter extends BaseAdapter {
             case Hidden:
                 return false;
             case Preview:
-                return result.getResults().length > m_previewCountPerProvider && providerIndex.second == m_previewCountPerProvider;
+                return providerIndex.second == m_previewCountPerProvider;
             case Full:
                 return position == result.getResults().length;
         }
@@ -162,6 +171,11 @@ public class SearchResultsAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         boolean isFooter = isFooter(position);
+        Pair<Integer, Integer> providerIndex = getProviderIndex(position);
+
+        SearchProviderQueryResult queryResult = m_results.getCurrentQueryResults().get(providerIndex.first);
+        int providerId = queryResult.getProviderId();
+
         if(convertView == null) {
             if(isFooter) {
                 convertView = m_footerViewFactory.makeFooterView(m_inflater, parent);
@@ -185,27 +199,29 @@ public class SearchResultsAdapter extends BaseAdapter {
         {
             SearchResultFooterViewFactory.SearchResultFooterViewHolder viewHolder =
                     (SearchResultFooterViewFactory.SearchResultFooterViewHolder)convertView.getTag();
-            Pair<Integer, Integer> providerIndex = getProviderIndex(position);
-            SearchProviderQueryResult result = m_results.getCurrentQueryResults().get(providerIndex.first);
-            int providerId = result.getProviderId();
 
             ResultSetState state = m_providerIdToResultSetStateMap.get(providerId);
 
             if(state == ResultSetState.Preview) {
-                int hiddenResults = result.getResults().length - m_previewCountPerProvider;
+                int hiddenResults = queryResult.getResults().length - m_previewCountPerProvider;
                 String providerName = m_searchModel.getProviderById(providerId).getTitle();
                 viewHolder.showExpand(hiddenResults, providerName);
             }
             else {
                 viewHolder.showCollapse();
             }
-
         }
         else {
             ISearchResult result = (ISearchResult)getItem(position);
 
             String queryText = m_searchModel.getCurrentQuery() != null ? m_searchModel.getCurrentQuery().getQueryString() : "";
-            ((ISearchResultViewHolder)convertView.getTag()).populate(result, queryText);
+            boolean firstResultInSet = providerIndex.second == 0;
+            boolean lastResultInSet = providerIndex.second == getVisibleCountForProvider(providerId) - 1 ||
+                    isFooter(position+1);
+            ((ISearchResultViewHolder)convertView.getTag()).populate(result,
+                    queryText,
+                    firstResultInSet,
+                    lastResultInSet);
         }
 
         return convertView;

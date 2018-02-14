@@ -61,6 +61,10 @@ public class YelpSearchResultViewFactory implements ISearchResultViewFactory {
         private TextView m_reviewCount;
         private String m_url;
 
+        private View m_divider;
+        private View m_separator;
+        private View m_shadow;
+
         public SearchResultViewHolderImpl(){}
 
         public void initialise(View view) {
@@ -69,9 +73,16 @@ public class YelpSearchResultViewFactory implements ISearchResultViewFactory {
             m_rating = (ImageView) view.findViewById(R.id.yelp_rating);
             m_yelpLogo = (ImageView) view.findViewById(R.id.yelp_logo);
             m_reviewCount = (TextView) view.findViewById(R.id.yelp_reviews);
+
+            m_divider = view.findViewById(com.wrld.widgets.R.id.search_result_divider);
+            m_separator = view.findViewById(com.wrld.widgets.R.id.search_result_top_seperator);
+            m_shadow = view.findViewById(com.wrld.widgets.R.id.search_result_shadow);
         }
 
-        public void populate(ISearchResult result, String searchTerm) {
+        public void populate(ISearchResult result,
+                             String searchTerm,
+                             boolean firstResultInSet,
+                             boolean lastResultInSet) {
             m_title.setText(result.getTitle());
             if(result.hasProperty(YelpSearchResult.AddressKey)) {
                 m_subtitle.setText((String)result.getProperty(YelpSearchResult.AddressKey).getValue());
@@ -89,6 +100,10 @@ public class YelpSearchResultViewFactory implements ISearchResultViewFactory {
                 String reviewCountText = String.format(m_reviewText, result.getProperty(YelpSearchResult.ReviewCountKey).getValue());
                 m_reviewCount.setText(reviewCountText);
             }
+
+            m_divider.setVisibility(lastResultInSet ? View.GONE : View.VISIBLE);
+            m_separator.setVisibility(firstResultInSet ? View.VISIBLE : View.GONE);
+            m_shadow.setVisibility(firstResultInSet ? View.VISIBLE : View.GONE);
         }
 
         private void openLink(){

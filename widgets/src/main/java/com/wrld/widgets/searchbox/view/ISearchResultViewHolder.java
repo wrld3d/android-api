@@ -6,5 +6,8 @@ import com.wrld.widgets.searchbox.model.ISearchResult;
 
 public interface ISearchResultViewHolder {
     void initialise(View view);
-    void populate(ISearchResult searchResult, String searchTerm);
+    void populate(ISearchResult searchResult,
+                  String searchTerm,
+                  boolean firstResultInSet,
+                  boolean lastResultInSet);
 }

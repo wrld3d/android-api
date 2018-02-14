@@ -13,6 +13,7 @@ public class DefaultSearchResultViewFactory implements ISearchResultViewFactory 
 
     private int m_layoutId;
 
+
     public DefaultSearchResultViewFactory(int layoutId){
         m_layoutId = layoutId;
     }
@@ -26,16 +27,31 @@ public class DefaultSearchResultViewFactory implements ISearchResultViewFactory 
         private TextView m_title;
         private TextView m_description;
 
+        private View m_divider;
+        private View m_separator;
+        private View m_shadow;
+
         public SearchResultViewHolder(){}
 
         public void initialise(View view) {
             m_title = (TextView) view.findViewById(R.id.search_result_title);
             m_description = (TextView) view.findViewById(R.id.search_result_description);
+
+            m_divider = view.findViewById(R.id.search_result_divider);
+            m_separator = view.findViewById(R.id.search_result_top_seperator);
+            m_shadow = view.findViewById(R.id.search_result_shadow);
         }
 
-        public void populate(ISearchResult result, String query) {
+        public void populate(ISearchResult result,
+                             String query,
+                             boolean firstResultInSet,
+                             boolean lastResultInSet) {
             m_title.setText(result.getTitle());
             m_description.setText((String)result.getProperty("Description").getValue());
+
+            m_divider.setVisibility(lastResultInSet ? View.GONE : View.VISIBLE);
+            m_separator.setVisibility(firstResultInSet ? View.VISIBLE : View.GONE);
+            m_shadow.setVisibility(firstResultInSet ? View.VISIBLE : View.GONE);
         }
     }
 
