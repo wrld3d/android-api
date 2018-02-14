@@ -8,7 +8,7 @@ import android.widget.ImageButton;
 
 import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.model.MenuChild;
-import com.wrld.widgets.searchbox.model.MenuGroup;
+import com.wrld.widgets.searchbox.model.MenuOption;
 import com.wrld.widgets.searchbox.model.OnMenuChangedListener;
 import com.wrld.widgets.searchbox.model.SearchWidgetMenuModel;
 
@@ -92,9 +92,9 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
 
     @Override
     public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-        MenuGroup group = (MenuGroup)m_expandableListAdapter.getGroup(groupPosition);
-        if (group != null && !group.hasChildren()) {
-            boolean closeMenu = group.executeOnSelectCallback();
+        MenuOption option = (MenuOption)m_expandableListAdapter.getGroup(groupPosition);
+        if (option != null && !option.hasChildren()) {
+            boolean closeMenu = option.executeOnSelectCallback();
             if (closeMenu) {
                 close();
             }
@@ -110,17 +110,17 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
         }
         m_previousGroup = groupPosition;
 
-        MenuGroup group = (MenuGroup)m_expandableListAdapter.getGroup(groupPosition);
-        if (group != null) {
-            group.executeOnExpandCallback();
+        MenuOption option = (MenuOption)m_expandableListAdapter.getGroup(groupPosition);
+        if (option != null) {
+            option.executeOnExpandCallback();
         }
     }
 
     @Override
     public void onGroupCollapse(int groupPosition) {
-        MenuGroup group = (MenuGroup)m_expandableListAdapter.getGroup(groupPosition);
-        if (group != null) {
-            group.executeOnCollapseCallback();
+        MenuOption option = (MenuOption)m_expandableListAdapter.getGroup(groupPosition);
+        if (option != null) {
+            option.executeOnCollapseCallback();
         }
     }
 

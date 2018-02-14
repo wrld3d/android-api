@@ -13,38 +13,39 @@ import android.widget.TextView;
 import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.model.MenuChild;
 import com.wrld.widgets.searchbox.model.MenuGroup;
+import com.wrld.widgets.searchbox.model.MenuOption;
 import com.wrld.widgets.searchbox.model.SearchWidgetMenuModel;
 
-interface IMenuGroupViewHolder {
+interface IMenuOptionViewHolder {
     void initialise(View view);
-    void populate(MenuGroup group);
+    void populate(MenuOption option);
 }
 
-class MenuGroupViewFactory {
+class MenuOptionViewFactory {
 
-    public MenuGroupViewFactory() {
+    public MenuOptionViewFactory() {
     }
 
-    public View makeMenuGroupView(LayoutInflater inflater, ViewGroup parent) {
+    public View makeMenuOptionView(LayoutInflater inflater, ViewGroup parent) {
         return inflater.inflate(R.layout.searchbox_menu_group_header, parent, false);
     }
 
-    private class MenuGroupViewHolder implements IMenuGroupViewHolder {
+    private class MenuOptionViewHolder implements IMenuOptionViewHolder {
         private TextView m_title;
 
-        public MenuGroupViewHolder(){}
+        public MenuOptionViewHolder(){}
 
         public void initialise(View view){
             m_title = (TextView) view.findViewById(R.id.searchbox_menu_item_text);
         }
 
-        public void populate(MenuGroup group) {
-            m_title.setText(group.getText());
+        public void populate(MenuOption option) {
+            m_title.setText(option.getText());
         }
     }
 
-    public IMenuGroupViewHolder makeMenuGroupViewHolder() {
-        return new MenuGroupViewHolder();
+    public IMenuOptionViewHolder makeMenuOptionViewHolder() {
+        return new MenuOptionViewHolder();
     }
 }
 
@@ -86,13 +87,13 @@ public class MenuViewAdapter implements ExpandableListAdapter {
     private final SearchWidgetMenuModel m_model;
     private final LayoutInflater m_inflater;
 
-    private final MenuGroupViewFactory m_menuGroupViewFactory;
+    private final MenuOptionViewFactory m_menuOptionViewFactory;
     private final MenuChildViewFactory m_menuChildViewFactory;
 
     public MenuViewAdapter(SearchWidgetMenuModel model, LayoutInflater inflater) {
         m_model = model;
         m_inflater = inflater;
-        m_menuGroupViewFactory = new MenuGroupViewFactory();
+        m_menuOptionViewFactory = new MenuOptionViewFactory();
         m_menuChildViewFactory = new MenuChildViewFactory();
     }
 
@@ -108,33 +109,75 @@ public class MenuViewAdapter implements ExpandableListAdapter {
 
     @Override
     public int getGroupCount() {
-        return m_model.getGroups().size();
+        int expandableListViewGroupCount = 0;
+        for (MenuGroup group : m_model.getGroups()) {
+            if (group.hasTitle()) {
+                expandableListViewGroupCount++;
+            }
+            expandableListViewGroupCount += group.getOptions().size();
+        }
+        // TODO: maybe consider separators as groups
+        return expandableListViewGroupCount;
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        if (groupPosition > -1 && groupPosition < m_model.getGroups().size()) {
-            return m_model.getGroups().get(groupPosition).getChildren().size();
+        if (groupPosition < 0) { return 0; }
+
+        int expandableListViewGroupPosition = 0;
+        for (MenuGroup group : m_model.getGroups()) {
+            if (group.hasTitle()) {
+                if (expandableListViewGroupPosition == groupPosition) {
+                    // Titles have no children and are not selectable.
+                    return 0;
+                }
+                expandableListViewGroupPosition++;
+            }
+
+            if (groupPosition < expandableListViewGroupPosition + group.getOptions().size()) {
+                return group.getOptions().get(groupPosition - expandableListViewGroupPosition).getChildren().size();
+            }
+
+            expandableListViewGroupPosition += group.getOptions().size();
         }
+
         return 0;
     }
 
     @Override
     public Object getGroup(int groupPosition) {
-        if (groupPosition > -1 && groupPosition < m_model.getGroups().size()) {
-            return m_model.getGroups().get(groupPosition);
+        if (groupPosition < 0) { return null; }
+
+        int expandableListViewGroupPosition = 0;
+        for (MenuGroup group : m_model.getGroups()) {
+            if (group.hasTitle()) {
+                if (expandableListViewGroupPosition == groupPosition) {
+                    // Titles have no children and are not selectable.
+                    return null;
+                }
+                expandableListViewGroupPosition++;
+            }
+
+            if (groupPosition < expandableListViewGroupPosition + group.getOptions().size()) {
+                return group.getOptions().get(groupPosition - expandableListViewGroupPosition);
+            }
+
+            expandableListViewGroupPosition += group.getOptions().size();
         }
+
         return null;
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        if (groupPosition > -1 && groupPosition < m_model.getGroups().size()) {
-            MenuGroup group = m_model.getGroups().get(groupPosition);
-            if (childPosition > -1 && childPosition < group.getChildren().size()) {
-                return group.getChildren().get(childPosition);
+        MenuOption option = (MenuOption)getGroup(groupPosition);
+
+        if (option != null) {
+            if (childPosition > -1 && childPosition < option.getChildren().size()) {
+                return option.getChildren().get(childPosition);
             }
         }
+
         return null;
     }
 
@@ -156,17 +199,17 @@ public class MenuViewAdapter implements ExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         if(convertView == null) {
-            convertView = m_menuGroupViewFactory.makeMenuGroupView(m_inflater, parent);
-            IMenuGroupViewHolder viewHolder = m_menuGroupViewFactory.makeMenuGroupViewHolder();
+            convertView = m_menuOptionViewFactory.makeMenuOptionView(m_inflater, parent);
+            IMenuOptionViewHolder viewHolder = m_menuOptionViewFactory.makeMenuOptionViewHolder();
             viewHolder.initialise(convertView);
             convertView.setTag(viewHolder);
         }
 
-        MenuGroup group = (MenuGroup)getGroup(groupPosition);
-        ((IMenuGroupViewHolder)convertView.getTag()).populate(group);
+        MenuOption option = (MenuOption)getGroup(groupPosition);
+        ((IMenuOptionViewHolder)convertView.getTag()).populate(option);
 
         ImageView arrow = (ImageView)convertView.findViewById(R.id.searchbox_menu_group_icon);
-        if (((MenuGroup) getGroup(groupPosition)).hasChildren()) {
+        if (option.hasChildren()) {
             arrow.setVisibility(View.VISIBLE);
         }
         else {
