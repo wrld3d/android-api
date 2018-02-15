@@ -266,6 +266,13 @@ public class MenuViewAdapter implements ExpandableListAdapter {
         MenuChild child = (MenuChild)getChild(groupPosition, childPosition);
         ((IMenuChildViewHolder)convertView.getTag()).populate(child);
 
+        if (isLastChild) {
+            convertView.findViewById(R.id.option_divider).setVisibility(View.GONE);
+        }
+        else {
+            convertView.findViewById(R.id.option_divider).setVisibility(View.VISIBLE);
+        }
+
         return convertView;
     }
 

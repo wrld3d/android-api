@@ -39,7 +39,7 @@
     <View
         android:id="@+id/option_divider"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/search_menu_drop_down_item_divider_height"
         android:layout_marginLeft="@dimen/search_menu_drop_down_group_margin"
         android:layout_marginRight="@dimen/search_menu_drop_down_group_margin"
         android:background="@color/searchbox_divider_light"
