@@ -223,12 +223,12 @@ public class MenuViewAdapter implements ExpandableListAdapter {
             text.setTextSize(TypedValue.COMPLEX_UNIT_PX, convertView.getResources().getDimension(R.dimen.font_size_menu_option_title));
             if (isExpanded) {
                 convertView.setBackgroundColor(ContextCompat.getColor(convertView.getContext(), R.color.wrld_blue));
-                text.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.searchbox_background));
-                arrow.setRotation(270);
+                text.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.white));
+                arrow.setImageResource(R.drawable.expander_expanded);
             } else {
-                convertView.setBackgroundColor(ContextCompat.getColor(convertView.getContext(), R.color.searchbox_background));
+                convertView.setBackgroundColor(ContextCompat.getColor(convertView.getContext(), R.color.white));
                 text.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.wrld_blue));
-                arrow.setRotation(0);
+                arrow.setImageResource(R.drawable.expander);
             }
         }
         else if (MenuGroup.class.isInstance(expandableListViewGroup)){
@@ -236,6 +236,20 @@ public class MenuViewAdapter implements ExpandableListAdapter {
             ((IMenuOptionViewHolder) convertView.getTag()).populate(menuGroup.getTitle());
             TextView text = (TextView) convertView.findViewById(R.id.searchbox_menu_item_text);
             text.setTextSize(TypedValue.COMPLEX_UNIT_PX, convertView.getResources().getDimension(R.dimen.font_size_menu_group_title));
+        }
+
+        if (requiresGroupDivider(groupPosition)) {
+            convertView.findViewById(R.id.group_divider).setVisibility(View.VISIBLE);
+        }
+        else {
+            convertView.findViewById(R.id.group_divider).setVisibility(View.GONE);
+        }
+
+        if (requiresOptionDivider(groupPosition, isExpanded)) {
+            convertView.findViewById(R.id.option_divider).setVisibility(View.VISIBLE);
+        }
+        else {
+            convertView.findViewById(R.id.option_divider).setVisibility(View.GONE);
         }
 
         return convertView;
@@ -287,5 +301,49 @@ public class MenuViewAdapter implements ExpandableListAdapter {
     @Override
     public long getCombinedGroupId(long groupId) {
         return groupId * 10000L;
+    }
+
+    private boolean requiresGroupDivider(int groupPosition) {
+        if (groupPosition < 0) { return false; }
+
+        int expandableListViewGroupPosition = 0;
+        for (MenuGroup group : m_model.getGroups()) {
+            if (group.hasTitle()) {
+                if (expandableListViewGroupPosition == groupPosition) {
+                    return true;
+                }
+                expandableListViewGroupPosition++;
+            }
+
+            if (groupPosition < expandableListViewGroupPosition + group.getOptions().size()) {
+                return (groupPosition - expandableListViewGroupPosition == 0) && !group.hasTitle();
+            }
+
+            expandableListViewGroupPosition += group.getOptions().size();
+        }
+
+        return false;
+    }
+
+    private boolean requiresOptionDivider(int groupPosition, boolean isExpanded) {
+        if (groupPosition < 0 || isExpanded) { return false; }
+
+        int expandableListViewGroupPosition = 0;
+        for (MenuGroup group : m_model.getGroups()) {
+            if (group.hasTitle()) {
+                if (expandableListViewGroupPosition == groupPosition) {
+                    return !group.getOptions().isEmpty();
+                }
+                expandableListViewGroupPosition++;
+            }
+
+            if (groupPosition < expandableListViewGroupPosition + group.getOptions().size()) {
+                return (groupPosition - expandableListViewGroupPosition != group.getOptions().size() - 1);
+            }
+
+            expandableListViewGroupPosition += group.getOptions().size();
+        }
+
+        return false;
     }
 }

@@ -24,6 +24,7 @@
     <dimen name="search_menu_drop_down_group_icon_height">16dp</dimen>
     <dimen name="search_menu_drop_down_group_text_area_height">20dp</dimen>
     <dimen name="search_menu_drop_down_group_margin">8dp</dimen>
+    <dimen name="search_menu_drop_down_group_text_left_right_margin">16dp</dimen>
     <dimen name="search_menu_drop_down_item_height">28dp</dimen>
     <dimen name="search_menu_drop_down_item_icon_height">24dp</dimen>
     <dimen name="search_menu_drop_down_item_icon_padding">2dp</dimen>
