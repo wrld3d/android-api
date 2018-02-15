@@ -206,12 +206,12 @@ public class MenuViewAdapter implements ExpandableListAdapter {
             convertView.setTag(viewHolder);
         }
 
+        ImageView arrow = (ImageView) convertView.findViewById(R.id.searchbox_menu_group_icon);
         Object expandableListViewGroup = getGroup(groupPosition);
         if (MenuOption.class.isInstance(expandableListViewGroup)) {
             MenuOption menuOption = (MenuOption)expandableListViewGroup;
             ((IMenuOptionViewHolder) convertView.getTag()).populate(menuOption.getText());
 
-            ImageView arrow = (ImageView) convertView.findViewById(R.id.searchbox_menu_group_icon);
             if (menuOption.hasChildren()) {
                 arrow.setVisibility(View.VISIBLE);
             } else {
@@ -233,6 +233,7 @@ public class MenuViewAdapter implements ExpandableListAdapter {
         else if (MenuGroup.class.isInstance(expandableListViewGroup)){
             MenuGroup menuGroup = (MenuGroup)expandableListViewGroup;
             ((IMenuOptionViewHolder) convertView.getTag()).populate(menuGroup.getTitle());
+            arrow.setVisibility(View.GONE);
             TextView text = (TextView) convertView.findViewById(R.id.searchbox_menu_item_text);
             text.setTextSize(TypedValue.COMPLEX_UNIT_PX, convertView.getResources().getDimension(R.dimen.font_size_menu_group_title));
         }
@@ -268,9 +269,18 @@ public class MenuViewAdapter implements ExpandableListAdapter {
 
         if (isLastChild) {
             convertView.findViewById(R.id.option_divider).setVisibility(View.GONE);
+            convertView.findViewById(R.id.bottom_shadow).setVisibility(View.VISIBLE);
         }
         else {
             convertView.findViewById(R.id.option_divider).setVisibility(View.VISIBLE);
+            convertView.findViewById(R.id.bottom_shadow).setVisibility(View.GONE);
+        }
+
+        if (childPosition == 0) {
+            convertView.findViewById(R.id.top_shadow).setVisibility(View.VISIBLE);
+        }
+        else {
+            convertView.findViewById(R.id.top_shadow).setVisibility(View.GONE);
         }
 
         return convertView;
