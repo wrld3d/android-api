@@ -5,7 +5,6 @@ import android.net.Uri;
 
 import com.eegeo.mapapi.EegeoMap;
 import com.eegeo.mapapi.camera.CameraPosition;
-import com.eegeo.mapapi.geometry.ElevationMode;
 import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.services.poi.AutocompleteOptions;
 import com.eegeo.mapapi.services.poi.OnPoiSearchCompletedListener;
@@ -13,16 +12,15 @@ import com.eegeo.mapapi.services.poi.PoiSearch;
 import com.eegeo.mapapi.services.poi.PoiSearchResponse;
 import com.eegeo.mapapi.services.poi.PoiSearchResult;
 import com.eegeo.mapapi.services.poi.PoiService;
+import com.eegeo.mapapi.services.poi.TagSearchOptions;
 import com.eegeo.mapapi.services.poi.TextSearchOptions;
-import com.wrld.widgets.searchbox.model.ISearchResult;
-import com.wrld.widgets.searchbox.model.OnSearchResultSelectedListener;
+import com.wrld.widgets.searchbox.model.SearchResult;
+import com.wrld.widgets.searchbox.model.SearchResultSelectedListener;
 import com.wrld.widgets.searchbox.model.SearchResultProperty;
-import com.wrld.widgets.searchbox.model.SearchResultPropertyString;
 import com.wrld.widgets.searchbox.view.DefaultSearchResultViewFactory;
 import com.wrld.widgets.searchbox.view.DefaultSuggestionViewFactory;
 import com.wrld.widgets.searchbox.view.TextHighlighter;
 
-import java.net.URLEncoder;
 import java.util.List;
 
 public class WrldPoiSearchProvider extends SearchProviderBase {
@@ -36,7 +34,7 @@ public class WrldPoiSearchProvider extends SearchProviderBase {
     private String m_suggestionTitleFormatting;
 
     private interface SearchCompleteCallback {
-        void invoke(ISearchResult[] results);
+        void invoke(SearchResult[] results);
     }
 
     @Override
@@ -54,7 +52,7 @@ public class WrldPoiSearchProvider extends SearchProviderBase {
         m_map = map;
     }
 
-    private class PoiSearchListener implements OnPoiSearchCompletedListener, OnSearchResultSelectedListener {
+    private class PoiSearchListener implements OnPoiSearchCompletedListener, SearchResultSelectedListener {
 
         private SearchCompleteCallback m_searchCompleteCallback;
 
@@ -67,7 +65,7 @@ public class WrldPoiSearchProvider extends SearchProviderBase {
             List<PoiSearchResult> results = response.getResults();
 
             if (response.succeeded()) {
-                ISearchResult[] resultsArray = new ISearchResult[results.size()];
+                SearchResult[] resultsArray = new SearchResult[results.size()];
                 for (int i = 0; i < results.size(); ++i) {
                     PoiSearchResult poi = results.get(i);
                     PositionalSearchResult result = new PositionalSearchResult(poi.title, poi.latLng, poi.subtitle, poi.indoorId, poi.floorId);
@@ -83,13 +81,13 @@ public class WrldPoiSearchProvider extends SearchProviderBase {
 
                 if (m_failedSearches >= 1) {
                     m_currentSearch = null;
-                    m_searchCompleteCallback.invoke(new ISearchResult[0]);
+                    m_searchCompleteCallback.invoke(new SearchResult[0]);
                 }
             }
         }
 
         @Override
-        public void onSearchResultSelected(ISearchResult result) {
+        public void onSearchResultSelected(SearchResult result) {
             SearchResultProperty<LatLng> position = result.getProperty(SearchPropertyLatLng.Key);
             SearchResultProperty<String> indoorMap = result.getProperty(PositionalSearchResult.IndoorMapKey);
             SearchResultProperty<Integer> indoorFloor = result.getProperty(PositionalSearchResult.IndoorFloorKey);
@@ -110,7 +108,7 @@ public class WrldPoiSearchProvider extends SearchProviderBase {
         PoiSearchListener listener = new PoiSearchListener(
                 new SearchCompleteCallback() {
                     @Override
-                    public void invoke(ISearchResult[] results) {
+                    public void invoke(SearchResult[] results) {
                         performSearchCompletedCallbacks(results, true);
                     }
                 }
@@ -139,7 +137,7 @@ public class WrldPoiSearchProvider extends SearchProviderBase {
         PoiSearchListener listener = new PoiSearchListener(
                 new SearchCompleteCallback() {
                     @Override
-                    public void invoke(ISearchResult[] results) {
+                    public void invoke(SearchResult[] results) {
                         performSuggestionCompletedCallbacks(results, true);
                     }
                 }

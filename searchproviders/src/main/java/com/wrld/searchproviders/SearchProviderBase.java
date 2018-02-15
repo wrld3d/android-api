@@ -1,16 +1,16 @@
 package com.wrld.searchproviders;
 
-import com.wrld.widgets.searchbox.model.ISearchProvider;
-import com.wrld.widgets.searchbox.model.ISearchProviderResultsReadyCallback;
-import com.wrld.widgets.searchbox.model.ISearchResult;
-import com.wrld.widgets.searchbox.model.ISuggestionProvider;
+import com.wrld.widgets.searchbox.model.SearchProvider;
+import com.wrld.widgets.searchbox.model.SearchProviderResultsReadyCallback;
+import com.wrld.widgets.searchbox.model.SearchResult;
+import com.wrld.widgets.searchbox.model.SuggestionProvider;
 import com.wrld.widgets.searchbox.view.ISearchResultViewFactory;
 
 import java.util.ArrayList;
 
-public abstract class SearchProviderBase implements ISearchProvider, ISuggestionProvider {
-    private ArrayList<ISearchProviderResultsReadyCallback> m_searchCompletedCallbacks;
-    private ArrayList<ISearchProviderResultsReadyCallback> m_suggestionCompletedCallbacks;
+public abstract class SearchProviderBase implements SearchProvider, SuggestionProvider {
+    private ArrayList<SearchProviderResultsReadyCallback> m_searchCompletedCallbacks;
+    private ArrayList<SearchProviderResultsReadyCallback> m_suggestionCompletedCallbacks;
 
     private ISearchResultViewFactory m_resultViewFactory;
     private ISearchResultViewFactory m_suggestionResultViewFactory;
@@ -33,16 +33,16 @@ public abstract class SearchProviderBase implements ISearchProvider, ISuggestion
     @Override
     public String getSuggestionTitleFormatting() { return m_title; }
 
-    protected void performSearchCompletedCallbacks(ISearchResult[] results, Boolean success){
+    protected void performSearchCompletedCallbacks(SearchResult[] results, Boolean success){
         // TODO: Threading concern?
-        for(ISearchProviderResultsReadyCallback queryResultsReadyCallback : m_searchCompletedCallbacks) {
+        for(SearchProviderResultsReadyCallback queryResultsReadyCallback : m_searchCompletedCallbacks) {
             queryResultsReadyCallback.onQueryCompleted(results, success);
         }
     }
 
-    protected void performSuggestionCompletedCallbacks(ISearchResult[] results, Boolean success){
+    protected void performSuggestionCompletedCallbacks(SearchResult[] results, Boolean success){
         // TODO: Threading concern?
-        for(ISearchProviderResultsReadyCallback queryResultsReadyCallback : m_suggestionCompletedCallbacks) {
+        for(SearchProviderResultsReadyCallback queryResultsReadyCallback : m_suggestionCompletedCallbacks) {
             queryResultsReadyCallback.onQueryCompleted(results, success);
         }
     }
@@ -72,21 +72,21 @@ public abstract class SearchProviderBase implements ISearchProvider, ISuggestion
     }
 
     @Override
-    public void addSearchCompletedCallback(ISearchProviderResultsReadyCallback resultReadyCallback) {
+    public void addSearchCompletedCallback(SearchProviderResultsReadyCallback resultReadyCallback) {
         m_searchCompletedCallbacks.add(resultReadyCallback);
     }
 
     @Override
-    public void removeSearchCompletedCallback(ISearchProviderResultsReadyCallback resultReadyCallback) {
+    public void removeSearchCompletedCallback(SearchProviderResultsReadyCallback resultReadyCallback) {
         m_searchCompletedCallbacks.remove(resultReadyCallback);
     }
     @Override
-    public void addSuggestionsReceivedCallback(ISearchProviderResultsReadyCallback resultReadyCallback) {
+    public void addSuggestionsReceivedCallback(SearchProviderResultsReadyCallback resultReadyCallback) {
         m_suggestionCompletedCallbacks.add(resultReadyCallback);
     }
 
     @Override
-    public void removeSuggestionsReceivedCallback(ISearchProviderResultsReadyCallback resultReadyCallback) {
+    public void removeSuggestionsReceivedCallback(SearchProviderResultsReadyCallback resultReadyCallback) {
         m_suggestionCompletedCallbacks.remove(resultReadyCallback);
     }
 

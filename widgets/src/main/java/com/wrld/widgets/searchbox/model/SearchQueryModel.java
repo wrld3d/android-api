@@ -10,63 +10,61 @@ import java.util.Map;
 
 class MappedSearchProvider
 {
-    MappedSearchProvider(ISearchProvider provider, int id)
+    MappedSearchProvider(SearchProvider provider, int id)
     {
         m_providerId = id;
         m_searchProvider = provider;
     }
 
     public int getId() { return m_providerId; }
-    ISearchProvider getSearchProvider() { return m_searchProvider; }
+    SearchProvider getSearchProvider() { return m_searchProvider; }
 
-    private ISearchProvider m_searchProvider;
+    private SearchProvider m_searchProvider;
     private int m_providerId;
 }
 
-public class SearchWidgetSearchModel implements SearchQueryListener
+public class SearchQueryModel implements SearchQueryListener, ObservableSearchQueryModel
 {
     private SearchQuery m_currentQuery;
     private SearchResultsModel m_results;
     private Map<Integer, MappedSearchProvider> m_searchProviderMap;
-    private IOnSearchListener m_searchListener;
+    private List<SearchQueryModelListener> m_searchListeners;
 
 
     private int m_nextProviderId = 0;
 
-    public SearchWidgetSearchModel(SearchResultsModel results)
+    public SearchQueryModel(SearchResultsModel results)
     {
         m_searchProviderMap = new HashMap<>();
-        m_searchListener = null;
+        m_searchListeners = new ArrayList<>();
         m_results = results;
     }
 
-    public void setSearchListener(IOnSearchListener listener)
-    {
-        m_searchListener = listener;
+    public void addListener(SearchQueryModelListener listener) {
+        m_searchListeners.add(listener);
+    }
+
+    public void removeListener(SearchQueryModelListener listener) {
+        m_searchListeners.remove(listener);
     }
 
     public final SearchQuery getCurrentQuery() { return m_currentQuery; }
 
-    public void addSearchProvider(ISearchProvider provider)
+    public void addSearchProvider(SearchProvider provider)
     {
-        // NOTE: Guard against adding
-        int providerId = m_nextProviderId++;
-        m_searchProviderMap.put(providerId, new MappedSearchProvider(provider, providerId));
+        if(findProvider(provider) == null) {
+            int providerId = m_nextProviderId++;
+            m_searchProviderMap.put(providerId, new MappedSearchProvider(provider, providerId));
+        }
     }
 
-    public void removeSearchProvider(ISearchProvider provider)
+    public void removeSearchProvider(SearchProvider provider)
     {
-        // TODO: Observer clearing any results or queries belong to this provider.
+        MappedSearchProvider mappedProvider = findProvider(provider);
+        if(mappedProvider != null) {
 
-        // TODO: This seems nonsense - cleaner way of doing this.
-        if(m_searchProviderMap.containsValue(provider))
-        {
-            for (Map.Entry<Integer,MappedSearchProvider> entry : m_searchProviderMap.entrySet()) {
-                if(entry.getValue().getSearchProvider() == provider) {
-                    m_searchProviderMap.remove(entry.getKey());
-                    return;
-                }
-            }
+            clear();
+            m_searchProviderMap.remove(mappedProvider.getId());
         }
     }
 
@@ -84,8 +82,8 @@ public class SearchWidgetSearchModel implements SearchQueryListener
 
         // NOTE: Search query hasn't actually started yet, but is about to - this is to avoid issues
         // where queries will complete immediately, and the Started event will occur after Complete
-        if(m_searchListener != null) {
-            m_searchListener.onSearchQueryStarted(m_currentQuery);
+        for(SearchQueryModelListener searchListener : m_searchListeners) {
+            searchListener.onSearchQueryStarted(m_currentQuery);
         }
 
         m_currentQuery.start();
@@ -123,18 +121,19 @@ public class SearchWidgetSearchModel implements SearchQueryListener
     public void onSearchQueryCompleted(List<SearchProviderQueryResult> results) {
         m_results.setResultsForQuery(results, m_currentQuery);
 
-        if(m_searchListener != null) {
-            m_searchListener.onSearchQueryCompleted(m_currentQuery, results);
+        for(SearchQueryModelListener searchListener : m_searchListeners) {
+            searchListener.onSearchQueryCompleted(m_currentQuery, results);
         }
     }
 
     @Override
     public void onSearchQueryCancelled() {
 
-        if(m_searchListener != null) {
-            m_searchListener.onSearchQueryCancelled(m_currentQuery);
+        for(SearchQueryModelListener searchListener : m_searchListeners) {
+            searchListener.onSearchQueryCancelled(m_currentQuery);
         }
     }
+
     public ISearchResultViewFactory getViewFactoryForProvider(int providerId) {
         if(!m_searchProviderMap.containsKey(providerId)) {
             return null;
@@ -143,9 +142,18 @@ public class SearchWidgetSearchModel implements SearchQueryListener
         return m_searchProviderMap.get(providerId).getSearchProvider().getResultViewFactory();
     }
 
-    public ISearchProvider getProviderById(int providerId) {
+    public SearchProvider getProviderById(int providerId) {
         if(m_searchProviderMap.containsKey(providerId)) {
             return m_searchProviderMap.get(providerId).getSearchProvider();
+        }
+        return null;
+    }
+
+    private MappedSearchProvider findProvider(SearchProvider provider) {
+        for(Map.Entry<Integer,MappedSearchProvider> entry : m_searchProviderMap.entrySet()) {
+            if(entry.getValue().getSearchProvider() == provider) {
+                return entry.getValue();
+            }
         }
         return null;
     }

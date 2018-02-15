@@ -8,16 +8,16 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 import com.wrld.widgets.R;
-import com.wrld.widgets.searchbox.model.IOnSearchResultListener;
-import com.wrld.widgets.searchbox.model.ISearchResult;
+import com.wrld.widgets.searchbox.model.SearchResultsListener;
+import com.wrld.widgets.searchbox.model.SearchResult;
+import com.wrld.widgets.searchbox.model.ObservableSearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchProviderQueryResult;
 import com.wrld.widgets.searchbox.model.SearchQuery;
-import com.wrld.widgets.searchbox.model.SearchResultsModel;
-import com.wrld.widgets.searchbox.model.SearchWidgetSuggestionModel;
+import com.wrld.widgets.searchbox.model.SuggestionQueryModel;
 
 import java.util.List;
 
-public class SuggestionResultsController implements AdapterView.OnItemClickListener, IOnSearchResultListener, View.OnFocusChangeListener {
+public class SuggestionResultsController implements AdapterView.OnItemClickListener, SearchResultsListener, View.OnFocusChangeListener {
 
     private final SuggestionResultsAdapter m_adapter;
     private View m_viewRoot;
@@ -25,14 +25,14 @@ public class SuggestionResultsController implements AdapterView.OnItemClickListe
 
     private SearchView m_searchView;
 
-    private SearchWidgetSuggestionModel m_model;
-    private SearchResultsModel m_suggestionResults;
-    private SearchResultsModel m_searchResults;
+    private SuggestionQueryModel m_model;
+    private ObservableSearchResultsModel m_suggestionResults;
+    private ObservableSearchResultsModel m_searchResults;
     private final SearchViewFocusObserver m_searchViewFocusObserver;
 
-    public SuggestionResultsController(SearchWidgetSuggestionModel model,
-                                       SearchResultsModel suggestionResults,
-                                       SearchResultsModel searchResults,
+    public SuggestionResultsController(SuggestionQueryModel model,
+                                       ObservableSearchResultsModel suggestionResults,
+                                       ObservableSearchResultsModel searchResults,
                                        View viewContainer,
                                        SearchView searchView,
                                        SearchViewFocusObserver searchViewFocusObserver) {
@@ -65,7 +65,7 @@ public class SuggestionResultsController implements AdapterView.OnItemClickListe
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        ISearchResult result = (ISearchResult)m_adapter.getItem(position);
+        SearchResult result = (SearchResult)m_adapter.getItem(position);
         if(result != null)
         {
             String searchTerm = result.getTitle();

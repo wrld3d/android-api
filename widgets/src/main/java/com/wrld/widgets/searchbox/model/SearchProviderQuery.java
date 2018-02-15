@@ -1,7 +1,7 @@
 package com.wrld.widgets.searchbox.model;
 
 /**
- * A model of an individual call to an ISearchProvider for a given SearchQuery
+ * A model of an individual call to an SearchProvider for a given SearchQuery
  */
 class SearchProviderQuery extends SearchProviderQueryBase  {
 

@@ -10,8 +10,8 @@ import com.eegeo.mapapi.EegeoMap;
 import com.eegeo.mapapi.camera.CameraPosition;
 import com.eegeo.mapapi.geometry.LatLng;
 import com.wrld.widgets.searchbox.model.DefaultSearchResult;
-import com.wrld.widgets.searchbox.model.ISearchResult;
-import com.wrld.widgets.searchbox.model.OnSearchResultSelectedListener;
+import com.wrld.widgets.searchbox.model.SearchResult;
+import com.wrld.widgets.searchbox.model.SearchResultSelectedListener;
 import com.wrld.widgets.searchbox.model.SearchResultProperty;
 import com.wrld.widgets.searchbox.view.DefaultSuggestionViewFactory;
 import com.wrld.widgets.searchbox.view.TextHighlighter;
@@ -25,7 +25,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-public class YelpSearchProvider extends SearchProviderBase implements OnSearchResultSelectedListener {
+public class YelpSearchProvider extends SearchProviderBase implements SearchResultSelectedListener {
 
     private String m_suggestionsTitleFormatting;
 
@@ -115,7 +115,7 @@ public class YelpSearchProvider extends SearchProviderBase implements OnSearchRe
         }
         else {
             handleUnauthorisedRequest();
-            performSuggestionCompletedCallbacks(new ISearchResult[0], false);
+            performSuggestionCompletedCallbacks(new SearchResult[0], false);
         }
     }
 
@@ -178,7 +178,7 @@ public class YelpSearchProvider extends SearchProviderBase implements OnSearchRe
 
     private void suggestionResponseHandler(JSONObject response){
         JSONArray businesses = response.optJSONArray(m_resultsArrayKey);
-        ISearchResult[] results = new ISearchResult[businesses.length()];
+        SearchResult[] results = new SearchResult[businesses.length()];
         for(int i = 0; i < businesses.length(); ++i){
             JSONObject businessJson = businesses.optJSONObject(i);
             results[i] = new DefaultSearchResult(businessJson.optString("name"));
@@ -189,7 +189,7 @@ public class YelpSearchProvider extends SearchProviderBase implements OnSearchRe
 
     private void searchResponseHandler(JSONObject response){
         JSONArray businesses = response.optJSONArray(m_resultsArrayKey);
-        ISearchResult[] results = new ISearchResult[businesses.length()];
+        SearchResult[] results = new SearchResult[businesses.length()];
         for(int i = 0; i < businesses.length(); ++i){
             JSONObject businessJson = businesses.optJSONObject(i);
             YelpSearchResult result = new YelpSearchResult(businessJson);
@@ -209,7 +209,7 @@ public class YelpSearchProvider extends SearchProviderBase implements OnSearchRe
                     searchResponseHandler(new JSONObject(response));
                 } catch (JSONException e) {
                     android.util.Log.w("Yelp Search", "Search Response Error: " +  response);
-                    performSearchCompletedCallbacks(new ISearchResult[0], false);
+                    performSearchCompletedCallbacks(new SearchResult[0], false);
                 }
             }
         };
@@ -218,7 +218,7 @@ public class YelpSearchProvider extends SearchProviderBase implements OnSearchRe
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                performSearchCompletedCallbacks(new ISearchResult[0], false);
+                performSearchCompletedCallbacks(new SearchResult[0], false);
             }
         };
 
@@ -229,7 +229,7 @@ public class YelpSearchProvider extends SearchProviderBase implements OnSearchRe
                     suggestionResponseHandler(new JSONObject(response));
                 } catch (JSONException e) {
                     android.util.Log.w("Yelp Search", "Suggestion Response Error: " +  response);
-                    performSuggestionCompletedCallbacks(new ISearchResult[0], false);
+                    performSuggestionCompletedCallbacks(new SearchResult[0], false);
                 }
             }
         };
@@ -243,7 +243,7 @@ public class YelpSearchProvider extends SearchProviderBase implements OnSearchRe
     }
 
     @Override
-    public void onSearchResultSelected(ISearchResult result) {
+    public void onSearchResultSelected(SearchResult result) {
         SearchResultProperty<LatLng> position = result.getProperty(SearchPropertyLatLng.Key);
         int defaultZoomLevel = 18;
         CameraPosition cameraPosition = new CameraPosition.Builder()

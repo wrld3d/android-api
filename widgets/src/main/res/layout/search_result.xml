@@ -3,39 +3,68 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/search_result"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:background="@color/searchbox_background"
-    android:padding="8dp"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    >
 
-    <ImageView
-        android:id="@+id/search_result_icon"
-        android:layout_centerVertical="true"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:adjustViewBounds="true"
-        android:layout_marginRight="8dp"
-        app:srcCompat="@android:drawable/ic_menu_search" />
+    <include layout="@layout/search_separator"
+        android:id="@+id/search_result_top_seperator"/>
 
-    <TextView
-        android:id="@+id/search_result_title"
-        android:layout_toRightOf="@id/search_result_icon"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="18dp"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:textSize="@dimen/font_size_title"
-        android:textColor="@color/searchbox_autcomplete_list_header_font_matched"/>
+        android:layout_height="48dp"
+        android:background="@color/searchbox_background"
+        android:layout_below="@id/search_result_top_seperator"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_marginLeft="@dimen/search_padding"
+        android:layout_marginRight="@dimen/search_padding"
+        android:padding="8dp">
 
-    <TextView
-        android:id="@+id/search_result_description"
-        android:layout_toRightOf="@id/search_result_icon"
-        android:layout_below="@id/search_result_title"
+        <ImageView
+            android:id="@+id/search_result_icon"
+            android:layout_centerVertical="true"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:adjustViewBounds="true"
+            android:layout_marginRight="8dp"
+            app:srcCompat="@android:drawable/ic_menu_search" />
+
+        <TextView
+            android:id="@+id/search_result_title"
+            android:layout_toRightOf="@id/search_result_icon"
+            android:layout_width="match_parent"
+            android:layout_height="18dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="@dimen/font_size_title"
+            android:textColor="@color/searchbox_autcomplete_list_header_font_matched"/>
+
+        <TextView
+            android:id="@+id/search_result_description"
+            android:layout_toRightOf="@id/search_result_icon"
+            android:layout_below="@id/search_result_title"
+            android:layout_width="match_parent"
+            android:layout_height="14dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="@dimen/font_size_subtitle"
+            android:textColor="@color/searchbox_autcomplete_list_header_font_unmatched"/>
+
+    </RelativeLayout>
+
+    <View android:id="@+id/search_result_shadow"
         android:layout_width="match_parent"
-        android:layout_height="14dp"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:textSize="@dimen/font_size_subtitle"
-        android:textColor="@color/searchbox_autcomplete_list_header_font_unmatched"/>
+        android:layout_height="8dp"
+        android:scaleY="-1"
+        android:background="@drawable/gradientshadow"
+        android:layout_below="@id/search_result_top_seperator"
+        android:layout_alignWithParentIfMissing="true"/>
+
+    <View android:id="@+id/search_result_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/searchbox_divider_light"
+        android:layout_marginLeft="@dimen/search_padding"
+        android:layout_marginRight="@dimen/search_padding"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

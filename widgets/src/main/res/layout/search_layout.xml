@@ -48,25 +48,19 @@
         android:orientation="vertical"
         android:visibility="gone"
         android:background="@color/searchbox_autcomplete_list_header_background"
-        android:elevation="4dp">
-
-        <include layout="@layout/search_separator"/>
+        android:elevation="8dp">
 
         <ListView
             android:id="@+id/searchbox_search_results_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingLeft="@dimen/search_padding"
-            android:paddingRight="@dimen/search_padding"
             android:choiceMode="singleChoice"
             android:footerDividersEnabled="false"
             android:headerDividersEnabled="false"
-            android:divider="@color/searchbox_divider_light"
-            android:dividerHeight="1dp"
             android:scrollbarFadeDuration="0"
             android:requiresFadingEdge="vertical"
-            android:fadingEdgeLength="96dp"
+            android:fadingEdgeLength="32dp"
             android:drawSelectorOnTop="true"
             android:fadeScrollbars="false"/>
 
@@ -79,7 +73,7 @@
         android:layout_below="@+id/searchbox_search_container"
         android:orientation="vertical"
         android:background="@color/searchbox_background"
-        android:elevation="4dp">
+        android:elevation="8dp">
 
         <include layout="@layout/search_separator"/>
 
@@ -103,19 +97,39 @@
         android:layout_below="@+id/searchbox_search_container"
         android:background="@color/searchbox_result_see_more_background"
         android:orientation="vertical"
-        android:elevation="4dp">
+        android:elevation="8dp">
 
         <include layout="@layout/search_separator"/>
 
-        <TextView
-            android:padding="@dimen/search_padding"
-            android:layout_width="wrap_content"
+        <View android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:scaleY="-1"
+            android:background="@drawable/gradientshadow"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/searchbox_no_results"
-            android:textColor="@color/searchbox_no_results_warning_textcolor"
-            android:layout_gravity="center"
             android:background="@color/searchbox_background"
-            android:textSize="12sp"/>
+            android:padding="@dimen/search_padding">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/noresults"
+                android:padding="@dimen/search_padding"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                android:padding="@dimen/search_padding"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/searchbox_no_results"
+                android:textColor="@color/searchbox_no_results_warning_textcolor"
+                android:layout_gravity="center"
+                android:textSize="12sp"/>
+        </LinearLayout>
+
+
 
     </LinearLayout>
 
@@ -128,6 +142,11 @@
         android:elevation="8dp">
 
         <include layout="@layout/search_separator"/>
+
+        <View android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:scaleY="-1"
+            android:background="@drawable/gradientshadow"/>
 
         <ProgressBar
             android:layout_width="match_parent"

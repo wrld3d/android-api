@@ -1,17 +1,13 @@
 package com.wrld.widgets.searchbox.model;
 
-
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
-public class SearchResultsModel {
+public class SearchResultsModel implements ObservableSearchResultsModel {
 
     private List<SearchProviderQueryResult> m_currentQueryResults;
-    private List<IOnSearchResultListener> m_resultsListeners;
+    private List<SearchResultsListener> m_resultsListeners;
 
     public SearchResultsModel()
     {
@@ -27,7 +23,7 @@ public class SearchResultsModel {
             Collections.sort(m_currentQueryResults);
         }
 
-        for(IOnSearchResultListener listener : m_resultsListeners) {
+        for(SearchResultsListener listener : m_resultsListeners) {
             listener.onSearchResultsRecieved(query, m_currentQueryResults);
         }
     }
@@ -45,11 +41,11 @@ public class SearchResultsModel {
         return total;
     }
 
-    public void addResultListener(IOnSearchResultListener listener)  {
+    public void addResultListener(SearchResultsListener listener)  {
         m_resultsListeners.add(listener);
     }
 
-    public void removeResultListener(IOnSearchResultListener listener)  {
+    public void removeResultListener(SearchResultsListener listener)  {
         m_resultsListeners.remove(listener);
     }
 
@@ -58,7 +54,7 @@ public class SearchResultsModel {
         if(m_currentQueryResults != null) {
             m_currentQueryResults = null;
 
-            for (IOnSearchResultListener listener : m_resultsListeners) {
+            for (SearchResultsListener listener : m_resultsListeners) {
                 listener.onSearchResultsCleared();
             }
         }
