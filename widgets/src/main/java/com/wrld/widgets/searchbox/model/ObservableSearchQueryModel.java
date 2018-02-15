@@ -1,7 +1,7 @@
 package com.wrld.widgets.searchbox.model;
 
 public interface ObservableSearchQueryModel {
-    void addListener(SearchModelListener listener);
-    void removeListener(SearchModelListener listener);
+    void addListener(SearchQueryModelListener listener);
+    void removeListener(SearchQueryModelListener listener);
 
 }

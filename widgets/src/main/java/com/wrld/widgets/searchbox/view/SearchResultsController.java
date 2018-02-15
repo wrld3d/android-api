@@ -13,14 +13,14 @@ import com.wrld.widgets.searchbox.model.SearchResult;
 import com.wrld.widgets.searchbox.model.ObservableSearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchProviderQueryResult;
 import com.wrld.widgets.searchbox.model.SearchQuery;
-import com.wrld.widgets.searchbox.model.SearchModel;
+import com.wrld.widgets.searchbox.model.SearchQueryModel;
 
 import java.util.List;
 import java.util.Locale;
 
 public class SearchResultsController implements SearchResultsListener, AdapterView.OnItemClickListener, View.OnFocusChangeListener {
 
-    private final SearchModel m_model;
+    private final SearchQueryModel m_model;
     private final ObservableSearchResultsModel m_searchResultsModel;
     private View m_noResultsViewContainer;
     private SearchView m_searchView;
@@ -30,7 +30,7 @@ public class SearchResultsController implements SearchResultsListener, AdapterVi
     private final SearchResultsAdapter m_adapter;
     private boolean m_resultsHidden;
 
-    public SearchResultsController(SearchModel searchModel,
+    public SearchResultsController(SearchQueryModel searchModel,
                                    ObservableSearchResultsModel searchResultsModel,
                                    View viewRoot,
                                    SearchView searchView,

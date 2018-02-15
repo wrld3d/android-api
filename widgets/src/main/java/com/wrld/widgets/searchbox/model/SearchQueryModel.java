@@ -23,28 +23,28 @@ class MappedSearchProvider
     private int m_providerId;
 }
 
-public class SearchModel implements SearchQueryListener, ObservableSearchQueryModel
+public class SearchQueryModel implements SearchQueryListener, ObservableSearchQueryModel
 {
     private SearchQuery m_currentQuery;
     private SearchResultsModel m_results;
     private Map<Integer, MappedSearchProvider> m_searchProviderMap;
-    private List<SearchModelListener> m_searchListeners;
+    private List<SearchQueryModelListener> m_searchListeners;
 
 
     private int m_nextProviderId = 0;
 
-    public SearchModel(SearchResultsModel results)
+    public SearchQueryModel(SearchResultsModel results)
     {
         m_searchProviderMap = new HashMap<>();
         m_searchListeners = new ArrayList<>();
         m_results = results;
     }
 
-    public void addListener(SearchModelListener listener) {
+    public void addListener(SearchQueryModelListener listener) {
         m_searchListeners.add(listener);
     }
 
-    public void removeListener(SearchModelListener listener) {
+    public void removeListener(SearchQueryModelListener listener) {
         m_searchListeners.remove(listener);
     }
 
@@ -82,7 +82,7 @@ public class SearchModel implements SearchQueryListener, ObservableSearchQueryMo
 
         // NOTE: Search query hasn't actually started yet, but is about to - this is to avoid issues
         // where queries will complete immediately, and the Started event will occur after Complete
-        for(SearchModelListener searchListener : m_searchListeners) {
+        for(SearchQueryModelListener searchListener : m_searchListeners) {
             searchListener.onSearchQueryStarted(m_currentQuery);
         }
 
@@ -121,7 +121,7 @@ public class SearchModel implements SearchQueryListener, ObservableSearchQueryMo
     public void onSearchQueryCompleted(List<SearchProviderQueryResult> results) {
         m_results.setResultsForQuery(results, m_currentQuery);
 
-        for(SearchModelListener searchListener : m_searchListeners) {
+        for(SearchQueryModelListener searchListener : m_searchListeners) {
             searchListener.onSearchQueryCompleted(m_currentQuery, results);
         }
     }
@@ -129,7 +129,7 @@ public class SearchModel implements SearchQueryListener, ObservableSearchQueryMo
     @Override
     public void onSearchQueryCancelled() {
 
-        for(SearchModelListener searchListener : m_searchListeners) {
+        for(SearchQueryModelListener searchListener : m_searchListeners) {
             searchListener.onSearchQueryCancelled(m_currentQuery);
         }
     }

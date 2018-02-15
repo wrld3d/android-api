@@ -12,13 +12,13 @@ import static org.junit.Assert.assertNotEquals;
 public class SearchWidgetModelTests {
 
     private SearchResultsModel m_results;
-    private SearchModel m_widgetModel;
+    private SearchQueryModel m_widgetModel;
     private MockSearchProvider m_provider;
 
     @Before
     public void setUp() {
         m_results = new SearchResultsModel();
-        m_widgetModel = new SearchModel(m_results);
+        m_widgetModel = new SearchQueryModel(m_results);
         m_provider = new MockSearchProvider("Valid Search Provider", true);
         m_widgetModel.addSearchProvider(m_provider);
     }

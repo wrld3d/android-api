@@ -24,28 +24,28 @@ class MappedSuggestionProvider
 }
 
 // TODO: Factor commonality between these two search models.
-public class SearchWidgetSuggestionModel implements SearchQueryListener, ObservableSuggestionQueryModel
+public class SuggestionQueryModel implements SearchQueryListener, ObservableSuggestionQueryModel
 {
     private SearchQuery m_currentQuery;
     private SearchResultsModel m_results;
     private Map<Integer, MappedSuggestionProvider> m_suggestionProviderMap;
 
-    private List<SuggestionModelListener> m_suggestionListeners;
+    private List<SuggestionQueryModelListener> m_suggestionListeners;
 
     private int m_nextProviderId = 0;
 
-    public SearchWidgetSuggestionModel(SearchResultsModel resultsModel)
+    public SuggestionQueryModel(SearchResultsModel resultsModel)
     {
         m_suggestionProviderMap = new HashMap<>();
         m_suggestionListeners = new ArrayList<>();
         m_results = resultsModel;
     }
 
-    public void addListener(SuggestionModelListener listener) {
+    public void addListener(SuggestionQueryModelListener listener) {
         m_suggestionListeners.add(listener);
     }
 
-    public void removeListener(SuggestionModelListener listener) {
+    public void removeListener(SuggestionQueryModelListener listener) {
         m_suggestionListeners.remove(listener);
     }
 
@@ -87,7 +87,7 @@ public class SearchWidgetSuggestionModel implements SearchQueryListener, Observa
         SearchQueryListener listener = this;
         m_currentQuery = BuildSuggestionQuery(queryText, null, listener, m_suggestionProviderMap);
 
-        for(SuggestionModelListener suggestionListener : m_suggestionListeners) {
+        for(SuggestionQueryModelListener suggestionListener : m_suggestionListeners) {
             suggestionListener.onSuggestionQueryStarted(m_currentQuery);
         }
 
@@ -113,7 +113,7 @@ public class SearchWidgetSuggestionModel implements SearchQueryListener, Observa
     public void onSearchQueryCompleted(List<SearchProviderQueryResult> results) {
         m_results.setResultsForQuery(results, m_currentQuery);
 
-        for(SuggestionModelListener suggestionListener : m_suggestionListeners) {
+        for(SuggestionQueryModelListener suggestionListener : m_suggestionListeners) {
             suggestionListener.onSuggestionQueryCompleted(m_currentQuery, results);
         }
     }
@@ -121,7 +121,7 @@ public class SearchWidgetSuggestionModel implements SearchQueryListener, Observa
     @Override
     public void onSearchQueryCancelled() {
 
-        for(SuggestionModelListener suggestionListener : m_suggestionListeners) {
+        for(SuggestionQueryModelListener suggestionListener : m_suggestionListeners) {
             suggestionListener.onSuggestionQueryCancelled(m_currentQuery);
         }
     }

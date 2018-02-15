@@ -21,8 +21,8 @@ import com.wrld.widgets.searchbox.model.ObservableSearchResultsModel;
 import com.wrld.widgets.searchbox.model.ObservableSuggestionQueryModel;
 import com.wrld.widgets.searchbox.model.SearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetMenuModel;
-import com.wrld.widgets.searchbox.model.SearchModel;
-import com.wrld.widgets.searchbox.model.SearchWidgetSuggestionModel;
+import com.wrld.widgets.searchbox.model.SearchQueryModel;
+import com.wrld.widgets.searchbox.model.SuggestionQueryModel;
 import com.wrld.widgets.searchbox.view.MenuViewController;
 import com.wrld.widgets.searchbox.view.SearchResultsController;
 import com.wrld.widgets.searchbox.view.SearchViewController;
@@ -34,8 +34,8 @@ public class WrldSearchWidget extends Fragment {
 
     private SearchResultsModel m_searchResultsModel;
     private SearchResultsModel m_suggestionResultsModel;
-    private SearchModel m_searchModel;
-    private SearchWidgetSuggestionModel m_suggestionModel;
+    private SearchQueryModel m_searchModel;
+    private SuggestionQueryModel m_suggestionModel;
     private SearchViewController m_searchViewController;
     private SuggestionResultsController m_searchSuggestionResultsController;
     private SearchResultsController m_searchResultsController;
@@ -138,9 +138,9 @@ public class WrldSearchWidget extends Fragment {
 
     private void initialiseSearch() {
         m_searchResultsModel = new SearchResultsModel();
-        m_searchModel = new SearchModel(m_searchResultsModel);
+        m_searchModel = new SearchQueryModel(m_searchResultsModel);
         m_suggestionResultsModel = new SearchResultsModel();
-        m_suggestionModel = new SearchWidgetSuggestionModel(m_suggestionResultsModel);
+        m_suggestionModel = new SuggestionQueryModel(m_suggestionResultsModel);
 
         SearchView searchView = (SearchView)getView().findViewById(R.id.searchbox_search_searchview);
         View suggestionResultsViewContainer = getView().findViewById(R.id.searchbox_autocomplete_container);

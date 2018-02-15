@@ -9,18 +9,18 @@ import android.widget.BaseAdapter;
 import com.wrld.widgets.searchbox.model.SearchResult;
 import com.wrld.widgets.searchbox.model.ObservableSearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchProviderQueryResult;
-import com.wrld.widgets.searchbox.model.SearchWidgetSuggestionModel;
+import com.wrld.widgets.searchbox.model.SuggestionQueryModel;
 
 
 public class SuggestionResultsAdapter extends BaseAdapter {
 
     private final ObservableSearchResultsModel m_results;
-    private final SearchWidgetSuggestionModel m_suggestionModel;
+    private final SuggestionQueryModel m_suggestionModel;
     private final int m_resultsPerProvider;
     private final LayoutInflater m_inflater;
 
     public SuggestionResultsAdapter(ObservableSearchResultsModel results,
-                                    SearchWidgetSuggestionModel suggestionModel,
+                                    SuggestionQueryModel suggestionModel,
                                     LayoutInflater inflater,
                                     int resultsPerProvider)
     {

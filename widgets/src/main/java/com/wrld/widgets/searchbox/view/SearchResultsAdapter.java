@@ -10,7 +10,7 @@ import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.model.SearchResult;
 import com.wrld.widgets.searchbox.model.ObservableSearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchProviderQueryResult;
-import com.wrld.widgets.searchbox.model.SearchModel;
+import com.wrld.widgets.searchbox.model.SearchQueryModel;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,13 +30,13 @@ public class SearchResultsAdapter extends BaseAdapter {
     private int m_fullResultsProviderId;
 
     private final ObservableSearchResultsModel m_results;
-    private final SearchModel m_searchModel;
+    private final SearchQueryModel m_searchModel;
     private final int m_previewCountPerProvider;
     private final LayoutInflater m_inflater;
     private final SearchResultFooterViewFactory m_footerViewFactory;
 
     public SearchResultsAdapter(ObservableSearchResultsModel results,
-                                SearchModel searchModel,
+                                SearchQueryModel searchModel,
                                 LayoutInflater inflater,
                                 int previewCountPerProvider) {
         m_results = results;
