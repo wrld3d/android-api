@@ -118,7 +118,6 @@ public class MenuViewAdapter implements ExpandableListAdapter {
             }
             expandableListViewGroupCount += group.getOptions().size();
         }
-        // TODO: maybe consider separators as groups
         return expandableListViewGroupCount;
     }
 
@@ -326,7 +325,7 @@ public class MenuViewAdapter implements ExpandableListAdapter {
     }
 
     private boolean requiresOptionDivider(int groupPosition, boolean isExpanded) {
-        if (groupPosition < 0 || isExpanded) { return false; }
+        if (groupPosition < 0) { return false; }
 
         int expandableListViewGroupPosition = 0;
         for (MenuGroup group : m_model.getGroups()) {
@@ -338,7 +337,7 @@ public class MenuViewAdapter implements ExpandableListAdapter {
             }
 
             if (groupPosition < expandableListViewGroupPosition + group.getOptions().size()) {
-                return (groupPosition - expandableListViewGroupPosition != group.getOptions().size() - 1);
+                return (groupPosition - expandableListViewGroupPosition != group.getOptions().size() - 1) && !isExpanded;
             }
 
             expandableListViewGroupPosition += group.getOptions().size();

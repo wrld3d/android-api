@@ -92,13 +92,16 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
 
     @Override
     public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-        MenuOption option = (MenuOption)m_expandableListAdapter.getGroup(groupPosition);
-        if (option != null && !option.hasChildren()) {
-            boolean closeMenu = option.executeOnSelectCallback();
-            if (closeMenu) {
-                close();
+        Object expandableListViewGroup = m_expandableListAdapter.getGroup(groupPosition);
+        if (MenuOption.class.isInstance(expandableListViewGroup)) {
+            MenuOption menuOption = (MenuOption)expandableListViewGroup;
+            if (!menuOption.hasChildren()) {
+                boolean closeMenu = menuOption.executeOnSelectCallback();
+                if (closeMenu) {
+                    close();
+                }
+                return true;
             }
-            return true;
         }
         return false;
     }
@@ -110,17 +113,17 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
         }
         m_previousGroup = groupPosition;
 
-        MenuOption option = (MenuOption)m_expandableListAdapter.getGroup(groupPosition);
-        if (option != null) {
-            option.executeOnExpandCallback();
+        Object expandableListViewGroup = m_expandableListAdapter.getGroup(groupPosition);
+        if (MenuOption.class.isInstance(expandableListViewGroup)) {
+            ((MenuOption)expandableListViewGroup).executeOnExpandCallback();
         }
     }
 
     @Override
     public void onGroupCollapse(int groupPosition) {
-        MenuOption option = (MenuOption)m_expandableListAdapter.getGroup(groupPosition);
-        if (option != null) {
-            option.executeOnCollapseCallback();
+        Object expandableListViewGroup = m_expandableListAdapter.getGroup(groupPosition);
+        if (MenuOption.class.isInstance(expandableListViewGroup)) {
+            ((MenuOption)expandableListViewGroup).executeOnCollapseCallback();
         }
     }
 
