@@ -1,5 +1,6 @@
 package com.wrld.widgets.searchbox;
 
+import android.app.SearchableInfo;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,9 @@ import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.model.ISearchProvider;
 import com.wrld.widgets.searchbox.model.ISuggestionProvider;
 import com.wrld.widgets.searchbox.model.MenuGroup;
+import com.wrld.widgets.searchbox.model.ObservableSearchQueryModel;
+import com.wrld.widgets.searchbox.model.ObservableSearchResultsModel;
+import com.wrld.widgets.searchbox.model.ObservableSuggestionQueryModel;
 import com.wrld.widgets.searchbox.model.SearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetMenuModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetSearchModel;
@@ -67,6 +71,26 @@ public class WrldSearchWidget extends Fragment {
         m_searchModel.doSearch(queryString, queryContext);
     }
 
+    public void setSearchableInfo(SearchableInfo searchableInfo) {
+        m_searchViewController.setSearchableInfo(searchableInfo);
+    }
+
+    public ObservableSearchResultsModel getSearchResultsModel() {
+        return m_searchResultsModel;
+    }
+
+    public ObservableSearchResultsModel getSuggestionResultsModel() {
+        return m_suggestionResultsModel;
+    }
+
+    public ObservableSearchQueryModel getSearchQueryModel() {
+        return m_searchModel;
+    }
+
+    public ObservableSuggestionQueryModel getSuggestionQueryModel() {
+        return m_suggestionModel;
+    }
+
     public void openMenu() {
         m_menuViewController.open();
     }
@@ -107,6 +131,7 @@ public class WrldSearchWidget extends Fragment {
     public void onDestroy() {
         super.onDestroy();
 
+        m_searchViewController.clean();
         m_searchResultsController.clean();
         m_searchSuggestionResultsController.clean();
     }

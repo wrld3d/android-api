@@ -1,6 +1,5 @@
 package com.wrld.widgets.searchbox.view;
 
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,19 +7,19 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.wrld.widgets.searchbox.model.ISearchResult;
+import com.wrld.widgets.searchbox.model.ObservableSearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchProviderQueryResult;
-import com.wrld.widgets.searchbox.model.SearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetSuggestionModel;
 
 
 public class SuggestionResultsAdapter extends BaseAdapter {
 
-    private final SearchResultsModel m_results;
+    private final ObservableSearchResultsModel m_results;
     private final SearchWidgetSuggestionModel m_suggestionModel;
     private final int m_resultsPerProvider;
     private final LayoutInflater m_inflater;
 
-    public SuggestionResultsAdapter(SearchResultsModel results,
+    public SuggestionResultsAdapter(ObservableSearchResultsModel results,
                                     SearchWidgetSuggestionModel suggestionModel,
                                     LayoutInflater inflater,
                                     int resultsPerProvider)

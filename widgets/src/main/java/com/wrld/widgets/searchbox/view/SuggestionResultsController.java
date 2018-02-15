@@ -10,9 +10,9 @@ import android.widget.SearchView;
 import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.model.IOnSearchResultListener;
 import com.wrld.widgets.searchbox.model.ISearchResult;
+import com.wrld.widgets.searchbox.model.ObservableSearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchProviderQueryResult;
 import com.wrld.widgets.searchbox.model.SearchQuery;
-import com.wrld.widgets.searchbox.model.SearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetSuggestionModel;
 
 import java.util.List;
@@ -26,13 +26,13 @@ public class SuggestionResultsController implements AdapterView.OnItemClickListe
     private SearchView m_searchView;
 
     private SearchWidgetSuggestionModel m_model;
-    private SearchResultsModel m_suggestionResults;
-    private SearchResultsModel m_searchResults;
+    private ObservableSearchResultsModel m_suggestionResults;
+    private ObservableSearchResultsModel m_searchResults;
     private final SearchViewFocusObserver m_searchViewFocusObserver;
 
     public SuggestionResultsController(SearchWidgetSuggestionModel model,
-                                       SearchResultsModel suggestionResults,
-                                       SearchResultsModel searchResults,
+                                       ObservableSearchResultsModel suggestionResults,
+                                       ObservableSearchResultsModel searchResults,
                                        View viewContainer,
                                        SearchView searchView,
                                        SearchViewFocusObserver searchViewFocusObserver) {

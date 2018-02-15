@@ -1,6 +1,5 @@
 package com.wrld.widgets.searchbox.view;
 
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +10,9 @@ import android.widget.SearchView;
 import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.model.IOnSearchResultListener;
 import com.wrld.widgets.searchbox.model.ISearchResult;
+import com.wrld.widgets.searchbox.model.ObservableSearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchProviderQueryResult;
 import com.wrld.widgets.searchbox.model.SearchQuery;
-import com.wrld.widgets.searchbox.model.SearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetSearchModel;
 
 import java.util.List;
@@ -22,7 +21,7 @@ import java.util.Locale;
 public class SearchResultsController implements IOnSearchResultListener, AdapterView.OnItemClickListener, View.OnFocusChangeListener {
 
     private final SearchWidgetSearchModel m_model;
-    private final SearchResultsModel m_searchResultsModel;
+    private final ObservableSearchResultsModel m_searchResultsModel;
     private View m_noResultsViewContainer;
     private SearchView m_searchView;
     private SearchViewFocusObserver m_searchViewFocusObserver;
@@ -32,7 +31,7 @@ public class SearchResultsController implements IOnSearchResultListener, Adapter
     private boolean m_resultsHidden;
 
     public SearchResultsController(SearchWidgetSearchModel searchModel,
-                                   SearchResultsModel searchResultsModel,
+                                   ObservableSearchResultsModel searchResultsModel,
                                    View viewRoot,
                                    SearchView searchView,
                                    SearchViewFocusObserver searchViewFocusObserver,

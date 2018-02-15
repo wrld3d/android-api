@@ -1,14 +1,10 @@
 package com.wrld.widgets.searchbox.model;
 
-
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
-public class SearchResultsModel {
+public class SearchResultsModel implements ObservableSearchResultsModel {
 
     private List<SearchProviderQueryResult> m_currentQueryResults;
     private List<IOnSearchResultListener> m_resultsListeners;

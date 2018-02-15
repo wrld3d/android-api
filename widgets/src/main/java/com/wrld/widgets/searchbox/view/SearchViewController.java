@@ -1,9 +1,9 @@
 package com.wrld.widgets.searchbox.view;
 
 
+import android.app.SearchableInfo;
 import android.os.Build;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -20,7 +20,6 @@ import com.wrld.widgets.searchbox.model.SearchQuery;
 import com.wrld.widgets.searchbox.model.SearchWidgetSearchModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetSuggestionModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SearchViewController implements SearchView.OnQueryTextListener, IOnSearchListener, View.OnClickListener {
@@ -41,7 +40,7 @@ public class SearchViewController implements SearchView.OnQueryTextListener, IOn
         m_searchModel = searchModel;
         m_suggestionModel = suggestionModel;
         m_searchViewFocusObserver = searchViewFocusObserver;
-        m_searchModel.setSearchListener(this);
+        m_searchModel.addListener(this);
 
         m_view = view;
         m_view.setOnQueryTextListener(this);
@@ -53,6 +52,10 @@ public class SearchViewController implements SearchView.OnQueryTextListener, IOn
 
         m_clearButton.setOnClickListener(this);
 
+    }
+
+    public void clean() {
+        m_searchModel.removeListener(this);
     }
 
     private void initialiseView() {
@@ -214,5 +217,9 @@ public class SearchViewController implements SearchView.OnQueryTextListener, IOn
             m_searchModel.clear();
             m_suggestionModel.clear();
         }
+    }
+
+    public void setSearchableInfo(SearchableInfo searchableInfo) {
+        m_view.setSearchableInfo(searchableInfo);
     }
 }

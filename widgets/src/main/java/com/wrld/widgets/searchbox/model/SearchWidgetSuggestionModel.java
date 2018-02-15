@@ -3,7 +3,6 @@ package com.wrld.widgets.searchbox.model;
 import com.wrld.widgets.searchbox.view.ISearchResultViewFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,48 +24,48 @@ class MappedSuggestionProvider
 }
 
 // TODO: Factor commonality between these two search models.
-public class SearchWidgetSuggestionModel implements SearchQueryListener
+public class SearchWidgetSuggestionModel implements SearchQueryListener, ObservableSuggestionQueryModel
 {
     private SearchQuery m_currentQuery;
     private SearchResultsModel m_results;
     private Map<Integer, MappedSuggestionProvider> m_suggestionProviderMap;
 
-    private IOnSuggestionListener m_suggestionListener;
+    private List<IOnSuggestionListener> m_suggestionListeners;
 
     private int m_nextProviderId = 0;
 
     public SearchWidgetSuggestionModel(SearchResultsModel resultsModel)
     {
         m_suggestionProviderMap = new HashMap<>();
-        m_suggestionListener = null;
+        m_suggestionListeners = new ArrayList<>();
         m_results = resultsModel;
     }
 
-    public void setSuggestionListener(IOnSuggestionListener listener) { m_suggestionListener = listener; }
+    public void addListener(IOnSuggestionListener listener) {
+        m_suggestionListeners.add(listener);
+    }
+
+    public void removeListener(IOnSuggestionListener listener) {
+        m_suggestionListeners.remove(listener);
+    }
 
     public final SearchQuery getCurrentQuery() { return m_currentQuery; }
 
     public void addSuggestionProvider(ISuggestionProvider provider)
     {
-        // NOTE: Guard against adding
-        int providerId = m_nextProviderId++;
-        m_suggestionProviderMap.put(providerId, new MappedSuggestionProvider(provider, providerId));
+        if(findProvider(provider) == null) {
+            int providerId = m_nextProviderId++;
+            m_suggestionProviderMap.put(providerId, new MappedSuggestionProvider(provider, providerId));
+        }
     }
 
     public void removeSuggestionProvider(ISuggestionProvider provider)
     {
-        // TODO: Observer clearing any results or queries belong to this provider.
-        // Might be easier to cancel current query, remove, and re-run the query
+        MappedSuggestionProvider mappedProvider = findProvider(provider);
+        if(mappedProvider != null) {
 
-        // TODO: This seems nonsense - cleaner way of doing this.
-        if(m_suggestionProviderMap.containsValue(provider))
-        {
-            for (Map.Entry<Integer,MappedSuggestionProvider> entry : m_suggestionProviderMap.entrySet()) {
-                if(entry.getValue().getSuggestionProvider() == provider) {
-                    m_suggestionProviderMap.remove(entry.getKey());
-                    return;
-                }
-            }
+            clear();
+            m_suggestionProviderMap.remove(mappedProvider.getId());
         }
     }
 
@@ -88,8 +87,8 @@ public class SearchWidgetSuggestionModel implements SearchQueryListener
         SearchQueryListener listener = this;
         m_currentQuery = BuildSuggestionQuery(queryText, null, listener, m_suggestionProviderMap);
 
-        if(m_suggestionListener != null) {
-            m_suggestionListener.onSuggestionQueryStarted(m_currentQuery);
+        for(IOnSuggestionListener suggestionListener : m_suggestionListeners) {
+            suggestionListener.onSuggestionQueryStarted(m_currentQuery);
         }
 
         m_currentQuery.start();
@@ -114,16 +113,16 @@ public class SearchWidgetSuggestionModel implements SearchQueryListener
     public void onSearchQueryCompleted(List<SearchProviderQueryResult> results) {
         m_results.setResultsForQuery(results, m_currentQuery);
 
-        if(m_suggestionListener != null) {
-            m_suggestionListener.onSuggestionQueryCompleted(m_currentQuery, results);
+        for(IOnSuggestionListener suggestionListener : m_suggestionListeners) {
+            suggestionListener.onSuggestionQueryCompleted(m_currentQuery, results);
         }
     }
 
     @Override
     public void onSearchQueryCancelled() {
 
-        if(m_suggestionListener != null) {
-            m_suggestionListener.onSuggestionQueryCancelled(m_currentQuery);
+        for(IOnSuggestionListener suggestionListener : m_suggestionListeners) {
+            suggestionListener.onSuggestionQueryCancelled(m_currentQuery);
         }
     }
 
@@ -138,5 +137,14 @@ public class SearchWidgetSuggestionModel implements SearchQueryListener
         }
 
         return m_suggestionProviderMap.get(providerId).getSuggestionProvider().getSuggestionViewFactory();
+    }
+
+    private MappedSuggestionProvider findProvider(ISuggestionProvider provider) {
+        for(Map.Entry<Integer,MappedSuggestionProvider> entry : m_suggestionProviderMap.entrySet()) {
+            if(entry.getValue().getSuggestionProvider() == provider) {
+                return entry.getValue();
+            }
+        }
+        return null;
     }
 }

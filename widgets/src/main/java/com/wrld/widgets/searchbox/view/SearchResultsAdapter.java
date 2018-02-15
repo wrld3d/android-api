@@ -1,6 +1,5 @@
 package com.wrld.widgets.searchbox.view;
 
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +8,8 @@ import android.widget.BaseAdapter;
 
 import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.model.ISearchResult;
+import com.wrld.widgets.searchbox.model.ObservableSearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchProviderQueryResult;
-import com.wrld.widgets.searchbox.model.SearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetSearchModel;
 
 import java.util.HashMap;
@@ -30,13 +29,13 @@ public class SearchResultsAdapter extends BaseAdapter {
     private boolean m_fullResultsShown;
     private int m_fullResultsProviderId;
 
-    private final SearchResultsModel m_results;
+    private final ObservableSearchResultsModel m_results;
     private final SearchWidgetSearchModel m_searchModel;
     private final int m_previewCountPerProvider;
     private final LayoutInflater m_inflater;
     private final SearchResultFooterViewFactory m_footerViewFactory;
 
-    public SearchResultsAdapter(SearchResultsModel results,
+    public SearchResultsAdapter(ObservableSearchResultsModel results,
                                 SearchWidgetSearchModel searchModel,
                                 LayoutInflater inflater,
                                 int previewCountPerProvider) {
