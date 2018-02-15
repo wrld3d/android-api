@@ -342,7 +342,7 @@ public class MenuViewAdapter implements ExpandableListAdapter {
     }
 
     private boolean requiresOptionDivider(int groupPosition, boolean isExpanded) {
-        if (groupPosition < 0) { return false; }
+        if (groupPosition < 0 || isExpanded) { return false; }
 
         int expandableListViewGroupPosition = 0;
         for (MenuGroup group : m_model.getGroups()) {
@@ -354,7 +354,7 @@ public class MenuViewAdapter implements ExpandableListAdapter {
             }
 
             if (groupPosition < expandableListViewGroupPosition + group.getOptions().size()) {
-                return (groupPosition - expandableListViewGroupPosition != group.getOptions().size() - 1) && !isExpanded;
+                return (groupPosition - expandableListViewGroupPosition != group.getOptions().size() - 1);
             }
 
             expandableListViewGroupPosition += group.getOptions().size();

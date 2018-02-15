@@ -8,6 +8,7 @@ import android.widget.ImageButton;
 
 import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.model.MenuChild;
+import com.wrld.widgets.searchbox.model.MenuGroup;
 import com.wrld.widgets.searchbox.model.MenuOption;
 import com.wrld.widgets.searchbox.model.OnMenuChangedListener;
 import com.wrld.widgets.searchbox.model.SearchWidgetMenuModel;
@@ -102,6 +103,9 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
                 }
                 return true;
             }
+        }
+        if (MenuGroup.class.isInstance(expandableListViewGroup)) {
+            return true;
         }
         return false;
     }
