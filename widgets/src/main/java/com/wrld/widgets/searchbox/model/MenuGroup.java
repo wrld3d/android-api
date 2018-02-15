@@ -30,64 +30,32 @@ class OnMenuGroupInteractionCallbackImpl implements OnMenuGroupInteractionCallba
 }
 
 public class MenuGroup {
-    private String m_text;
-    private Object m_context;
-    private OnMenuOptionSelectedCallback m_onSelectCallback;
-    private OnMenuGroupInteractionCallback m_onExpandCallback;
-    private OnMenuGroupInteractionCallback m_onCollapseCallback;
-    private List<MenuChild> m_children;
+    private String m_title;
+    private boolean m_hasTitle;
+    private List<MenuOption> m_options;
 
-    public final String getText() { return m_text; }
-    public final Object getContext() { return m_context; }
-    public final List<MenuChild> getChildren() { return m_children; }
-    public final boolean hasChildren() { return !m_children.isEmpty(); }
+    public final String getTitle() { return m_title; }
+    public final boolean hasTitle() { return m_hasTitle; }
+    public final List<MenuOption> getOptions() { return m_options; }
 
-    public MenuGroup(String text) {
-        this(text, null, null, null, null);
+    public MenuGroup() {
+        m_title = "";
+        m_hasTitle = false;
+        m_options = new ArrayList<MenuOption>();
     }
 
-    public MenuGroup(String text, Object context, final OnMenuOptionSelectedCallback onSelectCallback) {
-        this(text, context, onSelectCallback, null, null);
+    public MenuGroup(String title) {
+        m_title = title;
+        m_hasTitle = true;
+        m_options = new ArrayList<MenuOption>();
     }
 
-    public MenuGroup(String text, Object context, final OnMenuGroupInteractionCallback onExpandCallback, final OnMenuGroupInteractionCallback onCollapseCallback) {
-        this(text, context, null, onExpandCallback, onCollapseCallback);
+    public void addOption(String text, Object context, final OnMenuOptionSelectedCallback callback) {
+        MenuOption child = new MenuOption(text, context, callback);
+        m_options.add(child);
     }
 
-    private MenuGroup(String text, Object context, final OnMenuOptionSelectedCallback onSelectCallback, final OnMenuGroupInteractionCallback onExpandCallback, final OnMenuGroupInteractionCallback onCollapseCallback) {
-        m_text = text;
-        m_context = context;
-        m_onSelectCallback = onSelectCallback;
-        m_onExpandCallback = onExpandCallback;
-        m_onCollapseCallback = onCollapseCallback;
-        m_children = new ArrayList<MenuChild>();
-    }
-
-    public void addChild(String text, String icon, Object context, final OnMenuOptionSelectedCallback callback) {
-        MenuChild child = new MenuChild(text, icon, context, callback);
-        m_children.add(child);
-    }
-
-    public void addChild(MenuChild child) {
-        m_children.add(child);
-    }
-
-    public boolean executeOnSelectCallback() {
-        if (m_onSelectCallback != null) {
-            return m_onSelectCallback.onMenuOptionSelected(m_text, m_context);
-        }
-        return false;
-    }
-
-    public void executeOnExpandCallback() {
-        if (m_onExpandCallback != null) {
-            m_onExpandCallback.onMenuGroupInteraction(m_text, m_context);
-        }
-    }
-
-    public void executeOnCollapseCallback() {
-        if (m_onCollapseCallback != null) {
-            m_onCollapseCallback.onMenuGroupInteraction(m_text, m_context);
-        }
+    public void addOption(MenuOption option) {
+        m_options.add(option);
     }
 }

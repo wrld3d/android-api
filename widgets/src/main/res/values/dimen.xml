@@ -3,6 +3,8 @@
     <dimen name="font_size_title">16sp</dimen>
     <dimen name="font_size_subtitle">11sp</dimen>
     <dimen name="font_size_suggestions_title">11sp</dimen>
+    <dimen name="font_size_menu_group_title">12sp</dimen>
+    <dimen name="font_size_menu_option_title">14sp</dimen>
     <dimen name="search_query_height">40dp</dimen>
     <dimen name="search_query_button_size">32dp</dimen>
     <dimen name="search_query_clear_button_touch_size">24dp</dimen>
@@ -22,6 +24,7 @@
     <dimen name="search_menu_drop_down_group_icon_height">16dp</dimen>
     <dimen name="search_menu_drop_down_group_text_area_height">20dp</dimen>
     <dimen name="search_menu_drop_down_group_margin">8dp</dimen>
+    <dimen name="search_menu_drop_down_group_text_left_right_margin">16dp</dimen>
     <dimen name="search_menu_drop_down_item_height">28dp</dimen>
     <dimen name="search_menu_drop_down_item_icon_height">24dp</dimen>
     <dimen name="search_menu_drop_down_item_icon_padding">2dp</dimen>
@@ -29,6 +32,7 @@
     <dimen name="search_menu_drop_down_item_text_padding">4dp</dimen>
     <dimen name="search_menu_drop_down_item_icon_text_vertical_margin">4dp</dimen>
     <dimen name="search_menu_drop_down_item_divider_height">1dp</dimen>
+    <dimen name="search_menu_scrollbar_width">8dp</dimen>
     <dimen name="search_results_footer_height">32dp</dimen>
     <dimen name="search_results_spinner_height">40dp</dimen>
     <dimen name="search_results_more_icon_size">12dp</dimen>
