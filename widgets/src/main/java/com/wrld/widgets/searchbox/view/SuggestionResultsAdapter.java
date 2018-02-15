@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.wrld.widgets.searchbox.model.ISearchResult;
+import com.wrld.widgets.searchbox.model.SearchResult;
 import com.wrld.widgets.searchbox.model.ObservableSearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchProviderQueryResult;
 import com.wrld.widgets.searchbox.model.SearchWidgetSuggestionModel;
@@ -70,7 +70,7 @@ public class SuggestionResultsAdapter extends BaseAdapter {
             convertView.setTag(viewHolder);
         }
 
-        ISearchResult result = (ISearchResult)getItem(position);
+        SearchResult result = (SearchResult)getItem(position);
         if(result != null) {
             String queryText = m_suggestionModel.getCurrentQuery() != null ? m_suggestionModel.getCurrentQuery().getQueryString() : "";
             // TODO optional styling for first/last result - not used for suggestion default styles.

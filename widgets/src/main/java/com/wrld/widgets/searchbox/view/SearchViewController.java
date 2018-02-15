@@ -14,24 +14,24 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import com.wrld.widgets.searchbox.model.IOnSearchListener;
+import com.wrld.widgets.searchbox.model.SearchModelListener;
 import com.wrld.widgets.searchbox.model.SearchProviderQueryResult;
 import com.wrld.widgets.searchbox.model.SearchQuery;
-import com.wrld.widgets.searchbox.model.SearchWidgetSearchModel;
+import com.wrld.widgets.searchbox.model.SearchModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetSuggestionModel;
 
 import java.util.List;
 
-public class SearchViewController implements SearchView.OnQueryTextListener, IOnSearchListener, View.OnClickListener {
+public class SearchViewController implements SearchView.OnQueryTextListener, SearchModelListener, View.OnClickListener {
 
     private SearchView m_view;
-    private SearchWidgetSearchModel m_searchModel;
+    private SearchModel m_searchModel;
     private SearchWidgetSuggestionModel m_suggestionModel;
     private SearchViewFocusObserver m_searchViewFocusObserver;
     private View m_spinnerView;
     private ImageView m_clearButton;
 
-    public SearchViewController(SearchWidgetSearchModel searchModel,
+    public SearchViewController(SearchModel searchModel,
                                 SearchWidgetSuggestionModel suggestionModel,
                                 SearchView view,
                                 SearchViewFocusObserver searchViewFocusObserver,

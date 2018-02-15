@@ -12,13 +12,13 @@ import static org.junit.Assert.assertNotEquals;
 public class SearchWidgetModelTests {
 
     private SearchResultsModel m_results;
-    private SearchWidgetSearchModel m_widgetModel;
+    private SearchModel m_widgetModel;
     private MockSearchProvider m_provider;
 
     @Before
     public void setUp() {
         m_results = new SearchResultsModel();
-        m_widgetModel = new SearchWidgetSearchModel(m_results);
+        m_widgetModel = new SearchModel(m_results);
         m_provider = new MockSearchProvider("Valid Search Provider", true);
         m_widgetModel.addSearchProvider(m_provider);
     }
@@ -83,11 +83,11 @@ public class SearchWidgetModelTests {
 
 }
 
-class MockSearchProvider implements ISearchProvider
+class MockSearchProvider implements SearchProvider
 {
     Boolean m_willSucceed;
     String m_title;
-    ISearchProviderResultsReadyCallback m_callback;
+    SearchProviderResultsReadyCallback m_callback;
     private boolean m_cancelled;
 
     public String m_searchedQuery;
@@ -133,12 +133,12 @@ class MockSearchProvider implements ISearchProvider
     }
 
     @Override
-    public void addSearchCompletedCallback(ISearchProviderResultsReadyCallback queryResultsReadyCallback) {
+    public void addSearchCompletedCallback(SearchProviderResultsReadyCallback queryResultsReadyCallback) {
         m_callback = queryResultsReadyCallback;
     }
 
     @Override
-    public void removeSearchCompletedCallback(ISearchProviderResultsReadyCallback queryResultsReadyCallback) {
+    public void removeSearchCompletedCallback(SearchProviderResultsReadyCallback queryResultsReadyCallback) {
         m_callback = null;
     }
 

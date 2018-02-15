@@ -8,8 +8,8 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 import com.wrld.widgets.R;
-import com.wrld.widgets.searchbox.model.IOnSearchResultListener;
-import com.wrld.widgets.searchbox.model.ISearchResult;
+import com.wrld.widgets.searchbox.model.SearchResultsListener;
+import com.wrld.widgets.searchbox.model.SearchResult;
 import com.wrld.widgets.searchbox.model.ObservableSearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchProviderQueryResult;
 import com.wrld.widgets.searchbox.model.SearchQuery;
@@ -17,7 +17,7 @@ import com.wrld.widgets.searchbox.model.SearchWidgetSuggestionModel;
 
 import java.util.List;
 
-public class SuggestionResultsController implements AdapterView.OnItemClickListener, IOnSearchResultListener, View.OnFocusChangeListener {
+public class SuggestionResultsController implements AdapterView.OnItemClickListener, SearchResultsListener, View.OnFocusChangeListener {
 
     private final SuggestionResultsAdapter m_adapter;
     private View m_viewRoot;
@@ -65,7 +65,7 @@ public class SuggestionResultsController implements AdapterView.OnItemClickListe
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        ISearchResult result = (ISearchResult)m_adapter.getItem(position);
+        SearchResult result = (SearchResult)m_adapter.getItem(position);
         if(result != null)
         {
             String searchTerm = result.getTitle();

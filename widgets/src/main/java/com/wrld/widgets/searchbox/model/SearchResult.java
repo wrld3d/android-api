@@ -1,6 +1,6 @@
 package com.wrld.widgets.searchbox.model;
 
-public interface ISearchResult {
+public interface SearchResult {
     String getTitle();
 
     boolean hasProperty(String propertyKey);

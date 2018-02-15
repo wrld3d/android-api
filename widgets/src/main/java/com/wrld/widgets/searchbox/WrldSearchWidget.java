@@ -13,15 +13,15 @@ import android.widget.ImageButton;
 import android.widget.SearchView;
 
 import com.wrld.widgets.R;
-import com.wrld.widgets.searchbox.model.ISearchProvider;
-import com.wrld.widgets.searchbox.model.ISuggestionProvider;
+import com.wrld.widgets.searchbox.model.SearchProvider;
+import com.wrld.widgets.searchbox.model.SuggestionProvider;
 import com.wrld.widgets.searchbox.model.MenuGroup;
 import com.wrld.widgets.searchbox.model.ObservableSearchQueryModel;
 import com.wrld.widgets.searchbox.model.ObservableSearchResultsModel;
 import com.wrld.widgets.searchbox.model.ObservableSuggestionQueryModel;
 import com.wrld.widgets.searchbox.model.SearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetMenuModel;
-import com.wrld.widgets.searchbox.model.SearchWidgetSearchModel;
+import com.wrld.widgets.searchbox.model.SearchModel;
 import com.wrld.widgets.searchbox.model.SearchWidgetSuggestionModel;
 import com.wrld.widgets.searchbox.view.MenuViewController;
 import com.wrld.widgets.searchbox.view.SearchResultsController;
@@ -34,7 +34,7 @@ public class WrldSearchWidget extends Fragment {
 
     private SearchResultsModel m_searchResultsModel;
     private SearchResultsModel m_suggestionResultsModel;
-    private SearchWidgetSearchModel m_searchModel;
+    private SearchModel m_searchModel;
     private SearchWidgetSuggestionModel m_suggestionModel;
     private SearchViewController m_searchViewController;
     private SuggestionResultsController m_searchSuggestionResultsController;
@@ -47,22 +47,22 @@ public class WrldSearchWidget extends Fragment {
         super();
     }
 
-    public void addSearchProvider(ISearchProvider searchProvider)
+    public void addSearchProvider(SearchProvider searchProvider)
     {
         m_searchModel.addSearchProvider(searchProvider);
     }
 
-    public void removeSearchProvider(ISearchProvider searchProvider)
+    public void removeSearchProvider(SearchProvider searchProvider)
     {
         m_searchModel.removeSearchProvider(searchProvider);
     }
 
-    public void addSuggestionProvider(ISuggestionProvider suggestionProvider)
+    public void addSuggestionProvider(SuggestionProvider suggestionProvider)
     {
         m_suggestionModel.addSuggestionProvider(suggestionProvider);
     }
 
-    public void removeSuggestionProvider(ISuggestionProvider suggestionProvider)
+    public void removeSuggestionProvider(SuggestionProvider suggestionProvider)
     {
         m_suggestionModel.removeSuggestionProvider(suggestionProvider);
     }
@@ -138,7 +138,7 @@ public class WrldSearchWidget extends Fragment {
 
     private void initialiseSearch() {
         m_searchResultsModel = new SearchResultsModel();
-        m_searchModel = new SearchWidgetSearchModel(m_searchResultsModel);
+        m_searchModel = new SearchModel(m_searchResultsModel);
         m_suggestionResultsModel = new SearchResultsModel();
         m_suggestionModel = new SearchWidgetSuggestionModel(m_suggestionResultsModel);
 

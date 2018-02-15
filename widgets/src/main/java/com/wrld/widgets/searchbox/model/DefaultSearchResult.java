@@ -2,12 +2,12 @@ package com.wrld.widgets.searchbox.model;
 
 import java.util.HashMap;
 
-public class DefaultSearchResult implements ISearchResult {
+public class DefaultSearchResult implements SearchResult {
 
     private String m_title;
 
     private HashMap<String, SearchResultProperty> m_additionalProperties;
-    private OnSearchResultSelectedListener m_listener;
+    private SearchResultSelectedListener m_listener;
 
     public DefaultSearchResult(String title, SearchResultProperty... additionalProperties) {
         m_title = title;
@@ -45,7 +45,7 @@ public class DefaultSearchResult implements ISearchResult {
         }
     }
 
-    public void setSelectedListener(OnSearchResultSelectedListener listener) {
+    public void setSelectedListener(SearchResultSelectedListener listener) {
         m_listener = listener;
     }
 

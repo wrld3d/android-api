@@ -8,18 +8,18 @@ import android.support.annotation.NonNull;
  */
 public class SearchProviderQueryResult implements Comparable<SearchProviderQueryResult>
 {
-    public SearchProviderQueryResult(int providerId, ISearchResult[] results, boolean success)
+    public SearchProviderQueryResult(int providerId, SearchResult[] results, boolean success)
     {
         m_providerId = providerId;
         m_results = results;
         m_success = success;
     }
 
-    public final ISearchResult[] getResults() { return m_results; }
+    public final SearchResult[] getResults() { return m_results; }
     public final int getProviderId() { return m_providerId; }
     public final boolean wasSuccess() { return m_success; }
 
-    private ISearchResult[] m_results;
+    private SearchResult[] m_results;
     private int m_providerId;
     private final boolean m_success;
 

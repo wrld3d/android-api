@@ -8,19 +8,19 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 import com.wrld.widgets.R;
-import com.wrld.widgets.searchbox.model.IOnSearchResultListener;
-import com.wrld.widgets.searchbox.model.ISearchResult;
+import com.wrld.widgets.searchbox.model.SearchResultsListener;
+import com.wrld.widgets.searchbox.model.SearchResult;
 import com.wrld.widgets.searchbox.model.ObservableSearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchProviderQueryResult;
 import com.wrld.widgets.searchbox.model.SearchQuery;
-import com.wrld.widgets.searchbox.model.SearchWidgetSearchModel;
+import com.wrld.widgets.searchbox.model.SearchModel;
 
 import java.util.List;
 import java.util.Locale;
 
-public class SearchResultsController implements IOnSearchResultListener, AdapterView.OnItemClickListener, View.OnFocusChangeListener {
+public class SearchResultsController implements SearchResultsListener, AdapterView.OnItemClickListener, View.OnFocusChangeListener {
 
-    private final SearchWidgetSearchModel m_model;
+    private final SearchModel m_model;
     private final ObservableSearchResultsModel m_searchResultsModel;
     private View m_noResultsViewContainer;
     private SearchView m_searchView;
@@ -30,7 +30,7 @@ public class SearchResultsController implements IOnSearchResultListener, Adapter
     private final SearchResultsAdapter m_adapter;
     private boolean m_resultsHidden;
 
-    public SearchResultsController(SearchWidgetSearchModel searchModel,
+    public SearchResultsController(SearchModel searchModel,
                                    ObservableSearchResultsModel searchResultsModel,
                                    View viewRoot,
                                    SearchView searchView,
@@ -107,13 +107,13 @@ public class SearchResultsController implements IOnSearchResultListener, Adapter
                 m_adapter.toggleState(result.getProviderId());
             }
             else {
-                ISearchResult searchResult = result.getResults()[providerIndex.second];
+                SearchResult searchResult = result.getResults()[providerIndex.second];
                 selectSearchResult(searchResult);
             }
         }
     }
 
-    private void selectSearchResult(ISearchResult searchResult) {
+    private void selectSearchResult(SearchResult searchResult) {
         searchResult.select();
         m_resultsHidden = true;
         String hiddenResultsQueryString = String.format(Locale.getDefault(), "%s  (%d)",

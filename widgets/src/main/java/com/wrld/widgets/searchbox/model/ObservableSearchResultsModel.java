@@ -6,6 +6,6 @@ public interface ObservableSearchResultsModel {
     List<SearchProviderQueryResult> getCurrentQueryResults();
     int getTotalCurrentQueryResults();
 
-    void addResultListener(IOnSearchResultListener listener);
-    void removeResultListener(IOnSearchResultListener listener);
+    void addResultListener(SearchResultsListener listener);
+    void removeResultListener(SearchResultsListener listener);
 }

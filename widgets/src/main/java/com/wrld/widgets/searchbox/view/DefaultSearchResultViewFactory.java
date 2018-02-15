@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.wrld.widgets.R;
-import com.wrld.widgets.searchbox.model.ISearchResult;
+import com.wrld.widgets.searchbox.model.SearchResult;
 
 public class DefaultSearchResultViewFactory implements ISearchResultViewFactory {
 
@@ -42,7 +42,7 @@ public class DefaultSearchResultViewFactory implements ISearchResultViewFactory 
             m_shadow = view.findViewById(R.id.search_result_shadow);
         }
 
-        public void populate(ISearchResult result,
+        public void populate(SearchResult result,
                              String query,
                              boolean firstResultInSet,
                              boolean lastResultInSet) {

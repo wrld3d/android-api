@@ -2,7 +2,7 @@ package com.wrld.widgets.searchbox.model;
 
 import java.util.List;
 
-public interface IOnSuggestionListener
+public interface SuggestionModelListener
 {
     void onSuggestionQueryStarted(final SearchQuery query);
     void onSuggestionQueryCompleted(final SearchQuery query, final List<SearchProviderQueryResult> results);

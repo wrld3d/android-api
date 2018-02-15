@@ -10,16 +10,16 @@ import java.util.Map;
 
 class MappedSuggestionProvider
 {
-    MappedSuggestionProvider(ISuggestionProvider provider, int id)
+    MappedSuggestionProvider(SuggestionProvider provider, int id)
     {
         m_providerId = id;
         m_searchProvider = provider;
     }
 
     public int getId() { return m_providerId; }
-    ISuggestionProvider getSuggestionProvider() { return m_searchProvider; }
+    SuggestionProvider getSuggestionProvider() { return m_searchProvider; }
 
-    private ISuggestionProvider m_searchProvider;
+    private SuggestionProvider m_searchProvider;
     private int m_providerId;
 }
 
@@ -30,7 +30,7 @@ public class SearchWidgetSuggestionModel implements SearchQueryListener, Observa
     private SearchResultsModel m_results;
     private Map<Integer, MappedSuggestionProvider> m_suggestionProviderMap;
 
-    private List<IOnSuggestionListener> m_suggestionListeners;
+    private List<SuggestionModelListener> m_suggestionListeners;
 
     private int m_nextProviderId = 0;
 
@@ -41,17 +41,17 @@ public class SearchWidgetSuggestionModel implements SearchQueryListener, Observa
         m_results = resultsModel;
     }
 
-    public void addListener(IOnSuggestionListener listener) {
+    public void addListener(SuggestionModelListener listener) {
         m_suggestionListeners.add(listener);
     }
 
-    public void removeListener(IOnSuggestionListener listener) {
+    public void removeListener(SuggestionModelListener listener) {
         m_suggestionListeners.remove(listener);
     }
 
     public final SearchQuery getCurrentQuery() { return m_currentQuery; }
 
-    public void addSuggestionProvider(ISuggestionProvider provider)
+    public void addSuggestionProvider(SuggestionProvider provider)
     {
         if(findProvider(provider) == null) {
             int providerId = m_nextProviderId++;
@@ -59,7 +59,7 @@ public class SearchWidgetSuggestionModel implements SearchQueryListener, Observa
         }
     }
 
-    public void removeSuggestionProvider(ISuggestionProvider provider)
+    public void removeSuggestionProvider(SuggestionProvider provider)
     {
         MappedSuggestionProvider mappedProvider = findProvider(provider);
         if(mappedProvider != null) {
@@ -87,7 +87,7 @@ public class SearchWidgetSuggestionModel implements SearchQueryListener, Observa
         SearchQueryListener listener = this;
         m_currentQuery = BuildSuggestionQuery(queryText, null, listener, m_suggestionProviderMap);
 
-        for(IOnSuggestionListener suggestionListener : m_suggestionListeners) {
+        for(SuggestionModelListener suggestionListener : m_suggestionListeners) {
             suggestionListener.onSuggestionQueryStarted(m_currentQuery);
         }
 
@@ -113,7 +113,7 @@ public class SearchWidgetSuggestionModel implements SearchQueryListener, Observa
     public void onSearchQueryCompleted(List<SearchProviderQueryResult> results) {
         m_results.setResultsForQuery(results, m_currentQuery);
 
-        for(IOnSuggestionListener suggestionListener : m_suggestionListeners) {
+        for(SuggestionModelListener suggestionListener : m_suggestionListeners) {
             suggestionListener.onSuggestionQueryCompleted(m_currentQuery, results);
         }
     }
@@ -121,7 +121,7 @@ public class SearchWidgetSuggestionModel implements SearchQueryListener, Observa
     @Override
     public void onSearchQueryCancelled() {
 
-        for(IOnSuggestionListener suggestionListener : m_suggestionListeners) {
+        for(SuggestionModelListener suggestionListener : m_suggestionListeners) {
             suggestionListener.onSuggestionQueryCancelled(m_currentQuery);
         }
     }
@@ -139,7 +139,7 @@ public class SearchWidgetSuggestionModel implements SearchQueryListener, Observa
         return m_suggestionProviderMap.get(providerId).getSuggestionProvider().getSuggestionViewFactory();
     }
 
-    private MappedSuggestionProvider findProvider(ISuggestionProvider provider) {
+    private MappedSuggestionProvider findProvider(SuggestionProvider provider) {
         for(Map.Entry<Integer,MappedSuggestionProvider> entry : m_suggestionProviderMap.entrySet()) {
             if(entry.getValue().getSuggestionProvider() == provider) {
                 return entry.getValue();

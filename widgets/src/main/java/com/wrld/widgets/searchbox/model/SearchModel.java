@@ -10,47 +10,47 @@ import java.util.Map;
 
 class MappedSearchProvider
 {
-    MappedSearchProvider(ISearchProvider provider, int id)
+    MappedSearchProvider(SearchProvider provider, int id)
     {
         m_providerId = id;
         m_searchProvider = provider;
     }
 
     public int getId() { return m_providerId; }
-    ISearchProvider getSearchProvider() { return m_searchProvider; }
+    SearchProvider getSearchProvider() { return m_searchProvider; }
 
-    private ISearchProvider m_searchProvider;
+    private SearchProvider m_searchProvider;
     private int m_providerId;
 }
 
-public class SearchWidgetSearchModel implements SearchQueryListener, ObservableSearchQueryModel
+public class SearchModel implements SearchQueryListener, ObservableSearchQueryModel
 {
     private SearchQuery m_currentQuery;
     private SearchResultsModel m_results;
     private Map<Integer, MappedSearchProvider> m_searchProviderMap;
-    private List<IOnSearchListener> m_searchListeners;
+    private List<SearchModelListener> m_searchListeners;
 
 
     private int m_nextProviderId = 0;
 
-    public SearchWidgetSearchModel(SearchResultsModel results)
+    public SearchModel(SearchResultsModel results)
     {
         m_searchProviderMap = new HashMap<>();
         m_searchListeners = new ArrayList<>();
         m_results = results;
     }
 
-    public void addListener(IOnSearchListener listener) {
+    public void addListener(SearchModelListener listener) {
         m_searchListeners.add(listener);
     }
 
-    public void removeListener(IOnSearchListener listener) {
+    public void removeListener(SearchModelListener listener) {
         m_searchListeners.remove(listener);
     }
 
     public final SearchQuery getCurrentQuery() { return m_currentQuery; }
 
-    public void addSearchProvider(ISearchProvider provider)
+    public void addSearchProvider(SearchProvider provider)
     {
         if(findProvider(provider) == null) {
             int providerId = m_nextProviderId++;
@@ -58,7 +58,7 @@ public class SearchWidgetSearchModel implements SearchQueryListener, ObservableS
         }
     }
 
-    public void removeSearchProvider(ISearchProvider provider)
+    public void removeSearchProvider(SearchProvider provider)
     {
         MappedSearchProvider mappedProvider = findProvider(provider);
         if(mappedProvider != null) {
@@ -82,7 +82,7 @@ public class SearchWidgetSearchModel implements SearchQueryListener, ObservableS
 
         // NOTE: Search query hasn't actually started yet, but is about to - this is to avoid issues
         // where queries will complete immediately, and the Started event will occur after Complete
-        for(IOnSearchListener searchListener : m_searchListeners) {
+        for(SearchModelListener searchListener : m_searchListeners) {
             searchListener.onSearchQueryStarted(m_currentQuery);
         }
 
@@ -121,7 +121,7 @@ public class SearchWidgetSearchModel implements SearchQueryListener, ObservableS
     public void onSearchQueryCompleted(List<SearchProviderQueryResult> results) {
         m_results.setResultsForQuery(results, m_currentQuery);
 
-        for(IOnSearchListener searchListener : m_searchListeners) {
+        for(SearchModelListener searchListener : m_searchListeners) {
             searchListener.onSearchQueryCompleted(m_currentQuery, results);
         }
     }
@@ -129,7 +129,7 @@ public class SearchWidgetSearchModel implements SearchQueryListener, ObservableS
     @Override
     public void onSearchQueryCancelled() {
 
-        for(IOnSearchListener searchListener : m_searchListeners) {
+        for(SearchModelListener searchListener : m_searchListeners) {
             searchListener.onSearchQueryCancelled(m_currentQuery);
         }
     }
@@ -142,14 +142,14 @@ public class SearchWidgetSearchModel implements SearchQueryListener, ObservableS
         return m_searchProviderMap.get(providerId).getSearchProvider().getResultViewFactory();
     }
 
-    public ISearchProvider getProviderById(int providerId) {
+    public SearchProvider getProviderById(int providerId) {
         if(m_searchProviderMap.containsKey(providerId)) {
             return m_searchProviderMap.get(providerId).getSearchProvider();
         }
         return null;
     }
 
-    private MappedSearchProvider findProvider(ISearchProvider provider) {
+    private MappedSearchProvider findProvider(SearchProvider provider) {
         for(Map.Entry<Integer,MappedSearchProvider> entry : m_searchProviderMap.entrySet()) {
             if(entry.getValue().getSearchProvider() == provider) {
                 return entry.getValue();

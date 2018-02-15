@@ -3,7 +3,7 @@ package com.wrld.widgets.searchbox.model;
 /**
  * Shared base logic for calling and tracking a call to a SearchProvider
  */
-public class SearchProviderQueryBase implements ISearchProviderResultsReadyCallback {
+public class SearchProviderQueryBase implements SearchProviderResultsReadyCallback {
 
 
     public enum SearchProviderQueryState {
@@ -49,10 +49,10 @@ public class SearchProviderQueryBase implements ISearchProviderResultsReadyCallb
     protected void doSearch(String queryText, Object queryContext)
     {
         // override this.
-        onQueryCompleted(new ISearchResult[0], true);
+        onQueryCompleted(new SearchResult[0], true);
     }
 
-    public void onQueryCompleted(ISearchResult[] searchResults, Boolean success)
+    public void onQueryCompleted(SearchResult[] searchResults, Boolean success)
     {
         m_state = success ? SearchProviderQueryState.Success : SearchProviderQueryState.Failed;
 
@@ -66,7 +66,7 @@ public class SearchProviderQueryBase implements ISearchProviderResultsReadyCallb
         m_state = SearchProviderQueryState.Cancelled;
         if(m_listener != null) {
             // Use default search result.
-            ISearchResult[] results = new ISearchResult[0];
+            SearchResult[] results = new SearchResult[0];
             m_listener.onSearchProviderQueryCompleted(new SearchProviderQueryResult(m_providerId, results, false));
         }
     }

@@ -7,10 +7,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.wrld.widgets.R;
-import com.wrld.widgets.searchbox.model.ISearchResult;
+import com.wrld.widgets.searchbox.model.SearchResult;
 import com.wrld.widgets.searchbox.model.ObservableSearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchProviderQueryResult;
-import com.wrld.widgets.searchbox.model.SearchWidgetSearchModel;
+import com.wrld.widgets.searchbox.model.SearchModel;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,13 +30,13 @@ public class SearchResultsAdapter extends BaseAdapter {
     private int m_fullResultsProviderId;
 
     private final ObservableSearchResultsModel m_results;
-    private final SearchWidgetSearchModel m_searchModel;
+    private final SearchModel m_searchModel;
     private final int m_previewCountPerProvider;
     private final LayoutInflater m_inflater;
     private final SearchResultFooterViewFactory m_footerViewFactory;
 
     public SearchResultsAdapter(ObservableSearchResultsModel results,
-                                SearchWidgetSearchModel searchModel,
+                                SearchModel searchModel,
                                 LayoutInflater inflater,
                                 int previewCountPerProvider) {
         m_results = results;
@@ -211,7 +211,7 @@ public class SearchResultsAdapter extends BaseAdapter {
             }
         }
         else {
-            ISearchResult result = (ISearchResult)getItem(position);
+            SearchResult result = (SearchResult)getItem(position);
 
             String queryText = m_searchModel.getCurrentQuery() != null ? m_searchModel.getCurrentQuery().getQueryString() : "";
             boolean firstResultInSet = providerIndex.second == 0;

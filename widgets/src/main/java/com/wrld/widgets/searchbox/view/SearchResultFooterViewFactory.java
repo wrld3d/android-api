@@ -8,7 +8,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wrld.widgets.R;
-import com.wrld.widgets.searchbox.model.ISearchResult;
 
 public class SearchResultFooterViewFactory {
 

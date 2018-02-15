@@ -7,11 +7,10 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.wrld.widgets.searchbox.model.ISearchResult;
+import com.wrld.widgets.searchbox.model.SearchResult;
 import com.wrld.widgets.searchbox.view.ISearchResultViewFactory;
 import com.wrld.widgets.searchbox.view.ISearchResultViewHolder;
 
@@ -79,7 +78,7 @@ public class YelpSearchResultViewFactory implements ISearchResultViewFactory {
             m_shadow = view.findViewById(com.wrld.widgets.R.id.search_result_shadow);
         }
 
-        public void populate(ISearchResult result,
+        public void populate(SearchResult result,
                              String searchTerm,
                              boolean firstResultInSet,
                              boolean lastResultInSet) {
