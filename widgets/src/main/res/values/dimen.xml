@@ -3,6 +3,8 @@
     <dimen name="font_size_title">16sp</dimen>
     <dimen name="font_size_subtitle">11sp</dimen>
     <dimen name="font_size_suggestions_title">11sp</dimen>
+    <dimen name="font_size_menu_group_title">12sp</dimen>
+    <dimen name="font_size_menu_option_title">14sp</dimen>
     <dimen name="search_query_height">40dp</dimen>
     <dimen name="search_query_button_size">32dp</dimen>
     <dimen name="search_query_clear_button_touch_size">24dp</dimen>

@@ -3,10 +3,12 @@ package com.wrld.widgets.searchbox.view;
 
 import android.database.DataSetObserver;
 import android.support.v4.content.ContextCompat;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.widget.ExpandableListAdapter;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,7 +20,7 @@ import com.wrld.widgets.searchbox.model.SearchWidgetMenuModel;
 
 interface IMenuOptionViewHolder {
     void initialise(View view);
-    void populate(MenuOption option);
+    void populate(String text);
 }
 
 class MenuOptionViewFactory {
@@ -39,8 +41,8 @@ class MenuOptionViewFactory {
             m_title = (TextView) view.findViewById(R.id.searchbox_menu_item_text);
         }
 
-        public void populate(MenuOption option) {
-            m_title.setText(option.getText());
+        public void populate(String text) {
+            m_title.setText(text);
         }
     }
 
@@ -153,7 +155,7 @@ public class MenuViewAdapter implements ExpandableListAdapter {
             if (group.hasTitle()) {
                 if (expandableListViewGroupPosition == groupPosition) {
                     // Titles have no children and are not selectable.
-                    return null;
+                    return group;
                 }
                 expandableListViewGroupPosition++;
             }
@@ -205,27 +207,35 @@ public class MenuViewAdapter implements ExpandableListAdapter {
             convertView.setTag(viewHolder);
         }
 
-        MenuOption option = (MenuOption)getGroup(groupPosition);
-        ((IMenuOptionViewHolder)convertView.getTag()).populate(option);
+        Object expandableListViewGroup = getGroup(groupPosition);
+        if (MenuOption.class.isInstance(expandableListViewGroup)) {
+            MenuOption menuOption = (MenuOption)expandableListViewGroup;
+            ((IMenuOptionViewHolder) convertView.getTag()).populate(menuOption.getText());
 
-        ImageView arrow = (ImageView)convertView.findViewById(R.id.searchbox_menu_group_icon);
-        if (option.hasChildren()) {
-            arrow.setVisibility(View.VISIBLE);
-        }
-        else {
-            arrow.setVisibility(View.GONE);
-        }
+            ImageView arrow = (ImageView) convertView.findViewById(R.id.searchbox_menu_group_icon);
+            if (menuOption.hasChildren()) {
+                arrow.setVisibility(View.VISIBLE);
+            } else {
+                arrow.setVisibility(View.GONE);
+            }
 
-        TextView text = (TextView)convertView.findViewById(R.id.searchbox_menu_item_text);
-        if (isExpanded) {
-            convertView.setBackgroundColor(ContextCompat.getColor(convertView.getContext(), R.color.wrld_blue));
-            text.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.searchbox_background));
-            arrow.setRotation(270);
+            TextView text = (TextView) convertView.findViewById(R.id.searchbox_menu_item_text);
+            text.setTextSize(TypedValue.COMPLEX_UNIT_PX, convertView.getResources().getDimension(R.dimen.font_size_menu_option_title));
+            if (isExpanded) {
+                convertView.setBackgroundColor(ContextCompat.getColor(convertView.getContext(), R.color.wrld_blue));
+                text.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.searchbox_background));
+                arrow.setRotation(270);
+            } else {
+                convertView.setBackgroundColor(ContextCompat.getColor(convertView.getContext(), R.color.searchbox_background));
+                text.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.wrld_blue));
+                arrow.setRotation(0);
+            }
         }
-        else {
-            convertView.setBackgroundColor(ContextCompat.getColor(convertView.getContext(), R.color.searchbox_background));
-            text.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.wrld_blue));
-            arrow.setRotation(0);
+        else if (MenuGroup.class.isInstance(expandableListViewGroup)){
+            MenuGroup menuGroup = (MenuGroup)expandableListViewGroup;
+            ((IMenuOptionViewHolder) convertView.getTag()).populate(menuGroup.getTitle());
+            TextView text = (TextView) convertView.findViewById(R.id.searchbox_menu_item_text);
+            text.setTextSize(TypedValue.COMPLEX_UNIT_PX, convertView.getResources().getDimension(R.dimen.font_size_menu_group_title));
         }
 
         return convertView;

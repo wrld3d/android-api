@@ -23,6 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/search_menu_drop_down_group_text_area_height"
         android:layout_margin="@dimen/search_menu_drop_down_group_margin"
-        android:layout_toLeftOf="@id/searchbox_menu_group_icon" />
+        android:layout_toLeftOf="@id/searchbox_menu_group_icon"
+        android:textSize="@dimen/font_size_menu_option_title" />
 
 </RelativeLayout>
