@@ -13,4 +13,5 @@
     <color name="searchbox_divider_light">#B9C9E0</color>
     <color name="searchbox_divider_dark">#002B63</color>
     <color name="searchbox_no_results_warning_textcolor">#D1021A</color>
+    <color name="searchbox_menu_title_font">#202020</color>
 </resources>
