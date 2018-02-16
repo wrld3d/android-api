@@ -17,6 +17,7 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
         ExpandableListView.OnGroupExpandListener, ExpandableListView.OnGroupCollapseListener,
         OnMenuChangedListener {
 
+    private ImageButton m_openMenuButtonView;
     private View m_menuContainerView;
     private final MenuViewAdapter m_expandableListAdapter;
     private ExpandableListView m_expandableListView;
@@ -40,7 +41,8 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
         m_expandableListView.setOnGroupExpandListener(this);
         m_expandableListView.setOnGroupCollapseListener(this);
 
-        openMenuButtonView.setOnClickListener(new View.OnClickListener() {
+        m_openMenuButtonView = openMenuButtonView;
+        m_openMenuButtonView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 open();
             }
@@ -57,9 +59,11 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
         m_previousGroup = -1;
 
         updateVisibility();
+        updateMenuButtonVisibility();
     }
 
     public void open() {
+        if (!hasMenu()) { return; }
         m_isOpen = true;
         updateVisibility();
     }
@@ -69,12 +73,25 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
         updateVisibility();
     }
 
+    private boolean hasMenu() {
+        return !m_model.getGroups().isEmpty();
+    }
+
     private void updateVisibility() {
         if (m_isOpen) {
             m_menuContainerView.setVisibility(View.VISIBLE);
         }
         else {
             m_menuContainerView.setVisibility(View.GONE);
+        }
+    }
+
+    private void updateMenuButtonVisibility() {
+        if (hasMenu()) {
+            m_openMenuButtonView.setVisibility(View.VISIBLE);
+        }
+        else {
+            m_openMenuButtonView.setVisibility(View.GONE);
         }
     }
 
@@ -134,5 +151,6 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
     @Override
     public void onMenuChanged() {
         ((BaseAdapter) m_expandableListView.getAdapter()).notifyDataSetChanged();
+        updateMenuButtonVisibility();
     }
 }
