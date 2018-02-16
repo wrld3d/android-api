@@ -37,6 +37,12 @@
             android:text="@string/searchbox_menu_title" />
     </LinearLayout>
 
+    <View
+        android:id="@+id/group_divider"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="@color/searchbox_divider_dark" />
+
     <ExpandableListView
         android:id="@+id/searchbox_menu_groups"
         android:layout_width="match_parent"

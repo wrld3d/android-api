@@ -320,7 +320,7 @@ public class MenuViewAdapter implements ExpandableListAdapter {
     }
 
     private boolean requiresGroupDivider(int groupPosition) {
-        if (groupPosition < 0) { return false; }
+        if (groupPosition < 1) { return false; }
 
         int expandableListViewGroupPosition = 0;
         for (MenuGroup group : m_model.getGroups()) {
