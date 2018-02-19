@@ -34,8 +34,15 @@
             android:layout_marginStart="0dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
+            android:textColor="@color/search_widget_text_primary"
             android:text="@string/searchbox_menu_title" />
     </LinearLayout>
+
+    <View
+        android:id="@+id/group_divider"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="@color/search_widget_divider_dark" />
 
     <ExpandableListView
         android:id="@+id/searchbox_menu_groups"

@@ -91,6 +91,10 @@ public class WrldSearchWidget extends Fragment {
         return m_suggestionModel;
     }
 
+    public void setMenuTitle(String title) {
+        m_menuModel.setTitle(title);
+    }
+
     public void openMenu() {
         m_menuViewController.open();
     }
