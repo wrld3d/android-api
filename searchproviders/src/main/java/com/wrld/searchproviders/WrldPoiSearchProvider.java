@@ -115,11 +115,21 @@ public class WrldPoiSearchProvider extends SearchProviderBase {
         );
 
         // TODO: Check searchContext for tag searches
+        String tagContext = (String)searchContext;
+        if(tagContext != null) {
+            m_currentSearch = m_poiService.searchTag(
+                    new TagSearchOptions(tagContext, m_map.getCameraPosition().target)
+                            .number(20)
+                            .onPoiSearchCompletedListener(listener));
+        }
+        else {
+            m_currentSearch = m_poiService.searchText(
+                    new TextSearchOptions(Uri.encode(searchQuery), m_map.getCameraPosition().target)
+                            .number(20)
+                            .onPoiSearchCompletedListener(listener));
+        }
 
-        m_currentSearch = m_poiService.searchText(
-                new TextSearchOptions(Uri.encode(searchQuery), m_map.getCameraPosition().target)
-                        .number(20)
-                        .onPoiSearchCompletedListener(listener));
+
     }
 
     @Override

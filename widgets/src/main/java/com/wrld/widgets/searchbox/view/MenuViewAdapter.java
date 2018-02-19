@@ -221,12 +221,12 @@ public class MenuViewAdapter implements ExpandableListAdapter {
             TextView text = (TextView) convertView.findViewById(R.id.searchbox_menu_item_text);
             text.setTextSize(TypedValue.COMPLEX_UNIT_PX, convertView.getResources().getDimension(R.dimen.font_size_menu_option_title));
             if (isExpanded) {
-                convertView.setBackgroundColor(ContextCompat.getColor(convertView.getContext(), R.color.wrld_blue));
-                text.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.white));
+                convertView.setBackgroundColor(ContextCompat.getColor(convertView.getContext(), R.color.search_widget_menu_group_collapsed));
+                text.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.search_widget_menu_group_expanded));
                 arrow.setImageResource(R.drawable.expander_expanded);
             } else {
-                convertView.setBackgroundColor(ContextCompat.getColor(convertView.getContext(), R.color.white));
-                text.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.wrld_blue));
+                convertView.setBackgroundColor(ContextCompat.getColor(convertView.getContext(), R.color.search_widget_menu_group_expanded));
+                text.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.search_widget_menu_group_collapsed));
                 arrow.setImageResource(R.drawable.expander);
             }
         }

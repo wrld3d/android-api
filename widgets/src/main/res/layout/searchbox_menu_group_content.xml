@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
     android:layout_margin="@dimen/search_menu_drop_down_group_margin"
-    android:background="@color/off_white"
+    android:background="@color/search_widget_result_background"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -14,7 +14,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="@dimen/search_menu_drop_down_group_margin"
         android:layout_marginRight="@dimen/search_menu_drop_down_group_margin"
-        android:background="@color/white"
+        android:background="@color/search_widget_primary"
         android:orientation="vertical">
 
         <ImageView
@@ -59,6 +59,6 @@
         android:layout_marginLeft="@dimen/search_menu_drop_down_group_margin"
         android:layout_marginRight="@dimen/search_menu_drop_down_group_margin"
         android:layout_alignParentBottom="true"
-        android:background="@color/searchbox_divider_light"/>
+        android:background="@color/search_widget_divider_light"/>
 
 </RelativeLayout>

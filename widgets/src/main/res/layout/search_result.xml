@@ -12,7 +12,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@color/searchbox_background"
+        android:background="@color/search_widget_result_background"
         android:layout_below="@id/search_result_top_seperator"
         android:layout_alignWithParentIfMissing="true"
         android:layout_marginLeft="@dimen/search_padding"
@@ -36,7 +36,7 @@
             android:maxLines="1"
             android:ellipsize="end"
             android:textSize="@dimen/font_size_title"
-            android:textColor="@color/searchbox_autcomplete_list_header_font_matched"/>
+            android:textColor="@color/search_widget_text_primary"/>
 
         <TextView
             android:id="@+id/search_result_description"
@@ -47,7 +47,7 @@
             android:maxLines="1"
             android:ellipsize="end"
             android:textSize="@dimen/font_size_subtitle"
-            android:textColor="@color/searchbox_autcomplete_list_header_font_unmatched"/>
+            android:textColor="@color/search_widget_text_secondary"/>
 
     </RelativeLayout>
 
@@ -62,7 +62,7 @@
     <View android:id="@+id/search_result_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/searchbox_divider_light"
+        android:background="@color/search_widget_divider_light"
         android:layout_marginLeft="@dimen/search_padding"
         android:layout_marginRight="@dimen/search_padding"
         android:layout_alignParentBottom="true"/>

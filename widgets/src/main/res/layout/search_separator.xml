@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<View
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="4dp"
-    android:orientation="vertical"
-    android:background="@color/searchbox_autcomplete_list_header_background">
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:background="@color/searchbox_divider_dark"/>
-
-</LinearLayout>
+    android:background="@color/search_widget_divider_dark">
+</View>

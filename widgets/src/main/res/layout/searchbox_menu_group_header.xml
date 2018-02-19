@@ -5,14 +5,14 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
     android:layout_margin="@dimen/search_menu_drop_down_group_margin"
-    android:background="@color/searchbox_background"
+    android:background="@color/search_widget_result_background"
     android:orientation="vertical">
 
     <View
         android:id="@+id/group_divider"
         android:layout_width="match_parent"
         android:layout_height="4dp"
-        android:background="@color/searchbox_divider_dark" />
+        android:background="@color/search_widget_divider_dark" />
 
     <TextView
         android:id="@+id/searchbox_menu_item_text"
@@ -42,7 +42,7 @@
         android:layout_height="@dimen/search_menu_drop_down_item_divider_height"
         android:layout_marginLeft="@dimen/search_menu_drop_down_group_margin"
         android:layout_marginRight="@dimen/search_menu_drop_down_group_margin"
-        android:background="@color/searchbox_divider_light"
+        android:background="@color/search_widget_divider_light"
         android:layout_below="@+id/searchbox_menu_item_text" />
 
 </RelativeLayout>

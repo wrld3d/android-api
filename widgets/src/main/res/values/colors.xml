@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="wrld_blue">#0071BC</color>
-    <color name="white">#FFFFFF</color>
-    <color name="off_white">#F0F0F0</color>
-    <color name="searchbox_border">#0071BC</color>
-    <color name="searchbox_background">#FFFFFF</color>
-    <color name="searchbox_autcomplete_list_header_background">#F0F0F0</color>
-    <color name="searchbox_autcomplete_list_header_font_unmatched">#606060</color>
-    <color name="searchbox_autcomplete_list_header_font_matched">#202020</color>
-    <color name="searchbox_result_see_more_background">#F0F0F0</color>
-    <color name="searchbox_link">#0071bc</color>
-    <color name="searchbox_divider_light">#B9C9E0</color>
-    <color name="searchbox_divider_dark">#002B63</color>
-    <color name="searchbox_no_results_warning_textcolor">#D1021A</color>
+    <color name="search_widget_primary">#FFFFFF</color>
+    <color name="search_widget_secondary">#F0F0F0</color>
+    <color name="search_widget_searchbox">#FFFFFF</color>
+    <color name="search_widget_result_background">#FFFFFF</color>
+    <color name="search_widget_text_primary">#202020</color>
+    <color name="search_widget_text_secondary">#606060</color>
+    <color name="search_widget_link">#0071bc</color>
+    <color name="search_widget_warning">#D1021A</color>
+    <color name="search_widget_divider_light">#B9C9E0</color>
+    <color name="search_widget_divider_dark">#002B63</color>
+    <color name="search_widget_scrollbar">#1256B0</color>
+    <color name="search_widget_menu_group_expanded">#FFFFFF</color>
+    <color name="search_widget_menu_group_collapsed">#1256B0</color>
 </resources>

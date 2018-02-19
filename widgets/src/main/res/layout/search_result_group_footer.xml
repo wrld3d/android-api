@@ -7,7 +7,7 @@
     android:visibility="visible"
     android:gravity="center"
     android:padding="@dimen/search_results_more_margin"
-    android:background="@color/searchbox_result_see_more_background">
+    android:background="@color/search_widget_secondary">
 
     <ImageView
         android:id="@+id/searchbox_set_expand_button"
@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/search_results_text_area_height"
         android:textAlignment="textStart"
-        android:textColor="@color/searchbox_link"
+        android:textColor="@color/search_widget_link"
         android:gravity="center_vertical|start"
         android:layout_marginLeft="8dp"
         android:layout_gravity="center_vertical"/>
