@@ -17,7 +17,7 @@
         android:layout_height="@dimen/search_suggestions_result_icon_size"
         android:layout_marginRight="@dimen/search_suggestions_result_horizontal_padding"
         android:adjustViewBounds="true"
-        app:srcCompat="@android:drawable/ic_menu_search" />
+        android:src="@android:drawable/ic_menu_search" />
 
     <TextView
         android:id="@+id/search_result_title"

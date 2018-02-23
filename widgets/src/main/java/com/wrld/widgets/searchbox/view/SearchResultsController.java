@@ -8,12 +8,14 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 import com.wrld.widgets.R;
+import com.wrld.widgets.searchbox.model.SearchResultSelectedListener;
 import com.wrld.widgets.searchbox.model.SearchResultsListener;
 import com.wrld.widgets.searchbox.model.SearchResult;
 import com.wrld.widgets.searchbox.model.ObservableSearchResultsModel;
 import com.wrld.widgets.searchbox.model.SearchProviderQueryResult;
 import com.wrld.widgets.searchbox.model.SearchQuery;
 import com.wrld.widgets.searchbox.model.SearchQueryModel;
+import com.wrld.widgets.searchbox.model.SearchResultsModel;
 
 import java.util.List;
 import java.util.Locale;
@@ -21,7 +23,7 @@ import java.util.Locale;
 public class SearchResultsController implements SearchResultsListener, AdapterView.OnItemClickListener, View.OnFocusChangeListener {
 
     private final SearchQueryModel m_model;
-    private final ObservableSearchResultsModel m_searchResultsModel;
+    private final SearchResultsModel m_searchResultsModel;
     private View m_noResultsViewContainer;
     private SearchView m_searchView;
     private SearchViewFocusObserver m_searchViewFocusObserver;
@@ -30,8 +32,10 @@ public class SearchResultsController implements SearchResultsListener, AdapterVi
     private final SearchResultsAdapter m_adapter;
     private boolean m_resultsHidden;
 
+    private SearchResultSelectedListener m_searchResultSelectedListener;
+
     public SearchResultsController(SearchQueryModel searchModel,
-                                   ObservableSearchResultsModel searchResultsModel,
+                                   SearchResultsModel searchResultsModel,
                                    View viewRoot,
                                    SearchView searchView,
                                    SearchViewFocusObserver searchViewFocusObserver,
@@ -78,6 +82,18 @@ public class SearchResultsController implements SearchResultsListener, AdapterVi
         m_adapter.refresh(false);
     }
 
+    @Override
+    public void onSearchResultsSelected(SearchResult result) {
+
+        m_resultsHidden = true;
+        String hiddenResultsQueryString = String.format(Locale.getDefault(), "%s  (%d)",
+                m_model.getCurrentQuery().getQueryString(),
+                m_searchResultsModel.getTotalCurrentQueryResults());
+        m_searchView.clearFocus();
+        m_searchView.setQuery(hiddenResultsQueryString, false);
+        updateVisibility();
+    }
+
     private void updateVisibility() {
         boolean hasSearchResults = m_searchResultsModel.getTotalCurrentQueryResults() > 0;
         if(hasSearchResults && !m_resultsHidden) {
@@ -108,20 +124,9 @@ public class SearchResultsController implements SearchResultsListener, AdapterVi
             }
             else {
                 SearchResult searchResult = result.getResults()[providerIndex.second];
-                selectSearchResult(searchResult);
+                m_searchResultsModel.selectSearchResult(searchResult);
             }
         }
-    }
-
-    private void selectSearchResult(SearchResult searchResult) {
-        searchResult.select();
-        m_resultsHidden = true;
-        String hiddenResultsQueryString = String.format(Locale.getDefault(), "%s  (%d)",
-                m_model.getCurrentQuery().getQueryString(),
-                m_searchResultsModel.getTotalCurrentQueryResults());
-        m_searchView.clearFocus();
-        m_searchView.setQuery(hiddenResultsQueryString, false);
-        updateVisibility();
     }
 
     @Override

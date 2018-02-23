@@ -14,7 +14,7 @@
         android:layout_width="@dimen/search_results_more_icon_size"
         android:layout_height="@dimen/search_results_more_icon_size"
         android:visibility="visible"
-        app:srcCompat="@drawable/moreresults_butn" />
+        android:src="@drawable/moreresults_butn" />
 
     <TextView
         android:id="@+id/searchbox_set_expand_info"

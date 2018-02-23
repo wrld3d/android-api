@@ -6,4 +6,5 @@ public interface SearchResultsListener
 {
     void onSearchResultsRecieved(final SearchQuery query, final List<SearchProviderQueryResult> results);
     void onSearchResultsCleared();
+    void onSearchResultsSelected(final SearchResult result);
 }

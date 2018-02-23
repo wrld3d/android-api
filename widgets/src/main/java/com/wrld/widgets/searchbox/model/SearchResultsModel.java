@@ -41,6 +41,14 @@ public class SearchResultsModel implements ObservableSearchResultsModel {
         return total;
     }
 
+    public void selectSearchResult(SearchResult result) {
+        result.select();
+
+        for (SearchResultsListener listener : m_resultsListeners) {
+            listener.onSearchResultsSelected(result);
+        }
+    }
+
     public void addResultListener(SearchResultsListener listener)  {
         m_resultsListeners.add(listener);
     }

@@ -25,7 +25,7 @@
             android:layout_height="@dimen/search_query_button_size"
             android:layout_margin="@dimen/search_query_margin"
             android:layout_alignParentLeft="true"
-            app:srcCompat="@drawable/menu_btn"
+            android:src="@drawable/menu_btn"
             tools:text="Options" />
 
         <SearchView
@@ -40,7 +40,7 @@
             android:queryHint="@string/searchbox_query_hint" />
     </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/searchbox_search_results_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -59,12 +59,16 @@
             android:footerDividersEnabled="false"
             android:headerDividersEnabled="false"
             android:scrollbarFadeDuration="0"
+            android:scrollbarSize="@dimen/search_menu_scrollbar_width"
+            android:scrollbarThumbVertical="@color/search_widget_scrollbar"
             android:requiresFadingEdge="vertical"
             android:fadingEdgeLength="32dp"
             android:drawSelectorOnTop="true"
             android:fadeScrollbars="false"/>
 
-    </LinearLayout>
+        <include layout="@layout/search_separator"/>
+
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/searchbox_autocomplete_container"

@@ -23,7 +23,7 @@
             android:layout_margin="@dimen/search_menu_header_back_icon_margin"
             android:layout_marginRight="@dimen/search_menu_header_back_icon_title_margin"
             android:layout_marginEnd="@dimen/search_menu_header_back_icon_title_margin"
-            app:srcCompat="@drawable/back_btn" />
+            android:src="@drawable/back_btn" />
 
         <TextView
             android:id="@+id/searchbox_menu_title"

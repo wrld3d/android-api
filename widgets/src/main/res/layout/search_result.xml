@@ -11,7 +11,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:background="@color/search_widget_result_background"
         android:layout_below="@id/search_result_top_seperator"
         android:layout_alignWithParentIfMissing="true"
@@ -26,13 +26,13 @@
             android:layout_height="32dp"
             android:adjustViewBounds="true"
             android:layout_marginRight="8dp"
-            app:srcCompat="@android:drawable/ic_menu_search" />
+            android:src="@android:drawable/ic_menu_search" />
 
         <TextView
             android:id="@+id/search_result_title"
             android:layout_toRightOf="@id/search_result_icon"
             android:layout_width="match_parent"
-            android:layout_height="18dp"
+            android:layout_height="wrap_content"
             android:maxLines="1"
             android:ellipsize="end"
             android:textSize="@dimen/font_size_title"
@@ -43,7 +43,7 @@
             android:layout_toRightOf="@id/search_result_icon"
             android:layout_below="@id/search_result_title"
             android:layout_width="match_parent"
-            android:layout_height="14dp"
+            android:layout_height="wrap_content"
             android:maxLines="1"
             android:ellipsize="end"
             android:textSize="@dimen/font_size_subtitle"

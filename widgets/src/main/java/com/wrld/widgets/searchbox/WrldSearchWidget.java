@@ -1,9 +1,9 @@
 package com.wrld.widgets.searchbox;
 
+import android.app.Fragment;
 import android.app.SearchableInfo;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
