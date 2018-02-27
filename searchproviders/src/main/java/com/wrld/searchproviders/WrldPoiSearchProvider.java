@@ -68,7 +68,13 @@ public class WrldPoiSearchProvider extends SearchProviderBase {
                 SearchResult[] resultsArray = new SearchResult[results.size()];
                 for (int i = 0; i < results.size(); ++i) {
                     PoiSearchResult poi = results.get(i);
-                    PositionalSearchResult result = new PositionalSearchResult(poi.title, poi.latLng, poi.subtitle, poi.indoorId, poi.floorId);
+
+
+                    PositionalSearchResult result = new PositionalSearchResult(poi.title,
+                            poi.latLng,
+                            poi.subtitle,
+                            poi.indoorId,
+                            poi.floorId,
                     result.setSelectedListener(this);
                     resultsArray[i] = result;
 
