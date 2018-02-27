@@ -75,6 +75,7 @@ public class WrldPoiSearchProvider extends SearchProviderBase {
                             poi.subtitle,
                             poi.indoorId,
                             poi.floorId,
+                            android.R.drawable.ic_dialog_alert);
                     result.setSelectedListener(this);
                     resultsArray[i] = result;
 
