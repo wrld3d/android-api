@@ -43,4 +43,11 @@ public class SearchWidgetMenuModel {
             }
         }
     }
+
+    public void clearMenu() {
+        m_groups.clear();
+        if(m_listener != null) {
+            m_listener.onMenuChanged();
+        }
+    }
 }

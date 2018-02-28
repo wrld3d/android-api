@@ -109,6 +109,8 @@ public class WrldSearchWidget extends Fragment {
 
     public void removeMenuGroup(MenuGroup group) { m_menuModel.removeMenuGroup(group); }
 
+    public void clearMenu() { m_menuModel.clearMenu(); }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
