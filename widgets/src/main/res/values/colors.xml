@@ -6,6 +6,7 @@
     <color name="search_widget_result_background">#FFFFFF</color>
     <color name="search_widget_text_primary">#202020</color>
     <color name="search_widget_text_secondary">#606060</color>
+    <color name="search_widget_menu_child_text">#303030</color>
     <color name="search_widget_link">#0071bc</color>
     <color name="search_widget_warning">#D1021A</color>
     <color name="search_widget_divider_light">#B9C9E0</color>

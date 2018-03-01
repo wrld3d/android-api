@@ -67,15 +67,24 @@ class MenuChildViewFactory {
 
     private class MenuChildViewHolder implements IMenuChildViewHolder {
         private TextView m_title;
+        private ImageView m_icon;
 
         public MenuChildViewHolder(){}
 
         public void initialise(View view){
             m_title = (TextView) view.findViewById(R.id.searchbox_menu_item_text);
+            m_icon = (ImageView) view.findViewById(R.id.searchbox_menu_item_icon);
         }
 
         public void populate(MenuChild child) {
             m_title.setText(child.getText());
+            if(child.getIconResource() != null) {
+                m_icon.setImageResource(child.getIconResource());
+                m_icon.setVisibility(View.VISIBLE);
+            }
+            else {
+                m_icon.setVisibility(View.GONE);
+            }
         }
     }
 

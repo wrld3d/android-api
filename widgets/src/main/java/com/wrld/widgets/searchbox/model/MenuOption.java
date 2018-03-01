@@ -37,8 +37,8 @@ public class MenuOption {
         m_children = new ArrayList<MenuChild>();
     }
 
-    public void addChild(String text, String icon, Object context, final OnMenuOptionSelectedCallback callback) {
-        MenuChild child = new MenuChild(text, icon, context, callback);
+    public void addChild(String text, Integer iconResource, Object context, final OnMenuOptionSelectedCallback callback) {
+        MenuChild child = new MenuChild(text, iconResource, context, callback);
         m_children.add(child);
     }
 
