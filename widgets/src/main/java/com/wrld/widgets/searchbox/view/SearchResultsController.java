@@ -136,20 +136,24 @@ public class SearchResultsController implements SearchResultsListener,
     }
 
     private void minimizeResults() {
-        m_resultsHidden = true;
-        String hiddenResultsQueryString = String.format(Locale.getDefault(), "%s  (%d)",
-                m_model.getCurrentQuery().getQueryString(),
-                m_searchResultsModel.getTotalCurrentQueryResults());
-        m_searchView.clearFocus();
-        m_searchView.setQuery(hiddenResultsQueryString, false);
-        updateVisibility();
+        if(m_model.getCurrentQuery() != null) {
+            m_resultsHidden = true;
+            String hiddenResultsQueryString = String.format(Locale.getDefault(), "%s  (%d)",
+                    m_model.getCurrentQuery().getQueryString(),
+                    m_searchResultsModel.getTotalCurrentQueryResults());
+            m_searchView.clearFocus();
+            m_searchView.setQuery(hiddenResultsQueryString, false);
+            updateVisibility();
+        }
     }
 
     private void maximizeResults() {
-        m_resultsHidden = false;
-        String originalQueryString = m_model.getCurrentQuery().getQueryString();
-        m_searchView.setQuery(originalQueryString, false);
-        updateVisibility();
+        if(m_model.getCurrentQuery() != null) {
+            m_resultsHidden = false;
+            String originalQueryString = m_model.getCurrentQuery().getQueryString();
+            m_searchView.setQuery(originalQueryString, false);
+            updateVisibility();
+        }
     }
 
     @Override
