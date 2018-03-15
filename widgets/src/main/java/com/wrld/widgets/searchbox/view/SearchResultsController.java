@@ -16,11 +16,15 @@ import com.wrld.widgets.searchbox.model.SearchProviderQueryResult;
 import com.wrld.widgets.searchbox.model.SearchQuery;
 import com.wrld.widgets.searchbox.model.SearchQueryModel;
 import com.wrld.widgets.searchbox.model.SearchResultsModel;
+import com.wrld.widgets.searchbox.model.SearchWidgetMenuModel;
 
 import java.util.List;
 import java.util.Locale;
 
-public class SearchResultsController implements SearchResultsListener, AdapterView.OnItemClickListener, View.OnFocusChangeListener {
+public class SearchResultsController implements SearchResultsListener,
+        AdapterView.OnItemClickListener,
+        View.OnFocusChangeListener,
+        OnMenuViewChangedListener {
 
     private final SearchQueryModel m_model;
     private final SearchResultsModel m_searchResultsModel;
@@ -61,6 +65,7 @@ public class SearchResultsController implements SearchResultsListener, AdapterVi
         m_searchViewFocusObserver = searchViewFocusObserver;
         m_searchViewFocusObserver.addListener(this);
 
+
         updateVisibility();
     }
 
@@ -84,14 +89,7 @@ public class SearchResultsController implements SearchResultsListener, AdapterVi
 
     @Override
     public void onSearchResultsSelected(SearchResult result) {
-
-        m_resultsHidden = true;
-        String hiddenResultsQueryString = String.format(Locale.getDefault(), "%s  (%d)",
-                m_model.getCurrentQuery().getQueryString(),
-                m_searchResultsModel.getTotalCurrentQueryResults());
-        m_searchView.clearFocus();
-        m_searchView.setQuery(hiddenResultsQueryString, false);
-        updateVisibility();
+        minimizeResults();
     }
 
     private void updateVisibility() {
@@ -133,10 +131,34 @@ public class SearchResultsController implements SearchResultsListener, AdapterVi
     public void onFocusChange(View view, boolean hasFocus) {
         if(m_resultsHidden && hasFocus && m_model.getCurrentQuery() != null) {
 
-            m_resultsHidden = false;
-            String originalQueryString = m_model.getCurrentQuery().getQueryString();
-            m_searchView.setQuery(originalQueryString, false);
-            updateVisibility();
+            maximizeResults();
         }
+    }
+
+    private void minimizeResults() {
+        m_resultsHidden = true;
+        String hiddenResultsQueryString = String.format(Locale.getDefault(), "%s  (%d)",
+                m_model.getCurrentQuery().getQueryString(),
+                m_searchResultsModel.getTotalCurrentQueryResults());
+        m_searchView.clearFocus();
+        m_searchView.setQuery(hiddenResultsQueryString, false);
+        updateVisibility();
+    }
+
+    private void maximizeResults() {
+        m_resultsHidden = false;
+        String originalQueryString = m_model.getCurrentQuery().getQueryString();
+        m_searchView.setQuery(originalQueryString, false);
+        updateVisibility();
+    }
+
+    @Override
+    public void onMenuOpened() {
+        minimizeResults();
+    }
+
+    @Override
+    public void onMenuClosed() {
+
     }
 }

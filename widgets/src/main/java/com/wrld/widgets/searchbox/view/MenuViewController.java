@@ -20,18 +20,23 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
 
     private ImageButton m_openMenuButtonView;
     private View m_menuContainerView;
+    private OnMenuViewChangedListener m_menuViewChangedListener;
     private final MenuViewAdapter m_expandableListAdapter;
     private ExpandableListView m_expandableListView;
     private SearchWidgetMenuModel m_model;
     private boolean m_isOpen;
     private int m_previousGroup;
 
-    public MenuViewController(SearchWidgetMenuModel model, View view, ImageButton openMenuButtonView) {
+    public MenuViewController(SearchWidgetMenuModel model,
+                              View view,
+                              ImageButton openMenuButtonView,
+                              OnMenuViewChangedListener menuViewChangedListener) {
         m_model = model;
 
         m_model.setListener(this);
 
         m_menuContainerView = view;
+        m_menuViewChangedListener = menuViewChangedListener;
 
         m_expandableListView = (ExpandableListView)m_menuContainerView.findViewById(R.id.searchbox_menu_groups);;
         m_expandableListAdapter = new MenuViewAdapter(m_model, LayoutInflater.from(m_expandableListView.getContext()));
@@ -67,11 +72,17 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
     public void open() {
         if (!hasMenu()) { return; }
         m_isOpen = true;
+        if(m_menuViewChangedListener != null) {
+            m_menuViewChangedListener.onMenuOpened();
+        }
         updateVisibility();
     }
 
     public void close() {
         m_isOpen = false;
+        if(m_menuViewChangedListener != null) {
+            m_menuViewChangedListener.onMenuClosed();
+        }
         updateVisibility();
     }
 

@@ -129,8 +129,8 @@ public class WrldSearchWidget extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        initialiseMenu();
         initialiseSearch();
+        initialiseMenu();
     }
 
     @Override
@@ -183,6 +183,9 @@ public class WrldSearchWidget extends Fragment {
         View menuView = ((ViewStub)getView().findViewById(R.id.searchbox_menu_container_stub)).inflate();
 
         m_menuModel = new SearchWidgetMenuModel();
-        m_menuViewController = new MenuViewController(m_menuModel, menuView, openMenuButtonView);
+        m_menuViewController = new MenuViewController(m_menuModel,
+                menuView,
+                openMenuButtonView,
+                m_searchResultsController);
     }
 }
