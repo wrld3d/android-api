@@ -49,6 +49,8 @@ public class SearchQueryModel implements SearchQueryListener, ObservableSearchQu
     }
 
     public final SearchQuery getCurrentQuery() { return m_currentQuery; }
+    public String getCurrentQueryText() { return m_currentQuery != null ? m_currentQuery.getQueryString() : null; }
+    public Object getCurrentQueryContext() { return m_currentQuery != null ? m_currentQuery.getQueryContext() : null; }
 
     public void addSearchProvider(SearchProvider provider)
     {

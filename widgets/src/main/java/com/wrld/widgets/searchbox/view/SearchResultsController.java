@@ -76,13 +76,16 @@ public class SearchResultsController implements SearchResultsListener,
 
     @Override
     public void onSearchResultsRecieved(SearchQuery query, List<SearchProviderQueryResult> results) {
-        m_resultsHidden = false;
+        if(m_resultsHidden) {
+            minimizeResults();
+        }
         updateVisibility();
         m_adapter.refresh(true);
     }
 
     @Override
     public void onSearchResultsCleared() {
+        m_resultsHidden = false;
         updateVisibility();
         m_adapter.refresh(false);
     }
