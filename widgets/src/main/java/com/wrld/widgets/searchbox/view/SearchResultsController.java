@@ -34,9 +34,12 @@ public class SearchResultsController implements SearchResultsListener,
     private final View m_viewRoot;
     private final ListView m_listView;
     private final SearchResultsAdapter m_adapter;
+
     private boolean m_resultsHidden;
+    private boolean m_menuOpened;
 
     private SearchResultSelectedListener m_searchResultSelectedListener;
+
 
     public SearchResultsController(SearchQueryModel searchModel,
                                    SearchResultsModel searchResultsModel,
@@ -60,6 +63,7 @@ public class SearchResultsController implements SearchResultsListener,
         m_listView.setAdapter(m_adapter);
 
         m_resultsHidden = false;
+        m_menuOpened = false;
 
         m_searchView = searchView;
         m_searchViewFocusObserver = searchViewFocusObserver;
@@ -97,7 +101,7 @@ public class SearchResultsController implements SearchResultsListener,
 
     private void updateVisibility() {
         boolean hasSearchResults = m_searchResultsModel.getTotalCurrentQueryResults() > 0;
-        if(hasSearchResults && !m_resultsHidden) {
+        if(hasSearchResults && !m_resultsHidden && !m_menuOpened) {
             m_viewRoot.setVisibility(View.VISIBLE);
             m_noResultsViewContainer.setVisibility(View.GONE);
         }
@@ -160,11 +164,11 @@ public class SearchResultsController implements SearchResultsListener,
 
     @Override
     public void onMenuOpened() {
-        minimizeResults();
+        m_menuOpened = true;
     }
 
     @Override
     public void onMenuClosed() {
-
+        m_menuOpened = false;
     }
 }
