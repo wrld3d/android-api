@@ -91,6 +91,9 @@ public class WrldSearchWidget extends Fragment {
         return m_suggestionModel;
     }
 
+    public void hideSearchResults() { m_searchResultsController.minimizeResults(); }
+    public void showSearchResults() { m_searchResultsController.maximizeResults(); }
+
     public void setMenuTitle(String title) {
         m_menuModel.setTitle(title);
     }
@@ -143,6 +146,7 @@ public class WrldSearchWidget extends Fragment {
     }
 
     private void initialiseSearch() {
+
         m_searchResultsModel = new SearchResultsModel();
         m_searchModel = new SearchQueryModel(m_searchResultsModel);
         m_suggestionResultsModel = new SearchResultsModel();

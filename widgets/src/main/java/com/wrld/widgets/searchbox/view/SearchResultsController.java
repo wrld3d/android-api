@@ -133,14 +133,13 @@ public class SearchResultsController implements SearchResultsListener,
     @Override
     public void onFocusChange(View view, boolean hasFocus) {
         if(m_resultsHidden && hasFocus && m_model.getCurrentQuery() != null) {
-
             maximizeResults();
         }
     }
 
-    private void minimizeResults() {
+    public void minimizeResults() {
+        m_resultsHidden = true;
         if(m_model.getCurrentQuery() != null) {
-            m_resultsHidden = true;
             String hiddenResultsQueryString = String.format(Locale.getDefault(), "%s  (%d)",
                     m_model.getCurrentQuery().getQueryString(),
                     m_searchResultsModel.getTotalCurrentQueryResults());
@@ -150,9 +149,9 @@ public class SearchResultsController implements SearchResultsListener,
         }
     }
 
-    private void maximizeResults() {
+    public void maximizeResults() {
+        m_resultsHidden = false;
         if(m_model.getCurrentQuery() != null) {
-            m_resultsHidden = false;
             String originalQueryString = m_model.getCurrentQuery().getQueryString();
             m_searchView.setQuery(originalQueryString, false);
             updateVisibility();
