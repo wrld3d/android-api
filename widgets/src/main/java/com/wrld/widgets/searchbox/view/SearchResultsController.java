@@ -165,10 +165,12 @@ public class SearchResultsController implements SearchResultsListener,
     @Override
     public void onMenuOpened() {
         m_menuOpened = true;
+        updateVisibility();
     }
 
     @Override
     public void onMenuClosed() {
         m_menuOpened = false;
+        updateVisibility();
     }
 }
