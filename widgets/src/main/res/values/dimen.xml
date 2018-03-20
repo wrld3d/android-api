@@ -51,6 +51,8 @@
     <dimen name="search_suggestions_shadow_size">4dp</dimen>
     <dimen name="search_suggestions_set_vertical_spacing">4dp</dimen>
     <dimen name="search_suggestions_set_bottom_padding">8dp</dimen>
+    <dimen name="search_spinner_icon_size">16dp</dimen>
+    <dimen name="search_spinner_icon_margin">16dp</dimen>
     <integer name="suggestion_animate_in_duration_in_ms">100</integer>
     <integer name="suggestion_animate_out_duration_in_ms">100</integer>
     <integer name="search_result_animate_in_duration_in_ms">100</integer>

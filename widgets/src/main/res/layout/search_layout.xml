@@ -38,6 +38,30 @@
             android:baselineAligned="false"
             android:iconifiedByDefault="false"
             android:queryHint="@string/searchbox_query_hint" />
+
+        <RelativeLayout
+            android:id="@+id/searchbox_search_spinner_container"
+            android:layout_width="@dimen/search_spinner_icon_size"
+            android:layout_height="@dimen/search_spinner_icon_size"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/search_spinner_icon_margin">
+
+            <RelativeLayout
+                android:layout_width="@dimen/search_spinner_icon_size"
+                android:layout_height="@dimen/search_spinner_icon_size"
+                android:background="@color/search_widget_searchbox"/>
+
+            <ProgressBar
+                android:layout_width="@dimen/search_spinner_icon_size"
+                android:layout_height="@dimen/search_spinner_icon_size"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/search_widget_link"
+                android:indeterminateTintMode="multiply"/>
+
+        </RelativeLayout>
+
+
     </RelativeLayout>
 
     <RelativeLayout
@@ -134,31 +158,6 @@
         </LinearLayout>
 
 
-
-    </LinearLayout>
-
-    <LinearLayout android:id="@+id/searchbox_search_spinner_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/searchbox_search_container"
-        android:background="@color/search_widget_primary"
-        android:orientation="vertical"
-        android:elevation="8dp">
-
-        <include layout="@layout/search_separator"/>
-
-        <View android:layout_width="match_parent"
-            android:layout_height="8dp"
-            android:scaleY="-1"
-            android:background="@drawable/gradientshadow"/>
-
-        <ProgressBar
-            android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:layout_margin="@dimen/search_padding"
-            android:indeterminate="true"
-            android:indeterminateTint="@color/search_widget_link"
-            android:indeterminateTintMode="multiply"/>
 
     </LinearLayout>
 
