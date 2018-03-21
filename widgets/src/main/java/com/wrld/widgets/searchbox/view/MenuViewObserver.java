@@ -15,13 +15,13 @@ public class MenuViewObserver implements MenuViewListener {
         m_listeners = new ArrayList<>();
     }
 
-    void addMenuListener(MenuViewListener listener) {
+    public void addMenuListener(MenuViewListener listener) {
         if(listener != null) {
             m_listeners.add(listener);
         }
     }
 
-    void removeMenuListener(MenuViewListener listener) {
+    public void removeMenuListener(MenuViewListener listener) {
         if(listener != null && m_listeners.contains(listener)) {
             m_listeners.remove(listener);
         }
