@@ -95,7 +95,7 @@ public class SearchResultsController implements SearchResultsListener,
 
     @Override
     public void onSearchResultsCleared() {
-        m_resultsHidden = false;
+        maximizeResults();
         updateVisibility();
         m_adapter.refresh(false);
     }
