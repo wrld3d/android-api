@@ -8,6 +8,8 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 import com.wrld.widgets.R;
+import com.wrld.widgets.searchbox.model.MenuChild;
+import com.wrld.widgets.searchbox.model.MenuOption;
 import com.wrld.widgets.searchbox.model.SearchResultSelectedListener;
 import com.wrld.widgets.searchbox.model.SearchResultsListener;
 import com.wrld.widgets.searchbox.model.SearchResult;
@@ -23,8 +25,7 @@ import java.util.Locale;
 
 public class SearchResultsController implements SearchResultsListener,
         AdapterView.OnItemClickListener,
-        View.OnFocusChangeListener,
-        OnMenuViewChangedListener {
+        View.OnFocusChangeListener, MenuViewListener {
 
     private final SearchQueryModel m_model;
     private final SearchResultsModel m_searchResultsModel;
@@ -34,22 +35,24 @@ public class SearchResultsController implements SearchResultsListener,
     private final View m_viewRoot;
     private final ListView m_listView;
     private final SearchResultsAdapter m_adapter;
+    private SearchResultsViewObserver m_viewObserver;
+    private MenuViewObserver m_menuViewObserver;
 
     private boolean m_resultsHidden;
     private boolean m_menuOpened;
-
-    private SearchResultSelectedListener m_searchResultSelectedListener;
-
 
     public SearchResultsController(SearchQueryModel searchModel,
                                    SearchResultsModel searchResultsModel,
                                    View viewRoot,
                                    SearchView searchView,
                                    SearchViewFocusObserver searchViewFocusObserver,
-                                   View noResultsViewContainer)
+                                   View noResultsViewContainer,
+                                   SearchResultsViewObserver viewObserver,
+                                   MenuViewObserver menuViewObserver)
     {
         m_model = searchModel;
         m_searchResultsModel = searchResultsModel;
+        m_viewObserver = viewObserver;
         m_noResultsViewContainer = noResultsViewContainer;
 
         m_searchResultsModel.addResultListener(this);
@@ -69,11 +72,14 @@ public class SearchResultsController implements SearchResultsListener,
         m_searchViewFocusObserver = searchViewFocusObserver;
         m_searchViewFocusObserver.addListener(this);
 
+        m_menuViewObserver = menuViewObserver;
+        m_menuViewObserver.addMenuListener(this);
 
         updateVisibility();
     }
 
     public void clean() {
+        m_menuViewObserver.removeMenuListener(this);
         m_searchViewFocusObserver.removeListener(this);
         m_searchResultsModel.removeResultListener(this);
     }
@@ -142,7 +148,11 @@ public class SearchResultsController implements SearchResultsListener,
     }
 
     public void minimizeResults() {
-        m_resultsHidden = true;
+        if(!m_resultsHidden) {
+            m_resultsHidden = true;
+            m_viewObserver.onSearchResultsHidden();
+        }
+
         if(m_model.getCurrentQuery() != null) {
             String hiddenResultsQueryString = String.format(Locale.getDefault(), "%s  (%d)",
                     m_model.getCurrentQuery().getQueryString(),
@@ -154,7 +164,11 @@ public class SearchResultsController implements SearchResultsListener,
     }
 
     public void maximizeResults() {
-        m_resultsHidden = false;
+        if(m_resultsHidden) {
+            m_resultsHidden = false;
+            m_viewObserver.onSearchResultsShown();
+        }
+
         if(m_model.getCurrentQuery() != null) {
             String originalQueryString = m_model.getCurrentQuery().getQueryString();
             m_searchView.setQuery(originalQueryString, false);
@@ -163,14 +177,34 @@ public class SearchResultsController implements SearchResultsListener,
     }
 
     @Override
-    public void onMenuOpened() {
+    public void onOpened() {
         m_menuOpened = true;
         updateVisibility();
     }
 
     @Override
-    public void onMenuClosed() {
+    public void onClosed() {
         m_menuOpened = false;
         updateVisibility();
+    }
+
+    @Override
+    public void onOptionExpanded(MenuOption option) {
+
+    }
+
+    @Override
+    public void onOptionCollapsed(MenuOption option) {
+
+    }
+
+    @Override
+    public void onOptionSelected(MenuOption option) {
+
+    }
+
+    @Override
+    public void onChildSelected(MenuChild option) {
+
     }
 }

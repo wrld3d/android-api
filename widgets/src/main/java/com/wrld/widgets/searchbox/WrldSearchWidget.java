@@ -24,7 +24,9 @@ import com.wrld.widgets.searchbox.model.SearchWidgetMenuModel;
 import com.wrld.widgets.searchbox.model.SearchQueryModel;
 import com.wrld.widgets.searchbox.model.SuggestionQueryModel;
 import com.wrld.widgets.searchbox.view.MenuViewController;
+import com.wrld.widgets.searchbox.view.MenuViewObserver;
 import com.wrld.widgets.searchbox.view.SearchResultsController;
+import com.wrld.widgets.searchbox.view.SearchResultsViewObserver;
 import com.wrld.widgets.searchbox.view.SearchViewController;
 import com.wrld.widgets.searchbox.view.SearchViewFocusObserver;
 import com.wrld.widgets.searchbox.view.SuggestionResultsController;
@@ -39,8 +41,11 @@ public class WrldSearchWidget extends Fragment {
     private SearchViewController m_searchViewController;
     private SuggestionResultsController m_searchSuggestionResultsController;
     private SearchResultsController m_searchResultsController;
+    private SearchResultsViewObserver m_searchResultsViewObserver;
+    private SearchViewFocusObserver m_searchViewFocusObserver;
 
     private SearchWidgetMenuModel m_menuModel;
+    private MenuViewObserver m_menuViewObserver;
     private MenuViewController m_menuViewController;
 
     public WrldSearchWidget() {
@@ -106,6 +111,8 @@ public class WrldSearchWidget extends Fragment {
         m_menuViewController.close();
     }
 
+    public boolean isMenuOpen() { return m_menuViewController.isMenuOpen(); }
+
     public void addMenuGroup(MenuGroup group) {
         m_menuModel.addMenuGroup(group);
     }
@@ -113,6 +120,12 @@ public class WrldSearchWidget extends Fragment {
     public void removeMenuGroup(MenuGroup group) { m_menuModel.removeMenuGroup(group); }
 
     public void clearMenu() { m_menuModel.clearMenu(); }
+
+    public MenuViewObserver getMenuViewObserver() { return m_menuViewObserver; }
+
+    public SearchViewFocusObserver getSearchViewFocusObserver() { return m_searchViewFocusObserver; }
+
+    public SearchResultsViewObserver getSearchResultsViewObserver() { return m_searchResultsViewObserver; }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -132,8 +145,8 @@ public class WrldSearchWidget extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        initialiseSearch();
         initialiseMenu();
+        initialiseSearch();
     }
 
     @Override
@@ -158,7 +171,7 @@ public class WrldSearchWidget extends Fragment {
         View noResultsViewContainer = getView().findViewById(R.id.searchbox_no_results_container);
         View spinnerView = getView().findViewById(R.id.searchbox_search_spinner_container);
 
-        SearchViewFocusObserver m_searchViewFocusObserver = new SearchViewFocusObserver(searchView);
+        m_searchViewFocusObserver = new SearchViewFocusObserver(searchView);
         m_searchViewController = new SearchViewController(m_searchModel,
                 m_suggestionModel,
                 searchView,
@@ -172,13 +185,17 @@ public class WrldSearchWidget extends Fragment {
                 searchView,
                 m_searchViewFocusObserver);
 
+        m_searchResultsViewObserver = new SearchResultsViewObserver();
+
         m_searchResultsController = new SearchResultsController(
                 m_searchModel,
                 m_searchResultsModel,
                 searchResultsViewContainer,
                 searchView,
                 m_searchViewFocusObserver,
-                noResultsViewContainer);
+                noResultsViewContainer,
+                m_searchResultsViewObserver,
+                m_menuViewObserver);
     }
 
     private void initialiseMenu() {
@@ -187,9 +204,10 @@ public class WrldSearchWidget extends Fragment {
         View menuView = ((ViewStub)getView().findViewById(R.id.searchbox_menu_container_stub)).inflate();
 
         m_menuModel = new SearchWidgetMenuModel();
+        m_menuViewObserver = new MenuViewObserver();
         m_menuViewController = new MenuViewController(m_menuModel,
                 menuView,
                 openMenuButtonView,
-                m_searchResultsController);
+                m_menuViewObserver);
     }
 }

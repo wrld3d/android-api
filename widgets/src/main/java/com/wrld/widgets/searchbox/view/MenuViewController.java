@@ -20,7 +20,7 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
 
     private ImageButton m_openMenuButtonView;
     private View m_menuContainerView;
-    private OnMenuViewChangedListener m_menuViewChangedListener;
+    private MenuViewObserver m_menuViewObserver;
     private final MenuViewAdapter m_expandableListAdapter;
     private ExpandableListView m_expandableListView;
     private SearchWidgetMenuModel m_model;
@@ -30,13 +30,13 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
     public MenuViewController(SearchWidgetMenuModel model,
                               View view,
                               ImageButton openMenuButtonView,
-                              OnMenuViewChangedListener menuViewChangedListener) {
+                              MenuViewObserver menuViewObserver) {
         m_model = model;
 
         m_model.setListener(this);
 
         m_menuContainerView = view;
-        m_menuViewChangedListener = menuViewChangedListener;
+        m_menuViewObserver = menuViewObserver;
 
         m_expandableListView = (ExpandableListView)m_menuContainerView.findViewById(R.id.searchbox_menu_groups);;
         m_expandableListAdapter = new MenuViewAdapter(m_model, LayoutInflater.from(m_expandableListView.getContext()));
@@ -72,19 +72,17 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
     public void open() {
         if (!hasMenu()) { return; }
         m_isOpen = true;
-        if(m_menuViewChangedListener != null) {
-            m_menuViewChangedListener.onMenuOpened();
-        }
+        m_menuViewObserver.onOpened();
         updateVisibility();
     }
 
     public void close() {
         m_isOpen = false;
-        if(m_menuViewChangedListener != null) {
-            m_menuViewChangedListener.onMenuClosed();
-        }
+        m_menuViewObserver.onClosed();
         updateVisibility();
     }
+
+    public boolean isMenuOpen() { return m_isOpen; }
 
     private boolean hasMenu() {
         return !m_model.getGroups().isEmpty();
@@ -117,6 +115,7 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
         MenuChild child = (MenuChild)m_expandableListAdapter.getChild(groupPosition, childPosition);
         if (child != null) {
             boolean closeMenu = child.executeCallback();
+            m_menuViewObserver.onChildSelected(child);
             if (closeMenu) {
                 close();
             }
@@ -132,9 +131,11 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
             MenuOption menuOption = (MenuOption)expandableListViewGroup;
             if (!menuOption.hasChildren()) {
                 boolean closeMenu = menuOption.executeOnSelectCallback();
+                m_menuViewObserver.onOptionSelected(menuOption);
                 if (closeMenu) {
                     close();
                 }
+
                 return true;
             }
         }
@@ -154,6 +155,7 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
         Object expandableListViewGroup = m_expandableListAdapter.getGroup(groupPosition);
         if (MenuOption.class.isInstance(expandableListViewGroup)) {
             ((MenuOption)expandableListViewGroup).executeOnExpandCallback();
+            m_menuViewObserver.onOptionExpanded((MenuOption)expandableListViewGroup);
         }
     }
 
@@ -162,6 +164,7 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
         Object expandableListViewGroup = m_expandableListAdapter.getGroup(groupPosition);
         if (MenuOption.class.isInstance(expandableListViewGroup)) {
             ((MenuOption)expandableListViewGroup).executeOnCollapseCallback();
+            m_menuViewObserver.onOptionCollapsed((MenuOption)expandableListViewGroup);
         }
     }
 
