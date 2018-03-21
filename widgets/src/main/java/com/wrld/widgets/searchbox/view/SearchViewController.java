@@ -14,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.wrld.widgets.searchbox.model.MenuChild;
+import com.wrld.widgets.searchbox.model.MenuOption;
 import com.wrld.widgets.searchbox.model.SearchQueryModelListener;
 import com.wrld.widgets.searchbox.model.SearchProviderQueryResult;
 import com.wrld.widgets.searchbox.model.SearchQuery;
@@ -22,12 +24,13 @@ import com.wrld.widgets.searchbox.model.SuggestionQueryModel;
 
 import java.util.List;
 
-public class SearchViewController implements SearchView.OnQueryTextListener, SearchQueryModelListener, View.OnClickListener {
+public class SearchViewController implements SearchView.OnQueryTextListener, SearchQueryModelListener, View.OnClickListener, MenuViewListener {
 
     private SearchView m_view;
     private SearchQueryModel m_searchModel;
     private SuggestionQueryModel m_suggestionModel;
     private SearchViewFocusObserver m_searchViewFocusObserver;
+    private MenuViewObserver m_menuViewObserver;
     private View m_spinnerView;
     private ImageView m_clearButton;
 
@@ -35,11 +38,14 @@ public class SearchViewController implements SearchView.OnQueryTextListener, Sea
                                 SuggestionQueryModel suggestionModel,
                                 SearchView view,
                                 SearchViewFocusObserver searchViewFocusObserver,
-                                View spinnerView)
+                                View spinnerView,
+                                MenuViewObserver menuViewObserver)
     {
         m_searchModel = searchModel;
         m_suggestionModel = suggestionModel;
         m_searchViewFocusObserver = searchViewFocusObserver;
+        m_menuViewObserver = menuViewObserver;
+
         m_searchModel.addListener(this);
 
         m_view = view;
@@ -51,10 +57,12 @@ public class SearchViewController implements SearchView.OnQueryTextListener, Sea
         hideSpinner();
 
         m_clearButton.setOnClickListener(this);
+        m_menuViewObserver.addMenuListener(this);
 
     }
 
     public void clean() {
+        m_menuViewObserver.removeMenuListener(this);
         m_searchModel.removeListener(this);
     }
 
@@ -221,5 +229,35 @@ public class SearchViewController implements SearchView.OnQueryTextListener, Sea
 
     public void setSearchableInfo(SearchableInfo searchableInfo) {
         m_view.setSearchableInfo(searchableInfo);
+    }
+
+    @Override
+    public void onOpened() {
+        m_view.clearFocus();
+    }
+
+    @Override
+    public void onClosed() {
+
+    }
+
+    @Override
+    public void onOptionExpanded(MenuOption option) {
+
+    }
+
+    @Override
+    public void onOptionCollapsed(MenuOption option) {
+
+    }
+
+    @Override
+    public void onOptionSelected(MenuOption option) {
+
+    }
+
+    @Override
+    public void onChildSelected(MenuChild option) {
+
     }
 }

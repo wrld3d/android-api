@@ -1,6 +1,7 @@
 <resources>
     <string name="default_search_title">Search Results</string>
-    <string name="search_shared_results_info">More %1$s places (%2$s) results</string>
+    <string name="search_see_more_results">See more %1$s results (%2$d)</string>
+    <string name="search_see_less_results">Back</string>
     <string name="search_expanded_results_info">Results %1$s of %1$s</string>
     <string name="search_expanded_results_count">(%1$s) results</string>
     <string name="searchbox_query_hint">Search the WRLD</string>

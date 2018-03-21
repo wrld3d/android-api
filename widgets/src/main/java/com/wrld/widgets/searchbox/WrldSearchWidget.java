@@ -176,7 +176,9 @@ public class WrldSearchWidget extends Fragment {
                 m_suggestionModel,
                 searchView,
                 m_searchViewFocusObserver,
-                spinnerView);
+                spinnerView,
+                m_menuViewObserver);
+
         m_searchSuggestionResultsController = new SuggestionResultsController(
                 m_suggestionModel,
                 m_suggestionResultsModel,

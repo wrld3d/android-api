@@ -33,12 +33,14 @@ public class SearchResultFooterViewFactory {
         }
 
         public void showCollapse() {
-            m_title.setText("Back");
+            String collapsedText = m_iconView.getResources().getString(R.string.search_see_less_results);
+            m_title.setText(collapsedText);
             m_iconView.setImageResource(R.drawable.back_btn);
         }
 
         public void showExpand(int hiddenResults, String providerName) {
-            m_title.setText("See more " + providerName + " (" + hiddenResults + ") results");
+            String expandedText = m_iconView.getResources().getString(R.string.search_see_more_results, providerName, hiddenResults);
+            m_title.setText(expandedText);
             m_iconView.setImageResource(R.drawable.moreresults_butn);
         }
     }
