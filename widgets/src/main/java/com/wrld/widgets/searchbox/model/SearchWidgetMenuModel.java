@@ -25,18 +25,28 @@ public class SearchWidgetMenuModel {
 
     public void setTitle(String title) {
         m_title = title;
-        m_listener.onMenuTitleChanged();
+        if(m_listener != null) {
+            m_listener.onMenuTitleChanged();
+        }
     }
 
     public void addMenuGroup(MenuGroup group) {
-        m_groups.add(group);
-        if (m_listener != null) {
-            m_listener.onMenuChanged();
+        if(!m_groups.contains(group)) {
+            group.setChangedListener(m_listener);
+            m_groups.add(group);
+            if (m_listener != null) {
+                m_listener.onMenuChanged();
+            }
         }
+    }
+
+    public MenuGroup getGroupAt(int index) {
+        return m_groups.get(index);
     }
 
     public void removeMenuGroup(MenuGroup group) {
         if(m_groups.contains(group)) {
+            group.setChangedListener(null);
             m_groups.remove(group);
             if(m_listener != null) {
                 m_listener.onMenuChanged();
@@ -45,6 +55,9 @@ public class SearchWidgetMenuModel {
     }
 
     public void clearMenu() {
+        for(MenuGroup group : m_groups) {
+            group.setChangedListener(null);
+        }
         m_groups.clear();
         if(m_listener != null) {
             m_listener.onMenuChanged();

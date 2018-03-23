@@ -5,6 +5,7 @@ import android.database.DataSetObserver;
 import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListAdapter;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,7 +94,7 @@ class MenuChildViewFactory {
     }
 }
 
-public class MenuViewAdapter implements ExpandableListAdapter {
+public class MenuViewAdapter extends BaseExpandableListAdapter {
 
     private final SearchWidgetMenuModel m_model;
     private final LayoutInflater m_inflater;
@@ -106,16 +107,6 @@ public class MenuViewAdapter implements ExpandableListAdapter {
         m_inflater = inflater;
         m_menuOptionViewFactory = new MenuOptionViewFactory();
         m_menuChildViewFactory = new MenuChildViewFactory();
-    }
-
-    @Override
-    public void registerDataSetObserver(DataSetObserver observer) {
-        // TODO
-    }
-
-    @Override
-    public void unregisterDataSetObserver(DataSetObserver observer) {
-        // TODO
     }
 
     @Override

@@ -33,6 +33,7 @@ public class MenuGroup {
     private String m_title;
     private boolean m_hasTitle;
     private List<MenuOption> m_options;
+    private MenuChangedListener m_listener;
 
     public final String getTitle() { return m_title; }
     public final boolean hasTitle() { return m_hasTitle; }
@@ -52,10 +53,49 @@ public class MenuGroup {
 
     public void addOption(String text, Object context, final OnMenuOptionSelectedCallback callback) {
         MenuOption child = new MenuOption(text, context, callback);
-        m_options.add(child);
+        addOption(child);
     }
 
     public void addOption(MenuOption option) {
-        m_options.add(option);
+        if(!m_options.contains(option)) {
+            option.setChangedListener(m_listener);
+            m_options.add(option);
+            if (m_listener != null) {
+                m_listener.onMenuChanged();
+            }
+        }
     }
+
+    public MenuOption getOptionAt(int index) {
+        return m_options.get(index);
+    }
+
+    public void removeOption(MenuOption option) {
+        if(m_options.contains(option)) {
+            option.setChangedListener(null);
+            m_options.remove(option);
+            if (m_listener != null) {
+                m_listener.onMenuChanged();
+            }
+        }
+    }
+
+    public void removeAllOptions() {
+        for(MenuOption option : m_options) {
+            option.setChangedListener(null);
+        }
+        m_options.clear();
+        if(m_listener != null) {
+            m_listener.onMenuChanged();
+        }
+    }
+
+    void setChangedListener(MenuChangedListener listener) {
+
+        m_listener = listener;
+        for(MenuOption option : m_options) {
+            option.setChangedListener(listener);
+        }
+    }
+
 }

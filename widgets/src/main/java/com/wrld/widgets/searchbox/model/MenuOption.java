@@ -9,6 +9,7 @@ public class MenuOption {
     private OnMenuOptionSelectedCallback m_onSelectCallback;
     private OnMenuGroupInteractionCallback m_onExpandCallback;
     private OnMenuGroupInteractionCallback m_onCollapseCallback;
+    private MenuChangedListener m_menuChangedListener;
     private List<MenuChild> m_children;
 
     public final String getText() { return m_text; }
@@ -37,13 +38,37 @@ public class MenuOption {
         m_children = new ArrayList<MenuChild>();
     }
 
+    public void setTitle(String text) {
+        m_text = text;
+        executeOnChangedCallback();
+    }
+
     public void addChild(String text, Integer iconResource, Object context, final OnMenuOptionSelectedCallback callback) {
         MenuChild child = new MenuChild(text, iconResource, context, callback);
-        m_children.add(child);
+        addChild(child);
     }
 
     public void addChild(MenuChild child) {
-        m_children.add(child);
+        if(!m_children.contains(child)) {
+            m_children.add(child);
+            executeOnChangedCallback();
+        }
+    }
+
+    public void removeChild(MenuChild child) {
+        if(m_children.contains(child)) {
+            m_children.remove(child);
+            executeOnChangedCallback();
+        }
+    }
+
+    public void removeAllChildren() {
+        m_children.clear();
+        executeOnChangedCallback();
+    }
+
+    public MenuChild getChildAt(int index) {
+        return m_children.get(index);
     }
 
     public boolean executeOnSelectCallback() {
@@ -63,5 +88,15 @@ public class MenuOption {
         if (m_onCollapseCallback != null) {
             m_onCollapseCallback.onMenuGroupInteraction(m_text, m_context);
         }
+    }
+
+    public void executeOnChangedCallback() {
+        if(m_menuChangedListener != null) {
+            m_menuChangedListener.onMenuChanged();
+        }
+    }
+
+    void setChangedListener(MenuChangedListener listener) {
+        m_menuChangedListener = listener;
     }
 }

@@ -170,7 +170,8 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
 
     @Override
     public void onMenuChanged() {
-        ((BaseAdapter) m_expandableListView.getAdapter()).notifyDataSetChanged();
+        m_expandableListAdapter.notifyDataSetChanged();
+        m_expandableListView.invalidate();
         updateMenuButtonVisibility();
     }
 
