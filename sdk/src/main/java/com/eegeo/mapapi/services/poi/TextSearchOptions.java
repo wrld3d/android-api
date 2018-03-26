@@ -42,9 +42,9 @@ public final class TextSearchOptions {
     }
 
     /**
-     * Sets the radius around the center to search in.
+     * Sets the search result boost radius around the center.
      *
-     * @param radius The search radius in metres.
+     * @param radius The search result boost radius in metres.
      * @return This TextSearchOptions object.
      */
     public TextSearchOptions radius(double radius) {
