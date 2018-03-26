@@ -55,7 +55,7 @@ public class Projection {
         m_nativeRunner.runOnNativeThread(new Runnable() {
             @Override
             public void run() {
-                final double[] latLongAlt = nativeScreenToTerrainPoint(m_eegeoMapApiPtr, point.x, point.y);
+                final double[] latLongAlt = nativeScreenToWorldPoint(m_eegeoMapApiPtr, point.x, point.y);
                 m_uiRunner.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -104,6 +104,6 @@ public class Projection {
 
     private native double[] nativeWorldToScreen(long jniEegeoMapApiPtr, double lat, double lon, double alt);
 
-    private native double[] nativeScreenToTerrainPoint(long jniEegeoMapApiPtr, double x, double y);
+    private native double[] nativeScreenToWorldPoint(long jniEegeoMapApiPtr, double x, double y);
 
 }
