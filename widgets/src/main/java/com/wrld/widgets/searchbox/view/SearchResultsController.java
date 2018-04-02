@@ -132,6 +132,7 @@ public class SearchResultsController implements SearchResultsListener,
             boolean selectedFooter = m_adapter.isFooter(position);
             if(selectedFooter) {
                 m_adapter.toggleState(result.getProviderId());
+                m_searchView.clearFocus();
             }
             else {
                 SearchResult searchResult = result.getResults()[providerIndex.second];
