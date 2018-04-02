@@ -72,13 +72,13 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
     public void open() {
         if (!hasMenu()) { return; }
         m_isOpen = true;
-        m_menuViewObserver.onOpened();
+        m_menuViewObserver.onMenuOpened();
         updateVisibility();
     }
 
     public void close() {
         m_isOpen = false;
-        m_menuViewObserver.onClosed();
+        m_menuViewObserver.onMenuClosed();
         updateVisibility();
     }
 
@@ -115,7 +115,7 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
         MenuChild child = (MenuChild)m_expandableListAdapter.getChild(groupPosition, childPosition);
         if (child != null) {
             boolean closeMenu = child.executeCallback();
-            m_menuViewObserver.onChildSelected(child);
+            m_menuViewObserver.onMenuChildSelected(child);
             if (closeMenu) {
                 close();
             }
@@ -131,7 +131,7 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
             MenuOption menuOption = (MenuOption)expandableListViewGroup;
             if (!menuOption.hasChildren()) {
                 boolean closeMenu = menuOption.executeOnSelectCallback();
-                m_menuViewObserver.onOptionSelected(menuOption);
+                m_menuViewObserver.onMenuOptionSelected(menuOption);
                 if (closeMenu) {
                     close();
                 }
@@ -155,7 +155,7 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
         Object expandableListViewGroup = m_expandableListAdapter.getGroup(groupPosition);
         if (MenuOption.class.isInstance(expandableListViewGroup)) {
             ((MenuOption)expandableListViewGroup).executeOnExpandCallback();
-            m_menuViewObserver.onOptionExpanded((MenuOption)expandableListViewGroup);
+            m_menuViewObserver.onMenuOptionExpanded((MenuOption)expandableListViewGroup);
         }
     }
 
@@ -164,7 +164,7 @@ public class MenuViewController implements ExpandableListView.OnChildClickListen
         Object expandableListViewGroup = m_expandableListAdapter.getGroup(groupPosition);
         if (MenuOption.class.isInstance(expandableListViewGroup)) {
             ((MenuOption)expandableListViewGroup).executeOnCollapseCallback();
-            m_menuViewObserver.onOptionCollapsed((MenuOption)expandableListViewGroup);
+            m_menuViewObserver.onMenuOptionCollapsed((MenuOption)expandableListViewGroup);
         }
     }
 

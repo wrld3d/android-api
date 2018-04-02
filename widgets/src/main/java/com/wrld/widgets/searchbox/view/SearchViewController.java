@@ -232,32 +232,32 @@ public class SearchViewController implements SearchView.OnQueryTextListener, Sea
     }
 
     @Override
-    public void onOpened() {
+    public void onMenuOpened() {
         m_view.clearFocus();
     }
 
     @Override
-    public void onClosed() {
+    public void onMenuClosed() {
 
     }
 
     @Override
-    public void onOptionExpanded(MenuOption option) {
+    public void onMenuOptionExpanded(MenuOption option) {
 
     }
 
     @Override
-    public void onOptionCollapsed(MenuOption option) {
+    public void onMenuOptionCollapsed(MenuOption option) {
 
     }
 
     @Override
-    public void onOptionSelected(MenuOption option) {
+    public void onMenuOptionSelected(MenuOption option) {
 
     }
 
     @Override
-    public void onChildSelected(MenuChild option) {
+    public void onMenuChildSelected(MenuChild option) {
 
     }
 }

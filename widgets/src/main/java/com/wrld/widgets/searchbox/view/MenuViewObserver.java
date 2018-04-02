@@ -27,39 +27,39 @@ public class MenuViewObserver implements MenuViewListener {
         }
     }
 
-    public void onOpened() {
+    public void onMenuOpened() {
         for(MenuViewListener listener : m_listeners) {
-            listener.onOpened();
+            listener.onMenuOpened();
         }
     }
 
-    public void onClosed() {
+    public void onMenuClosed() {
         for(MenuViewListener listener : m_listeners) {
-            listener.onClosed();
+            listener.onMenuClosed();
         }
     }
 
-    public void onOptionExpanded(MenuOption option) {
+    public void onMenuOptionExpanded(MenuOption option) {
         for(MenuViewListener listener : m_listeners) {
-            listener.onOptionExpanded(option);
+            listener.onMenuOptionExpanded(option);
         }
     }
 
-    public void onOptionCollapsed(MenuOption option) {
+    public void onMenuOptionCollapsed(MenuOption option) {
         for(MenuViewListener listener : m_listeners) {
-            listener.onOptionCollapsed(option);
+            listener.onMenuOptionCollapsed(option);
         }
     }
 
-    public void onOptionSelected(MenuOption option) {
+    public void onMenuOptionSelected(MenuOption option) {
         for(MenuViewListener listener : m_listeners) {
-            listener.onOptionSelected(option);
+            listener.onMenuOptionSelected(option);
         }
     }
 
-    public void onChildSelected(MenuChild option) {
+    public void onMenuChildSelected(MenuChild option) {
         for(MenuViewListener listener : m_listeners) {
-            listener.onChildSelected(option);
+            listener.onMenuChildSelected(option);
         }
     }
 }

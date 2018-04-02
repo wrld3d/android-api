@@ -39,7 +39,6 @@ public class SearchResultsController implements SearchResultsListener,
     private MenuViewObserver m_menuViewObserver;
 
     private boolean m_resultsHidden;
-    private boolean m_menuOpened;
 
     public SearchResultsController(SearchQueryModel searchModel,
                                    SearchResultsModel searchResultsModel,
@@ -66,7 +65,6 @@ public class SearchResultsController implements SearchResultsListener,
         m_listView.setAdapter(m_adapter);
 
         m_resultsHidden = false;
-        m_menuOpened = false;
 
         m_searchView = searchView;
         m_searchViewFocusObserver = searchViewFocusObserver;
@@ -107,7 +105,7 @@ public class SearchResultsController implements SearchResultsListener,
 
     private void updateVisibility() {
         boolean hasSearchResults = m_searchResultsModel.getTotalCurrentQueryResults() > 0;
-        if(hasSearchResults && !m_resultsHidden && !m_menuOpened) {
+        if(hasSearchResults && !m_resultsHidden) {
             m_viewRoot.setVisibility(View.VISIBLE);
             m_noResultsViewContainer.setVisibility(View.GONE);
         }
@@ -178,34 +176,33 @@ public class SearchResultsController implements SearchResultsListener,
     }
 
     @Override
-    public void onOpened() {
-        m_menuOpened = true;
+    public void onMenuOpened() {
+        minimizeResults();
         updateVisibility();
     }
 
     @Override
-    public void onClosed() {
-        m_menuOpened = false;
+    public void onMenuClosed() {
         updateVisibility();
     }
 
     @Override
-    public void onOptionExpanded(MenuOption option) {
+    public void onMenuOptionExpanded(MenuOption option) {
 
     }
 
     @Override
-    public void onOptionCollapsed(MenuOption option) {
+    public void onMenuOptionCollapsed(MenuOption option) {
 
     }
 
     @Override
-    public void onOptionSelected(MenuOption option) {
+    public void onMenuOptionSelected(MenuOption option) {
 
     }
 
     @Override
-    public void onChildSelected(MenuChild option) {
+    public void onMenuChildSelected(MenuChild option) {
 
     }
 }
