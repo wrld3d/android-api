@@ -141,8 +141,13 @@ public class SearchResultsController implements SearchResultsListener,
 
     @Override
     public void onFocusChange(View view, boolean hasFocus) {
-        if(m_resultsHidden && hasFocus && m_model.getCurrentQuery() != null) {
-            maximizeResults();
+        if(m_resultsHidden && hasFocus) {
+            if(m_model.getCurrentQuery() != null) {
+                maximizeResults();
+            }
+            else {
+                m_resultsHidden = false;
+            }
         }
     }
 
