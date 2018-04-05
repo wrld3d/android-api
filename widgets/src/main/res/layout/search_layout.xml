@@ -23,7 +23,9 @@
             android:id="@+id/searchbox_search_menu"
             android:layout_width="@dimen/search_query_button_size"
             android:layout_height="@dimen/search_query_button_size"
-            android:layout_margin="@dimen/search_query_margin"
+            android:layout_marginLeft="@dimen/search_query_margin"
+            android:layout_marginTop="@dimen/search_query_margin"
+            android:layout_marginBottom="@dimen/search_query_margin"
             android:layout_alignParentLeft="true"
             android:src="@drawable/menu_btn"
             tools:text="Options" />
@@ -71,7 +73,7 @@
         android:layout_below="@+id/searchbox_search_container"
         android:orientation="vertical"
         android:visibility="gone"
-        android:background="@color/search_widget_secondary"
+        android:background="@color/search_widget_primary"
         android:elevation="8dp">
 
         <ListView
@@ -87,10 +89,10 @@
             android:scrollbarThumbVertical="@color/search_widget_scrollbar"
             android:requiresFadingEdge="vertical"
             android:fadingEdgeLength="32dp"
-            android:drawSelectorOnTop="true"
+            android:drawSelectorOnTop="false"
             android:fadeScrollbars="false"/>
 
-        <include layout="@layout/search_separator"/>
+        <include layout="@layout/search_separator_small"/>
 
     </RelativeLayout>
 
@@ -100,23 +102,20 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/searchbox_search_container"
         android:orientation="vertical"
-        android:background="@color/search_widget_secondary"
+        android:background="@color/search_widget_primary"
         android:elevation="8dp">
 
-        <include layout="@layout/search_separator"/>
+        <include layout="@layout/search_separator_small"/>
 
         <ListView
             android:id="@+id/searchbox_autocomplete_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:divider="@color/search_widget_divider_light"
+            android:divider="@color/search_widget_divider_dark"
             android:dividerHeight="1dp"
             android:footerDividersEnabled="false"
             android:headerDividersEnabled="false"
-            android:paddingBottom="@dimen/search_suggestions_result_vertical_padding"
-            android:paddingLeft="@dimen/search_suggestions_result_horizontal_padding"
-            android:paddingRight="@dimen/search_suggestions_result_horizontal_padding"
-            android:drawSelectorOnTop="true"/>
+            android:drawSelectorOnTop="false"/>
     </LinearLayout>
 
     <LinearLayout android:id="@+id/searchbox_no_results_container"
@@ -127,24 +126,19 @@
         android:orientation="vertical"
         android:elevation="8dp">
 
-        <include layout="@layout/search_separator"/>
-
-        <View android:layout_width="match_parent"
-            android:layout_height="8dp"
-            android:scaleY="-1"
-            android:background="@drawable/gradientshadow"/>
+        <include layout="@layout/search_separator_small"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/search_widget_result_background"
+            android:background="@color/search_widget_primary"
             android:padding="@dimen/search_padding">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/noresults"
-                android:padding="@dimen/search_padding"
+                android:layout_width="@dimen/search_results_no_results_icon_size"
+                android:layout_height="@dimen/search_results_no_results_icon_size"
+                android:src="@drawable/no_results"
+                android:layout_margin="@dimen/search_padding"
                 android:layout_gravity="center_vertical"/>
 
             <TextView

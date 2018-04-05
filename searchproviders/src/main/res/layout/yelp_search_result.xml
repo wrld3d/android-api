@@ -3,15 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/search_result"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/search_widget_result_background">
 
-    <include layout="@layout/search_separator"
+    <include layout="@layout/search_separator_small"
         android:id="@+id/search_result_top_seperator"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/search_widget_result_background"
         android:gravity="center_vertical"
         android:padding="@dimen/search_results_more_margin"
         android:layout_below="@id/search_result_top_seperator"
@@ -84,14 +84,6 @@
             android:scaleType="fitCenter"
             android:src="@drawable/yelp_trademark_rgb_outline" />
     </RelativeLayout>
-
-    <View android:id="@+id/search_result_shadow"
-        android:layout_width="match_parent"
-        android:layout_height="8dp"
-        android:scaleY="-1"
-        android:background="@drawable/gradientshadow"
-        android:layout_below="@id/search_result_top_seperator"
-        android:layout_alignWithParentIfMissing="true"/>
 
     <View android:id="@+id/search_result_divider"
         android:layout_width="match_parent"

@@ -62,7 +62,6 @@ public class YelpSearchResultViewFactory implements ISearchResultViewFactory {
 
         private View m_divider;
         private View m_separator;
-        private View m_shadow;
 
         public SearchResultViewHolderImpl(){}
 
@@ -75,7 +74,6 @@ public class YelpSearchResultViewFactory implements ISearchResultViewFactory {
 
             m_divider = view.findViewById(com.wrld.widgets.R.id.search_result_divider);
             m_separator = view.findViewById(com.wrld.widgets.R.id.search_result_top_seperator);
-            m_shadow = view.findViewById(com.wrld.widgets.R.id.search_result_shadow);
         }
 
         public void populate(SearchResult result,
@@ -102,7 +100,6 @@ public class YelpSearchResultViewFactory implements ISearchResultViewFactory {
 
             m_divider.setVisibility(lastResultInSet ? View.GONE : View.VISIBLE);
             m_separator.setVisibility(firstResultInSet ? View.VISIBLE : View.GONE);
-            m_shadow.setVisibility(firstResultInSet ? View.VISIBLE : View.GONE);
         }
 
         private void openLink(){

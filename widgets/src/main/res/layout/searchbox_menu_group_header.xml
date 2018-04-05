@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
     android:layout_margin="@dimen/search_menu_drop_down_group_margin"
-    android:background="@color/search_widget_result_background"
+    android:background="@drawable/search_widget_result_background"
     android:orientation="vertical">
 
     <View
@@ -14,35 +14,40 @@
         android:layout_height="4dp"
         android:background="@color/search_widget_divider_dark" />
 
-    <TextView
-        android:id="@+id/searchbox_menu_item_text"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/search_menu_drop_down_group_text_area_height"
-        android:layout_marginTop="@dimen/search_menu_drop_down_group_margin"
-        android:layout_marginBottom="@dimen/search_menu_drop_down_group_margin"
-        android:layout_marginLeft="@dimen/search_menu_drop_down_group_text_left_right_margin"
-        android:layout_toLeftOf="@+id/searchbox_menu_group_icon"
-        android:layout_below="@+id/group_divider"
-        android:textSize="@dimen/font_size_menu_option_title" />
+        android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/searchbox_menu_group_icon"
-        android:layout_width="@dimen/search_menu_drop_down_group_text_area_height"
-        android:layout_height="@dimen/search_menu_drop_down_group_text_area_height"
-        android:src="@drawable/expander"
-        android:layout_alignTop="@+id/searchbox_menu_item_text"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="@dimen/search_menu_drop_down_group_text_left_right_margin"
-        android:layout_marginEnd="@dimen/search_menu_drop_down_group_text_left_right_margin"/>
+        <TextView
+            android:id="@+id/searchbox_menu_item_text"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/search_menu_drop_down_group_text_area_height"
+            android:layout_marginTop="@dimen/search_menu_drop_down_group_margin"
+            android:layout_marginBottom="@dimen/search_menu_drop_down_group_margin"
+            android:layout_marginLeft="@dimen/search_menu_drop_down_group_text_left_right_margin"
+            android:layout_toLeftOf="@+id/searchbox_menu_group_icon"
+            android:textSize="@dimen/font_size_menu_option_title" />
 
-    <View
-        android:id="@+id/option_divider"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/search_menu_drop_down_item_divider_height"
-        android:layout_marginLeft="@dimen/search_menu_drop_down_group_margin"
-        android:layout_marginRight="@dimen/search_menu_drop_down_group_margin"
-        android:background="@color/search_widget_divider_light"
-        android:layout_below="@+id/searchbox_menu_item_text" />
+        <ImageView
+            android:id="@+id/searchbox_menu_group_icon"
+            android:layout_width="@dimen/search_menu_drop_down_group_icon_height"
+            android:layout_height="@dimen/search_menu_drop_down_group_icon_height"
+            android:src="@drawable/menu_chev"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="@dimen/search_menu_drop_down_group_text_left_right_margin"
+            android:layout_marginEnd="@dimen/search_menu_drop_down_group_text_left_right_margin"/>
 
-</RelativeLayout>
+        <View
+            android:id="@+id/option_divider"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/search_menu_drop_down_item_divider_height"
+            android:layout_marginLeft="@dimen/search_menu_drop_down_group_margin"
+            android:layout_marginRight="@dimen/search_menu_drop_down_group_margin"
+            android:background="@color/search_widget_divider_light"
+            android:layout_below="@+id/searchbox_menu_item_text" />
+
+    </RelativeLayout>
+
+</LinearLayout>

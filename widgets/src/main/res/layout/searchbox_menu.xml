@@ -24,7 +24,8 @@
             android:layout_margin="@dimen/search_menu_header_back_icon_margin"
             android:layout_marginRight="@dimen/search_menu_header_back_icon_title_margin"
             android:layout_marginEnd="@dimen/search_menu_header_back_icon_title_margin"
-            android:src="@drawable/back_btn" />
+            android:background="@color/search_widget_primary"
+            android:src="@drawable/menu_back_btn" />
 
         <TextView
             android:id="@+id/searchbox_menu_title"
@@ -49,7 +50,7 @@
         android:id="@+id/searchbox_menu_groups"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/search_widget_secondary"
+        android:background="@color/search_widget_primary"
         android:fadeScrollbars="false"
         android:fadingEdgeLength="32dp"
         android:footerDividersEnabled="false"
@@ -60,6 +61,7 @@
         android:scrollbarFadeDuration="0"
         android:scrollbarSize="@dimen/search_menu_scrollbar_width"
         android:scrollbarThumbVertical="@color/search_widget_scrollbar"
+        android:drawSelectorOnTop="false"
         android:divider="@null" />
 
 </LinearLayout>

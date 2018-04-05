@@ -223,11 +223,13 @@ public class MenuViewAdapter extends BaseExpandableListAdapter {
             if (isExpanded) {
                 convertView.setBackgroundColor(ContextCompat.getColor(convertView.getContext(), R.color.search_widget_menu_group_collapsed));
                 text.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.search_widget_menu_group_expanded));
-                arrow.setImageResource(R.drawable.expander_expanded);
+                arrow.setImageResource(R.drawable.menu_chev__down);
+                arrow.setRotation(-90.0f);
             } else {
-                convertView.setBackgroundColor(ContextCompat.getColor(convertView.getContext(), R.color.search_widget_menu_group_expanded));
+                convertView.setBackgroundResource(R.drawable.search_widget_result_background);
                 text.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.search_widget_menu_group_collapsed));
-                arrow.setImageResource(R.drawable.expander);
+                arrow.setImageResource(R.drawable.menu_chev);
+                arrow.setRotation(0.0f);
             }
         }
         else if (MenuGroup.class.isInstance(expandableListViewGroup)){

@@ -5,9 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/search_suggestions_result_height"
     android:orientation="horizontal"
-    android:paddingTop="4dp"
-    android:paddingBottom="4dp"
-    android:background="@color/search_widget_result_background"
+    android:paddingTop="@dimen/search_padding"
+    android:paddingBottom="@dimen/search_padding"
+    android:paddingLeft="@dimen/search_suggestions_result_horizontal_padding"
+    android:paddingRight="@dimen/search_suggestions_result_horizontal_padding"
+    android:background="@drawable/search_widget_result_background"
     android:gravity="center_vertical"
     >
 
@@ -15,15 +17,17 @@
         android:id="@+id/search_result_icon"
         android:layout_width="@dimen/search_suggestions_result_icon_size"
         android:layout_height="@dimen/search_suggestions_result_icon_size"
+        android:layout_marginLeft="@dimen/search_padding"
         android:layout_marginRight="@dimen/search_suggestions_result_horizontal_padding"
         android:adjustViewBounds="true"
-        android:src="@android:drawable/ic_menu_search" />
+        android:src="@drawable/search_result_placeholder__grey" />
 
     <TextView
         android:id="@+id/search_result_title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginRight="@dimen/search_suggestions_result_horizontal_padding"
+        android:layout_marginLeft="@dimen/search_suggestions_result_horizontal_padding"
         android:maxLines="1"
         android:ellipsize="end"
         android:textColor="@color/search_widget_text_secondary"

@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.wrld.widgets.R;
 import com.wrld.widgets.searchbox.model.MenuChild;
 import com.wrld.widgets.searchbox.model.MenuOption;
 import com.wrld.widgets.searchbox.model.SearchQueryModelListener;
@@ -24,7 +25,7 @@ import com.wrld.widgets.searchbox.model.SuggestionQueryModel;
 
 import java.util.List;
 
-public class SearchViewController implements SearchView.OnQueryTextListener, SearchQueryModelListener, View.OnClickListener, MenuViewListener {
+public class SearchViewController implements SearchView.OnQueryTextListener, SearchQueryModelListener, View.OnClickListener, MenuViewListener, View.OnFocusChangeListener {
 
     private SearchView m_view;
     private SearchQueryModel m_searchModel;
@@ -33,6 +34,7 @@ public class SearchViewController implements SearchView.OnQueryTextListener, Sea
     private MenuViewObserver m_menuViewObserver;
     private View m_spinnerView;
     private ImageView m_clearButton;
+    private ImageView m_magIcon;
 
     public SearchViewController(SearchQueryModel searchModel,
                                 SuggestionQueryModel suggestionModel,
@@ -58,10 +60,12 @@ public class SearchViewController implements SearchView.OnQueryTextListener, Sea
 
         m_clearButton.setOnClickListener(this);
         m_menuViewObserver.addMenuListener(this);
+        m_searchViewFocusObserver.addListener(this);
 
     }
 
     public void clean() {
+        m_searchViewFocusObserver.removeListener(this);
         m_menuViewObserver.removeMenuListener(this);
         m_searchModel.removeListener(this);
     }
@@ -73,19 +77,33 @@ public class SearchViewController implements SearchView.OnQueryTextListener, Sea
         String searchViewSearchPlateId = "android:id/search_plate";
         String searchViewTextViewId = "android:id/search_src_text";
         String searchViewClearButtonId = "android:id/search_close_btn";
-        clearMargins(searchViewEditFrameId);
-        clearMargins(searchViewSearchIconId);
-        clearMargins(searchViewSearchPlateId);
+        String searchViewMicButtonId = "android:id/search_voice_btn";
+        clearMargins(searchViewEditFrameId,0);
+        clearMargins(searchViewSearchIconId,0);
+        clearMargins(searchViewSearchPlateId,0);
+        clearMargins(searchViewMicButtonId,dpToPx(4));
+        clearMargins(searchViewClearButtonId,dpToPx(8));
 
         int searchMicId = m_view.getResources().getIdentifier(searchViewTextViewId, null, null);
         TextView textView = (TextView)m_view.findViewById(searchMicId);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         ViewGroup.LayoutParams params =  textView.getLayoutParams();
 
+        int searchMagIconId = m_view.getResources().getIdentifier(searchViewSearchIconId, null, null);
+        m_magIcon = (ImageView)m_view.findViewById(searchMagIconId);
+        m_magIcon.setImageResource(R.drawable.search_icon);
+
         int searchClearButtonId = m_view.getResources().getIdentifier(searchViewClearButtonId, null, null);
         m_clearButton = (ImageView)m_view.findViewById(searchClearButtonId);
+        m_clearButton.setImageResource(R.drawable.clear_text_button);
+        m_clearButton.getLayoutParams().width = m_clearButton.getLayoutParams().height = dpToPx(16);
 
-        int textPadding = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, m_view.getResources().getDisplayMetrics()));
+        int searchVoiceButtonId = m_view.getResources().getIdentifier(searchViewMicButtonId, null, null);
+        ImageView voiceButton = (ImageView)m_view.findViewById(searchVoiceButtonId);
+        voiceButton.setImageResource(R.drawable.voice_search_button);
+        voiceButton.getLayoutParams().width = voiceButton.getLayoutParams().height = dpToPx(24);
+
+        int textPadding = dpToPx(8);
         params.height = ViewGroup.MarginLayoutParams.MATCH_PARENT;
         textView.setLayoutParams(params);
         textView.setPadding(0,0,textPadding,0);
@@ -95,15 +113,15 @@ public class SearchViewController implements SearchView.OnQueryTextListener, Sea
         m_view.requestLayout();
     }
 
-    private void clearMargins(String childId) {
+    private void clearMargins(String childId, int marginOverride) {
         int searchMicId = m_view.getResources().getIdentifier(childId, null, null);
         View view = m_view.findViewById(searchMicId);
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams)view.getLayoutParams();
-        params.setMargins(0,0,0,0);
+        params.setMargins(marginOverride,marginOverride,marginOverride,marginOverride);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            params.setMarginStart(0);
-            params.setMarginEnd(0);
+            params.setMarginStart(marginOverride);
+            params.setMarginEnd(marginOverride);
         }
 
         params.height = ViewGroup.MarginLayoutParams.MATCH_PARENT;
@@ -136,6 +154,9 @@ public class SearchViewController implements SearchView.OnQueryTextListener, Sea
         {
             m_suggestionModel.clear();
         }
+
+        refreshSearchIcon(m_searchViewFocusObserver.hasFocus());
+
         return false;
     }
 
@@ -259,5 +280,18 @@ public class SearchViewController implements SearchView.OnQueryTextListener, Sea
     @Override
     public void onMenuChildSelected(MenuChild option) {
 
+    }
+
+    @Override
+    public void onFocusChange(View view, boolean focused) {
+        refreshSearchIcon(focused);
+    }
+
+    private void refreshSearchIcon(boolean focused) {
+        // TODO: Hide/shrink search icon if focused or have searchView query text
+    }
+
+    private int dpToPx(int dp) {
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, m_view.getResources().getDisplayMetrics()));
     }
 }

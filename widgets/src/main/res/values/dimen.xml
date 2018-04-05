@@ -5,11 +5,11 @@
     <dimen name="font_size_suggestions_title">11sp</dimen>
     <dimen name="font_size_menu_group_title">12sp</dimen>
     <dimen name="font_size_menu_option_title">14sp</dimen>
-    <dimen name="search_query_height">40dp</dimen>
+    <dimen name="search_query_height">44dp</dimen>
     <dimen name="search_query_button_size">32dp</dimen>
     <dimen name="search_query_clear_button_touch_size">24dp</dimen>
     <dimen name="search_query_clear_button_icon_size">16dp</dimen>
-    <dimen name="search_query_margin">4dp</dimen>
+    <dimen name="search_query_margin">6dp</dimen>
     <dimen name="search_border_width">1dp</dimen>
     <dimen name="search_padding">4dp</dimen>
     <dimen name="search_header_height">40dp</dimen>
@@ -35,11 +35,12 @@
     <dimen name="search_menu_scrollbar_width">5dp</dimen>
     <dimen name="search_results_footer_height">32dp</dimen>
     <dimen name="search_results_spinner_height">40dp</dimen>
-    <dimen name="search_results_more_icon_size">12dp</dimen>
+    <dimen name="search_results_more_icon_size">24dp</dimen>
     <dimen name="search_results_more_margin">8dp</dimen>
     <dimen name="search_results_page_icon_width">12dp</dimen>
     <dimen name="search_results_page_icon_height">16dp</dimen>
     <dimen name="search_results_text_area_height">24dp</dimen>
+    <dimen name="search_results_no_results_icon_size">32dp</dimen>
     <dimen name="search_suggestions_result_height">32dp</dimen>
     <dimen name="search_suggestions_header_text_area_height_with_padding">24dp</dimen>
     <dimen name="search_suggestions_header_padding">8dp</dimen>
@@ -52,7 +53,8 @@
     <dimen name="search_suggestions_set_vertical_spacing">4dp</dimen>
     <dimen name="search_suggestions_set_bottom_padding">8dp</dimen>
     <dimen name="search_spinner_icon_size">16dp</dimen>
-    <dimen name="search_spinner_icon_margin">16dp</dimen>
+    <dimen name="search_spinner_icon_margin">12dp</dimen>
+    <dimen name="search_menu_button_corner_radius">4dp</dimen>
     <integer name="suggestion_animate_in_duration_in_ms">100</integer>
     <integer name="suggestion_animate_out_duration_in_ms">100</integer>
     <integer name="search_result_animate_in_duration_in_ms">100</integer>

@@ -14,14 +14,14 @@
         android:layout_width="@dimen/search_results_more_icon_size"
         android:layout_height="@dimen/search_results_more_icon_size"
         android:visibility="visible"
-        android:src="@drawable/moreresults_butn" />
+        android:src="@drawable/more_results_btn" />
 
     <TextView
         android:id="@+id/searchbox_set_expand_info"
         android:layout_width="match_parent"
         android:layout_height="@dimen/search_results_text_area_height"
         android:textAlignment="textStart"
-        android:textColor="@color/search_widget_link"
+        android:textColor="@color/search_link_color"
         android:gravity="center_vertical|start"
         android:layout_marginLeft="8dp"
         android:layout_gravity="center_vertical"/>
