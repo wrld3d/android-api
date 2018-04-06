@@ -35,6 +35,9 @@ public class SearchViewController implements SearchView.OnQueryTextListener, Sea
     private View m_spinnerView;
     private ImageView m_clearButton;
     private ImageView m_magIcon;
+    private int m_searchIconVisibleWidth;
+    private int m_searchIconHiddenWidth;
+    private Animation m_searchIconAnimation;
 
     public SearchViewController(SearchQueryModel searchModel,
                                 SuggestionQueryModel suggestionModel,
@@ -92,6 +95,8 @@ public class SearchViewController implements SearchView.OnQueryTextListener, Sea
         int searchMagIconId = m_view.getResources().getIdentifier(searchViewSearchIconId, null, null);
         m_magIcon = (ImageView)m_view.findViewById(searchMagIconId);
         m_magIcon.setImageResource(R.drawable.search_icon);
+        m_searchIconVisibleWidth =  m_magIcon.getLayoutParams().width;
+        m_searchIconHiddenWidth = dpToPx(8);
 
         int searchClearButtonId = m_view.getResources().getIdentifier(searchViewClearButtonId, null, null);
         m_clearButton = (ImageView)m_view.findViewById(searchClearButtonId);
@@ -102,6 +107,7 @@ public class SearchViewController implements SearchView.OnQueryTextListener, Sea
         ImageView voiceButton = (ImageView)m_view.findViewById(searchVoiceButtonId);
         voiceButton.setImageResource(R.drawable.voice_search_button);
         voiceButton.getLayoutParams().width = voiceButton.getLayoutParams().height = dpToPx(24);
+        voiceButton.setBackgroundResource(0);
 
         int textPadding = dpToPx(8);
         params.height = ViewGroup.MarginLayoutParams.MATCH_PARENT;
@@ -288,7 +294,43 @@ public class SearchViewController implements SearchView.OnQueryTextListener, Sea
     }
 
     private void refreshSearchIcon(boolean focused) {
-        // TODO: Hide/shrink search icon if focused or have searchView query text
+        boolean shouldHide = focused || m_view.getQuery().length() > 0;
+        setSearchIconVisibility(!shouldHide);
+    }
+
+    private void setSearchIconVisibility(final boolean iconVisible) {
+
+        if(m_searchIconAnimation != null) {
+            m_searchIconAnimation.cancel();
+        }
+
+        final int startWidth = m_magIcon.getWidth();
+        final int targetWidth = iconVisible ? m_searchIconVisibleWidth : m_searchIconHiddenWidth;
+        final float startAlpha = m_magIcon.getAlpha();
+        final float targetAlpha = iconVisible ? 1.0f : 0.0f;
+
+        m_searchIconAnimation = new Animation()
+        {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                if(interpolatedTime == 1){
+                    m_magIcon.setVisibility(iconVisible ? View.VISIBLE : View.INVISIBLE);
+                    m_magIcon.getLayoutParams().width = targetWidth;
+                }else{
+                    m_magIcon.setAlpha(startAlpha + interpolatedTime * (targetAlpha - startAlpha));
+                    m_magIcon.getLayoutParams().width = startWidth + Math.round(interpolatedTime * (targetWidth-startWidth));
+                }
+
+                m_magIcon.requestLayout();
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+        m_searchIconAnimation.setDuration(200);
+        m_magIcon.startAnimation(m_searchIconAnimation);
     }
 
     private int dpToPx(int dp) {
