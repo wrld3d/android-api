@@ -99,6 +99,11 @@ public class WrldSearchWidget extends Fragment {
     public void hideSearchResults() { m_searchResultsController.minimizeResults(); }
     public void showSearchResults() { m_searchResultsController.maximizeResults(); }
 
+    public void clearSearch()
+    {
+        m_searchViewController.clear();
+    }
+
     public void setMenuTitle(String title) {
         m_menuModel.setTitle(title);
     }

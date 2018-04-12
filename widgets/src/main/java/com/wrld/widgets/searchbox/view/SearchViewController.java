@@ -146,9 +146,14 @@ public class SearchViewController implements SearchView.OnQueryTextListener, Sea
 
     @Override
     public boolean onQueryTextChange(String s) {
+
+        String trimmedQuery = s.trim();
+
         boolean hasQueryAndNewTextDiffers = (m_searchModel.getCurrentQuery() != null &&
-                !s.contentEquals(m_searchModel.getCurrentQuery().getQueryString()));
-        if(m_searchViewFocusObserver.hasFocus() && hasQueryAndNewTextDiffers) {
+                !trimmedQuery.contentEquals(m_searchModel.getCurrentQuery().getQueryString()));
+        boolean queryTextNowEmpty = trimmedQuery.isEmpty();
+
+        if((m_searchViewFocusObserver.hasFocus() && hasQueryAndNewTextDiffers) || queryTextNowEmpty) {
             m_searchModel.clear();
         }
 
@@ -158,6 +163,7 @@ public class SearchViewController implements SearchView.OnQueryTextListener, Sea
         }
         else
         {
+            m_searchModel.cancelCurrentQuery();
             m_suggestionModel.clear();
         }
 
@@ -335,5 +341,9 @@ public class SearchViewController implements SearchView.OnQueryTextListener, Sea
 
     private int dpToPx(int dp) {
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, m_view.getResources().getDisplayMetrics()));
+    }
+
+    public void clear() {
+        m_view.setQuery("", false);
     }
 }
