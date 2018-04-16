@@ -21,7 +21,6 @@ public class RoutingQuery extends NativeApiObject {
     RoutingQuery(final RoutingApi routingApi, final RoutingQueryOptions options) {
         super(routingApi.getNativeRunner(), routingApi.getUiRunner(),
                 new Callable<Integer>() {
-                    @WorkerThread
                     @Override
                     public Integer call() throws Exception {
                         Integer id = routingApi.beginRouteQuery(options);

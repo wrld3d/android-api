@@ -38,7 +38,6 @@ public class BuildingHighlight extends NativeApiObject {
                     @NonNull final BuildingHighlightOptions buildingHighlightOptions) {
         super(buildingsApi.getNativeRunner(), buildingsApi.getUiRunner(),
                 new Callable<Integer>() {
-                    @WorkerThread
                     @Override
                     public Integer call() throws Exception {
                         return buildingsApi.create(buildingHighlightOptions, m_allowHandleAccess);

@@ -117,7 +117,6 @@ public class Marker extends NativeApiObject {
                   @NonNull final MarkerOptions markerOptions) {
         super(markerApi.getNativeRunner(), markerApi.getUiRunner(),
                 new Callable<Integer>() {
-                    @WorkerThread
                     @Override
                     public Integer call() throws Exception {
                         return markerApi.createMarker(markerOptions, m_allowHandleAccess);

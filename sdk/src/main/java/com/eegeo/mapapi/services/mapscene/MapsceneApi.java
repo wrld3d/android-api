@@ -32,7 +32,6 @@ public class MapsceneApi {
                 options.getApplyOnLoad(),
                 options.getOnMapsceneRequestCompletedListener(),
                 new Callable<Integer>() {
-                    @WorkerThread
                     @Override
                     public Integer call() throws Exception {
                         return beginMapsceneRequest(options);

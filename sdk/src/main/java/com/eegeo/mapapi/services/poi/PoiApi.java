@@ -31,7 +31,6 @@ public class PoiApi {
     public PoiSearch searchText(final TextSearchOptions options) {
         PoiSearch search = new PoiSearch(this, options.getOnPoiSearchCompletedListener(),
                 new Callable<Integer>() {
-                    @WorkerThread
                     @Override
                     public Integer call() throws Exception {
                         return beginTextSearch(options);
@@ -44,7 +43,6 @@ public class PoiApi {
     public PoiSearch searchTag(final TagSearchOptions options) {
         PoiSearch search = new PoiSearch(this, options.getOnPoiSearchCompletedListener(),
                 new Callable<Integer>() {
-                    @WorkerThread
                     @Override
                     public Integer call() throws Exception {
                         return beginTagSearch(options);
@@ -57,7 +55,6 @@ public class PoiApi {
     public PoiSearch searchAutocomplete(final AutocompleteOptions options) {
         PoiSearch search = new PoiSearch(this, options.getOnPoiSearchCompletedListener(),
                 new Callable<Integer>() {
-                    @WorkerThread
                     @Override
                     public Integer call() throws Exception {
                         return beginAutocompleteSearch(options);

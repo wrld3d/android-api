@@ -37,7 +37,6 @@ public class Polyline extends NativeApiObject {
                     @NonNull final PolylineOptions polylineOptions) {
         super(polylineApi.getNativeRunner(), polylineApi.getUiRunner(),
                 new Callable<Integer>() {
-                    @WorkerThread
                     @Override
                     public Integer call() throws Exception {
                         return polylineApi.create(polylineOptions, m_allowHandleAccess);

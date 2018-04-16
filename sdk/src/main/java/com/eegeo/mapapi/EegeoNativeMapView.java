@@ -47,7 +47,6 @@ public class EegeoNativeMapView implements INativeMessageRunner {
         this.m_nativeThread.start();
 
         this.m_createEegeoMapNativeCallable = new Callable<EegeoMap>() {
-            @WorkerThread
             @Override
             public EegeoMap call() throws Exception {
                 EegeoMap eeGeoMap = new EegeoMap(EegeoNativeMapView.this, m_uiRunner, new CreateEegeoMapApiImpl(), eegeoMapOptions);

@@ -36,7 +36,6 @@ public class Polygon extends NativeApiObject {
                   @NonNull final PolygonOptions polygonOptions) {
         super(polygonApi.getNativeRunner(), polygonApi.getUiRunner(),
                 new Callable<Integer>() {
-                    @WorkerThread
                     @Override
                     public Integer call() throws Exception {
                         return polygonApi.create(polygonOptions, m_allowHandleAccess);

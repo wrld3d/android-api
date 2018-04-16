@@ -71,7 +71,6 @@ public class BlueSphere extends NativeApiObject {
     public BlueSphere(@NonNull final BlueSphereApi bluesphereApi) {
         super(bluesphereApi.getNativeRunner(), bluesphereApi.getUiRunner(),
                 new Callable<Integer>() {
-                    @WorkerThread
                     @Override
                     public Integer call() throws Exception {
                         return 0;

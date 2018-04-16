@@ -85,7 +85,6 @@ public class Positioner extends NativeApiObject {
                   @NonNull final PositionerOptions positionerOptions) {
         super(positionerApi.getNativeRunner(), positionerApi.getUiRunner(),
                 new Callable<Integer>() {
-                    @WorkerThread
                     @Override
                     public Integer call() throws Exception {
                         return positionerApi.createPositioner(positionerOptions, m_allowHandleAccess);
