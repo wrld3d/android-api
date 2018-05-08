@@ -895,8 +895,27 @@ public final class EegeoMap {
     public PrecacheOperation precache(
             final LatLng center,
             final double radius,
-            final OnPrecacheOperationCompletedListener callback) {
+            final OnPrecacheOperationCompletedListener callback) throws IllegalArgumentException {
+        final double maximumPrecacheRadius = m_precacheApi.getMaximumPrecacheRadius();
+
+        if (radius < 0.0 || radius > maximumPrecacheRadius)
+        {
+            throw new IllegalArgumentException(
+                    String.format("radius %f outside of valid (0, %f] range.",
+                            radius, maximumPrecacheRadius));
+        }
+
         return m_precacheApi.precache(center, radius, callback);
+    }
+
+    /**
+     * Gets the maximum radius value that can be passed to precache(center, radius, callback)
+     *
+     * @return the maxium radius that may be passed to precache, in meters
+     */
+    @UiThread
+    public double getMaximumPrecacheRadius() {
+        return m_precacheApi.getMaximumPrecacheRadius();
     }
 
     @WorkerThread

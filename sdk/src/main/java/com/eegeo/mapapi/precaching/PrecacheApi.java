@@ -12,8 +12,10 @@ public class PrecacheApi {
     private INativeMessageRunner m_nativeRunner;
     private IUiMessageRunner m_uiRunner;
     private long m_jniEegeoMapApiPtr;
+    private final double m_maximumPrecacheRadius;
     private SparseArray<PrecacheOperation> m_operations = new SparseArray<>();
 
+    @WorkerThread
     public PrecacheApi(
             INativeMessageRunner nativeRunner,
             IUiMessageRunner uiRunner,
@@ -21,6 +23,7 @@ public class PrecacheApi {
         m_nativeRunner = nativeRunner;
         m_uiRunner = uiRunner;
         m_jniEegeoMapApiPtr = jniEegeoMapApiPtr;
+        m_maximumPrecacheRadius = PrecacheApiJniCalls.getMaximumPrecacheRadius();
     }
 
     @UiThread
@@ -29,6 +32,12 @@ public class PrecacheApi {
                                       OnPrecacheOperationCompletedListener callback) {
         return new PrecacheOperation(this, center, radius, callback);
     }
+
+    @UiThread
+    public double getMaximumPrecacheRadius() {
+        return m_maximumPrecacheRadius;
+    }
+
 
     @WorkerThread
     int beginPrecacheOperation(LatLng center, double radius) {

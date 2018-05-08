@@ -9,4 +9,7 @@ class PrecacheApiJniCalls {
 
     @WorkerThread
     static native void cancelPrecacheOperation(long jniEegeoMapApiPtr, int operationId);
+
+    @WorkerThread
+    static native double getMaximumPrecacheRadius();
 }
