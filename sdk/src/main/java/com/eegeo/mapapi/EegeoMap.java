@@ -42,6 +42,10 @@ import com.eegeo.mapapi.positioner.OnPositionerChangedListener;
 import com.eegeo.mapapi.positioner.Positioner;
 import com.eegeo.mapapi.positioner.PositionerApi;
 import com.eegeo.mapapi.positioner.PositionerOptions;
+import com.eegeo.mapapi.precaching.PrecacheApi;
+import com.eegeo.mapapi.precaching.OnPrecacheOperationCompletedListener;
+import com.eegeo.mapapi.precaching.PrecacheOperation;
+import com.eegeo.mapapi.precaching.PrecacheOperationResult;
 import com.eegeo.mapapi.rendering.RenderingApi;
 import com.eegeo.mapapi.rendering.RenderingState;
 import com.eegeo.mapapi.services.mapscene.Mapscene;
@@ -100,7 +104,7 @@ public final class EegeoMap {
     private MapsceneApi m_mapsceneApi;
     private RoutingApi m_routingApi;
     private BlueSphere m_blueSphere = null;
-
+    private PrecacheApi m_precacheApi;
 
 
     private static final AllowApiAccess m_allowApiAccess = new AllowApiAccess();
@@ -131,6 +135,7 @@ public final class EegeoMap {
         this.m_tagApi = new TagApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_mapsceneApi = new MapsceneApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_routingApi = new RoutingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_precacheApi = new PrecacheApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
 
     @WorkerThread
@@ -875,6 +880,44 @@ public final class EegeoMap {
         m_positionerApi.removePositionerChangedListener(listener);
     }
 
+    /**
+     * Begin an operation to precache a spherical area of the map. This allows that area to load
+     * faster in future.
+     *
+     * @param center The center of the area to precache.
+     * @param radius The radius (in meters) of the area to precache.
+     * @param callback The function to call when the precache operation completes. The function will
+     *                be passed a boolean indicating whether the precache completed successfully.
+     *
+     * @return an object with a cancel() method to allow you to cancel the precache operation.
+     */
+    @UiThread
+    public PrecacheOperation precache(
+            final LatLng center,
+            final double radius,
+            final OnPrecacheOperationCompletedListener callback) throws IllegalArgumentException {
+        final double maximumPrecacheRadius = m_precacheApi.getMaximumPrecacheRadius();
+
+        if (radius < 0.0 || radius > maximumPrecacheRadius)
+        {
+            throw new IllegalArgumentException(
+                    String.format("radius %f outside of valid (0, %f] range.",
+                            radius, maximumPrecacheRadius));
+        }
+
+        return m_precacheApi.precache(center, radius, callback);
+    }
+
+    /**
+     * Gets the maximum radius value that can be passed to precache(center, radius, callback)
+     *
+     * @return the maxium radius that may be passed to precache, in meters
+     */
+    @UiThread
+    public double getMaximumPrecacheRadius() {
+        return m_precacheApi.getMaximumPrecacheRadius();
+    }
+
     @WorkerThread
     private void jniOnMarkerClicked(final int markerId) {
         m_markerApi.notifyMarkerClicked(markerId);
@@ -903,6 +946,11 @@ public final class EegeoMap {
     @WorkerThread
     private void jniOnSearchTagsLoaded() {
         m_tagApi.notifyTagsLoaded();
+    }
+
+    @WorkerThread
+    private void jniOnPrecacheQueryCompleted(final int precacheOperationId, PrecacheOperationResult result) {
+        m_precacheApi.notifyPrecacheOperationComplete(precacheOperationId, result);
     }
 
     private void jniOnRoutingQueryCompleted(final int routingQueryId, RoutingQueryResponse response) {
