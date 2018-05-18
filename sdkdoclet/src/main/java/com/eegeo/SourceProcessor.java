@@ -85,7 +85,9 @@ public class SourceProcessor extends Doclet {
             "RouteView",
             "RouteViewOptions",
             "TagService",
-            "OnTagsLoadCompletedListener"
+            "OnTagsLoadCompletedListener",
+            "PointOnPath",
+            "PointOnRoute"
     );
     // Would be nicer to extract this list automatically, but that would require two passes
     private static List<String> subClasses = Arrays.asList(

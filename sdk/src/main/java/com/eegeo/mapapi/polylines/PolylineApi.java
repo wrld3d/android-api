@@ -6,8 +6,8 @@ import android.util.SparseArray;
 
 import com.eegeo.mapapi.INativeMessageRunner;
 import com.eegeo.mapapi.IUiMessageRunner;
-import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.geometry.ElevationMode;
+import com.eegeo.mapapi.geometry.LatLngHelpers;
 
 import java.security.InvalidParameterException;
 import java.util.List;
@@ -42,16 +42,6 @@ public class PolylineApi {
         m_nativeHandleToPolyline.put(polyline.getNativeHandle(allowHandleAccess), polyline);
     }
 
-    private double[] pointsToArray(List<LatLng> points) {
-        final int pointCount = points.size();
-        double[] coords = new double[pointCount * 2];
-        for (int i = 0; i < pointCount; ++i) {
-            coords[i * 2] = points.get(i).latitude;
-            coords[i * 2 + 1] = points.get(i).longitude;
-        }
-        return coords;
-    }
-
     @WorkerThread
     public int create(PolylineOptions polylineOptions, Polyline.AllowHandleAccess allowHandleAccess) throws InvalidParameterException {
         if (allowHandleAccess == null)
@@ -60,7 +50,7 @@ public class PolylineApi {
         if (polylineOptions.getPoints().size() < 2)
             throw new InvalidParameterException("PolylineOptions points must contain at least two elements");
 
-        double[] latLongs = pointsToArray(polylineOptions.getPoints());
+        double[] latLongs = LatLngHelpers.pointsToArray(polylineOptions.getPoints());
 
         List<Double> perPointElevationsList = polylineOptions.getPerPointElevations();
         double[] perPointElevations = new double[perPointElevationsList.size()];

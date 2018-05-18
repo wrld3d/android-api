@@ -32,6 +32,7 @@ import com.eegeo.mapapi.markers.MarkerOptions;
 import com.eegeo.mapapi.markers.OnMarkerClickListener;
 import com.eegeo.mapapi.picking.PickResult;
 import com.eegeo.mapapi.picking.PickingApi;
+import com.eegeo.mapapi.pointonpath.PointOnPath;
 import com.eegeo.mapapi.pointonpath.PointOnPathApi;
 import com.eegeo.mapapi.pointonpath.PointOnRoute;
 import com.eegeo.mapapi.pointonpath.PointOnRouteOptions;
@@ -987,9 +988,22 @@ public final class EegeoMap {
      * @param pointOnRouteOptions Additional options for the Route; e.g, Indoor Map Id.
      */
     @UiThread
-    public PointOnRoute getPointOnRoute(LatLng point, Route route, PointOnRouteOptions pointOnRouteOptions)
+    public Promise<PointOnRoute> getPointOnRoute(LatLng point, Route route, PointOnRouteOptions pointOnRouteOptions)
     {
         return m_pointOnPathApi.getPointOnRoute(point, route, pointOnRouteOptions);
+    }
+
+
+    /**
+     * Retrieve information about the closest point on a Path to a given input point.
+     *
+     * @param point The input point to find the closest point on the Path with.
+     * @param path The Path that should be tested against.
+     */
+    @UiThread
+    public Promise<PointOnPath> getPointOnPath(LatLng point, List<LatLng> path)
+    {
+        return m_pointOnPathApi.getPointOnPath(point, path);
     }
 
 

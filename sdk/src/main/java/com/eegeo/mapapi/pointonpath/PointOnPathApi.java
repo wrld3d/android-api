@@ -1,16 +1,16 @@
 package com.eegeo.mapapi.pointonpath;
 
-import java.util.concurrent.Callable;
-import java.util.List;
-
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
-import android.util.SparseArray;
 
 import com.eegeo.mapapi.INativeMessageRunner;
 import com.eegeo.mapapi.IUiMessageRunner;
 import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.services.routing.Route;
+import com.eegeo.mapapi.util.Promise;
+import com.eegeo.mapapi.geometry.LatLngHelpers;
+
+import java.util.List;
 
 public class PointOnPathApi {
 
@@ -24,19 +24,60 @@ public class PointOnPathApi {
         this.m_jniEegeoMapApiPtr = jniEegeoMapApiPtr;
     }
 
-    public PointOnRoute getPointOnRoute(LatLng point, Route route, PointOnRouteOptions pointOnRouteOptions)
+    @UiThread
+    public Promise<PointOnRoute> getPointOnRoute(final LatLng point, final Route route, final PointOnRouteOptions pointOnRouteOptions)
     {
-        return nativeGetPointOnRoute(m_jniEegeoMapApiPtr, point.latitude, point.longitude, route, pointOnRouteOptions);
+        final Promise<PointOnRoute> p = new Promise<>();
+        m_nativeRunner.runOnNativeThread(new Runnable() {
+            @Override
+            public void run() {
+                final PointOnRoute pointOnRoute = nativeGetPointOnRoute(m_jniEegeoMapApiPtr, point.latitude, point.longitude, route, pointOnRouteOptions);
+                m_uiRunner.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        p.ready(pointOnRoute);
+                    }
+                });
+            }
+        });
+        return p;
     }
 
-    // Most of our native functions are run on the @WorkerThread, but in this case the API points
-    // that we're calling into do not require platform state - they are free functions that just
-    // perform some calculations.
-    @UiThread
+    @WorkerThread
     private native PointOnRoute nativeGetPointOnRoute(
             long jniEegeoMapApiPtr,
             double latitude,
             double longitude,
             Route routeData,
             PointOnRouteOptions pointOnRouteOptions);
+
+
+    @UiThread
+    public Promise<PointOnPath> getPointOnPath(final LatLng point, final List<LatLng> path)
+    {
+        final Promise<PointOnPath> p = new Promise<>();
+        m_nativeRunner.runOnNativeThread(new Runnable() {
+            @Override
+            public void run() {
+                double[] latLongs = LatLngHelpers.pointsToArray(path);
+                final PointOnPath pointOnPath = nativeGetPointOnPath(m_jniEegeoMapApiPtr, point.latitude, point.longitude, latLongs);
+                m_uiRunner.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        p.ready(pointOnPath);
+                    }
+                });
+            }
+        });
+        return p;
+    }
+
+    @WorkerThread
+    private native PointOnPath nativeGetPointOnPath(
+            long jniEegeoMapApiPtr,
+            double latitude,
+            double longitude,
+            double[] path);
+
+
 }
