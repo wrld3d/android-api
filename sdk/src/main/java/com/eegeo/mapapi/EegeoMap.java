@@ -32,6 +32,10 @@ import com.eegeo.mapapi.markers.MarkerOptions;
 import com.eegeo.mapapi.markers.OnMarkerClickListener;
 import com.eegeo.mapapi.picking.PickResult;
 import com.eegeo.mapapi.picking.PickingApi;
+import com.eegeo.mapapi.pointonpath.PointOnPath;
+import com.eegeo.mapapi.pointonpath.PointOnPathApi;
+import com.eegeo.mapapi.pointonpath.PointOnRoute;
+import com.eegeo.mapapi.pointonpath.PointOnRouteOptions;
 import com.eegeo.mapapi.polygons.Polygon;
 import com.eegeo.mapapi.polygons.PolygonApi;
 import com.eegeo.mapapi.polygons.PolygonOptions;
@@ -54,6 +58,7 @@ import com.eegeo.mapapi.services.mapscene.MapsceneService;
 import com.eegeo.mapapi.services.poi.PoiApi;
 import com.eegeo.mapapi.services.poi.PoiSearchResult;
 import com.eegeo.mapapi.services.poi.PoiService;
+import com.eegeo.mapapi.services.routing.Route;
 import com.eegeo.mapapi.services.tag.TagApi;
 import com.eegeo.mapapi.services.tag.TagService;
 import com.eegeo.mapapi.services.routing.RoutingQueryResponse;
@@ -103,8 +108,10 @@ public final class EegeoMap {
     private TagApi m_tagApi;
     private MapsceneApi m_mapsceneApi;
     private RoutingApi m_routingApi;
+    private PointOnPathApi m_pointOnPathApi;
     private BlueSphere m_blueSphere = null;
     private PrecacheApi m_precacheApi;
+
 
 
     private static final AllowApiAccess m_allowApiAccess = new AllowApiAccess();
@@ -135,6 +142,7 @@ public final class EegeoMap {
         this.m_tagApi = new TagApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_mapsceneApi = new MapsceneApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_routingApi = new RoutingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_pointOnPathApi = new PointOnPathApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_precacheApi = new PrecacheApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
 
@@ -1019,6 +1027,33 @@ public final class EegeoMap {
             m_listener.onCameraMove();
         }
     }
+
+    /**
+     * Retrieve information about the closest point on a Route to a given input point.
+     *
+     * @param point The input point to find the closest point on the Route with.
+     * @param route The Route that should be tested against.
+     * @param pointOnRouteOptions Additional options for the Route; e.g, Indoor Map Id.
+     */
+    @UiThread
+    public Promise<PointOnRoute> getPointOnRoute(LatLng point, Route route, PointOnRouteOptions pointOnRouteOptions)
+    {
+        return m_pointOnPathApi.getPointOnRoute(point, route, pointOnRouteOptions);
+    }
+
+
+    /**
+     * Retrieve information about the closest point on a Path to a given input point.
+     *
+     * @param point The input point to find the closest point on the Path with.
+     * @param path The Path that should be tested against.
+     */
+    @UiThread
+    public Promise<PointOnPath> getPointOnPath(LatLng point, List<LatLng> path)
+    {
+        return m_pointOnPathApi.getPointOnPath(point, path);
+    }
+
 
     public static final class AllowApiAccess {
         @WorkerThread

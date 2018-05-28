@@ -86,6 +86,9 @@ public class SourceProcessor extends Doclet {
             "RouteViewOptions",
             "TagService",
             "OnTagsLoadCompletedListener",
+            "PointOnPath",
+            "PointOnRoute",
+            "PointOnRouteOptions"
             "PrecacheOperation",
             "PrecacheOperationResult",
             "OnPrecacheOperationCompletedListener"
