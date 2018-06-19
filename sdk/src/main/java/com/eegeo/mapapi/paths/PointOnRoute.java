@@ -1,4 +1,4 @@
-package com.eegeo.mapapi.pointonpath;
+package com.eegeo.mapapi.paths;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;

@@ -1,4 +1,4 @@
-package com.eegeo.mapapi.pointonpath;
+package com.eegeo.mapapi.paths;
 
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
@@ -12,13 +12,13 @@ import com.eegeo.mapapi.geometry.LatLngHelpers;
 
 import java.util.List;
 
-public class PointOnPathApi {
+public class PathApi {
 
     private INativeMessageRunner m_nativeRunner;
     private IUiMessageRunner m_uiRunner;
     private long m_jniEegeoMapApiPtr;
 
-    public PointOnPathApi(INativeMessageRunner nativeRunner, IUiMessageRunner uiRunner, long jniEegeoMapApiPtr) {
+    public PathApi(INativeMessageRunner nativeRunner, IUiMessageRunner uiRunner, long jniEegeoMapApiPtr) {
         this.m_nativeRunner = nativeRunner;
         this.m_uiRunner = uiRunner;
         this.m_jniEegeoMapApiPtr = jniEegeoMapApiPtr;

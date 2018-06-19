@@ -32,10 +32,10 @@ import com.eegeo.mapapi.markers.MarkerOptions;
 import com.eegeo.mapapi.markers.OnMarkerClickListener;
 import com.eegeo.mapapi.picking.PickResult;
 import com.eegeo.mapapi.picking.PickingApi;
-import com.eegeo.mapapi.pointonpath.PointOnPath;
-import com.eegeo.mapapi.pointonpath.PointOnPathApi;
-import com.eegeo.mapapi.pointonpath.PointOnRoute;
-import com.eegeo.mapapi.pointonpath.PointOnRouteOptions;
+import com.eegeo.mapapi.paths.PointOnPath;
+import com.eegeo.mapapi.paths.PathApi;
+import com.eegeo.mapapi.paths.PointOnRoute;
+import com.eegeo.mapapi.paths.PointOnRouteOptions;
 import com.eegeo.mapapi.polygons.Polygon;
 import com.eegeo.mapapi.polygons.PolygonApi;
 import com.eegeo.mapapi.polygons.PolygonOptions;
@@ -108,7 +108,7 @@ public final class EegeoMap {
     private TagApi m_tagApi;
     private MapsceneApi m_mapsceneApi;
     private RoutingApi m_routingApi;
-    private PointOnPathApi m_pointOnPathApi;
+    private PathApi m_pathApi;
     private BlueSphere m_blueSphere = null;
     private PrecacheApi m_precacheApi;
 
@@ -142,7 +142,7 @@ public final class EegeoMap {
         this.m_tagApi = new TagApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_mapsceneApi = new MapsceneApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_routingApi = new RoutingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
-        this.m_pointOnPathApi = new PointOnPathApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_pathApi = new PathApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_precacheApi = new PrecacheApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
 
@@ -1038,7 +1038,7 @@ public final class EegeoMap {
     @UiThread
     public Promise<PointOnRoute> getPointOnRoute(LatLng point, Route route, PointOnRouteOptions pointOnRouteOptions)
     {
-        return m_pointOnPathApi.getPointOnRoute(point, route, pointOnRouteOptions);
+        return m_pathApi.getPointOnRoute(point, route, pointOnRouteOptions);
     }
 
 
@@ -1051,7 +1051,7 @@ public final class EegeoMap {
     @UiThread
     public Promise<PointOnPath> getPointOnPath(LatLng point, List<LatLng> path)
     {
-        return m_pointOnPathApi.getPointOnPath(point, path);
+        return m_pathApi.getPointOnPath(point, path);
     }
 
 

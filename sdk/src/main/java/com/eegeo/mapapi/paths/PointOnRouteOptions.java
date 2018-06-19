@@ -1,4 +1,4 @@
-package com.eegeo.mapapi.pointonpath;
+package com.eegeo.mapapi.paths;
 
 public final class PointOnRouteOptions {
 
