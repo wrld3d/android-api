@@ -4,229 +4,182 @@ package com.eegeo.location;
 
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
-public class LocationService
-{
-	static boolean isListening = false;
-	static boolean lastQuerySucceeded = false;
-	static boolean locationValid = false;
-	static Location bestLocation = null;
-	static boolean isAuthorized = false;
-	
-	static Activity activity;
-	
-	public static double lat()
-	{
-		if (bestLocation == null)
-		{
-			return 0.0;
-		}
-		return bestLocation.getLatitude();
-	}
-	
-	public static double lon()
-	{
-		if (bestLocation == null)
-		{
-			return 0.0;
-		}
-		return bestLocation.getLongitude();
-	}
-	
-	public static double alt()
-	{
-		if(bestLocation == null)
-		{
-			return 0.0;
-		}
-		return bestLocation.getAltitude();
-	}
-	
-	public static boolean hasAlt()
-	{
-		if(bestLocation == null)
-		{
-			return false;
-		}
-		return bestLocation.hasAltitude();
-	}
-	
-	public static double accuracy()
-	{
-		if(bestLocation == null)
-		{
-			return 0.0;
-		}
-		return bestLocation.getAccuracy();
-	}
-	
-	public static boolean hasAccuracy()
-	{
-		if(bestLocation == null)
-		{
-			return false;
-		}
-		return bestLocation.hasAccuracy();
-	}
-	
-	public static boolean getIsAuthorized()
-	{
-		return isAuthorized;
-	}
-	
-	static LocationListener locationListener;
-	static LocationManager locationManager;
-	
-	private static final int ONE_MINUTE = 1000 * 60;
+import com.eegeo.mapapi.INativeMessageRunner;
 
-    public static boolean lastQuerySucceeded() {
-    	return bestLocation != null;
+@SuppressWarnings("unused")
+public class LocationService {
+    private final int m_ctorThreadId;
+
+    private final Context m_context;
+    private final INativeMessageRunner m_nativeMessageRunner;
+    private final long m_nativeCallerPointer;
+
+    private Location m_bestLocation = null;
+    private boolean m_isListening = false;
+    private boolean m_isAuthorized = false;
+
+    private LocationListener m_locationListener;
+    private LocationManager m_locationManager;
+
+    private static int getThreadId() {
+        return android.os.Process.myTid();
     }
 
-    public static boolean locationValid() {
-    	return bestLocation != null;
-    }
-    
-    public static void startListeningToUpdates(Activity a)
-    {
-    	if (!isListening)
-    	{
-	    	setupListenerAndLocationManager(a);
-    		forceLocationFromCachedProviders(LocationService.locationManager);
-	    	a.runOnUiThread(new Runnable()
-	    	{
-	    		public void run()
-	    		{
-	    	    	try
-	    	    	{
-	    	    		if (LocationService.locationListener != null)
-	    	    		{
-	    	    			LocationService.locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, LocationService.locationListener);
-	    	    			LocationService.locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, LocationService.locationListener);
-	    	    		}
-	    	    	}
-	    	    	catch (SecurityException e)
-	    	    	{
-	    	        	Log.v("Location", e.getMessage());
-	    	    	}    			
-	    		}
-	    	});
-    	}
-    }
-    
-    public static void stopListeningToUpdates(Activity a)
-    {
-    	if( isListening )
-    	{
-    		LocationService.locationManager.removeUpdates(LocationService.locationListener);
-    		tearDownListener();
-    	}
+    private void throwIfCalledOnIncorrectThread() {
+        int currentThreadId = getThreadId();
+
+        if(getThreadId() != m_ctorThreadId) {
+            throw new IllegalThreadStateException(
+                    "was not called on a consistent thread; ctor was called on thread with id '" +
+                            m_ctorThreadId + "', but this thread has id '" + currentThreadId + "'");
+        }
     }
 
-    public static void updateLocation(Activity a)
-    {
-    	LocationService.startListeningToUpdates(a);
+    @SuppressWarnings("unused")
+    public LocationService(@NonNull Context context, @NonNull INativeMessageRunner nativeMessageRunner, long nativeCallerPointer) {
+        //noinspection ConstantConditions
+        if(context == null) {
+            throw new NullPointerException("context");
+        }
+
+        //noinspection ConstantConditions
+        if(nativeMessageRunner == null) {
+            throw new NullPointerException("nativeMessageRunner");
+        }
+
+        m_context = context;
+        m_nativeMessageRunner = nativeMessageRunner;
+        m_nativeCallerPointer = nativeCallerPointer;
+        m_ctorThreadId = getThreadId();
     }
-    
-    private static void forceLocationFromCachedProviders(LocationManager locationManager)
-    {
-		List<String> providers = locationManager.getProviders(true);
-		Location bestCachedLocation = null;
-		for (String provider : providers)
-		{
-            Location l = null;
-            try {
-                l = locationManager.getLastKnownLocation(provider);
+
+    @SuppressWarnings("unused")
+    public void startListeningToUpdates() {
+        throwIfCalledOnIncorrectThread();
+
+        if (m_isListening) {
+            return;
+        }
+
+        setupListenerAndLocationManager();
+
+        forceLocationFromCachedProviders(m_locationManager);
+
+        try {
+            if (m_locationListener != null) {
+                m_locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, m_locationListener);
+                m_locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, m_locationListener);
             }
-            catch (SecurityException e)
-            {
+        } catch (Exception e) {
+            Log.v("Location", e.getMessage());
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public void stopListeningToUpdates() {
+        throwIfCalledOnIncorrectThread();
+
+        if (m_isListening) {
+            m_locationManager.removeUpdates(m_locationListener);
+            tearDownListener();
+            updateNativeAuthorized(false);
+        }
+    }
+
+    private void forceLocationFromCachedProviders(LocationManager locationManager) {
+        List<String> providers = locationManager.getProviders(true);
+        Location bestCachedLocation = null;
+        for (String provider : providers) {
+            Location l = locationManager.getLastKnownLocation(provider);
+            if (l == null) {
                 continue;
             }
+            if (isBetterLocation(l, bestCachedLocation)) {
+                bestCachedLocation = l;
+            }
+        }
 
+        m_bestLocation = bestCachedLocation;
 
-			if (l == null)
-			{
-				continue;
-			}
-			if (isBetterLocation(l, bestCachedLocation))
-			{
-				bestCachedLocation = l;
-			}
-		}
-		
-		LocationService.bestLocation = bestCachedLocation;
-		Log.v("Location", "best location set from cache");
-    }
-    
-    private static void tearDownListener() 
-    {	
-    	if (LocationService.locationManager != null)
-    	{
-    		LocationService.locationManager = null;
-    	}
-    	if (LocationService.locationListener != null)
-    	{
-    		LocationService.locationListener = null;
-    		isListening = false;
-    	}
-    }
-    
-    private static boolean isAnyProviderEnabled(LocationManager locationManager)
-    {
-    	boolean gpsIsAuthorized = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-    	boolean networkIsAuthorized = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-    	return (gpsIsAuthorized || networkIsAuthorized);
-    }
-    
-    private static void setupListenerAndLocationManager(Activity a) 
-    {	
-		LocationService.locationManager = (LocationManager) a.getSystemService(Context.LOCATION_SERVICE);
-		
-		LocationService.isAuthorized = isAnyProviderEnabled(LocationService.locationManager);
-		
-		if (LocationService.locationListener == null)
-    	{
-			LocationService.locationListener = new LocationListener() {
-    		
-	    		public void onLocationChanged(Location location) {
-    	        	if (isBetterLocation(location, LocationService.bestLocation))
-    	        	{
-    	        		LocationService.bestLocation = location;
-    	        		Log.v("Location", "best updated from onLocationChanged : " + location.getLatitude() + " , " + location.getLongitude() + " , " + location.getAltitude());
-    	        	}
-	       		}
-	    		
-	    	    public void onStatusChanged(String provider, int status, Bundle extras)
-	    	    {
-    	        	Log.v("Location", "onStatusChanged");
-	    	    }
-	
-	    	    public void onProviderEnabled(String provider) {
-	    	    	LocationService.isAuthorized = isAnyProviderEnabled(LocationService.locationManager);
-    	        	Log.v("Location", "onProviderEnabled, LocationService.isAuthorized : " + LocationService.isAuthorized);
-	    	    }
-	
-	    	    public void onProviderDisabled(String provider) {
-	    	    	LocationService.isAuthorized = isAnyProviderEnabled(LocationService.locationManager);
-    	        	Log.v("Location", "onProviderDisabled, LocationService.isAuthorized : " + LocationService.isAuthorized);
-	    	    }        	   
-	    	    
+        if (m_bestLocation != null) {
+            updateNativeLocation(
+                    m_bestLocation.getLatitude(),
+                    m_bestLocation.getLongitude(),
+                    m_bestLocation.getAltitude(),
+                    m_bestLocation.getAccuracy());
+        }
 
-    	
-    		};
-    	}
-		isListening = true;
+        Log.v("Location", "best location set from cache");
     }
-    
+
+    private void tearDownListener() {
+        if (m_locationManager != null) {
+            m_locationManager = null;
+        }
+
+        if (m_locationListener != null) {
+            m_locationListener = null;
+            m_isListening = false;
+        }
+    }
+
+    private boolean isAnyProviderEnabled(LocationManager locationManager) {
+        boolean gpsIsAuthorized = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean networkIsAuthorized = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        return (gpsIsAuthorized || networkIsAuthorized);
+    }
+
+    private void setupListenerAndLocationManager() {
+        m_locationManager = (LocationManager) m_context.getSystemService(Context.LOCATION_SERVICE);
+
+        m_isAuthorized = isAnyProviderEnabled(m_locationManager);
+
+        if (m_locationListener == null) {
+            m_locationListener = new LocationListener() {
+                public void onLocationChanged(Location location) {
+                    if (isBetterLocation(location, m_bestLocation)) {
+                        m_bestLocation = location;
+
+                        updateNativeLocation(
+                                m_bestLocation.getLatitude(),
+                                m_bestLocation.getLongitude(),
+                                m_bestLocation.getAltitude(),
+                                m_bestLocation.getAccuracy());
+
+                        Log.v("Location", "best updated from onLocationChanged : " + location.getLatitude() + " , " + location.getLongitude() + " , " + location.getAltitude());
+                    }
+                }
+
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+                    Log.v("Location", "onStatusChanged");
+                }
+
+                public void onProviderEnabled(String provider) {
+                    m_isAuthorized = isAnyProviderEnabled(m_locationManager);
+                    updateNativeAuthorized(m_isAuthorized);
+                    Log.v("Location", "onProviderEnabled, LocationService.m_isAuthorized : " + m_isAuthorized);
+                }
+
+                public void onProviderDisabled(String provider) {
+                    m_isAuthorized = isAnyProviderEnabled(m_locationManager);
+                    updateNativeAuthorized(m_isAuthorized);
+                    Log.v("Location", "onProviderDisabled, LocationService.m_isAuthorized : " + m_isAuthorized);
+                }
+            };
+        }
+        m_isListening = true;
+    }
+
     // Hoick http://developer.android.com/guide/topics/location/strategies.html
-    protected static boolean isBetterLocation(Location location, Location currentBestLocation) {
+    private boolean isBetterLocation(Location location, Location currentBestLocation) {
         if (currentBestLocation == null) {
             // A new location is always better than no location
             return true;
@@ -234,6 +187,8 @@ public class LocationService
 
         // Check whether the new location fix is newer or older
         long timeDelta = location.getTime() - currentBestLocation.getTime();
+
+        final int ONE_MINUTE = 1000 * 60;
         boolean isSignificantlyNewer = timeDelta > ONE_MINUTE;
         boolean isSignificantlyOlder = timeDelta < -ONE_MINUTE;
         boolean isNewer = timeDelta > 0;
@@ -242,7 +197,7 @@ public class LocationService
         // because the user has likely moved
         if (isSignificantlyNewer) {
             return true;
-        // If the new location is more than two minutes older, it must be worse
+            // If the new location is more than two minutes older, it must be worse
         } else if (isSignificantlyOlder) {
             return false;
         }
@@ -268,11 +223,35 @@ public class LocationService
         return false;
     }
 
-    /** Checks whether two providers are the same */
     private static boolean isSameProvider(String provider1, String provider2) {
         if (provider1 == null) {
-          return provider2 == null;
+            return provider2 == null;
         }
         return provider1.equals(provider2);
+    }
+
+    private void updateNativeLocation(
+            final double latitudeDegrees,
+            final double longitudeDegrees,
+            final double altitudeMeters,
+            final double horizontalAccuracyMeters) {
+
+        throwIfCalledOnIncorrectThread();
+
+        LocationServiceJniMethods.UpdateLocation(
+                m_nativeCallerPointer,
+                latitudeDegrees,
+                longitudeDegrees,
+                altitudeMeters,
+                horizontalAccuracyMeters);
+    }
+
+    private void updateNativeAuthorized(final boolean isAuthorized) {
+        throwIfCalledOnIncorrectThread();
+
+        LocationServiceJniMethods.UpdateAuthorized(
+                m_nativeCallerPointer,
+                isAuthorized);
+
     }
 }
