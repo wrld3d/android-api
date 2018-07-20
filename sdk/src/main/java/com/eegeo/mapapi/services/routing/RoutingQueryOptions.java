@@ -26,7 +26,7 @@ public final class RoutingQueryOptions {
 
     private List<Waypoint> m_waypoints = new ArrayList<Waypoint>();
     private OnRoutingQueryCompletedListener m_onRoutingQueryCompletedListener = null;
-
+    private TransportationMode m_transportationMode = TransportationMode.Walking;
 
     /**
      * Add an outdoor waypoint to the route.
@@ -50,6 +50,20 @@ public final class RoutingQueryOptions {
         m_waypoints.add(new Waypoint(latLng, true, indoorFloorId));
         return this;
     }
+
+    /**
+     * Set which mode of transport this route should use, e.g Walking, Driving.
+     *
+     * @param transportationMode The desired transportation mode.
+     * @return This RoutingQueryOptions object.
+     */
+    public RoutingQueryOptions setTransportationMode(TransportationMode transportationMode)
+    {
+        m_transportationMode = transportationMode;
+        return this;
+    }
+
+    TransportationMode getTransportationMode() { return m_transportationMode; }
 
     List<Waypoint> getWaypoints() {
         return m_waypoints;

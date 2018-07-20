@@ -44,7 +44,9 @@ public class RoutingApi {
             indoorFloorIds[i] = waypoints.get(i).indoorFloorId;
         }
 
-        return nativeBeginRoutingQuery(m_jniEegeoMapApiPtr, count, latitudes, longitudes, isIndoors, indoorFloorIds);
+        int transportationMode = options.getTransportationMode().ordinal();
+
+        return nativeBeginRoutingQuery(m_jniEegeoMapApiPtr, count, latitudes, longitudes, isIndoors, indoorFloorIds, transportationMode);
     }
 
     @WorkerThread
@@ -109,7 +111,8 @@ public class RoutingApi {
             double[] latitudes,
             double[] longitudes,
             boolean[] isIndoors,
-            int[] indoorFloorIds);
+            int[] indoorFloorIds,
+            int transportationMode);
 
     @WorkerThread
     private native void nativeCancelRoutingQuery(

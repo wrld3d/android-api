@@ -9,6 +9,10 @@ public enum TransportationMode
     /**
      * Indicates that the route is a walking Route.
      */
-    Walking
+    Walking,
+    /**
+     * Indicates that the route is a driving Route, e.g car transport
+     */
+    Driving
 }
 
