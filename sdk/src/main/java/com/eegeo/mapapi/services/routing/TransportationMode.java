@@ -11,7 +11,7 @@ public enum TransportationMode
      */
     Walking,
     /**
-     * Indicates that the route is a driving Route, e.g car transport
+     * Indicates that the route is a driving Route, e.g car transport. Driving routes are available for limited areas.  Please contact support@wrld3d.com for details.
      */
     Driving
 }

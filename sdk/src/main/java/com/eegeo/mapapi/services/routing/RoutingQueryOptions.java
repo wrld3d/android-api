@@ -53,7 +53,7 @@ public final class RoutingQueryOptions {
 
     /**
      * Set which mode of transport this route should use, e.g Walking, Driving.
-     *
+     * Driving routes are available for limited areas.  Please contact support@wrld3d.com for details.
      * @param transportationMode The desired transportation mode.
      * @return This RoutingQueryOptions object.
      */
