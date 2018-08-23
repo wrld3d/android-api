@@ -885,7 +885,7 @@
         "screen_margin": 36.0,
         "screen_margin_hiding": "if_icon_outside_margin",
         "stencil_mode": "always",
-        "priority": 5
+        "priority": 1
     },
     {
         "name": "marker_default",
