@@ -36,6 +36,8 @@ android {
                         "-DANDROID_TOOLCHAIN=clang",
                         "-DANDROID_STL=gnustl_static",
                         "-DANDROID_CPP_FEATURES=rtti exceptions"
+
+                targets "eegeo-api-host"
             }
         }
         ndk {
