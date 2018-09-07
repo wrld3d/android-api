@@ -188,8 +188,6 @@ JNIEXPORT void JNICALL Java_com_eegeo_mapapi_EegeoNativeMapView_nativeSetSurface
     Eegeo_ASSERT(jniApiRunnerPtr != 0);
     auto pAndroidApiRunner = reinterpret_cast<Eegeo::ApiHost::Android::AndroidApiRunner*>(jniApiRunnerPtr);
 
-    Eegeo::Android::Sdk::NativeState& nativeState = pAndroidApiRunner->GetNativeState();
-
     if (surface != NULL)
     {
         ANativeWindow* window = ANativeWindow_fromSurface(jenv, surface);

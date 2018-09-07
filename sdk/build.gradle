@@ -29,21 +29,18 @@ android {
 
         externalNativeBuild {
             cmake {
-                cppFlags "-std=c++11"
+                cppFlags "-std=c++11 -fexceptions -frtti -Werror -Wall -Wno-reorder"
 
-                arguments "-DANDROID_PLATFORM=android-9",
-                        "-DANDROID_ARM_MODE=arm",
-                        "-DANDROID_TOOLCHAIN=clang",
-                        "-DANDROID_STL=gnustl_static",
-                        "-DANDROID_CPP_FEATURES=rtti exceptions"
+                arguments "-DANDROID_ARM_MODE=arm",
+                        "-DANDROID_STL=gnustl_static"
 
-                targets "eegeo-api-host"
+                targets "eegeo-jni"
             }
         }
         ndk {
             // filter for abi types to be packed into aar. Also defaults cmake to building these
             // abis, but can be overridden with externalNativeBuild.cmake.abiFilters
-            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a"
+            abiFilters "armeabi-v7a", "arm64-v8a"
         }
 
         lintOptions {
