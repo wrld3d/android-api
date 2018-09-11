@@ -48,7 +48,7 @@ public final class PointOnRoute {
     public final int routeSectionIndex;
 
     /**
-     * True if the result is valid: a PointOnRoute may be invalid if an outdoor route is provided and is tested against an indoors point, and vice versa.
+     * True if the result is valid: a PointOnRoute may be invalid if an outdoor route is provided and is tested against an indoor point, and vice versa.
      */
     public final boolean validResult;
 
