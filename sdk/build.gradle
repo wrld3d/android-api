@@ -29,12 +29,12 @@ android {
 
         externalNativeBuild {
             cmake {
-                cppFlags "-std=c++11"
+                cppFlags "-std=c++11 -fexceptions -frtti -Werror -Wall -Wno-reorder"
 
                 arguments "-DANDROID_ARM_MODE=arm",
-                        "-DANDROID_TOOLCHAIN=clang",
-                        "-DANDROID_STL=gnustl_static",
-                        "-DANDROID_CPP_FEATURES=rtti exceptions"
+                        "-DANDROID_STL=gnustl_static"
+
+                targets "eegeo-jni"
             }
         }
         ndk {
