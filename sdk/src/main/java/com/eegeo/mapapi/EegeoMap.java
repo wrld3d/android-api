@@ -1,5 +1,6 @@
 package com.eegeo.mapapi;
 
+import android.graphics.Color;
 import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
@@ -18,6 +19,9 @@ import com.eegeo.mapapi.camera.CameraUpdateFactory;
 import com.eegeo.mapapi.camera.Projection;
 import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.geometry.LatLngAlt;
+import com.eegeo.mapapi.indoorentities.IndoorEntityApi;
+import com.eegeo.mapapi.indoorentities.IndoorEntityPickedMessage;
+import com.eegeo.mapapi.indoorentities.OnIndoorEntityPickedListener;
 import com.eegeo.mapapi.indoors.ExpandFloorsJniCalls;
 import com.eegeo.mapapi.indoors.IndoorMap;
 import com.eegeo.mapapi.indoors.IndoorsApiJniCalls;
@@ -111,7 +115,7 @@ public final class EegeoMap {
     private PathApi m_pathApi;
     private BlueSphere m_blueSphere = null;
     private PrecacheApi m_precacheApi;
-
+    private IndoorEntityApi m_indoorEntityApi;
 
 
     private static final AllowApiAccess m_allowApiAccess = new AllowApiAccess();
@@ -144,6 +148,7 @@ public final class EegeoMap {
         this.m_routingApi = new RoutingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_pathApi = new PathApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_precacheApi = new PrecacheApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_indoorEntityApi = new IndoorEntityApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
 
     @WorkerThread
@@ -807,6 +812,30 @@ public final class EegeoMap {
     }
 
     /**
+     * Sets highlights on a list of indoor map entities to the specified ARGB color.
+     */
+    public void setIndoorEntityHighlights(final String indoorMapId, final ArrayList<String> indoorEntityIds, final int highlightColorARGB)
+    {
+        m_indoorEntityApi.setIndoorEntityHighlights(indoorMapId, indoorEntityIds, highlightColorARGB);
+    }
+
+    /**
+     * Clears the highlights from a list of indoor map entities.
+     */
+    public void clearIndoorEntityHighlights(final String indoorMapId, final ArrayList<String> indoorEntityIds)
+    {
+        m_indoorEntityApi.clearIndoorEntityHighlights(indoorMapId, indoorEntityIds);
+    }
+
+    /**
+     * Clears all indoor entity highlights.
+     */
+    public void clearAllIndoorEntityHighlights()
+    {
+        m_indoorEntityApi.clearAllIndoorEntityHighlights();
+    }
+
+    /**
      * Creates and returns a PoiService for this map.
      *
      * @return A new PoiService object.
@@ -889,6 +918,27 @@ public final class EegeoMap {
     }
 
     /**
+     * Register a listener to an event raised when one or more indoor map entities are clicked or tapped by the user.
+     *
+     * @param listener the listener to add
+     */
+    @UiThread
+    public void addOnIndoorEntityPickedListener(@NonNull OnIndoorEntityPickedListener listener) {
+        m_indoorEntityApi.addOnIndoorEntityPickedListener(listener);
+    }
+
+    /**
+     * Unregister a listener to an event raised when one or more indoor map entities are clicked or tapped by the user.
+     *
+     * @param listener the listener to remove
+     */
+    @UiThread
+    public void removeOnIndoorEntityPickedListener(@NonNull OnIndoorEntityPickedListener listener) {
+        m_indoorEntityApi.removeOnIndoorEntityPickedListener(listener);
+    }
+
+
+    /**
      * Begin an operation to precache a spherical area of the map. This allows that area to load
      * faster in future.
      *
@@ -961,8 +1011,15 @@ public final class EegeoMap {
         m_precacheApi.notifyPrecacheOperationComplete(precacheOperationId, result);
     }
 
+    @WorkerThread
     private void jniOnRoutingQueryCompleted(final int routingQueryId, RoutingQueryResponse response) {
         m_routingApi.notifyQueryComplete(routingQueryId, response);
+    }
+
+    @WorkerThread
+    private void jniOnIndoorEntityPicked(IndoorEntityPickedMessage message)
+    {
+        m_indoorEntityApi.notifyIndoorEntityPicked(message);
     }
 
     /**
