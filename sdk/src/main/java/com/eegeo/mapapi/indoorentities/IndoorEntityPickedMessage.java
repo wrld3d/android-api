@@ -8,12 +8,12 @@ import java.util.ArrayList;
  */
 public class IndoorEntityPickedMessage
 {
-    private float m_screenPointX;
-    private float m_screenPointY;
+    private double m_screenPointX;
+    private double m_screenPointY;
     private ArrayList<String> m_indoorMapEntityIds;
     private String m_indoorMapId;
 
-    IndoorEntityPickedMessage(float screenPointX, float screenPointY, ArrayList<String> indoorMapEntityIds, String indoorMapId) {
+    IndoorEntityPickedMessage(double screenPointX, double screenPointY, ArrayList<String> indoorMapEntityIds, String indoorMapId) {
         this.m_screenPointX = screenPointX;
         this.m_screenPointY = screenPointY;
         this.m_indoorMapEntityIds = indoorMapEntityIds;
@@ -23,14 +23,14 @@ public class IndoorEntityPickedMessage
     /**
      * @return A float containing the x-position of the click or tap in screen space.
      */
-    public float screenPointX() {
+    public double screenPointX() {
         return m_screenPointX;
     }
 
     /**
      * @return A float containing the y-position of the click or tap in screen space.
      */
-    public float screenPointY() {
+    public double screenPointY() {
         return m_screenPointY;
     }
 
