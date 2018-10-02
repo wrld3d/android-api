@@ -12,11 +12,11 @@ def buildNumber = project.hasProperty('build.number') ? project.ext['build.numbe
 version = '0.0.' + buildNumber
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 28
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 25
+        targetSdkVersion 28
         publishNonDefault rootProject.hasProperty('useLocalSdkBuild') ? rootProject.getProperty('useLocalSdkBuild').toBoolean() : false
         archivesBaseName = 'wrld-android-sdk'
 
@@ -32,7 +32,7 @@ android {
                 cppFlags "-std=c++11 -fexceptions -frtti -Werror -Wall -Wno-reorder"
 
                 arguments "-DANDROID_ARM_MODE=arm",
-                        "-DANDROID_STL=gnustl_static"
+                        "-DANDROID_STL=c++_static"
 
                 targets "eegeo-jni"
             }

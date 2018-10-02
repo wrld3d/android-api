@@ -2,7 +2,7 @@
 
 baseUrl="http://s3.amazonaws.com/eegeo-static/"
 
-srcPackageName="sdk.package.android.cpp11.tar.gz"
+srcPackageName="sdk.package.android.cpp11.c++_static.tar.gz"
 destPackageName="./sdk.package.tar.gz"
 includeDestination="./sdk/src/main/cpp/libs/eegeo"
 sdkDestination="sdk.package.android"
@@ -10,7 +10,10 @@ sdkDestination="sdk.package.android"
 echo "Fetching eeGeo sdk..."
 rm -f ./$destPackageName
 rm -rf $includeDestination
-curl $baseUrl$srcPackageName > ./$destPackageName
+
+src_url=$(echo $baseUrl$srcPackageName | sed "s:+:%2B:g")
+
+curl $src_url > ./$destPackageName
 
 statuscode=$?
 if [ $statuscode -ne 0 ] ; then
