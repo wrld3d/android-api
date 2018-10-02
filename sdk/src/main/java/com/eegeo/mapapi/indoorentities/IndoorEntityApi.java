@@ -9,13 +9,14 @@ import com.eegeo.mapapi.INativeMessageRunner;
 import com.eegeo.mapapi.IUiMessageRunner;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class IndoorEntityApi {
     private INativeMessageRunner m_nativeRunner;
     private IUiMessageRunner m_uiRunner;
 
     private long m_jniEegeoMapApiPtr;
-    private ArrayList<OnIndoorEntityPickedListener> m_onIndoorEntityPickedListeners = new ArrayList<OnIndoorEntityPickedListener>();
+    private List<OnIndoorEntityPickedListener> m_onIndoorEntityPickedListeners = new ArrayList<OnIndoorEntityPickedListener>();
 
     public IndoorEntityApi(INativeMessageRunner nativeRunner,
                       IUiMessageRunner uiRunner,
@@ -26,17 +27,17 @@ public class IndoorEntityApi {
     }
 
     @UiThread
-    public void setIndoorEntityHighlights(@NonNull final String indoorMapId, @NonNull final ArrayList<String> indoorEntityIds, @NonNull final int highlightColor){
+    public void setIndoorEntityHighlights(@NonNull final String indoorMapId, @NonNull final List<String> indoorEntityIds, @NonNull final int highlightColor){
         m_nativeRunner.runOnNativeThread(new Runnable() {
             @Override
             public void run() {
-                nativeSetIndoorEntityHighlights(m_jniEegeoMapApiPtr, indoorMapId, indoorEntityIds, Color.red(highlightColor), Color.green(highlightColor), Color.blue(highlightColor), Color.alpha(highlightColor) );
+                nativeSetIndoorEntityHighlights(m_jniEegeoMapApiPtr, indoorMapId, indoorEntityIds, highlightColor);
             }
         });
     }
 
     @UiThread
-    public void clearIndoorEntityHighlights(final String indoorMapId, final ArrayList<String> indoorEntityIds){
+    public void clearIndoorEntityHighlights(final String indoorMapId, final List<String> indoorEntityIds){
         m_nativeRunner.runOnNativeThread(new Runnable() {
             @Override
             public void run() {
@@ -80,10 +81,10 @@ public class IndoorEntityApi {
 
 
     @WorkerThread
-    private native void nativeSetIndoorEntityHighlights(long jniEegeoMapApiPtr, String indoorMapId, ArrayList<String> indoorEntityIds, int r, int g, int b, int a);
+    private native void nativeSetIndoorEntityHighlights(long jniEegeoMapApiPtr, String indoorMapId, List<String> indoorEntityIds, int highlightColor);
 
     @WorkerThread
-    private native void nativeClearIndoorEntityHighlights(long jniEegeoMapApiPtr, String indoorMapId, ArrayList<String> indoorEntityIds);
+    private native void nativeClearIndoorEntityHighlights(long jniEegeoMapApiPtr, String indoorMapId, List<String> indoorEntityIds);
 
     @WorkerThread
     private native void nativeClearAllIndoorEntityHighlights(long jniEegeoMapApiPtr);

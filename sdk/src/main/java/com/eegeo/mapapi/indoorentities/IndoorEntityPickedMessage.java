@@ -1,50 +1,46 @@
 package com.eegeo.mapapi.indoorentities;
 
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 
 /**
  * This message contains information about one or more indoor map entities that have been clicked or tapped.
- * It is received when the users clicks or taps on an indoor map entity.
+ * It is received when the user clicks or taps on an indoor map entity.
  */
 public class IndoorEntityPickedMessage
 {
-    private double m_screenPointX;
-    private double m_screenPointY;
-    private ArrayList<String> m_indoorMapEntityIds;
-    private String m_indoorMapId;
-
-    IndoorEntityPickedMessage(double screenPointX, double screenPointY, ArrayList<String> indoorMapEntityIds, String indoorMapId) {
-        this.m_screenPointX = screenPointX;
-        this.m_screenPointY = screenPointY;
-        this.m_indoorMapEntityIds = indoorMapEntityIds;
-        this.m_indoorMapId = indoorMapId;
-    }
+    /**
+     * The x-position of the click or tap in screen space.
+     */
+    public final double screenPointX;
 
     /**
-     * @return A float containing the x-position of the click or tap in screen space.
+     * The y-position of the click or tap in screen space.
      */
-    public double screenPointX() {
-        return m_screenPointX;
-    }
+    public final double screenPointY;
 
     /**
-     * @return A float containing the y-position of the click or tap in screen space.
+     * An ArrayList of indoor map entity id strings, representing which map entities were clicked or tapped.
      */
-    public double screenPointY() {
-        return m_screenPointY;
-    }
+    public final ArrayList<String> indoorMapEntityIds;
 
     /**
-     * @return An ArrayList of indoor map entity id strings, representing which map entities were clicked or tapped.
+     * The id of the indoor map that the clicked/tapped entities belong to.
      */
-    public ArrayList<String> indoorMapEntityIds() {
-        return m_indoorMapEntityIds;
-    }
+    public final String indoorMapId;
 
     /**
-     * @return The id of the indoor map that the clicked/tapped entities belong to.
+     * @eegeo.internal
      */
-    public String indoorMapId() {
-        return m_indoorMapId;
+    IndoorEntityPickedMessage(@NonNull double screenPointX,
+                              @NonNull double screenPointY,
+                              @NonNull ArrayList<String> indoorMapEntityIds,
+                              @NonNull String indoorMapId) {
+        this.screenPointX = screenPointX;
+        this.screenPointY = screenPointY;
+        this.indoorMapEntityIds = indoorMapEntityIds;
+        this.indoorMapId = indoorMapId;
     }
+
 }
