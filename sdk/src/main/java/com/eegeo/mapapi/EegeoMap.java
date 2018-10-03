@@ -73,6 +73,7 @@ import com.eegeo.mapapi.util.Promise;
 import com.eegeo.mapapi.util.Ready;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -814,17 +815,19 @@ public final class EegeoMap {
     /**
      * Sets highlights on a list of indoor map entities to the specified ARGB color.
      */
-    public void setIndoorEntityHighlights(final String indoorMapId, final List<String> indoorEntityIds, final int highlightColorARGB)
+    public void setIndoorEntityHighlights(final String indoorMapId, final Collection<String> indoorEntityIds, final int highlightColorARGB)
     {
-        m_indoorEntityApi.setIndoorEntityHighlights(indoorMapId, indoorEntityIds, highlightColorARGB);
+        List<String> indoorEntityIdsList = new ArrayList<String>(indoorEntityIds);
+        m_indoorEntityApi.setIndoorEntityHighlights(indoorMapId, indoorEntityIdsList, highlightColorARGB);
     }
 
     /**
      * Clears the highlights from a list of indoor map entities.
      */
-    public void clearIndoorEntityHighlights(final String indoorMapId, final List<String> indoorEntityIds)
+    public void clearIndoorEntityHighlights(final String indoorMapId, final Collection<String> indoorEntityIds)
     {
-        m_indoorEntityApi.clearIndoorEntityHighlights(indoorMapId, indoorEntityIds);
+        List<String> indoorEntityIdsList = new ArrayList<String>(indoorEntityIds);
+        m_indoorEntityApi.clearIndoorEntityHighlights(indoorMapId, indoorEntityIdsList);
     }
 
     /**
