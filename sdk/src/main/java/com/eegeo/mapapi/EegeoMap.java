@@ -830,6 +830,16 @@ public final class EegeoMap {
         m_indoorEntityApi.clearIndoorEntityHighlights(indoorMapId, indoorEntityIdsList);
     }
 
+    public List<String> getInteriorHighlights(final String indoorMapId)
+    {
+        return m_indoorEntityApi.getIndoorEntityHighlightIds(indoorMapId);
+    }
+
+    public List<String> getInteriorHighlightsOnFloor(final String indoorMapId, final int floorNumber)
+    {
+        return m_indoorEntityApi.getIndoorEntityHighlightIdsOnFloor(indoorMapId, floorNumber);
+    }
+
     /**
      * Clears all indoor entity highlights.
      */

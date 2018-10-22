@@ -37,6 +37,16 @@ public class IndoorEntityApi {
     }
 
     @UiThread
+    public List<String> getIndoorEntityHighlightIds(@NonNull final String indoorMapId){
+        return nativeGetIndoorEntityHighlights(m_jniEegeoMapApiPtr,indoorMapId);
+    }
+
+    @UiThread
+    public List<String> getIndoorEntityHighlightIdsOnFloor(@NonNull final String indoorMapId,@NonNull final int floorNum){
+        return nativeGetIndoorEntityHighlightsOnFloor(m_jniEegeoMapApiPtr,indoorMapId, floorNum);
+    }
+
+    @UiThread
     public void clearIndoorEntityHighlights(final String indoorMapId, final List<String> indoorEntityIds){
         m_nativeRunner.runOnNativeThread(new Runnable() {
             @Override
@@ -82,6 +92,10 @@ public class IndoorEntityApi {
 
     @WorkerThread
     private native void nativeSetIndoorEntityHighlights(long jniEegeoMapApiPtr, String indoorMapId, List<String> indoorEntityIds, int highlightColor);
+
+    private native List<String> nativeGetIndoorEntityHighlights(long jniEegeoMapApiPtr, String indoorMapId);
+
+    private native List<String> nativeGetIndoorEntityHighlightsOnFloor(long jniEegeoMapApiPtr, String indoorMapId, int floorNum);
 
     @WorkerThread
     private native void nativeClearIndoorEntityHighlights(long jniEegeoMapApiPtr, String indoorMapId, List<String> indoorEntityIds);
