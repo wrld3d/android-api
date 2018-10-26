@@ -14,14 +14,14 @@ set (ANDROID_PREBUILT_LIBS_DIR ${EEGEO_SDK_PACKAGE_DIR}/prebuilt/android-${ANDRO
 MESSAGE("ANDROID_PREBUILT_LIBS_DIR is ${ANDROID_PREBUILT_LIBS_DIR}")
 
 find_library(
-	eegeo-sdk-lib 
-	eegeo-sdk 
-	PATHS ${ANDROID_PREBUILT_LIBS_DIR}
+    eegeo-sdk-lib
+    eegeo-sdk
+    PATHS ${ANDROID_PREBUILT_LIBS_DIR}
     CMAKE_FIND_ROOT_PATH_BOTH
 )
 
 link_directories(
-	${ANDROID_PREBUILT_LIBS_DIR}
+    ${ANDROID_PREBUILT_LIBS_DIR}
 )
 
 add_library(${library_name} SHARED jnimain.cpp)
@@ -29,25 +29,25 @@ add_library(${library_name} SHARED jnimain.cpp)
 target_include_directories(${library_name} PUBLIC ${headers})
 
 target_link_libraries(
-	${library_name}	
-	eegeo-api-host
-	eegeo-api
-	${eegeo-sdk-lib}
-	android
-	curl
-	crypto
-	EGL
-	GLESv2
-	http-parser
-	jpeg
-	log
-	m
-	png
-	ssl
-	crypto
-	turbojpeg
-	uv
-	z)
+    ${library_name}
+    eegeo-api-host
+    eegeo-api
+    ${eegeo-sdk-lib}
+    android
+    curl
+    crypto
+    EGL
+    GLESv2
+    http-parser
+    jpeg
+    log
+    m
+    png
+    ssl
+    crypto
+    turbojpeg
+    uv
+    z)
 
 
 # copy lib .so and header to distribution
