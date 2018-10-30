@@ -34,6 +34,11 @@ public class IndoorMap {
      * Gets an array of floor numbers.
      */
     public final int[] floorNumbers;
+
+    /**
+     * Gets an array of entity ids.
+     */
+    public final String[] entityIds;
     /**
      * Gets user data which has been associated with the map through the indoor map service.
      * The user data is a string in JSON format.
@@ -61,7 +66,8 @@ public class IndoorMap {
             String[] indoorFloorIds,
             String[] indoorFloorNames,
             int[] indoorFloorNumbers,
-            String indoorUserData
+            String indoorUserData,
+            String[] indoorEntityIds
     ) {
         id = indoorMapId;
         name = indoorMapName;
@@ -71,6 +77,7 @@ public class IndoorMap {
         floorNames = indoorFloorNames;
         floorNumbers = indoorFloorNumbers;
         userData = indoorUserData;
+        entityIds = indoorEntityIds;
     }
 
 }
