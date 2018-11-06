@@ -1034,9 +1034,13 @@ public final class EegeoMap {
     }
 
     @WorkerThread
-    private void jniOnIndoorEntityPicked(IndoorEntityPickedMessage message)
-    {
+    private void jniOnIndoorEntityPicked(IndoorEntityPickedMessage message) {
         m_indoorEntityApi.notifyIndoorEntityPicked(message);
+    }
+
+    @WorkerThread
+    private void jniOnIndoorMapEntityInformationChanged(final int indoorMapEntityInformationId) {
+        m_indoorMapEntityInformationApi.notifyIndoorMapEntityInformationChanged(indoorMapEntityInformationId);
     }
 
     /**

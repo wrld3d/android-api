@@ -6,6 +6,7 @@ import android.support.annotation.WorkerThread;
 import com.eegeo.mapapi.util.NativeApiObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -18,8 +19,8 @@ public class IndoorMapEntityInformation extends NativeApiObject {
     private final IndoorMapEntityInformationApi m_indoorMapEntityInformationApi;
 
     private final String m_indoorMapId;
-    private final List<IndoorMapEntity> m_indoorMapEntities;
-    private final IndoorMapEntityLoadState m_loadState;
+    private List<IndoorMapEntity> m_indoorMapEntities;
+    private IndoorMapEntityLoadState m_indoorMapEntityLoadState;
 
 
     /**
@@ -43,7 +44,7 @@ public class IndoorMapEntityInformation extends NativeApiObject {
 
         m_indoorMapId = indoorMapId;
         m_indoorMapEntities = new ArrayList<>();
-        m_loadState = IndoorMapEntityLoadState.None;
+        m_indoorMapEntityLoadState = IndoorMapEntityLoadState.None;
 
         submit(new Runnable() {
             @WorkerThread
@@ -54,11 +55,11 @@ public class IndoorMapEntityInformation extends NativeApiObject {
         });
     }
 
-    public String getIndoorMapId() {return m_indoorMapId;}
+    public String getIndoorMapId() { return m_indoorMapId; }
 
-    public List<IndoorMapEntity> getIndoorMapEntities() {return m_indoorMapEntities;}
+    public List<IndoorMapEntity> getIndoorMapEntities() { return m_indoorMapEntities; }
 
-    public IndoorMapEntityLoadState getLoadState() {return  m_loadState;}
+    public IndoorMapEntityLoadState getLoadState() { return m_indoorMapEntityLoadState; }
 
     @UiThread
     public void destroy() {
@@ -73,9 +74,11 @@ public class IndoorMapEntityInformation extends NativeApiObject {
     }
 
     @UiThread
-    void setIndoorEntityInformation(IndoorMapEntityInformation indoorMapEntityInformation)
+    void updateFromNative(IndoorMapEntity indoorMapEntities[], IndoorMapEntityLoadState indoorMapEntityLoadState)
     {
-
+        m_indoorMapEntities = Arrays.asList(indoorMapEntities);
+        m_indoorMapEntityLoadState = indoorMapEntityLoadState;
+        // todo-indoor-entity-api - add change notification
     }
 
     @WorkerThread

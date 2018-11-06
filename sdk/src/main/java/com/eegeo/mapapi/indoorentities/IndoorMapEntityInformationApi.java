@@ -8,6 +8,8 @@ import com.eegeo.mapapi.INativeMessageRunner;
 import com.eegeo.mapapi.IUiMessageRunner;
 
 import java.security.InvalidParameterException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @eegeo.internal
@@ -40,6 +42,7 @@ public class IndoorMapEntityInformationApi {
     public void register(IndoorMapEntityInformation indoorMapEntityInformation, IndoorMapEntityInformation.AllowHandleAccess allowHandleAccess) {
         int nativeHandle = indoorMapEntityInformation.getNativeHandle(allowHandleAccess);
         m_nativeHandleToIndoorMapEntityInformation.put(nativeHandle, indoorMapEntityInformation);
+        fetchIndoorMapEntityInformation(nativeHandle);
     }
 
     @WorkerThread
@@ -67,30 +70,32 @@ public class IndoorMapEntityInformationApi {
     }
 
     @WorkerThread
-    public void notifyIndoorEntityInformationReceived(final int nativeHandle) {
-//        if (m_nativeHandleToIndoorMapEntityInformation.get(nativeHandle) != null) {
-//            fetchIndoorEntityInformation(nativeHandle);
-//        }
+    public void notifyIndoorMapEntityInformationChanged(final int nativeHandle) {
+        if (m_nativeHandleToIndoorMapEntityInformation.get(nativeHandle) != null) {
+            fetchIndoorMapEntityInformation(nativeHandle);
+        }
     }
 
     @WorkerThread
-    private void fetchIndoorEntityInformation(int nativeHandle)
+    private void fetchIndoorMapEntityInformation(int nativeHandle)
     {
-//        final IndoorMapEntityInformation indoorEntityInformation = m_nativeHandleToIndoorMapEntityInformation.get(nativeHandle);
-//
-//        if (indoorEntityInformation == null)
-//            throw new NullPointerException("IndoorMapEntityInformation object not found for nativeHandle");
-//
-//        final IndoorMapEntityInformation newIndoorEntityInformation = nativeGetIndoorEntityInformation(m_jniEegeoMapApiPtr, nativeHandle);
-//        if (newIndoorEntityInformation != null) {
-//            m_uiRunner.runOnUiThread(new Runnable() {
-//                @UiThread
-//                @Override
-//                public void run() {
-//                    indoorEntityInformation.setIndoorEntityInformation(newIndoorEntityInformation);
-//                }
-//            });
-//        }
+        final IndoorMapEntityInformation indoorMapEntityInformation = m_nativeHandleToIndoorMapEntityInformation.get(nativeHandle);
+
+        if (indoorMapEntityInformation == null)
+            throw new NullPointerException("IndoorMapEntityInformation object not found for nativeHandle");
+
+
+        final IndoorMapEntity indoorMapEntities[] = nativeGetIndoorMapEntities(m_jniEegeoMapApiPtr, nativeHandle);
+        final IndoorMapEntityLoadState indoorMapEntityLoadState = nativeGetIndoorMapEntityLoadState(m_jniEegeoMapApiPtr, nativeHandle);
+        if (indoorMapEntities != null) {
+            m_uiRunner.runOnUiThread(new Runnable() {
+                @UiThread
+                @Override
+                public void run() {
+                    indoorMapEntityInformation.updateFromNative(indoorMapEntities, indoorMapEntityLoadState);
+                }
+            });
+        }
     }
 
     @WorkerThread
@@ -104,12 +109,18 @@ public class IndoorMapEntityInformationApi {
             long jniEegeoMapApiPtr,
             int nativeHandle
     );
-//
-//    @WorkerThread
-//    private native IndoorMapEntityInformation nativeGetIndoorEntityInformation(
-//            long jniEegeoMapApiPtr,
-//            int nativeHandle
-//    );
+
+    @WorkerThread
+    private native IndoorMapEntity[] nativeGetIndoorMapEntities(
+            long jniEegeoMapApiPtr,
+            int nativeHandle
+    );
+
+    @WorkerThread
+    private native IndoorMapEntityLoadState nativeGetIndoorMapEntityLoadState(
+            long jniEegeoMapApiPtr,
+            int nativeHandle
+    );
 
 }
 
