@@ -60,6 +60,17 @@ public class IndoorMapEntityInformation extends NativeApiObject {
 
     public IndoorMapEntityLoadState getLoadState() {return  m_loadState;}
 
+    @UiThread
+    public void destroy() {
+        submit(new Runnable() {
+            @WorkerThread
+            @Override
+            public void run() {
+                m_indoorMapEntityInformationApi.destroy(IndoorMapEntityInformation.this, IndoorMapEntityInformation.m_allowHandleAccess);
+            }
+        });
+
+    }
 
     @UiThread
     void setIndoorEntityInformation(IndoorMapEntityInformation indoorMapEntityInformation)

@@ -55,15 +55,15 @@ public class IndoorMapEntityInformationApi {
 
     @WorkerThread
     public void destroy(IndoorMapEntityInformation indoorMapEntityInformation, IndoorMapEntityInformation.AllowHandleAccess allowHandleAccess) {
-//        if (allowHandleAccess == null)
-//            throw new NullPointerException("Null access token. Method is intended for internal use by IndoorMapEntityInformation");
-//
-//        final int nativeHandle = indoorMapEntityInformation.getNativeHandle(allowHandleAccess);
-//
-//        if (m_nativeHandleToIndoorMapEntityInformation.get(nativeHandle) != null) {
-//            nativeDestroyIndoorEntityInformation(m_jniEegeoMapApiPtr, nativeHandle);
-//            m_nativeHandleToIndoorMapEntityInformation.remove(nativeHandle);
-//        }
+        if (allowHandleAccess == null)
+            throw new NullPointerException("Null access token. Method is intended for internal use by IndoorMapEntityInformation");
+
+        final int nativeHandle = indoorMapEntityInformation.getNativeHandle(allowHandleAccess);
+
+        if (m_nativeHandleToIndoorMapEntityInformation.get(nativeHandle) != null) {
+            nativeDestroyIndoorEntityInformation(m_jniEegeoMapApiPtr, nativeHandle);
+            m_nativeHandleToIndoorMapEntityInformation.remove(nativeHandle);
+        }
     }
 
     @WorkerThread
@@ -99,11 +99,11 @@ public class IndoorMapEntityInformationApi {
             String indoorMapId
     );
 
-//    @WorkerThread
-//    private native void nativeDestroyIndoorEntityInformation(
-//            long jniEegeoMapApiPtr,
-//            int nativeHandle
-//    );
+    @WorkerThread
+    private native void nativeDestroyIndoorEntityInformation(
+            long jniEegeoMapApiPtr,
+            int nativeHandle
+    );
 //
 //    @WorkerThread
 //    private native IndoorMapEntityInformation nativeGetIndoorEntityInformation(

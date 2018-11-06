@@ -847,6 +847,11 @@ public final class EegeoMap {
         return new IndoorMapEntityInformation(m_indoorMapEntityInformationApi, indoorMapId);
     }
 
+    public void removeIndoorMapEntityInfomation(@NonNull final IndoorMapEntityInformation indoorMapEntityInformation) {
+
+        indoorMapEntityInformation.destroy();
+    }
+
     /**
      * Creates and returns a PoiService for this map.
      *
