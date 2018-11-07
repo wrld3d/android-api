@@ -23,6 +23,7 @@ import com.eegeo.mapapi.indoorentities.IndoorMapEntityInformation;
 import com.eegeo.mapapi.indoorentities.IndoorMapEntityInformationApi;
 import com.eegeo.mapapi.indoorentities.IndoorEntityPickedMessage;
 import com.eegeo.mapapi.indoorentities.OnIndoorEntityPickedListener;
+import com.eegeo.mapapi.indoorentities.OnIndoorMapEntityInformationChangedListener;
 import com.eegeo.mapapi.indoors.ExpandFloorsJniCalls;
 import com.eegeo.mapapi.indoors.IndoorMap;
 import com.eegeo.mapapi.indoors.IndoorsApiJniCalls;
@@ -842,12 +843,28 @@ public final class EegeoMap {
     }
 
 
-    public IndoorMapEntityInformation addIndoorMapEntityInfomation(@NonNull final String indoorMapId)
+    /**
+     * Adds an IndoorMapEntityInformation object, that will become populated with the ids
+     * of any indoor map entities belonging to the specified indoor map as map tiles stream in.
+     * @param indoorMapId The id of the indoor map to obtain entity information for.
+     * @param indoorMapEntityInformationChangedListener A listener object to obtain notification
+     *                                                  when the IndoorMapEntityInformation has been
+     *                                                  updated with indoor map entity ids.
+     * @return The IndoorMapEntityInformation instance.
+     */
+    public IndoorMapEntityInformation addIndoorMapEntityInformation(
+        @NonNull final String indoorMapId,
+        final OnIndoorMapEntityInformationChangedListener indoorMapEntityInformationChangedListener
+        )
     {
-        return new IndoorMapEntityInformation(m_indoorMapEntityInformationApi, indoorMapId);
+        return new IndoorMapEntityInformation(m_indoorMapEntityInformationApi, indoorMapId, indoorMapEntityInformationChangedListener);
     }
 
-    public void removeIndoorMapEntityInfomation(@NonNull final IndoorMapEntityInformation indoorMapEntityInformation) {
+    /**
+     * Remove an IndoorMapEntityInformation object, previously added via addIndoorMapEntityInformation.
+     * @param indoorMapEntityInformation The IndoorMapEntityInformation instance to remove.
+     */
+    public void removeIndoorMapEntityInformation(@NonNull final IndoorMapEntityInformation indoorMapEntityInformation) {
 
         indoorMapEntityInformation.destroy();
     }
@@ -953,7 +970,6 @@ public final class EegeoMap {
     public void removeOnIndoorEntityPickedListener(@NonNull OnIndoorEntityPickedListener listener) {
         m_indoorEntityApi.removeOnIndoorEntityPickedListener(listener);
     }
-
 
     /**
      * Begin an operation to precache a spherical area of the map. This allows that area to load
