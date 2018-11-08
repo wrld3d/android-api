@@ -8,8 +8,6 @@ import com.eegeo.mapapi.INativeMessageRunner;
 import com.eegeo.mapapi.IUiMessageRunner;
 
 import java.security.InvalidParameterException;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @eegeo.internal
@@ -84,7 +82,6 @@ public class IndoorMapEntityInformationApi {
         if (indoorMapEntityInformation == null)
             throw new NullPointerException("IndoorMapEntityInformation object not found for nativeHandle");
 
-
         final IndoorMapEntity indoorMapEntities[] = nativeGetIndoorMapEntities(m_jniEegeoMapApiPtr, nativeHandle);
         final IndoorMapEntityLoadState indoorMapEntityLoadState = nativeGetIndoorMapEntityLoadState(m_jniEegeoMapApiPtr, nativeHandle);
         if (indoorMapEntities != null) {
@@ -121,7 +118,4 @@ public class IndoorMapEntityInformationApi {
             long jniEegeoMapApiPtr,
             int nativeHandle
     );
-
 }
-
-
