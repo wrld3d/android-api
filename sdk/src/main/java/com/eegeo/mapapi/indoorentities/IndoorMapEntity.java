@@ -6,7 +6,7 @@ import android.support.annotation.UiThread;
 /**
  * Represents infomation about an identifiable feature on an indoor map.
  * These correspond to features within a level GeoJSON in an indoor map submission via the WRLD Indoor Map REST API.
- * See https://github.com/wrld3d/wrld-indoor-maps-api/blob/master/FORMAT.md
+ * See [https://github.com/wrld3d/wrld-indoor-maps-api/blob/master/FORMAT.md](https://github.com/wrld3d/wrld-indoor-maps-api/blob/master/FORMAT.md)
  */
 public class IndoorMapEntity
 {

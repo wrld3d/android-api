@@ -79,6 +79,10 @@ public class IndoorMapEntityInformation extends NativeApiObject {
      */
     public IndoorMapEntityLoadState getLoadState() { return m_indoorMapEntityLoadState; }
 
+
+    /**
+     * @eegeo.internal
+     */
     @UiThread
     public void destroy() {
         submit(new Runnable() {
