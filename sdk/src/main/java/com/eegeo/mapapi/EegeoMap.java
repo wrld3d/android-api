@@ -1,6 +1,5 @@
 package com.eegeo.mapapi;
 
-import android.graphics.Color;
 import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
@@ -20,8 +19,11 @@ import com.eegeo.mapapi.camera.Projection;
 import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.geometry.LatLngAlt;
 import com.eegeo.mapapi.indoorentities.IndoorEntityApi;
+import com.eegeo.mapapi.indoorentities.IndoorMapEntityInformation;
+import com.eegeo.mapapi.indoorentities.IndoorMapEntityInformationApi;
 import com.eegeo.mapapi.indoorentities.IndoorEntityPickedMessage;
 import com.eegeo.mapapi.indoorentities.OnIndoorEntityPickedListener;
+import com.eegeo.mapapi.indoorentities.OnIndoorMapEntityInformationChangedListener;
 import com.eegeo.mapapi.indoors.ExpandFloorsJniCalls;
 import com.eegeo.mapapi.indoors.IndoorMap;
 import com.eegeo.mapapi.indoors.IndoorsApiJniCalls;
@@ -117,6 +119,7 @@ public final class EegeoMap {
     private BlueSphere m_blueSphere = null;
     private PrecacheApi m_precacheApi;
     private IndoorEntityApi m_indoorEntityApi;
+    private IndoorMapEntityInformationApi m_indoorMapEntityInformationApi;
 
 
     private static final AllowApiAccess m_allowApiAccess = new AllowApiAccess();
@@ -150,6 +153,7 @@ public final class EegeoMap {
         this.m_pathApi = new PathApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_precacheApi = new PrecacheApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_indoorEntityApi = new IndoorEntityApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_indoorMapEntityInformationApi = new IndoorMapEntityInformationApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
 
     @WorkerThread
@@ -838,6 +842,33 @@ public final class EegeoMap {
         m_indoorEntityApi.clearAllIndoorEntityHighlights();
     }
 
+
+    /**
+     * Adds an IndoorMapEntityInformation object, that will become populated with the ids
+     * of any indoor map entities belonging to the specified indoor map as map tiles stream in.
+     * @param indoorMapId The id of the indoor map to obtain entity information for.
+     * @param indoorMapEntityInformationChangedListener A listener object to obtain notification
+     *                                                  when the IndoorMapEntityInformation has been
+     *                                                  updated with indoor map entity ids.
+     * @return The IndoorMapEntityInformation instance.
+     */
+    public IndoorMapEntityInformation addIndoorMapEntityInformation(
+        @NonNull final String indoorMapId,
+        final OnIndoorMapEntityInformationChangedListener indoorMapEntityInformationChangedListener
+        )
+    {
+        return new IndoorMapEntityInformation(m_indoorMapEntityInformationApi, indoorMapId, indoorMapEntityInformationChangedListener);
+    }
+
+    /**
+     * Remove an IndoorMapEntityInformation object, previously added via addIndoorMapEntityInformation.
+     * @param indoorMapEntityInformation The IndoorMapEntityInformation instance to remove.
+     */
+    public void removeIndoorMapEntityInformation(@NonNull final IndoorMapEntityInformation indoorMapEntityInformation) {
+
+        indoorMapEntityInformation.destroy();
+    }
+
     /**
      * Creates and returns a PoiService for this map.
      *
@@ -940,7 +971,6 @@ public final class EegeoMap {
         m_indoorEntityApi.removeOnIndoorEntityPickedListener(listener);
     }
 
-
     /**
      * Begin an operation to precache a spherical area of the map. This allows that area to load
      * faster in future.
@@ -1020,9 +1050,13 @@ public final class EegeoMap {
     }
 
     @WorkerThread
-    private void jniOnIndoorEntityPicked(IndoorEntityPickedMessage message)
-    {
+    private void jniOnIndoorEntityPicked(IndoorEntityPickedMessage message) {
         m_indoorEntityApi.notifyIndoorEntityPicked(message);
+    }
+
+    @WorkerThread
+    private void jniOnIndoorMapEntityInformationChanged(final int indoorMapEntityInformationId) {
+        m_indoorMapEntityInformationApi.notifyIndoorMapEntityInformationChanged(indoorMapEntityInformationId);
     }
 
     /**
@@ -1120,6 +1154,5 @@ public final class EegeoMap {
         private AllowApiAccess() {
         }
     }
-
 }
 
