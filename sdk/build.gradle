@@ -1,6 +1,10 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
+
+import com.amazonaws.auth.*
+import com.amazonaws.auth.profile.*
 
 ext {
     eegeoExternalSource = false
@@ -150,5 +154,37 @@ bintray {
         userOrg = 'wrld'
         licenses = ['BSD 2-Clause']
         vcsUrl = 'https://github.com/wrld3d/android-api.git'
+    }
+}
+
+def buildAwsCredentials = {
+    try {
+        return new DefaultAWSCredentialsProviderChain().credentials
+    } catch (Exception e) {
+        logger.info('Unable to retrieve AWS credentials for s3 upload.', e)
+        return new AnonymousAWSCredentials();
+    }
+}
+
+AWSCredentials awsCredentials = buildAwsCredentials()
+def s3storeUrl = project.hasProperty('s3.upload.store') ? project.ext['s3.upload.store'] : ""
+
+publishing {
+    publications {
+        WrldAndroidSdk (MavenPublication) {
+            groupId 'com.wrld'
+            artifactId 'wrld-android-sdk'
+            version version
+            artifact "$buildDir/outputs/aar/wrld-android-sdk-release.aar"
+        }
+    }
+    repositories {
+        maven {
+            url s3storeUrl
+            credentials(AwsCredentials) {
+                accessKey = awsCredentials.AWSAccessKeyId
+                secretKey = awsCredentials.AWSSecretKey
+            }
+        }
     }
 }
