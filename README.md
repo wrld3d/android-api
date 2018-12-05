@@ -9,7 +9,7 @@ If you want to use the library in your Android application, then see our [docume
 The library is available as a Maven package on [Bintray](https://bintray.com/wrld/maven/wrld-android-sdk).
 
 [ ![Download](https://api.bintray.com/packages/wrld/maven/wrld-android-sdk/images/download.svg) ](https://bintray.com/wrld/maven/wrld-android-sdk/_latestVersion)
-
+![Powered by Bintray](http://cdn1.eegeo.com/bintray-attribution/Powered-by-Bintray_Banner_16-6-16-grey.png)
 
 ## Status
 This library is currently in alpha, and is undergoing active development. We plan to add further features in the near future. Got something you want to do in your app? Let us know via the [issues](https://github.com/wrld3d/android-api/issues) page.
