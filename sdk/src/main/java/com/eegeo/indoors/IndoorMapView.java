@@ -134,6 +134,9 @@ public class IndoorMapView implements OnIndoorEnteredListener, OnIndoorExitedLis
                 int maxFloorContainerHeight = screenHeight - rightPanelMarginTop - m_backButton.getHeight() - floorListMarginTop - rightPanelMarginBottom;
 
                 m_maxFloorsViewableCount = (int) Math.floor(maxFloorContainerHeight / ListItemHeight);
+
+                m_uiRootView.removeOnLayoutChangeListener(this);
+            
             }
         });
         m_uiContainer.addView(m_uiRootView);
