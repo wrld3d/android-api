@@ -56,6 +56,9 @@ import com.eegeo.mapapi.precaching.PrecacheApi;
 import com.eegeo.mapapi.precaching.OnPrecacheOperationCompletedListener;
 import com.eegeo.mapapi.precaching.PrecacheOperation;
 import com.eegeo.mapapi.precaching.PrecacheOperationResult;
+import com.eegeo.mapapi.props.Prop;
+import com.eegeo.mapapi.props.PropOptions;
+import com.eegeo.mapapi.props.PropsApi;
 import com.eegeo.mapapi.rendering.RenderingApi;
 import com.eegeo.mapapi.rendering.RenderingState;
 import com.eegeo.mapapi.services.mapscene.Mapscene;
@@ -106,6 +109,7 @@ public final class EegeoMap {
     private PositionerApi m_positionerApi;
     private PolygonApi m_polygonApi;
     private PolylineApi m_polylineApi;
+    private PropsApi m_propsApi;
     private BlueSphereApi m_blueSphereApi;
     private BuildingsApi m_buildingsApi;
     private PickingApi m_pickingApi;
@@ -140,6 +144,7 @@ public final class EegeoMap {
         this.m_positionerApi = new PositionerApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_polygonApi = new PolygonApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_polylineApi = new PolylineApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_propsApi = new PropsApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_blueSphereApi = new BlueSphereApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_buildingsApi = new BuildingsApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_pickingApi = new PickingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
@@ -739,6 +744,28 @@ public final class EegeoMap {
     public void removeBuildingHighlight(@NonNull final BuildingHighlight buildingHighlight) {
 
         buildingHighlight.destroy();
+    }
+
+    /**
+     * Create a prop and add it to the map.
+     *
+     * @param propOptions Creation parameters for the prop
+     * @return The Prop that was added
+     */
+    @UiThread
+    public Prop addProp(@NonNull final PropOptions propOptions) {
+        return new Prop(m_propsApi, propOptions);
+    }
+
+
+    /**
+     * Remove a prop from the map and destroy it.
+     *
+     * @param prop The Prop to remove.
+     */
+    @UiThread
+    public void removeProp(@NonNull final Prop prop) {
+        prop.destroy();
     }
 
     /**

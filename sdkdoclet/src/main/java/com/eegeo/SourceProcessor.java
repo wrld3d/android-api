@@ -91,6 +91,8 @@ public class SourceProcessor extends Doclet {
             "PointOnRouteOptions",
             "PrecacheOperation",
             "PrecacheOperationResult",
+	    "Prop",
+            "PropOptions",
             "OnPrecacheOperationCompletedListener",
             "IndoorMapEntity",
             "IndoorMapEntityInformation",
