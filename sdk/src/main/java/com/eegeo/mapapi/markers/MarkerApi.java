@@ -73,6 +73,7 @@ public class MarkerApi {
                 markerOptions.getIndoorFloorId(),
                 markerOptions.getTitle(),
                 markerOptions.getIconKey(),
+                markerOptions.getStyleName(),
                 markerOptions.getUserData(),
                 markerOptions.getDrawOrder()
         );
@@ -148,6 +149,7 @@ public class MarkerApi {
             int interiorFloorId,
             String labelText,
             String iconKey,
+            String styleName,
             String entityName,
             int drawOrder);
 
