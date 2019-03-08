@@ -30,6 +30,8 @@ import com.eegeo.mapapi.indoors.IndoorsApiJniCalls;
 import com.eegeo.mapapi.indoors.OnFloorChangedListener;
 import com.eegeo.mapapi.indoors.OnIndoorEnteredListener;
 import com.eegeo.mapapi.indoors.OnIndoorExitedListener;
+import com.eegeo.mapapi.indoors.OnIndoorMapLoadedListener;
+import com.eegeo.mapapi.indoors.OnIndoorMapUnloadedListener;
 import com.eegeo.mapapi.map.EegeoMapOptions;
 import com.eegeo.mapapi.map.OnInitialStreamingCompleteListener;
 import com.eegeo.mapapi.markers.Marker;
@@ -98,6 +100,8 @@ public final class EegeoMap {
     private List<OnMapClickListener> m_onMapClickedListeners = new ArrayList<>();
     private List<OnIndoorEnteredListener> m_onIndoorEnteredListeners = new ArrayList<>();
     private List<OnIndoorExitedListener> m_onIndoorExitedListeners = new ArrayList<>();
+    private List<OnIndoorMapLoadedListener> m_onIndoorMapLoadedListeners = new ArrayList<>();
+    private List<OnIndoorMapUnloadedListener> m_onIndoorMapUnloadedListeners = new ArrayList<>();
     private List<OnFloorChangedListener> m_onIndoorFloorChangedListeners = new ArrayList<>();
     private List<OnInitialStreamingCompleteListener> m_onInitialStreamingCompleteListeners = new ArrayList<>();
     private CameraPosition m_cameraPosition = null;
@@ -452,6 +456,46 @@ public final class EegeoMap {
     @UiThread
     public void removeOnIndoorExitedListener(@NonNull OnIndoorExitedListener listener) {
         m_onIndoorExitedListeners.remove(listener);
+    }
+
+    /**
+     * Registers a listener for indoor map loaded events.
+     *
+     * @param listener The listener to be notified when an indoor map is loaded.
+     */
+    @UiThread
+    public void addOnIndoorMapLoadedListener(@NonNull OnIndoorMapLoadedListener listener) {
+        m_onIndoorMapLoadedListeners.add(listener);
+    }
+
+    /**
+     * Unregisters a listener for indoor map unloaded events.
+     *
+     * @param listener The listener to be removed.
+     */
+    @UiThread
+    public void removeOnIndoorMapLoadedListener(@NonNull OnIndoorMapLoadedListener listener) {
+        m_onIndoorMapLoadedListeners.remove(listener);
+    }
+
+    /**
+     * Registers a listener for indoor map unloaded events.
+     *
+     * @param listener The listener to be notified when an indoor map is unloaded.
+     */
+    @UiThread
+    public void addOnIndoorMapUnloadedListener(@NonNull OnIndoorMapUnloadedListener listener) {
+        m_onIndoorMapUnloadedListeners.add(listener);
+    }
+
+    /**
+     * Unregisters a listener for indoor map unloaded events.
+     *
+     * @param listener The listener to be removed.
+     */
+    @UiThread
+    public void removeOnIndoorMapUnloadedListener(@NonNull OnIndoorMapUnloadedListener listener) {
+        m_onIndoorMapUnloadedListeners.remove(listener);
     }
 
     /**
@@ -1085,6 +1129,29 @@ public final class EegeoMap {
     private void jniOnIndoorMapEntityInformationChanged(final int indoorMapEntityInformationId) {
         m_indoorMapEntityInformationApi.notifyIndoorMapEntityInformationChanged(indoorMapEntityInformationId);
     }
+
+    @WorkerThread
+    private void jniOnIndoorMapLoaded(final String indoorMapId) {
+        m_uiRunner.runOnUiThread(new Runnable() {
+            public void run() {
+                for (OnIndoorMapLoadedListener listener : m_onIndoorMapLoadedListeners) {
+                    listener.onIndoorMapLoaded(indoorMapId);
+                }
+            }
+        });
+    }
+
+    @WorkerThread
+    private void jniOnIndoorMapUnloaded(final String indoorMapId) {
+        m_uiRunner.runOnUiThread(new Runnable() {
+            public void run() {
+                for (OnIndoorMapUnloadedListener listener : m_onIndoorMapUnloadedListeners) {
+                    listener.onIndoorMapUnloaded(indoorMapId);
+                }
+            }
+        });
+    }
+
 
     /**
      * Registers a listener to an event raised when the initial map scene has completed streaming all resources

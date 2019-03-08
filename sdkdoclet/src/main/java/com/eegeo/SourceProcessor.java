@@ -39,6 +39,8 @@ public class SourceProcessor extends Doclet {
             "OnFloorChangedListener",
             "OnIndoorEnteredListener",
             "OnIndoorExitedListener",
+            "OnIndoorMapLoadedListener",
+            "OnIndoorMapUnloadedListener",
             "LatLng",
             "LatLngAlt",
             "LatLngBounds",
