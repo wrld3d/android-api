@@ -50,6 +50,9 @@ import com.eegeo.mapapi.polygons.PolygonOptions;
 import com.eegeo.mapapi.polylines.Polyline;
 import com.eegeo.mapapi.polylines.PolylineApi;
 import com.eegeo.mapapi.polylines.PolylineOptions;
+import com.eegeo.mapapi.heatmaps.Heatmap;
+import com.eegeo.mapapi.heatmaps.HeatmapApi;
+import com.eegeo.mapapi.heatmaps.HeatmapOptions;
 import com.eegeo.mapapi.positioner.OnPositionerChangedListener;
 import com.eegeo.mapapi.positioner.Positioner;
 import com.eegeo.mapapi.positioner.PositionerApi;
@@ -113,6 +116,7 @@ public final class EegeoMap {
     private PositionerApi m_positionerApi;
     private PolygonApi m_polygonApi;
     private PolylineApi m_polylineApi;
+    private HeatmapApi m_heatmapApi;
     private PropsApi m_propsApi;
     private BlueSphereApi m_blueSphereApi;
     private BuildingsApi m_buildingsApi;
@@ -148,6 +152,7 @@ public final class EegeoMap {
         this.m_positionerApi = new PositionerApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_polygonApi = new PolygonApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_polylineApi = new PolylineApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_heatmapApi = new HeatmapApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_propsApi = new PropsApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_blueSphereApi = new BlueSphereApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_buildingsApi = new BuildingsApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
@@ -764,6 +769,30 @@ public final class EegeoMap {
     public void removePolyline(@NonNull final Polyline polyline) {
 
         polyline.destroy();
+    }
+
+    /**
+     * Create a heatmap and add it to the map.
+     *
+     * @param heatmapOptions Creation parameters for the marker
+     * @return The Heatmap that was added
+     */
+    @UiThread
+    public Heatmap addHeatmap(@NonNull final HeatmapOptions heatmapOptions) {
+
+        return new Heatmap(m_heatmapApi, heatmapOptions);
+    }
+
+
+    /**
+     * Remove a heatmap from the map and destroy it.
+     *
+     * @param heatmap The Heatmap to remove.
+     */
+    @UiThread
+    public void removeHeatmap(@NonNull final Heatmap heatmap) {
+
+        heatmap.destroy();
     }
 
     /**
