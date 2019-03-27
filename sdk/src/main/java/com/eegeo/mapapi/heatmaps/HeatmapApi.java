@@ -8,6 +8,8 @@ import com.eegeo.mapapi.INativeMessageRunner;
 import com.eegeo.mapapi.IUiMessageRunner;
 import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.geometry.ElevationMode;
+import com.eegeo.mapapi.geometry.WeightedLatLngAlt;
+import com.eegeo.mapapi.polygons.PolygonOptions;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -48,24 +50,35 @@ public class HeatmapApi {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
 
-        if (heatmapOptions.getPoints().size() < 2)
-            throw new InvalidParameterException("HeatmapOptions points must contain at least two elements");
+        PolygonOptions polygonOptions = heatmapOptions.getPolygonOptions();
 
-        List<LatLng> exteriorPoints = heatmapOptions.getPoints();
-        List<List<LatLng>> holes = heatmapOptions.getHoles();
+        if (polygonOptions.getPoints().size() < 2)
+            throw new InvalidParameterException("PolygonOptions points must contain at least two elements");
+
+        // todo DRY - factor out commonality with PolygonApi
+        List<LatLng> exteriorPoints = polygonOptions.getPoints();
+        List<List<LatLng>> holes = polygonOptions.getHoles();
 
         final int[] ringVertexCounts = buildRingVertexCounts(exteriorPoints, holes);
         final double[] allPointsDoubleArray = buildPointsArray(exteriorPoints, holes, ringVertexCounts);
+        final double[] dataDoubleArray = dataToDoubleArray(heatmapOptions.getData());
+        final int textureWidth = heatmapOptions.getTextureWidth();
+        final int textureHeight = heatmapOptions.getTextureHeight();
+        final float blurRadiusMeters = heatmapOptions.getBlurRadiusMeters();
 
         return nativeCreateHeatmap(
                 m_jniEegeoMapApiPtr,
-                heatmapOptions.getIndoorMapId(),
-                heatmapOptions.getIndoorFloorId(),
-                heatmapOptions.getElevation(),
-                heatmapOptions.getElevationMode().ordinal(),
+                polygonOptions.getIndoorMapId(),
+                polygonOptions.getIndoorFloorId(),
+                polygonOptions.getElevation(),
+                polygonOptions.getElevationMode().ordinal(),
                 allPointsDoubleArray,
                 ringVertexCounts,
-                heatmapOptions.getFillColor()
+                polygonOptions.getFillColor(),
+                dataDoubleArray,
+                textureWidth,
+                textureHeight,
+                blurRadiusMeters
         );
     }
 
@@ -108,6 +121,22 @@ public class HeatmapApi {
         }
         return coords;
     }
+
+
+    private double[] dataToDoubleArray(List<WeightedLatLngAlt> data) {
+        final int elementCount = data.size();
+        final int doublesPerElement = 4;
+        double[] doubles = new double[elementCount * doublesPerElement];
+        for (int i = 0; i < elementCount; ++i) {
+            WeightedLatLngAlt element = data.get(i);
+            doubles[i * doublesPerElement + 0] = element.point.latitude;
+            doubles[i * doublesPerElement + 1] = element.point.longitude;
+            doubles[i * doublesPerElement + 2] = element.point.altitude;
+            doubles[i * doublesPerElement + 3] = element.intensity;
+        }
+        return doubles;
+    }
+
 
     @WorkerThread
     public void destroy(Heatmap heatmap, Heatmap.AllowHandleAccess allowHandleAccess) {
@@ -166,6 +195,21 @@ public class HeatmapApi {
     }
 
     @WorkerThread
+    void setData(
+            int nativeHandle,
+            Heatmap.AllowHandleAccess allowHandleAccess,
+            List<WeightedLatLngAlt> data) {
+        if (allowHandleAccess == null)
+            throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
+
+        double[] dataDoubleArray = dataToDoubleArray(data);
+        nativeSetData(
+                m_jniEegeoMapApiPtr,
+                nativeHandle,
+                dataDoubleArray);
+    }
+
+    @WorkerThread
     private native int nativeCreateHeatmap(
             long jniEegeoMapApiPtr,
             String indoorMapId,
@@ -174,7 +218,11 @@ public class HeatmapApi {
             int elevationMode,
             double[] points,
             int[] ringVertexCounts,
-            int colorARGB
+            int colorARGB,
+            double[] dataDoubleArray,
+            int textureWidth,
+            int textureHeight,
+            float blurRadiusMeters
     );
 
     @WorkerThread
@@ -203,4 +251,9 @@ public class HeatmapApi {
             int nativeHandle,
             int colorARGB);
 
+    @WorkerThread
+    private native void nativeSetData(
+            long jniEegeoMapApiPtr,
+            int nativeHandle,
+            double[] dataDoubleArray);
 }

@@ -7,6 +7,8 @@ import android.support.annotation.WorkerThread;
 
 import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.geometry.ElevationMode;
+import com.eegeo.mapapi.geometry.WeightedLatLngAlt;
+import com.eegeo.mapapi.polygons.PolygonOptions;
 import com.eegeo.mapapi.util.NativeApiObject;
 
 import java.util.List;
@@ -21,9 +23,11 @@ public class Heatmap extends NativeApiObject {
     private double m_elevation;
     private ElevationMode m_elevationMode;
 
-    private List<LatLng> m_points;
-    private List<List<LatLng>> m_holes;
+    private List<LatLng> m_polygonPoints;
+    private List<List<LatLng>> m_polygonHoles;
     private int m_fillColorARGB;
+
+    private List<WeightedLatLngAlt> m_data;
 
 
     /**
@@ -42,14 +46,17 @@ public class Heatmap extends NativeApiObject {
                     }
                 });
 
+        PolygonOptions polygonOptions = heatmapOptions.getPolygonOptions();
+
         m_heatmapApi = heatmapApi;
-        m_indoorMapId = heatmapOptions.getIndoorMapId();
-        m_indoorFloorId = heatmapOptions.getIndoorFloorId();
-        m_elevation = heatmapOptions.getElevation();
-        m_elevationMode = heatmapOptions.getElevationMode();
-        m_points = heatmapOptions.getPoints();
-        m_holes = heatmapOptions.getHoles();
-        m_fillColorARGB = heatmapOptions.getFillColor();
+        m_indoorMapId = polygonOptions.getIndoorMapId();
+        m_indoorFloorId = polygonOptions.getIndoorFloorId();
+        m_elevation = polygonOptions.getElevation();
+        m_elevationMode = polygonOptions.getElevationMode();
+        m_polygonPoints = polygonOptions.getPoints();
+        m_polygonHoles = polygonOptions.getHoles();
+        m_fillColorARGB = polygonOptions.getFillColor();
+        m_data = heatmapOptions.getData();
 
         submit(new Runnable() {
             @WorkerThread
@@ -169,24 +176,27 @@ public class Heatmap extends NativeApiObject {
     }
 
     /**
-     * Gets the outline points of the heatmap.
+     * Gets the outline points of the heatmap polygon.
      *
      * @return The vertices of the exterior ring (outline) of this heatmap.
      */
     @UiThread
-    public List<LatLng> getPoints() {
-        return m_points;
+    public List<LatLng> getPolygonPoints() {
+        return m_polygonPoints;
     }
 
     /**
-     * Gets the points that define holes for this heatmap.
+     * Gets the points that define holes for the heatmap polygon.
      *
      * @return A list of lists - each inner list contains the vertices of an interior ring (hole) of this heatmap.
      */
     @UiThread
-    public List<List<LatLng>> getHoles() {
-        return m_holes;
+    public List<List<LatLng>> getPolygonHoles() {
+        return m_polygonHoles;
     }
+
+    @UiThread
+    public List<WeightedLatLngAlt> getData() { return m_data; }
 
     /**
      * Removes this heatmap from the map and destroys the heatmap. Use EegeoMap.removeHeatmap
@@ -250,6 +260,21 @@ public class Heatmap extends NativeApiObject {
                         getNativeHandle(),
                         Heatmap.m_allowHandleAccess,
                         fillColorARGB);
+            }
+        });
+    }
+
+    @UiThread
+    private void updateNativeData() {
+        final List<WeightedLatLngAlt> data = m_data;
+
+        submit(new Runnable() {
+            @WorkerThread
+            public void run() {
+                m_heatmapApi.setData(
+                        getNativeHandle(),
+                        Heatmap.m_allowHandleAccess,
+                        data);
             }
         });
     }
