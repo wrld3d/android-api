@@ -18,15 +18,8 @@ public final class HeatmapOptions {
     private List<WeightedLatLngAlt> m_data = new ArrayList<>();
 
     private int m_resolutionPixels = 512;
-    private float m_blurRadiusMeters = 10.f;
-
-    // todo_heatmap
-    // other options:
-    //private double m_opacity;
-    // private GradientInfo
-
-
-    private int m_fillColorARGB = 0xff000000;
+    private double m_blurRadiusMeters = 10.0;
+    private double m_opacity = 0.70;
 
     /**
      * Default constructor for heatmap creation parameters.
@@ -64,26 +57,19 @@ public final class HeatmapOptions {
         return this;
     }
 
-    /**
-    /**
-     * Sets the fill color of the heatmap as a 32-bit ARGB color. The default value is opaque black (0xff000000).
-     *
-     * @param fillColor The fill color to use.
-     * @return The HeatmapOptions object on which the method was called, with the new color set.
-     */
-    @SuppressWarnings("JavaDoc")
-    public HeatmapOptions fillColor(int fillColor) {
-        m_fillColorARGB = fillColor;
-        return this;
-    }
 
     public HeatmapOptions resolution(int resolutionPixels) {
         m_resolutionPixels = resolutionPixels;
         return this;
     }
 
-    public HeatmapOptions blurRadiusMeters(float blurRadiusMeters) {
+    public HeatmapOptions blurRadiusMeters(double blurRadiusMeters) {
         m_blurRadiusMeters = blurRadiusMeters;
+        return this;
+    }
+
+    public HeatmapOptions opacity(double opacity) {
+        m_opacity = opacity;
         return this;
     }
 
@@ -101,18 +87,13 @@ public final class HeatmapOptions {
         return m_data;
     }
 
-    /**
-     * Returns the fill color set for this HeatmapOptions object.
-     *
-     * @return The fill color as a 32-bit ARGB color.
-     */
-    public int getFillColor() { return m_fillColorARGB; }
-
     public int getTextureWidth() { return m_resolutionPixels; }
 
     public int getTextureHeight() { return m_resolutionPixels; }
 
-    public float getBlurRadiusMeters() { return m_blurRadiusMeters; }
+    public double getBlurRadiusMeters() { return m_blurRadiusMeters; }
+
+    public double getOpacity() { return m_opacity; }
 
 
 }

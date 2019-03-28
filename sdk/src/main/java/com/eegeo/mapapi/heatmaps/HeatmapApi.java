@@ -64,7 +64,8 @@ public class HeatmapApi {
         final double[] dataDoubleArray = dataToDoubleArray(heatmapOptions.getData());
         final int textureWidth = heatmapOptions.getTextureWidth();
         final int textureHeight = heatmapOptions.getTextureHeight();
-        final float blurRadiusMeters = heatmapOptions.getBlurRadiusMeters();
+        final double blurRadiusMeters = heatmapOptions.getBlurRadiusMeters();
+        final float opacity = (float)heatmapOptions.getOpacity();
 
         return nativeCreateHeatmap(
                 m_jniEegeoMapApiPtr,
@@ -78,7 +79,8 @@ public class HeatmapApi {
                 dataDoubleArray,
                 textureWidth,
                 textureHeight,
-                blurRadiusMeters
+                blurRadiusMeters,
+                opacity
         );
     }
 
@@ -222,7 +224,8 @@ public class HeatmapApi {
             double[] dataDoubleArray,
             int textureWidth,
             int textureHeight,
-            float blurRadiusMeters
+            double blurRadiusMeters,
+            float opacity
     );
 
     @WorkerThread

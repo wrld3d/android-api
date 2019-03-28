@@ -25,9 +25,12 @@ public class Heatmap extends NativeApiObject {
 
     private List<LatLng> m_polygonPoints;
     private List<List<LatLng>> m_polygonHoles;
-    private int m_fillColorARGB;
 
     private List<WeightedLatLngAlt> m_data;
+    private int m_textureWidth;
+    private int m_textureHeight;
+    private double m_blurRadiusMeters;
+    private double m_opacity;
 
 
     /**
@@ -55,8 +58,13 @@ public class Heatmap extends NativeApiObject {
         m_elevationMode = polygonOptions.getElevationMode();
         m_polygonPoints = polygonOptions.getPoints();
         m_polygonHoles = polygonOptions.getHoles();
-        m_fillColorARGB = polygonOptions.getFillColor();
+
         m_data = heatmapOptions.getData();
+        m_textureWidth = heatmapOptions.getTextureWidth();
+        m_textureHeight = heatmapOptions.getTextureHeight();
+        m_blurRadiusMeters = heatmapOptions.getBlurRadiusMeters();
+        m_opacity = heatmapOptions.getOpacity();
+
 
         submit(new Runnable() {
             @WorkerThread
@@ -155,27 +163,6 @@ public class Heatmap extends NativeApiObject {
     }
 
     /**
-     * Gets the fill color of the heatmap.
-     *
-     * @return The fill color of the heatmap as a 32-bit ARGB color.
-     */
-    @UiThread
-    public int getFillColor() {
-        return m_fillColorARGB;
-    }
-
-    /**
-     * Sets the fill color for this heatmap.
-     *
-     * @param fillColor The fill color of the heatmap as a 32-bit ARGB color.
-     */
-    @UiThread
-    public void setFillColor(int fillColor) {
-        m_fillColorARGB = fillColor;
-        updateNativeStyleAttributes();
-    }
-
-    /**
      * Gets the outline points of the heatmap polygon.
      *
      * @return The vertices of the exterior ring (outline) of this heatmap.
@@ -251,17 +238,18 @@ public class Heatmap extends NativeApiObject {
 
     @UiThread
     private void updateNativeStyleAttributes() {
-        final int fillColorARGB = m_fillColorARGB;
-
-        submit(new Runnable() {
-            @WorkerThread
-            public void run() {
-                m_heatmapApi.setStyleAttributes(
-                        getNativeHandle(),
-                        Heatmap.m_allowHandleAccess,
-                        fillColorARGB);
-            }
-        });
+// todo_heatmaps
+//        final int fillColorARGB = m_fillColorARGB;
+//
+//        submit(new Runnable() {
+//            @WorkerThread
+//            public void run() {
+//                m_heatmapApi.setStyleAttributes(
+//                        getNativeHandle(),
+//                        Heatmap.m_allowHandleAccess,
+//                        fillColorARGB);
+//            }
+//        });
     }
 
     @UiThread
