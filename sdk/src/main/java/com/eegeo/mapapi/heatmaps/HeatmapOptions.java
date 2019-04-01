@@ -13,13 +13,28 @@ import java.util.List;
  */
 @SuppressWarnings("WeakerAccess")
 public final class HeatmapOptions {
+    public static final int OCCLUSION_NONE = 0x0;
+    public static final int OCCLUSION_GROUND = 0x1;
+    public static final int OCCLUSION_BUILDINGS = 0x2;
+    public static final int OCCLUSION_TREES = 0x4;
+    public static final int OCCLUSION_TRANSPORT = 0x8;
+
 
     private PolygonOptions m_polygonOptions = new PolygonOptions();
     private List<WeightedLatLngAlt> m_data = new ArrayList<>();
+    private double m_weightMin = 0.0;
+    private double m_weightMax = 1.0;
 
     private int m_resolutionPixels = 512;
-    private double m_blurRadiusMeters = 10.0;
+    private double m_radiusMinMeters = 5.0;
+    private double m_radiusMaxMeters = 25.0;
+    private double m_radiusBlend = 5.0;
     private double m_opacity = 0.70;
+    private double m_intensityScale = 1.0;
+    private float m_occludedAlpha = 0.85f;
+    private float m_occludedSaturation = 0.7f;
+    private float m_occludedBrightness = 0.7f;
+    private int m_occludedFeatures = OCCLUSION_NONE;
 
     /**
      * Default constructor for heatmap creation parameters.
@@ -57,19 +72,63 @@ public final class HeatmapOptions {
         return this;
     }
 
+    public HeatmapOptions weightMin(double weightMin) {
+        m_weightMin = weightMin;
+        return this;
+    }
+
+    public HeatmapOptions weightMax(double weightMax) {
+        m_weightMax = weightMax;
+        return this;
+    }
 
     public HeatmapOptions resolution(int resolutionPixels) {
         m_resolutionPixels = resolutionPixels;
         return this;
     }
 
-    public HeatmapOptions blurRadiusMeters(double blurRadiusMeters) {
-        m_blurRadiusMeters = blurRadiusMeters;
+    public HeatmapOptions radiusMinMeters(double radiusMinMeters) {
+        m_radiusMinMeters = radiusMinMeters;
+        return this;
+    }
+
+    public HeatmapOptions radiusMaxMeters(double radiusMaxMeters) {
+        m_radiusMaxMeters = radiusMaxMeters;
+        return this;
+    }
+
+    public HeatmapOptions radiusBlend(double radiusBlend) {
+        m_radiusBlend = radiusBlend;
         return this;
     }
 
     public HeatmapOptions opacity(double opacity) {
         m_opacity = opacity;
+        return this;
+    }
+
+    public HeatmapOptions intensityScale(double intensityScale) {
+        m_intensityScale = intensityScale;
+        return this;
+    }
+
+    public HeatmapOptions occludedFeatures(int occludedFeatures) {
+        m_occludedFeatures = occludedFeatures;
+        return this;
+    }
+
+    public HeatmapOptions occludedStyleAlpha(float occludedAlpha) {
+        m_occludedAlpha = occludedAlpha;
+        return this;
+    }
+
+    public HeatmapOptions occludedStyleSaturation(float occludedSaturation) {
+        m_occludedSaturation = occludedSaturation;
+        return this;
+    }
+
+    public HeatmapOptions occludedStyleBrightness(float occludedBrightness) {
+        m_occludedBrightness = occludedBrightness;
         return this;
     }
 
@@ -87,13 +146,29 @@ public final class HeatmapOptions {
         return m_data;
     }
 
+    public double getWeightMin() { return m_weightMin; }
+
+    public double getWeightMax() { return m_weightMax; }
+
     public int getTextureWidth() { return m_resolutionPixels; }
 
     public int getTextureHeight() { return m_resolutionPixels; }
 
-    public double getBlurRadiusMeters() { return m_blurRadiusMeters; }
+    public double getRadiusMinMeters() { return m_radiusMinMeters; }
+
+    public double getRadiusMaxMeters() { return m_radiusMaxMeters; }
+
+    public double getRadiusBlend() { return m_radiusBlend; }
 
     public double getOpacity() { return m_opacity; }
 
+    public double getIntensityScale() { return m_intensityScale; }
 
+    public float getOccludedStyleAlpha() { return m_occludedAlpha; }
+
+    public float getOccludedStyleSaturation() { return m_occludedSaturation; }
+
+    public float getOccludedStyleBrightness()  { return m_occludedBrightness; }
+
+    public int getOccludedFeatures() { return m_occludedFeatures; }
 }

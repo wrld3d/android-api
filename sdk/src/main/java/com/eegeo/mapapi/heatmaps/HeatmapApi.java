@@ -62,10 +62,20 @@ public class HeatmapApi {
         final int[] ringVertexCounts = buildRingVertexCounts(exteriorPoints, holes);
         final double[] allPointsDoubleArray = buildPointsArray(exteriorPoints, holes, ringVertexCounts);
         final double[] dataDoubleArray = dataToDoubleArray(heatmapOptions.getData());
+        final double weightMin = heatmapOptions.getWeightMin();
+        final double weightMax = heatmapOptions.getWeightMax();
         final int textureWidth = heatmapOptions.getTextureWidth();
         final int textureHeight = heatmapOptions.getTextureHeight();
-        final double blurRadiusMeters = heatmapOptions.getBlurRadiusMeters();
+        final double radiusMinMeters = heatmapOptions.getRadiusMinMeters();
+        final double radiusMaxMeters = heatmapOptions.getRadiusMaxMeters();
+        final double radiusBlend = heatmapOptions.getRadiusBlend();
         final float opacity = (float)heatmapOptions.getOpacity();
+        final double intensityScale = heatmapOptions.getIntensityScale();
+        final int occludedFeatures = heatmapOptions.getOccludedFeatures();
+        final float occludedAlpha = heatmapOptions.getOccludedStyleAlpha();
+        final float occludedSaturation = heatmapOptions.getOccludedStyleSaturation();
+        final float occludedBrightness = heatmapOptions.getOccludedStyleBrightness();
+
 
         return nativeCreateHeatmap(
                 m_jniEegeoMapApiPtr,
@@ -77,10 +87,19 @@ public class HeatmapApi {
                 ringVertexCounts,
                 polygonOptions.getFillColor(),
                 dataDoubleArray,
+                weightMin,
+                weightMax,
                 textureWidth,
                 textureHeight,
-                blurRadiusMeters,
-                opacity
+                radiusMinMeters,
+                radiusMaxMeters,
+                radiusBlend,
+                opacity,
+                intensityScale,
+                occludedFeatures,
+                occludedAlpha,
+                occludedSaturation,
+                occludedBrightness
         );
     }
 
@@ -184,17 +203,67 @@ public class HeatmapApi {
     }
 
     @WorkerThread
-    void setStyleAttributes(int nativeHandle,
-                            Heatmap.AllowHandleAccess allowHandleAccess,
-                            int colorARGB) {
+    void setRadiusBlend(int nativeHandle,
+                        Heatmap.AllowHandleAccess allowHandleAccess,
+                        double radiusBlend) {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
 
-        nativeSetStyleAttributes(
+        nativeRadiusBlend(
                 m_jniEegeoMapApiPtr,
                 nativeHandle,
-                colorARGB);
+                radiusBlend);
     }
+
+    @WorkerThread
+    void setIntensityScale(int nativeHandle,
+                        Heatmap.AllowHandleAccess allowHandleAccess,
+                        double intensityScale) {
+        if (allowHandleAccess == null)
+            throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
+
+        nativeIntensityScale(
+                m_jniEegeoMapApiPtr,
+                nativeHandle,
+                intensityScale);
+    }
+
+    @WorkerThread
+    void setOpacity(int nativeHandle,
+                           Heatmap.AllowHandleAccess allowHandleAccess,
+                           double opacity) {
+        if (allowHandleAccess == null)
+            throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
+
+        nativeOpacity(
+                m_jniEegeoMapApiPtr,
+                nativeHandle,
+                (float)opacity);
+    }
+
+    @WorkerThread
+    void setOccludedStyle(
+            int nativeHandle,
+            Heatmap.AllowHandleAccess allowHandleAccess,
+            int occludedFeatures,
+            float occludedAlpha,
+            float occludedSaturation,
+            float occludedBrightness
+        ) {
+        if (allowHandleAccess == null)
+            throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
+
+        nativeOccludedStyle(
+                m_jniEegeoMapApiPtr,
+                nativeHandle,
+                occludedFeatures,
+                occludedAlpha,
+                occludedSaturation,
+                occludedBrightness
+        );
+    }
+
+
 
     @WorkerThread
     void setData(
@@ -222,10 +291,19 @@ public class HeatmapApi {
             int[] ringVertexCounts,
             int colorARGB,
             double[] dataDoubleArray,
+            double weightMin,
+            double weightMax,
             int textureWidth,
             int textureHeight,
-            double blurRadiusMeters,
-            float opacity
+            double radiusMinMeters,
+            double radiusMaxMeters,
+            double radiusBlend,
+            float opacity,
+            double intensityScale,
+            int occludedFeatures,
+            float occludedAlpha,
+            float occludedSaturation,
+            float occludedBrightness
     );
 
     @WorkerThread
@@ -249,10 +327,36 @@ public class HeatmapApi {
             int elevationModeInt);
 
     @WorkerThread
-    private native void nativeSetStyleAttributes(
+    private native void nativeRadiusBlend(
             long jniEegeoMapApiPtr,
             int nativeHandle,
-            int colorARGB);
+            double radiusBlend);
+
+    @WorkerThread
+    private native void nativeIntensityScale(
+            long jniEegeoMapApiPtr,
+            int nativeHandle,
+            double intensityScale);
+
+    @WorkerThread
+    private native void nativeOpacity(
+            long jniEegeoMapApiPtr,
+            int nativeHandle,
+            float opacity);
+
+    @WorkerThread
+    private native void nativeOccludedStyle(
+            long jniEegeoMapApiPtr,
+            int nativeHandle,
+            int occludedFeatures,
+            float occludedAlpha,
+            float occludedSaturation,
+            float occludedBrightness);
+
+
+
+
+
 
     @WorkerThread
     private native void nativeSetData(

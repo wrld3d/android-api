@@ -27,11 +27,21 @@ public class Heatmap extends NativeApiObject {
     private List<List<LatLng>> m_polygonHoles;
 
     private List<WeightedLatLngAlt> m_data;
+    private double m_weightMin;
+    private double m_weightMax;
     private int m_textureWidth;
     private int m_textureHeight;
-    private double m_blurRadiusMeters;
+    private double m_radiusMinMeters;
+    private double m_radiusMaxMeters;
+    private double m_radiusBlend;
+    private double m_intensityScale;
     private double m_opacity;
 
+    private float m_occludedStyleAlpha;
+    private float m_occludedStyleSaturation;
+    private float m_occludedStyleBrightness;
+
+    private int m_occludedFeatures;
 
     /**
      * This constructor is for internal SDK use only -- use EegeoMap.addHeatmap to create a heatmap
@@ -60,10 +70,19 @@ public class Heatmap extends NativeApiObject {
         m_polygonHoles = polygonOptions.getHoles();
 
         m_data = heatmapOptions.getData();
+        m_weightMin = heatmapOptions.getWeightMin();
+        m_weightMax = heatmapOptions.getWeightMax();
         m_textureWidth = heatmapOptions.getTextureWidth();
         m_textureHeight = heatmapOptions.getTextureHeight();
-        m_blurRadiusMeters = heatmapOptions.getBlurRadiusMeters();
+        m_radiusMinMeters = heatmapOptions.getRadiusMinMeters();
+        m_radiusMaxMeters = heatmapOptions.getRadiusMaxMeters();
+        m_radiusBlend = heatmapOptions.getRadiusBlend();
+        m_intensityScale = heatmapOptions.getIntensityScale();
         m_opacity = heatmapOptions.getOpacity();
+        m_occludedStyleAlpha = heatmapOptions.getOccludedStyleAlpha();
+        m_occludedStyleSaturation = heatmapOptions.getOccludedStyleSaturation();
+        m_occludedStyleBrightness = heatmapOptions.getOccludedStyleBrightness();
+        m_occludedFeatures = heatmapOptions.getOccludedFeatures();
 
 
         submit(new Runnable() {
@@ -162,6 +181,62 @@ public class Heatmap extends NativeApiObject {
         updateNativeIndoorMap();
     }
 
+    public double getWeightMin() { return m_weightMin; }
+
+    public double getWeightMax() { return m_weightMax; }
+
+    public double getRadiusBlend() {
+        return m_radiusBlend;
+    }
+
+    public double getRadiusMinMeters() {
+        return m_radiusMinMeters;
+    }
+
+    public double getRadiusMaxMeters() {
+        return m_radiusMaxMeters;
+    }
+
+    public double getIntensityScale() { return m_intensityScale; }
+
+    public double getOpacity() { return m_opacity; }
+
+    public float getOccludedStyleAlpha() { return m_occludedStyleAlpha; }
+
+    public float getOccludedStyleSaturation() { return m_occludedStyleSaturation; }
+
+    public float getOccludedStyleBrightness()  { return m_occludedStyleBrightness; }
+
+
+    public void setRadiusBlend(double radiusBlend) {
+        m_radiusBlend = radiusBlend;
+        updateNativeRadiusBlend();
+    }
+
+    public void setIntensityScale(double intensityScale) {
+        m_intensityScale = intensityScale;
+        updateNativeIntensityScale();
+    }
+
+    public void setOpacity(double opacity) {
+        m_opacity = opacity;
+        updateNativeOpacity();
+    }
+
+    public void setOccludedStyle(float alpha, float saturation, float brightness) {
+        m_occludedStyleAlpha = alpha;
+        m_occludedStyleSaturation = saturation;
+        m_occludedStyleBrightness = brightness;
+        updateNativeOccludedStyle();
+    }
+
+    public void setOccludedFeatures(int occludedFeatures) {
+        m_occludedFeatures = occludedFeatures;
+        updateNativeOccludedStyle();
+    }
+
+
+
     /**
      * Gets the outline points of the heatmap polygon.
      *
@@ -237,20 +312,72 @@ public class Heatmap extends NativeApiObject {
     }
 
     @UiThread
-    private void updateNativeStyleAttributes() {
-// todo_heatmaps
-//        final int fillColorARGB = m_fillColorARGB;
-//
-//        submit(new Runnable() {
-//            @WorkerThread
-//            public void run() {
-//                m_heatmapApi.setStyleAttributes(
-//                        getNativeHandle(),
-//                        Heatmap.m_allowHandleAccess,
-//                        fillColorARGB);
-//            }
-//        });
+    private void updateNativeRadiusBlend() {
+        final double radiusBlend = m_radiusBlend;
+
+        submit(new Runnable() {
+            @WorkerThread
+            public void run() {
+                m_heatmapApi.setRadiusBlend(
+                        getNativeHandle(),
+                        Heatmap.m_allowHandleAccess,
+                        radiusBlend);
+            }
+        });
     }
+
+    @UiThread
+    private void updateNativeIntensityScale() {
+        final double intensityScale = m_intensityScale;
+
+        submit(new Runnable() {
+            @WorkerThread
+            public void run() {
+                m_heatmapApi.setIntensityScale(
+                        getNativeHandle(),
+                        Heatmap.m_allowHandleAccess,
+                        intensityScale);
+            }
+        });
+    }
+
+    @UiThread
+    private void updateNativeOpacity() {
+        final double opacity = m_opacity;
+
+        submit(new Runnable() {
+            @WorkerThread
+            public void run() {
+                m_heatmapApi.setOpacity(
+                        getNativeHandle(),
+                        Heatmap.m_allowHandleAccess,
+                        opacity);
+            }
+        });
+    }
+
+    @UiThread
+    private void updateNativeOccludedStyle() {
+        final int occludedFeatures = m_occludedFeatures;
+        final float alpha = m_occludedStyleAlpha;
+        final float saturation = m_occludedStyleSaturation;
+        final float brightness = m_occludedStyleBrightness;
+
+        submit(new Runnable() {
+            @WorkerThread
+            public void run() {
+                m_heatmapApi.setOccludedStyle(
+                        getNativeHandle(),
+                        Heatmap.m_allowHandleAccess,
+                        occludedFeatures,
+                        alpha,
+                        saturation,
+                        brightness);
+            }
+        });
+    }
+
+
 
     @UiThread
     private void updateNativeData() {
