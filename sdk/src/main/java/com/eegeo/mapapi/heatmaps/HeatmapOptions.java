@@ -35,6 +35,10 @@ public final class HeatmapOptions {
     private float m_occludedSaturation = 0.7f;
     private float m_occludedBrightness = 0.7f;
     private int m_occludedFeatures = OCCLUSION_NONE;
+    // http://colorbrewer2.org/#type=sequential&scheme=OrRd&n=5
+    // with additional ramp to transparent white below 20%
+    private int[] m_gradientColors = {0xffffff00, 0xfef0d9ff, 0xfdcc8aff, 0xfc8d59ff, 0xe34a33ff, 0xb30000ff};
+    private float[] m_gradientStartParams = {0.f, 0.2f, 0.4f, 0.6f, 0.8f, 1.f};
 
     /**
      * Default constructor for heatmap creation parameters.
@@ -132,6 +136,12 @@ public final class HeatmapOptions {
         return this;
     }
 
+    public HeatmapOptions gradient(int[] colors, float[] startParams) {
+        m_gradientColors = colors;
+        m_gradientStartParams = startParams;
+        return this;
+    }
+
     public PolygonOptions getPolygonOptions() {
         return m_polygonOptions;
     }
@@ -171,4 +181,8 @@ public final class HeatmapOptions {
     public float getOccludedStyleBrightness()  { return m_occludedBrightness; }
 
     public int getOccludedFeatures() { return m_occludedFeatures; }
+
+    public float[] getGradientStartParams() { return m_gradientStartParams; }
+
+    public int[] getGradientColors() { return m_gradientColors; }
 }

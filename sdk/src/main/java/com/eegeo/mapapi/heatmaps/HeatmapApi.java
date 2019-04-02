@@ -75,6 +75,8 @@ public class HeatmapApi {
         final float occludedAlpha = heatmapOptions.getOccludedStyleAlpha();
         final float occludedSaturation = heatmapOptions.getOccludedStyleSaturation();
         final float occludedBrightness = heatmapOptions.getOccludedStyleBrightness();
+        final float[] gradientStartParamsArray = heatmapOptions.getGradientStartParams();
+        final int[] gradientColorsArray = heatmapOptions.getGradientColors();
 
 
         return nativeCreateHeatmap(
@@ -99,7 +101,9 @@ public class HeatmapApi {
                 occludedFeatures,
                 occludedAlpha,
                 occludedSaturation,
-                occludedBrightness
+                occludedBrightness,
+                gradientStartParamsArray,
+                gradientColorsArray
         );
     }
 
@@ -303,7 +307,9 @@ public class HeatmapApi {
             int occludedFeatures,
             float occludedAlpha,
             float occludedSaturation,
-            float occludedBrightness
+            float occludedBrightness,
+            float[] gradientStartParams,
+            int[] gradientColors
     );
 
     @WorkerThread
