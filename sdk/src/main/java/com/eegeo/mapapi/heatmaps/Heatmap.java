@@ -11,6 +11,7 @@ import com.eegeo.mapapi.geometry.WeightedLatLngAlt;
 import com.eegeo.mapapi.polygons.PolygonOptions;
 import com.eegeo.mapapi.util.NativeApiObject;
 
+import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -40,6 +41,9 @@ public class Heatmap extends NativeApiObject {
     private float m_occludedStyleAlpha;
     private float m_occludedStyleSaturation;
     private float m_occludedStyleBrightness;
+
+    private int[] m_gradientColors;
+    private float[] m_gradientStartParams;
 
     private int m_occludedFeatures;
 
@@ -83,6 +87,8 @@ public class Heatmap extends NativeApiObject {
         m_occludedStyleSaturation = heatmapOptions.getOccludedStyleSaturation();
         m_occludedStyleBrightness = heatmapOptions.getOccludedStyleBrightness();
         m_occludedFeatures = heatmapOptions.getOccludedFeatures();
+        m_gradientColors = heatmapOptions.getGradientColors();
+        m_gradientStartParams = heatmapOptions.getGradientStartParams();
 
 
         submit(new Runnable() {
@@ -223,6 +229,15 @@ public class Heatmap extends NativeApiObject {
         updateNativeOpacity();
     }
 
+    public void setGradient(int[] gradientColors, float[] gradientStartParams) throws InvalidParameterException {
+        if (gradientColors.length != gradientStartParams.length) {
+            throw new InvalidParameterException("gradientColors and gradientStartParams must have same length");
+        }
+        m_gradientColors = gradientColors;
+        m_gradientStartParams = gradientStartParams;
+        updateNativeGradient();
+    }
+
     public void setOccludedStyle(float alpha, float saturation, float brightness) {
         m_occludedStyleAlpha = alpha;
         m_occludedStyleSaturation = saturation;
@@ -355,6 +370,25 @@ public class Heatmap extends NativeApiObject {
             }
         });
     }
+
+    @UiThread
+    private void updateNativeGradient() {
+        final float[] gradientStartParams = m_gradientStartParams;
+        final int[] gradientColors = m_gradientColors;
+
+        submit(new Runnable() {
+            @WorkerThread
+            public void run() {
+                m_heatmapApi.setGradient(
+                        getNativeHandle(),
+                        Heatmap.m_allowHandleAccess,
+                        gradientStartParams,
+                        gradientColors);
+            }
+        });
+    }
+
+
 
     @UiThread
     private void updateNativeOccludedStyle() {

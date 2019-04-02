@@ -233,9 +233,11 @@ public class HeatmapApi {
     }
 
     @WorkerThread
-    void setOpacity(int nativeHandle,
-                           Heatmap.AllowHandleAccess allowHandleAccess,
-                           double opacity) {
+    void setOpacity(
+            int nativeHandle,
+            Heatmap.AllowHandleAccess allowHandleAccess,
+            double opacity
+    ) {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
 
@@ -244,6 +246,25 @@ public class HeatmapApi {
                 nativeHandle,
                 (float)opacity);
     }
+
+    @WorkerThread
+    void setGradient(
+            int nativeHandle,
+            Heatmap.AllowHandleAccess allowHandleAccess,
+            float[] gradientStartParams,
+            int[] gradientColors
+
+    ) {
+        if (allowHandleAccess == null)
+            throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
+
+        nativeGradient(
+                m_jniEegeoMapApiPtr,
+                nativeHandle,
+                gradientStartParams,
+                gradientColors);
+    }
+
 
     @WorkerThread
     void setOccludedStyle(
@@ -323,14 +344,16 @@ public class HeatmapApi {
             long jniEegeoMapApiPtr,
             int nativeHandle,
             String indoorMapId,
-            int indoorFloorId);
+            int indoorFloorId
+    );
 
     @WorkerThread
     private native void nativeSetElevation(
             long jniEegeoMapApiPtr,
             int nativeHandle,
             double elevation,
-            int elevationModeInt);
+            int elevationModeInt
+    );
 
     @WorkerThread
     private native void nativeRadiusBlend(
@@ -342,13 +365,23 @@ public class HeatmapApi {
     private native void nativeIntensityScale(
             long jniEegeoMapApiPtr,
             int nativeHandle,
-            double intensityScale);
+            double intensityScale
+    );
 
     @WorkerThread
     private native void nativeOpacity(
             long jniEegeoMapApiPtr,
             int nativeHandle,
-            float opacity);
+            float opacity
+    );
+
+    @WorkerThread
+    private native void nativeGradient(
+            long jniEegeoMapApiPtr,
+            int nativeHandle,
+            float[] gradientStartParams,
+            int[] gradientColors
+    );
 
     @WorkerThread
     private native void nativeOccludedStyle(
@@ -357,7 +390,8 @@ public class HeatmapApi {
             int occludedFeatures,
             float occludedAlpha,
             float occludedSaturation,
-            float occludedBrightness);
+            float occludedBrightness
+    );
 
 
 
