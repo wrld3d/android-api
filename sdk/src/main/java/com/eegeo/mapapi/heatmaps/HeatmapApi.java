@@ -55,7 +55,7 @@ public class HeatmapApi {
         if (polygonOptions.getPoints().size() < 2)
             throw new InvalidParameterException("PolygonOptions points must contain at least two elements");
 
-        // todo DRY - factor out commonality with PolygonApi
+        // todo_heatmap DRY - factor out commonality with PolygonApi
         List<LatLng> exteriorPoints = polygonOptions.getPoints();
         List<List<LatLng>> holes = polygonOptions.getHoles();
 
@@ -68,9 +68,10 @@ public class HeatmapApi {
         final int textureHeight = heatmapOptions.getTextureHeight();
         final double radiusMinMeters = heatmapOptions.getRadiusMinMeters();
         final double radiusMaxMeters = heatmapOptions.getRadiusMaxMeters();
-        final double radiusBlend = heatmapOptions.getRadiusBlend();
-        final float opacity = (float)heatmapOptions.getOpacity();
-        final double intensityScale = heatmapOptions.getIntensityScale();
+        final float radiusBlend = heatmapOptions.getRadiusBlend();
+        final float opacity = heatmapOptions.getOpacity();
+        final float intensityBias = heatmapOptions.getIntensityBias();
+        final float intensityScale = heatmapOptions.getIntensityScale();
         final int occludedFeatures = heatmapOptions.getOccludedFeatures();
         final float occludedAlpha = heatmapOptions.getOccludedStyleAlpha();
         final float occludedSaturation = heatmapOptions.getOccludedStyleSaturation();
@@ -97,6 +98,7 @@ public class HeatmapApi {
                 radiusMaxMeters,
                 radiusBlend,
                 opacity,
+                intensityBias,
                 intensityScale,
                 occludedFeatures,
                 occludedAlpha,
@@ -220,16 +222,21 @@ public class HeatmapApi {
     }
 
     @WorkerThread
-    void setIntensityScale(int nativeHandle,
-                        Heatmap.AllowHandleAccess allowHandleAccess,
-                        double intensityScale) {
+    void setIntensityBiasScale(
+            int nativeHandle,
+            Heatmap.AllowHandleAccess allowHandleAccess,
+            float intensityBias,
+            float intensityScale
+    ) {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
 
-        nativeIntensityScale(
+        nativeIntensityBiasScale(
                 m_jniEegeoMapApiPtr,
                 nativeHandle,
-                intensityScale);
+                intensityBias,
+                intensityScale
+        );
     }
 
     @WorkerThread
@@ -327,9 +334,10 @@ public class HeatmapApi {
             int textureHeight,
             double radiusMinMeters,
             double radiusMaxMeters,
-            double radiusBlend,
+            float radiusBlend,
             float opacity,
-            double intensityScale,
+            float intensityBias,
+            float intensityScale,
             int occludedFeatures,
             float occludedAlpha,
             float occludedSaturation,
@@ -367,10 +375,11 @@ public class HeatmapApi {
             double radiusBlend);
 
     @WorkerThread
-    private native void nativeIntensityScale(
+    private native void nativeIntensityBiasScale(
             long jniEegeoMapApiPtr,
             int nativeHandle,
-            double intensityScale
+            float intensityBias,
+            float intensityScale
     );
 
     @WorkerThread

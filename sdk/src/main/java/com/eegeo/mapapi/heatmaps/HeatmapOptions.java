@@ -28,9 +28,10 @@ public final class HeatmapOptions {
     private int m_resolutionPixels = 512;
     private double m_radiusMinMeters = 5.0;
     private double m_radiusMaxMeters = 25.0;
-    private double m_radiusBlend = 5.0;
-    private double m_opacity = 0.70;
-    private double m_intensityScale = 1.0;
+    private float m_radiusBlend = 0.0f;
+    private float m_opacity = 1.f;
+    private float m_intensityBias = 0.0f;
+    private float m_intensityScale = 1.0f;
     private float m_occludedAlpha = 0.85f;
     private float m_occludedSaturation = 0.7f;
     private float m_occludedBrightness = 0.7f;
@@ -101,17 +102,22 @@ public final class HeatmapOptions {
         return this;
     }
 
-    public HeatmapOptions radiusBlend(double radiusBlend) {
+    public HeatmapOptions radiusBlend(float radiusBlend) {
         m_radiusBlend = radiusBlend;
         return this;
     }
 
-    public HeatmapOptions opacity(double opacity) {
+    public HeatmapOptions opacity(float opacity) {
         m_opacity = opacity;
         return this;
     }
 
-    public HeatmapOptions intensityScale(double intensityScale) {
+    public HeatmapOptions intensityBias(float intensityBias) {
+        m_intensityBias = intensityBias;
+        return this;
+    }
+
+    public HeatmapOptions intensityScale(float intensityScale) {
         m_intensityScale = intensityScale;
         return this;
     }
@@ -168,11 +174,13 @@ public final class HeatmapOptions {
 
     public double getRadiusMaxMeters() { return m_radiusMaxMeters; }
 
-    public double getRadiusBlend() { return m_radiusBlend; }
+    public float getRadiusBlend() { return m_radiusBlend; }
 
-    public double getOpacity() { return m_opacity; }
+    public float getOpacity() { return m_opacity; }
 
-    public double getIntensityScale() { return m_intensityScale; }
+    public float getIntensityBias() { return m_intensityBias; }
+
+    public float getIntensityScale() { return m_intensityScale; }
 
     public float getOccludedStyleAlpha() { return m_occludedAlpha; }
 

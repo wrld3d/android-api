@@ -34,9 +34,10 @@ public class Heatmap extends NativeApiObject {
     private int m_textureHeight;
     private double m_radiusMinMeters;
     private double m_radiusMaxMeters;
-    private double m_radiusBlend;
-    private double m_intensityScale;
-    private double m_opacity;
+    private float m_radiusBlend;
+    private float m_intensityBias;
+    private float m_intensityScale;
+    private float m_opacity;
 
     private float m_occludedStyleAlpha;
     private float m_occludedStyleSaturation;
@@ -191,7 +192,7 @@ public class Heatmap extends NativeApiObject {
 
     public double getWeightMax() { return m_weightMax; }
 
-    public double getRadiusBlend() {
+    public float getRadiusBlend() {
         return m_radiusBlend;
     }
 
@@ -203,9 +204,11 @@ public class Heatmap extends NativeApiObject {
         return m_radiusMaxMeters;
     }
 
-    public double getIntensityScale() { return m_intensityScale; }
+    public float getIntensityBias() { return m_intensityBias; }
 
-    public double getOpacity() { return m_opacity; }
+    public float getIntensityScale() { return m_intensityScale; }
+
+    public float getOpacity() { return m_opacity; }
 
     public float getOccludedStyleAlpha() { return m_occludedStyleAlpha; }
 
@@ -214,14 +217,19 @@ public class Heatmap extends NativeApiObject {
     public float getOccludedStyleBrightness()  { return m_occludedStyleBrightness; }
 
 
-    public void setRadiusBlend(double radiusBlend) {
+    public void setRadiusBlend(float radiusBlend) {
         m_radiusBlend = radiusBlend;
         updateNativeRadiusBlend();
     }
 
-    public void setIntensityScale(double intensityScale) {
+    public void setIntensityBias(float intensityBias) {
+        m_intensityBias = intensityBias;
+        updateNativeIntensityBiasScale();
+    }
+
+    public void setIntensityScale(float intensityScale) {
         m_intensityScale = intensityScale;
-        updateNativeIntensityScale();
+        updateNativeIntensityBiasScale();
     }
 
     public void setData(List<WeightedLatLngAlt> weightedPoints, double weightMin, double weightMax) {
@@ -231,7 +239,7 @@ public class Heatmap extends NativeApiObject {
         updateNativeData();
     }
 
-    public void setOpacity(double opacity) {
+    public void setOpacity(float opacity) {
         m_opacity = opacity;
         updateNativeOpacity();
     }
@@ -349,15 +357,17 @@ public class Heatmap extends NativeApiObject {
     }
 
     @UiThread
-    private void updateNativeIntensityScale() {
-        final double intensityScale = m_intensityScale;
+    private void updateNativeIntensityBiasScale() {
+        final float intensityBias = m_intensityBias;
+        final float intensityScale = m_intensityScale;
 
         submit(new Runnable() {
             @WorkerThread
             public void run() {
-                m_heatmapApi.setIntensityScale(
+                m_heatmapApi.setIntensityBiasScale(
                         getNativeHandle(),
                         Heatmap.m_allowHandleAccess,
+                        intensityBias,
                         intensityScale);
             }
         });
