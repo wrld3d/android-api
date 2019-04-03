@@ -21,7 +21,7 @@ public final class HeatmapOptions {
 
 
     private PolygonOptions m_polygonOptions = new PolygonOptions();
-    private List<WeightedLatLngAlt> m_data = new ArrayList<>();
+    private List<WeightedLatLngAlt> m_weightedPoints = new ArrayList<>();
     private double m_weightMin = 0.0;
     private double m_weightMax = 1.0;
 
@@ -60,7 +60,7 @@ public final class HeatmapOptions {
      */
     @SuppressWarnings("JavaDoc")
     public HeatmapOptions add(WeightedLatLngAlt... data) {
-        Collections.addAll(m_data, data);
+        Collections.addAll(m_weightedPoints, data);
         return this;
     }
 
@@ -72,7 +72,7 @@ public final class HeatmapOptions {
      */
     @SuppressWarnings("JavaDoc")
     public HeatmapOptions add(WeightedLatLngAlt data) {
-        m_data.add(data);
+        m_weightedPoints.add(data);
         return this;
     }
 
@@ -152,8 +152,8 @@ public final class HeatmapOptions {
      *
      * @return A list of LatLng objects specifying the heatmap's vertices.
      */
-    public List<WeightedLatLngAlt> getData() {
-        return m_data;
+    public List<WeightedLatLngAlt> getWeightedPoints() {
+        return m_weightedPoints;
     }
 
     public double getWeightMin() { return m_weightMin; }

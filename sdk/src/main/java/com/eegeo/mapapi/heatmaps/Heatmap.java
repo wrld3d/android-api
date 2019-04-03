@@ -27,7 +27,7 @@ public class Heatmap extends NativeApiObject {
     private List<LatLng> m_polygonPoints;
     private List<List<LatLng>> m_polygonHoles;
 
-    private List<WeightedLatLngAlt> m_data;
+    private List<WeightedLatLngAlt> m_weightedPoints;
     private double m_weightMin;
     private double m_weightMax;
     private int m_textureWidth;
@@ -73,7 +73,7 @@ public class Heatmap extends NativeApiObject {
         m_polygonPoints = polygonOptions.getPoints();
         m_polygonHoles = polygonOptions.getHoles();
 
-        m_data = heatmapOptions.getData();
+        m_weightedPoints = heatmapOptions.getWeightedPoints();
         m_weightMin = heatmapOptions.getWeightMin();
         m_weightMax = heatmapOptions.getWeightMax();
         m_textureWidth = heatmapOptions.getTextureWidth();
@@ -224,6 +224,13 @@ public class Heatmap extends NativeApiObject {
         updateNativeIntensityScale();
     }
 
+    public void setData(List<WeightedLatLngAlt> weightedPoints, double weightMin, double weightMax) {
+        m_weightedPoints = weightedPoints;
+        m_weightMin = weightMin;
+        m_weightMax = weightMax;
+        updateNativeData();
+    }
+
     public void setOpacity(double opacity) {
         m_opacity = opacity;
         updateNativeOpacity();
@@ -273,7 +280,7 @@ public class Heatmap extends NativeApiObject {
     }
 
     @UiThread
-    public List<WeightedLatLngAlt> getData() { return m_data; }
+    public List<WeightedLatLngAlt> getWeightedPoints() { return m_weightedPoints; }
 
     /**
      * Removes this heatmap from the map and destroys the heatmap. Use EegeoMap.removeHeatmap
@@ -415,7 +422,9 @@ public class Heatmap extends NativeApiObject {
 
     @UiThread
     private void updateNativeData() {
-        final List<WeightedLatLngAlt> data = m_data;
+        final List<WeightedLatLngAlt> data = m_weightedPoints;
+        final double weightMin = m_weightMin;
+        final double weightMax = m_weightMax;
 
         submit(new Runnable() {
             @WorkerThread
@@ -423,7 +432,10 @@ public class Heatmap extends NativeApiObject {
                 m_heatmapApi.setData(
                         getNativeHandle(),
                         Heatmap.m_allowHandleAccess,
-                        data);
+                        data,
+                        weightMin,
+                        weightMax
+                );
             }
         });
     }

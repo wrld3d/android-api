@@ -61,7 +61,7 @@ public class HeatmapApi {
 
         final int[] ringVertexCounts = buildRingVertexCounts(exteriorPoints, holes);
         final double[] allPointsDoubleArray = buildPointsArray(exteriorPoints, holes, ringVertexCounts);
-        final double[] dataDoubleArray = dataToDoubleArray(heatmapOptions.getData());
+        final double[] dataDoubleArray = weightedPointsToDoubleArray(heatmapOptions.getWeightedPoints());
         final double weightMin = heatmapOptions.getWeightMin();
         final double weightMax = heatmapOptions.getWeightMax();
         final int textureWidth = heatmapOptions.getTextureWidth();
@@ -148,12 +148,12 @@ public class HeatmapApi {
     }
 
 
-    private double[] dataToDoubleArray(List<WeightedLatLngAlt> data) {
-        final int elementCount = data.size();
+    private double[] weightedPointsToDoubleArray(List<WeightedLatLngAlt> weightedPoints) {
+        final int elementCount = weightedPoints.size();
         final int doublesPerElement = 4;
         double[] doubles = new double[elementCount * doublesPerElement];
         for (int i = 0; i < elementCount; ++i) {
-            WeightedLatLngAlt element = data.get(i);
+            WeightedLatLngAlt element = weightedPoints.get(i);
             doubles[i * doublesPerElement + 0] = element.point.latitude;
             doubles[i * doublesPerElement + 1] = element.point.longitude;
             doubles[i * doublesPerElement + 2] = element.point.altitude;
@@ -294,15 +294,20 @@ public class HeatmapApi {
     void setData(
             int nativeHandle,
             Heatmap.AllowHandleAccess allowHandleAccess,
-            List<WeightedLatLngAlt> data) {
+            List<WeightedLatLngAlt> weightedPoints,
+            double weightMin,
+            double weightMax
+            ) {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
 
-        double[] dataDoubleArray = dataToDoubleArray(data);
+        double[] weightedPointsDoubleArray = weightedPointsToDoubleArray(weightedPoints);
         nativeSetData(
                 m_jniEegeoMapApiPtr,
                 nativeHandle,
-                dataDoubleArray);
+                weightedPointsDoubleArray,
+                weightMin,
+                weightMax);
     }
 
     @WorkerThread
@@ -393,14 +398,12 @@ public class HeatmapApi {
             float occludedBrightness
     );
 
-
-
-
-
-
     @WorkerThread
     private native void nativeSetData(
             long jniEegeoMapApiPtr,
             int nativeHandle,
-            double[] dataDoubleArray);
+            double[] weightedPointsDoubleArray,
+            double weightMin,
+            double weightMax
+            );
 }
