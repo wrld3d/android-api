@@ -65,6 +65,7 @@ public class HeatmapApi {
         final double weightMin = heatmapOptions.getWeightMin();
         final double weightMax = heatmapOptions.getWeightMax();
         final int resolutionPixels = heatmapOptions.getResolutionPixels();
+        final float textureBorderPercent = heatmapOptions.getTextureBorderPercent();
         final double radiusMinMeters = heatmapOptions.getRadiusMinMeters();
         final double radiusMaxMeters = heatmapOptions.getRadiusMaxMeters();
         final float radiusBlend = heatmapOptions.getRadiusBlend();
@@ -87,11 +88,11 @@ public class HeatmapApi {
                 polygonOptions.getElevationMode().ordinal(),
                 allPointsDoubleArray,
                 ringVertexCounts,
-                polygonOptions.getFillColor(),
                 dataDoubleArray,
                 weightMin,
                 weightMax,
                 resolutionPixels,
+                textureBorderPercent,
                 radiusMinMeters,
                 radiusMaxMeters,
                 radiusBlend,
@@ -356,11 +357,11 @@ public class HeatmapApi {
             int elevationMode,
             double[] points,
             int[] ringVertexCounts,
-            int colorARGB,
             double[] dataDoubleArray,
             double weightMin,
             double weightMax,
             int resolutionPixels,
+            float textureBorderPercent,
             double radiusMinMeters,
             double radiusMaxMeters,
             float radiusBlend,

@@ -31,6 +31,7 @@ public class Heatmap extends NativeApiObject {
     private double m_weightMin;
     private double m_weightMax;
     private int m_resolutionPixels;
+    private float m_textureBorderPercent;
     private double m_radiusMinMeters;
     private double m_radiusMaxMeters;
     private float m_radiusBlend;
@@ -76,6 +77,7 @@ public class Heatmap extends NativeApiObject {
         m_weightMin = heatmapOptions.getWeightMin();
         m_weightMax = heatmapOptions.getWeightMax();
         m_resolutionPixels = heatmapOptions.getResolutionPixels();
+        m_textureBorderPercent = heatmapOptions.getTextureBorderPercent();
         m_radiusMinMeters = heatmapOptions.getRadiusMinMeters();
         m_radiusMaxMeters = heatmapOptions.getRadiusMaxMeters();
         m_radiusBlend = heatmapOptions.getRadiusBlend();
@@ -188,6 +190,10 @@ public class Heatmap extends NativeApiObject {
     public double getWeightMin() { return m_weightMin; }
 
     public double getWeightMax() { return m_weightMax; }
+
+    public int getResolutionPixels() { return m_resolutionPixels; }
+
+    public float getTextureBorderPercent() { return m_textureBorderPercent; }
 
     public float getRadiusBlend() {
         return m_radiusBlend;

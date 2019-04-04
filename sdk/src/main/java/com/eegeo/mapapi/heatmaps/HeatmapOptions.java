@@ -26,6 +26,7 @@ public final class HeatmapOptions {
     private double m_weightMax = 1.0;
 
     private int m_resolutionPixels = 512;
+    private float m_textureBorderPercent = 0.05f;
     private double m_radiusMinMeters = 5.0;
     private double m_radiusMaxMeters = 25.0;
     private float m_radiusBlend = 0.0f;
@@ -89,6 +90,11 @@ public final class HeatmapOptions {
 
     public HeatmapOptions resolution(int resolutionPixels) {
         m_resolutionPixels = resolutionPixels;
+        return this;
+    }
+
+    public HeatmapOptions textureBorder(float textureBorderPercent) {
+        m_textureBorderPercent = textureBorderPercent;
         return this;
     }
 
@@ -167,6 +173,8 @@ public final class HeatmapOptions {
     public double getWeightMax() { return m_weightMax; }
 
     public int getResolutionPixels() { return m_resolutionPixels; }
+
+    public float getTextureBorderPercent() { return m_textureBorderPercent; }
 
     public double getRadiusMinMeters() { return m_radiusMinMeters; }
 
