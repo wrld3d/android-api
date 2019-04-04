@@ -52,8 +52,8 @@ public class HeatmapApi {
 
         PolygonOptions polygonOptions = heatmapOptions.getPolygonOptions();
 
-        if (polygonOptions.getPoints().size() < 2)
-            throw new InvalidParameterException("PolygonOptions points must contain at least two elements");
+        if (!polygonOptions.getPoints().isEmpty() && polygonOptions.getPoints().size() < 3)
+            throw new InvalidParameterException("PolygonOptions points must either be empty or contain at least three elements");
 
         // todo_heatmap DRY - factor out commonality with PolygonApi
         List<LatLng> exteriorPoints = polygonOptions.getPoints();
