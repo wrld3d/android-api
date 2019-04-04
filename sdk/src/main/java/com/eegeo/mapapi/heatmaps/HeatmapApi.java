@@ -64,8 +64,7 @@ public class HeatmapApi {
         final double[] dataDoubleArray = weightedPointsToDoubleArray(heatmapOptions.getWeightedPoints());
         final double weightMin = heatmapOptions.getWeightMin();
         final double weightMax = heatmapOptions.getWeightMax();
-        final int textureWidth = heatmapOptions.getTextureWidth();
-        final int textureHeight = heatmapOptions.getTextureHeight();
+        final int resolutionPixels = heatmapOptions.getResolutionPixels();
         final double radiusMinMeters = heatmapOptions.getRadiusMinMeters();
         final double radiusMaxMeters = heatmapOptions.getRadiusMaxMeters();
         final float radiusBlend = heatmapOptions.getRadiusBlend();
@@ -92,8 +91,7 @@ public class HeatmapApi {
                 dataDoubleArray,
                 weightMin,
                 weightMax,
-                textureWidth,
-                textureHeight,
+                resolutionPixels,
                 radiusMinMeters,
                 radiusMaxMeters,
                 radiusBlend,
@@ -295,7 +293,39 @@ public class HeatmapApi {
         );
     }
 
+    @WorkerThread
+    void setResolution(
+            int nativeHandle,
+            Heatmap.AllowHandleAccess allowHandleAccess,
+            int resolutionPixels
+    ) {
+        if (allowHandleAccess == null)
+            throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
 
+        nativeResolution(
+                m_jniEegeoMapApiPtr,
+                nativeHandle,
+                resolutionPixels
+        );
+    }
+
+    @WorkerThread
+    void setRadiusExtents(
+            int nativeHandle,
+            Heatmap.AllowHandleAccess allowHandleAccess,
+            double radiusMinMeters,
+            double radiusMaxMeters
+    ) {
+        if (allowHandleAccess == null)
+            throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
+
+        nativeRadiusExtents(
+                m_jniEegeoMapApiPtr,
+                nativeHandle,
+                radiusMinMeters,
+                radiusMaxMeters
+        );
+    }
 
     @WorkerThread
     void setData(
@@ -330,8 +360,7 @@ public class HeatmapApi {
             double[] dataDoubleArray,
             double weightMin,
             double weightMax,
-            int textureWidth,
-            int textureHeight,
+            int resolutionPixels,
             double radiusMinMeters,
             double radiusMaxMeters,
             float radiusBlend,
@@ -405,6 +434,21 @@ public class HeatmapApi {
             float occludedAlpha,
             float occludedSaturation,
             float occludedBrightness
+    );
+
+    @WorkerThread
+    private native void nativeResolution(
+            long jniEegeoMapApiPtr,
+            int nativeHandle,
+            int resolutionPixels
+    );
+
+    @WorkerThread
+    private native void nativeRadiusExtents(
+            long jniEegeoMapApiPtr,
+            int nativeHandle,
+            double radiusMinMeters,
+            double radiusMaxMeters
     );
 
     @WorkerThread

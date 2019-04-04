@@ -166,9 +166,7 @@ public final class HeatmapOptions {
 
     public double getWeightMax() { return m_weightMax; }
 
-    public int getTextureWidth() { return m_resolutionPixels; }
-
-    public int getTextureHeight() { return m_resolutionPixels; }
+    public int getResolutionPixels() { return m_resolutionPixels; }
 
     public double getRadiusMinMeters() { return m_radiusMinMeters; }
 

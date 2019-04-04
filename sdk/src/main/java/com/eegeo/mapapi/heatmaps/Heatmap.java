@@ -30,8 +30,7 @@ public class Heatmap extends NativeApiObject {
     private List<WeightedLatLngAlt> m_weightedPoints;
     private double m_weightMin;
     private double m_weightMax;
-    private int m_textureWidth;
-    private int m_textureHeight;
+    private int m_resolutionPixels;
     private double m_radiusMinMeters;
     private double m_radiusMaxMeters;
     private float m_radiusBlend;
@@ -42,11 +41,10 @@ public class Heatmap extends NativeApiObject {
     private float m_occludedStyleAlpha;
     private float m_occludedStyleSaturation;
     private float m_occludedStyleBrightness;
+    private int m_occludedFeatures;
 
     private int[] m_gradientColors;
     private float[] m_gradientStartParams;
-
-    private int m_occludedFeatures;
 
     /**
      * This constructor is for internal SDK use only -- use EegeoMap.addHeatmap to create a heatmap
@@ -77,8 +75,7 @@ public class Heatmap extends NativeApiObject {
         m_weightedPoints = heatmapOptions.getWeightedPoints();
         m_weightMin = heatmapOptions.getWeightMin();
         m_weightMax = heatmapOptions.getWeightMax();
-        m_textureWidth = heatmapOptions.getTextureWidth();
-        m_textureHeight = heatmapOptions.getTextureHeight();
+        m_resolutionPixels = heatmapOptions.getResolutionPixels();
         m_radiusMinMeters = heatmapOptions.getRadiusMinMeters();
         m_radiusMaxMeters = heatmapOptions.getRadiusMaxMeters();
         m_radiusBlend = heatmapOptions.getRadiusBlend();
@@ -260,9 +257,45 @@ public class Heatmap extends NativeApiObject {
         updateNativeOccludedStyle();
     }
 
+    public void setOccludedStyleAlpha(float alpha) {
+        m_occludedStyleAlpha = alpha;
+        updateNativeOccludedStyle();
+    }
+
+    public void setOccludedStyleSaturation(float saturation) {
+        m_occludedStyleSaturation = saturation;
+        updateNativeOccludedStyle();
+    }
+
+    public void setOccludedStyleBrightness(float brightness) {
+        m_occludedStyleBrightness = brightness;
+        updateNativeOccludedStyle();
+    }
+
     public void setOccludedFeatures(int occludedFeatures) {
         m_occludedFeatures = occludedFeatures;
         updateNativeOccludedStyle();
+    }
+
+    public void setResolution(int resolutionPixels) {
+        m_resolutionPixels = resolutionPixels;
+        updateNativeResolution();
+    }
+
+    public void setRadii(double radiusMinMeters, double radiusMaxMeters) {
+        m_radiusMinMeters = radiusMinMeters;
+        m_radiusMaxMeters = radiusMaxMeters;
+        updateNativeRadiusExtents();
+    }
+
+    public void setRadusMin(double radiusMinMeters) {
+        m_radiusMinMeters = radiusMinMeters;
+        updateNativeRadiusExtents();
+    }
+
+    public void setRadiusMax(double radiusMaxMeters) {
+        m_radiusMaxMeters = radiusMaxMeters;
+        updateNativeRadiusExtents();
     }
 
 
@@ -424,6 +457,40 @@ public class Heatmap extends NativeApiObject {
                         alpha,
                         saturation,
                         brightness);
+            }
+        });
+    }
+
+    @UiThread
+    private void updateNativeResolution() {
+        final int resolutionPixels = m_resolutionPixels;
+
+        submit(new Runnable() {
+            @WorkerThread
+            public void run() {
+                m_heatmapApi.setResolution(
+                        getNativeHandle(),
+                        Heatmap.m_allowHandleAccess,
+                        resolutionPixels
+                );
+            }
+        });
+    }
+
+    @UiThread
+    private void updateNativeRadiusExtents() {
+        final double radiusMinMeters = m_radiusMinMeters;
+        final double radiusMaxMeters = m_radiusMaxMeters;
+
+        submit(new Runnable() {
+            @WorkerThread
+            public void run() {
+                m_heatmapApi.setRadiusExtents(
+                        getNativeHandle(),
+                        Heatmap.m_allowHandleAccess,
+                        radiusMinMeters,
+                        radiusMaxMeters
+                );
             }
         });
     }
