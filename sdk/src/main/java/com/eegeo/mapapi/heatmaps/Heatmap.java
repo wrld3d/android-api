@@ -81,6 +81,7 @@ public class Heatmap extends NativeApiObject {
         m_radiusMinMeters = heatmapOptions.getRadiusMinMeters();
         m_radiusMaxMeters = heatmapOptions.getRadiusMaxMeters();
         m_radiusBlend = heatmapOptions.getRadiusBlend();
+        m_intensityBias = heatmapOptions.getIntensityBias();
         m_intensityScale = heatmapOptions.getIntensityScale();
         m_opacity = heatmapOptions.getOpacity();
         m_occludedStyleAlpha = heatmapOptions.getOccludedStyleAlpha();
