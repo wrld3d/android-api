@@ -3,6 +3,7 @@ package com.eegeo.mapapi.heatmaps;
 import com.eegeo.mapapi.geometry.WeightedLatLngAlt;
 import com.eegeo.mapapi.polygons.PolygonOptions;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,8 +28,8 @@ public final class HeatmapOptions {
 
     private int m_resolutionPixels = 512;
     private float m_textureBorderPercent = 0.05f;
-    private double m_radiusMinMeters = 5.0;
-    private double m_radiusMaxMeters = 25.0;
+    private List<Double> m_heatmapRadii = new ArrayList<>();
+    private List<Float> m_heatmapRadiiStartParams = new ArrayList<>();
     private float m_radiusBlend = 0.0f;
     private float m_opacity = 1.f;
     private float m_intensityBias = 0.0f;
@@ -78,6 +79,39 @@ public final class HeatmapOptions {
         return this;
     }
 
+    public HeatmapOptions heatmapRadius(double heatmapRadiusMeters) {
+        m_heatmapRadii.clear();
+        m_heatmapRadiiStartParams.clear();
+        m_heatmapRadii.add(heatmapRadiusMeters);
+        m_heatmapRadiiStartParams.add(0.0f);
+        return this;
+    }
+
+    public HeatmapOptions addHeatmapRadius(double heatmapRadiusMeters, float startParam) {
+        m_heatmapRadii.add(heatmapRadiusMeters);
+        m_heatmapRadiiStartParams.add(startParam);
+        return this;
+    }
+
+    public HeatmapOptions setHeatmapRadii(double[] heatmapRadiiMeters, float[] startParams) {
+        m_heatmapRadii.clear();
+        m_heatmapRadiiStartParams.clear();
+
+        if (heatmapRadiiMeters.length == 0) {
+            throw new InvalidParameterException("heatmapRadiiMeters must not be empty");
+        }
+
+        if (heatmapRadiiMeters.length != startParams.length) {
+            throw new InvalidParameterException("heatmapRadiiMeters and startParams must be equal length");
+        }
+
+        for (int i = 0; i < heatmapRadiiMeters.length; ++i) {
+            m_heatmapRadii.add(heatmapRadiiMeters[i]);
+            m_heatmapRadiiStartParams.add(startParams[i]);
+        }
+        return this;
+    }
+
     public HeatmapOptions weightMin(double weightMin) {
         m_weightMin = weightMin;
         return this;
@@ -98,15 +132,6 @@ public final class HeatmapOptions {
         return this;
     }
 
-    public HeatmapOptions radiusMinMeters(double radiusMinMeters) {
-        m_radiusMinMeters = radiusMinMeters;
-        return this;
-    }
-
-    public HeatmapOptions radiusMaxMeters(double radiusMaxMeters) {
-        m_radiusMaxMeters = radiusMaxMeters;
-        return this;
-    }
 
     public HeatmapOptions radiusBlend(float radiusBlend) {
         m_radiusBlend = radiusBlend;
@@ -176,9 +201,22 @@ public final class HeatmapOptions {
 
     public float getTextureBorderPercent() { return m_textureBorderPercent; }
 
-    public double getRadiusMinMeters() { return m_radiusMinMeters; }
+    public double[] getHeatmapRadii() {
+        double[] heatmapRadii = new double[m_heatmapRadii.size()];
+        for (int i = 0; i < m_heatmapRadii.size(); ++i) {
+            heatmapRadii[i] = Double.valueOf(m_heatmapRadii.get(i));
+        }
+        return heatmapRadii;
+    }
 
-    public double getRadiusMaxMeters() { return m_radiusMaxMeters; }
+    public float[] getHeatmapRadiiStartParams() {
+        float[] startParams = new float[m_heatmapRadiiStartParams.size()];
+        for (int i = 0; i < m_heatmapRadiiStartParams.size(); ++i) {
+            startParams[i] = Float.valueOf(m_heatmapRadiiStartParams.get(i));
+        }
+        return startParams;
+    }
+
 
     public float getRadiusBlend() { return m_radiusBlend; }
 

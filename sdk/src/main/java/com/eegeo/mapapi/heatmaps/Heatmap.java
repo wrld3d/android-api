@@ -32,8 +32,9 @@ public class Heatmap extends NativeApiObject {
     private double m_weightMax;
     private int m_resolutionPixels;
     private float m_textureBorderPercent;
-    private double m_radiusMinMeters;
-    private double m_radiusMaxMeters;
+    private double[] m_heatmapRadii;
+    private float[] m_heatmapRadiiStartParams;
+
     private float m_radiusBlend;
     private float m_intensityBias;
     private float m_intensityScale;
@@ -78,8 +79,8 @@ public class Heatmap extends NativeApiObject {
         m_weightMax = heatmapOptions.getWeightMax();
         m_resolutionPixels = heatmapOptions.getResolutionPixels();
         m_textureBorderPercent = heatmapOptions.getTextureBorderPercent();
-        m_radiusMinMeters = heatmapOptions.getRadiusMinMeters();
-        m_radiusMaxMeters = heatmapOptions.getRadiusMaxMeters();
+        m_heatmapRadii = heatmapOptions.getHeatmapRadii();
+        m_heatmapRadiiStartParams = heatmapOptions.getHeatmapRadiiStartParams();
         m_radiusBlend = heatmapOptions.getRadiusBlend();
         m_intensityBias = heatmapOptions.getIntensityBias();
         m_intensityScale = heatmapOptions.getIntensityScale();
@@ -200,13 +201,11 @@ public class Heatmap extends NativeApiObject {
         return m_radiusBlend;
     }
 
-    public double getRadiusMinMeters() {
-        return m_radiusMinMeters;
-    }
+    public double[] getHeatmapRadii() { return m_heatmapRadii; }
 
-    public double getRadiusMaxMeters() {
-        return m_radiusMaxMeters;
-    }
+    public float[] getHeatmapRadiiStartParams() { return m_heatmapRadiiStartParams; }
+
+
 
     public float getIntensityBias() { return m_intensityBias; }
 
@@ -289,19 +288,9 @@ public class Heatmap extends NativeApiObject {
         updateNativeResolution();
     }
 
-    public void setRadii(double radiusMinMeters, double radiusMaxMeters) {
-        m_radiusMinMeters = radiusMinMeters;
-        m_radiusMaxMeters = radiusMaxMeters;
-        updateNativeRadiusExtents();
-    }
-
-    public void setRadusMin(double radiusMinMeters) {
-        m_radiusMinMeters = radiusMinMeters;
-        updateNativeRadiusExtents();
-    }
-
-    public void setRadiusMax(double radiusMaxMeters) {
-        m_radiusMaxMeters = radiusMaxMeters;
+    public void setHeatmapRadii(double[] heatmapRadii, float[] heatmapRadiiStartParams) {
+        m_heatmapRadii = heatmapRadii;
+        m_heatmapRadiiStartParams = heatmapRadiiStartParams;
         updateNativeRadiusExtents();
     }
 
@@ -486,8 +475,8 @@ public class Heatmap extends NativeApiObject {
 
     @UiThread
     private void updateNativeRadiusExtents() {
-        final double radiusMinMeters = m_radiusMinMeters;
-        final double radiusMaxMeters = m_radiusMaxMeters;
+        final double[] heatmapRadii = m_heatmapRadii;
+        final float[] heatmapRadiiStartParams = m_heatmapRadiiStartParams;
 
         submit(new Runnable() {
             @WorkerThread
@@ -495,8 +484,8 @@ public class Heatmap extends NativeApiObject {
                 m_heatmapApi.setRadiusExtents(
                         getNativeHandle(),
                         Heatmap.m_allowHandleAccess,
-                        radiusMinMeters,
-                        radiusMaxMeters
+                        m_heatmapRadii,
+                        m_heatmapRadiiStartParams
                 );
             }
         });
