@@ -30,6 +30,7 @@ public final class HeatmapOptions {
     private float m_textureBorderPercent = 0.05f;
     private List<Double> m_heatmapRadii = new ArrayList<>();
     private List<Float> m_heatmapRadiiStartParams = new ArrayList<>();
+    private boolean m_useApproximation = true;
     private float m_radiusBlend = 0.0f;
     private float m_opacity = 1.f;
     private float m_intensityBias = 0.0f;
@@ -109,6 +110,11 @@ public final class HeatmapOptions {
             m_heatmapRadii.add(heatmapRadiiMeters[i]);
             m_heatmapRadiiStartParams.add(startParams[i]);
         }
+        return this;
+    }
+
+    public HeatmapOptions useApproximation(boolean enableApproximation) {
+        m_useApproximation = enableApproximation;
         return this;
     }
 
@@ -217,6 +223,7 @@ public final class HeatmapOptions {
         return startParams;
     }
 
+    public boolean getUseApproximation() { return m_useApproximation; }
 
     public float getRadiusBlend() { return m_radiusBlend; }
 

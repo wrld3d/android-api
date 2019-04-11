@@ -34,8 +34,9 @@ public class Heatmap extends NativeApiObject {
     private float m_textureBorderPercent;
     private double[] m_heatmapRadii;
     private float[] m_heatmapRadiiStartParams;
-
+    private boolean m_useApproximation;
     private float m_radiusBlend;
+
     private float m_intensityBias;
     private float m_intensityScale;
     private float m_opacity;
@@ -81,6 +82,7 @@ public class Heatmap extends NativeApiObject {
         m_textureBorderPercent = heatmapOptions.getTextureBorderPercent();
         m_heatmapRadii = heatmapOptions.getHeatmapRadii();
         m_heatmapRadiiStartParams = heatmapOptions.getHeatmapRadiiStartParams();
+        m_useApproximation = heatmapOptions.getUseApproximation();
         m_radiusBlend = heatmapOptions.getRadiusBlend();
         m_intensityBias = heatmapOptions.getIntensityBias();
         m_intensityScale = heatmapOptions.getIntensityScale();
@@ -295,6 +297,10 @@ public class Heatmap extends NativeApiObject {
     }
 
 
+    public void setUseApproximation(boolean useApproximation) {
+        m_useApproximation = useApproximation;
+        updateNativeRadiusExtents();
+    }
 
     /**
      * Gets the outline points of the heatmap polygon.
@@ -477,6 +483,7 @@ public class Heatmap extends NativeApiObject {
     private void updateNativeRadiusExtents() {
         final double[] heatmapRadii = m_heatmapRadii;
         final float[] heatmapRadiiStartParams = m_heatmapRadiiStartParams;
+        final boolean useApproximation = m_useApproximation;
 
         submit(new Runnable() {
             @WorkerThread
@@ -485,7 +492,8 @@ public class Heatmap extends NativeApiObject {
                         getNativeHandle(),
                         Heatmap.m_allowHandleAccess,
                         m_heatmapRadii,
-                        m_heatmapRadiiStartParams
+                        m_heatmapRadiiStartParams,
+                        m_useApproximation
                 );
             }
         });

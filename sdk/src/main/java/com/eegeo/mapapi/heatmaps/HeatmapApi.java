@@ -68,6 +68,7 @@ public class HeatmapApi {
         final float textureBorderPercent = heatmapOptions.getTextureBorderPercent();
         final double[] heatmapRadiiArray = heatmapOptions.getHeatmapRadii();
         final float[] heatmapRadiiStartParams = heatmapOptions.getHeatmapRadiiStartParams();
+        final boolean useApproximation = heatmapOptions.getUseApproximation();
         final float radiusBlend = heatmapOptions.getRadiusBlend();
         final float opacity = heatmapOptions.getOpacity();
         final float intensityBias = heatmapOptions.getIntensityBias();
@@ -95,6 +96,7 @@ public class HeatmapApi {
                 textureBorderPercent,
                 heatmapRadiiArray,
                 heatmapRadiiStartParams,
+                useApproximation,
                 radiusBlend,
                 opacity,
                 intensityBias,
@@ -315,7 +317,8 @@ public class HeatmapApi {
             int nativeHandle,
             Heatmap.AllowHandleAccess allowHandleAccess,
             double[] heatmapRadii,
-            float[] heatmapRadiiStartParams
+            float[] heatmapRadiiStartParams,
+            boolean useApproximation
     ) {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
@@ -324,7 +327,8 @@ public class HeatmapApi {
                 m_jniEegeoMapApiPtr,
                 nativeHandle,
                 heatmapRadii,
-                heatmapRadiiStartParams
+                heatmapRadiiStartParams,
+                useApproximation
         );
     }
 
@@ -364,6 +368,7 @@ public class HeatmapApi {
             float textureBorderPercent,
             double[] heatmapRadii,
             float[] heatmapRadiiStartParams,
+            boolean useApproximation,
             float radiusBlend,
             float opacity,
             float intensityBias,
@@ -449,7 +454,8 @@ public class HeatmapApi {
             long jniEegeoMapApiPtr,
             int nativeHandle,
             double[] heatmapRadii,
-            float[] heatmapRadiiStartParams
+            float[] heatmapRadiiStartParams,
+            boolean useApproximation
     );
 
     @WorkerThread
