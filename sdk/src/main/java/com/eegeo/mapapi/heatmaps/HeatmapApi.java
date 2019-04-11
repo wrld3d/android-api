@@ -317,8 +317,7 @@ public class HeatmapApi {
             int nativeHandle,
             Heatmap.AllowHandleAccess allowHandleAccess,
             double[] heatmapRadii,
-            float[] heatmapRadiiStartParams,
-            boolean useApproximation
+            float[] heatmapRadiiStartParams
     ) {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
@@ -327,7 +326,22 @@ public class HeatmapApi {
                 m_jniEegeoMapApiPtr,
                 nativeHandle,
                 heatmapRadii,
-                heatmapRadiiStartParams,
+                heatmapRadiiStartParams
+        );
+    }
+
+    @WorkerThread
+    void setUseApproximation(
+            int nativeHandle,
+            Heatmap.AllowHandleAccess allowHandleAccess,
+            boolean useApproximation
+    ) {
+        if (allowHandleAccess == null)
+            throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
+
+        nativeUseApproximation(
+                m_jniEegeoMapApiPtr,
+                nativeHandle,
                 useApproximation
         );
     }
@@ -454,7 +468,13 @@ public class HeatmapApi {
             long jniEegeoMapApiPtr,
             int nativeHandle,
             double[] heatmapRadii,
-            float[] heatmapRadiiStartParams,
+            float[] heatmapRadiiStartParams
+    );
+
+    @WorkerThread
+    private native void nativeUseApproximation(
+            long jniEegeoMapApiPtr,
+            int nativeHandle,
             boolean useApproximation
     );
 

@@ -299,7 +299,7 @@ public class Heatmap extends NativeApiObject {
 
     public void setUseApproximation(boolean useApproximation) {
         m_useApproximation = useApproximation;
-        updateNativeRadiusExtents();
+        updateNativeUseApproximation();
     }
 
     /**
@@ -483,7 +483,6 @@ public class Heatmap extends NativeApiObject {
     private void updateNativeRadiusExtents() {
         final double[] heatmapRadii = m_heatmapRadii;
         final float[] heatmapRadiiStartParams = m_heatmapRadiiStartParams;
-        final boolean useApproximation = m_useApproximation;
 
         submit(new Runnable() {
             @WorkerThread
@@ -492,7 +491,22 @@ public class Heatmap extends NativeApiObject {
                         getNativeHandle(),
                         Heatmap.m_allowHandleAccess,
                         m_heatmapRadii,
-                        m_heatmapRadiiStartParams,
+                        m_heatmapRadiiStartParams
+                );
+            }
+        });
+    }
+
+    @UiThread
+    private void updateNativeUseApproximation() {
+        final boolean useApproximation = m_useApproximation;
+
+        submit(new Runnable() {
+            @WorkerThread
+            public void run() {
+                m_heatmapApi.setUseApproximation(
+                        getNativeHandle(),
+                        Heatmap.m_allowHandleAccess,
                         m_useApproximation
                 );
             }
