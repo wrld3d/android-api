@@ -88,13 +88,13 @@ public final class HeatmapOptions {
         return this;
     }
 
-    public HeatmapOptions addHeatmapRadius(double heatmapRadiusMeters, float stop) {
+    public HeatmapOptions addHeatmapRadius(float stop, double heatmapRadiusMeters) {
         m_heatmapRadiiStops.add(stop);
         m_heatmapRadii.add(heatmapRadiusMeters);
         return this;
     }
 
-    public HeatmapOptions setHeatmapRadii(double[] heatmapRadiiMeters, float[] stops) {
+    public HeatmapOptions setHeatmapRadii(float[] stops, double[] heatmapRadiiMeters) {
         m_heatmapRadiiStops.clear();
         m_heatmapRadii.clear();
 
@@ -181,7 +181,7 @@ public final class HeatmapOptions {
         return this;
     }
 
-    public HeatmapOptions gradient(int[] colors, float[] stops) {
+    public HeatmapOptions gradient(float[] stops, int[] colors) {
         m_gradientStops = stops;
         m_gradientColors = colors;
         return this;
