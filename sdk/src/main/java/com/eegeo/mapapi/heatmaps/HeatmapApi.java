@@ -66,8 +66,8 @@ public class HeatmapApi {
         final double weightMax = heatmapOptions.getWeightMax();
         final int resolutionPixels = heatmapOptions.getResolutionPixels();
         final float textureBorderPercent = heatmapOptions.getTextureBorderPercent();
+        final float[] heatmapRadiiStops = heatmapOptions.getHeatmapRadiiStops();
         final double[] heatmapRadiiArray = heatmapOptions.getHeatmapRadii();
-        final float[] heatmapRadiiStartParams = heatmapOptions.getHeatmapRadiiStartParams();
         final boolean useApproximation = heatmapOptions.getUseApproximation();
         final float radiusBlend = heatmapOptions.getRadiusBlend();
         final float opacity = heatmapOptions.getOpacity();
@@ -77,7 +77,7 @@ public class HeatmapApi {
         final float occludedAlpha = heatmapOptions.getOccludedStyleAlpha();
         final float occludedSaturation = heatmapOptions.getOccludedStyleSaturation();
         final float occludedBrightness = heatmapOptions.getOccludedStyleBrightness();
-        final float[] gradientStartParamsArray = heatmapOptions.getGradientStartParams();
+        final float[] gradientStopsArray = heatmapOptions.getGradientStops();
         final int[] gradientColorsArray = heatmapOptions.getGradientColors();
 
 
@@ -94,8 +94,8 @@ public class HeatmapApi {
                 weightMax,
                 resolutionPixels,
                 textureBorderPercent,
+                heatmapRadiiStops,
                 heatmapRadiiArray,
-                heatmapRadiiStartParams,
                 useApproximation,
                 radiusBlend,
                 opacity,
@@ -105,7 +105,7 @@ public class HeatmapApi {
                 occludedAlpha,
                 occludedSaturation,
                 occludedBrightness,
-                gradientStartParamsArray,
+                gradientStopsArray,
                 gradientColorsArray
         );
     }
@@ -273,7 +273,7 @@ public class HeatmapApi {
     void setGradient(
             int nativeHandle,
             Heatmap.AllowHandleAccess allowHandleAccess,
-            float[] gradientStartParams,
+            float[] gradientStops,
             int[] gradientColors
 
     ) {
@@ -283,7 +283,7 @@ public class HeatmapApi {
         nativeGradient(
                 m_jniEegeoMapApiPtr,
                 nativeHandle,
-                gradientStartParams,
+                gradientStops,
                 gradientColors);
     }
 
@@ -330,8 +330,8 @@ public class HeatmapApi {
     void setRadiusExtents(
             int nativeHandle,
             Heatmap.AllowHandleAccess allowHandleAccess,
-            double[] heatmapRadii,
-            float[] heatmapRadiiStartParams
+            float[] heatmapRadiiStops,
+            double[] heatmapRadii
     ) {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
@@ -339,8 +339,8 @@ public class HeatmapApi {
         nativeRadiusExtents(
                 m_jniEegeoMapApiPtr,
                 nativeHandle,
-                heatmapRadii,
-                heatmapRadiiStartParams
+                heatmapRadiiStops,
+                heatmapRadii
         );
     }
 
@@ -394,8 +394,8 @@ public class HeatmapApi {
             double weightMax,
             int resolutionPixels,
             float textureBorderPercent,
+            float[] heatmapRadiiStops,
             double[] heatmapRadii,
-            float[] heatmapRadiiStartParams,
             boolean useApproximation,
             float radiusBlend,
             float opacity,
@@ -405,7 +405,7 @@ public class HeatmapApi {
             float occludedAlpha,
             float occludedSaturation,
             float occludedBrightness,
-            float[] gradientStartParams,
+            float[] gradientStops,
             int[] gradientColors
     );
 
@@ -462,7 +462,7 @@ public class HeatmapApi {
     private native void nativeGradient(
             long jniEegeoMapApiPtr,
             int nativeHandle,
-            float[] gradientStartParams,
+            float[] gradientStops,
             int[] gradientColors
     );
 
@@ -487,8 +487,8 @@ public class HeatmapApi {
     private native void nativeRadiusExtents(
             long jniEegeoMapApiPtr,
             int nativeHandle,
-            double[] heatmapRadii,
-            float[] heatmapRadiiStartParams
+            float[] heatmapRadiiStops,
+            double[] heatmapRadii
     );
 
     @WorkerThread

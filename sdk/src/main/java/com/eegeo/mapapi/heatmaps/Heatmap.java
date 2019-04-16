@@ -33,7 +33,7 @@ public class Heatmap extends NativeApiObject {
     private int m_resolutionPixels;
     private float m_textureBorderPercent;
     private double[] m_heatmapRadii;
-    private float[] m_heatmapRadiiStartParams;
+    private float[] m_heatmapRadiiStops;
     private boolean m_useApproximation;
     private float m_radiusBlend;
 
@@ -47,7 +47,7 @@ public class Heatmap extends NativeApiObject {
     private int m_occludedFeatures;
 
     private int[] m_gradientColors;
-    private float[] m_gradientStartParams;
+    private float[] m_gradientStops;
 
     /**
      * This constructor is for internal SDK use only -- use EegeoMap.addHeatmap to create a heatmap
@@ -81,7 +81,7 @@ public class Heatmap extends NativeApiObject {
         m_resolutionPixels = heatmapOptions.getResolutionPixels();
         m_textureBorderPercent = heatmapOptions.getTextureBorderPercent();
         m_heatmapRadii = heatmapOptions.getHeatmapRadii();
-        m_heatmapRadiiStartParams = heatmapOptions.getHeatmapRadiiStartParams();
+        m_heatmapRadiiStops = heatmapOptions.getHeatmapRadiiStops();
         m_useApproximation = heatmapOptions.getUseApproximation();
         m_radiusBlend = heatmapOptions.getRadiusBlend();
         m_intensityBias = heatmapOptions.getIntensityBias();
@@ -92,7 +92,7 @@ public class Heatmap extends NativeApiObject {
         m_occludedStyleBrightness = heatmapOptions.getOccludedStyleBrightness();
         m_occludedFeatures = heatmapOptions.getOccludedFeatures();
         m_gradientColors = heatmapOptions.getGradientColors();
-        m_gradientStartParams = heatmapOptions.getGradientStartParams();
+        m_gradientStops = heatmapOptions.getGradientStops();
 
 
         submit(new Runnable() {
@@ -205,7 +205,7 @@ public class Heatmap extends NativeApiObject {
 
     public double[] getHeatmapRadii() { return m_heatmapRadii; }
 
-    public float[] getHeatmapRadiiStartParams() { return m_heatmapRadiiStartParams; }
+    public float[] getHeatmapRadiiStops() { return m_heatmapRadiiStops; }
 
 
 
@@ -249,12 +249,12 @@ public class Heatmap extends NativeApiObject {
         updateNativeOpacity();
     }
 
-    public void setGradient(int[] gradientColors, float[] gradientStartParams) throws InvalidParameterException {
-        if (gradientColors.length != gradientStartParams.length) {
-            throw new InvalidParameterException("gradientColors and gradientStartParams must have same length");
+    public void setGradient(int[] gradientColors, float[] gradientStops) throws InvalidParameterException {
+        if (gradientColors.length != gradientStops.length) {
+            throw new InvalidParameterException("gradientColors and gradientStops must have same length");
         }
         m_gradientColors = gradientColors;
-        m_gradientStartParams = gradientStartParams;
+        m_gradientStops = gradientStops;
         updateNativeGradient();
     }
 
@@ -290,9 +290,9 @@ public class Heatmap extends NativeApiObject {
         updateNativeResolution();
     }
 
-    public void setHeatmapRadii(double[] heatmapRadii, float[] heatmapRadiiStartParams) {
+    public void setHeatmapRadii(double[] heatmapRadii, float[] heatmapRadiiStops) {
         m_heatmapRadii = heatmapRadii;
-        m_heatmapRadiiStartParams = heatmapRadiiStartParams;
+        m_heatmapRadiiStops = heatmapRadiiStops;
         updateNativeRadiusExtents();
     }
 
@@ -438,7 +438,7 @@ public class Heatmap extends NativeApiObject {
 
     @UiThread
     private void updateNativeGradient() {
-        final float[] gradientStartParams = m_gradientStartParams;
+        final float[] gradientStops = m_gradientStops;
         final int[] gradientColors = m_gradientColors;
 
         submit(new Runnable() {
@@ -447,7 +447,7 @@ public class Heatmap extends NativeApiObject {
                 m_heatmapApi.setGradient(
                         getNativeHandle(),
                         Heatmap.m_allowHandleAccess,
-                        gradientStartParams,
+                        gradientStops,
                         gradientColors);
             }
         });
@@ -494,8 +494,8 @@ public class Heatmap extends NativeApiObject {
 
     @UiThread
     private void updateNativeRadiusExtents() {
+        final float[] heatmapRadiiStops = m_heatmapRadiiStops;
         final double[] heatmapRadii = m_heatmapRadii;
-        final float[] heatmapRadiiStartParams = m_heatmapRadiiStartParams;
 
         submit(new Runnable() {
             @WorkerThread
@@ -503,8 +503,8 @@ public class Heatmap extends NativeApiObject {
                 m_heatmapApi.setRadiusExtents(
                         getNativeHandle(),
                         Heatmap.m_allowHandleAccess,
-                        m_heatmapRadii,
-                        m_heatmapRadiiStartParams
+                        m_heatmapRadiiStops,
+                        m_heatmapRadii
                 );
             }
         });

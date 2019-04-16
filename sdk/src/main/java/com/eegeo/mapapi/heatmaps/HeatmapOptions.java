@@ -28,8 +28,8 @@ public final class HeatmapOptions {
 
     private int m_resolutionPixels = 512;
     private float m_textureBorderPercent = 0.05f;
+    private List<Float> m_heatmapRadiiStops = new ArrayList<>();
     private List<Double> m_heatmapRadii = new ArrayList<>();
-    private List<Float> m_heatmapRadiiStartParams = new ArrayList<>();
     private boolean m_useApproximation = true;
     private float m_radiusBlend = 0.0f;
     private float m_opacity = 1.f;
@@ -41,8 +41,8 @@ public final class HeatmapOptions {
     private int m_occludedFeatures = OCCLUSION_NONE;
     // http://colorbrewer2.org/#type=sequential&scheme=OrRd&n=5
     // with additional ramp to transparent white below 20%
+    private float[] m_gradientStops = {0.f, 0.2f, 0.4f, 0.6f, 0.8f, 1.f};
     private int[] m_gradientColors = {0xffffff00, 0xfef0d9ff, 0xfdcc8aff, 0xfc8d59ff, 0xe34a33ff, 0xb30000ff};
-    private float[] m_gradientStartParams = {0.f, 0.2f, 0.4f, 0.6f, 0.8f, 1.f};
 
     /**
      * Default constructor for heatmap creation parameters.
@@ -81,34 +81,34 @@ public final class HeatmapOptions {
     }
 
     public HeatmapOptions heatmapRadius(double heatmapRadiusMeters) {
+        m_heatmapRadiiStops.clear();
         m_heatmapRadii.clear();
-        m_heatmapRadiiStartParams.clear();
+        m_heatmapRadiiStops.add(0.0f);
         m_heatmapRadii.add(heatmapRadiusMeters);
-        m_heatmapRadiiStartParams.add(0.0f);
         return this;
     }
 
-    public HeatmapOptions addHeatmapRadius(double heatmapRadiusMeters, float startParam) {
+    public HeatmapOptions addHeatmapRadius(double heatmapRadiusMeters, float stop) {
+        m_heatmapRadiiStops.add(stop);
         m_heatmapRadii.add(heatmapRadiusMeters);
-        m_heatmapRadiiStartParams.add(startParam);
         return this;
     }
 
-    public HeatmapOptions setHeatmapRadii(double[] heatmapRadiiMeters, float[] startParams) {
+    public HeatmapOptions setHeatmapRadii(double[] heatmapRadiiMeters, float[] stops) {
+        m_heatmapRadiiStops.clear();
         m_heatmapRadii.clear();
-        m_heatmapRadiiStartParams.clear();
 
         if (heatmapRadiiMeters.length == 0) {
             throw new InvalidParameterException("heatmapRadiiMeters must not be empty");
         }
 
-        if (heatmapRadiiMeters.length != startParams.length) {
-            throw new InvalidParameterException("heatmapRadiiMeters and startParams must be equal length");
+        if (heatmapRadiiMeters.length != stops.length) {
+            throw new InvalidParameterException("heatmapRadiiMeters and stops must be equal length");
         }
 
         for (int i = 0; i < heatmapRadiiMeters.length; ++i) {
+            m_heatmapRadiiStops.add(stops[i]);
             m_heatmapRadii.add(heatmapRadiiMeters[i]);
-            m_heatmapRadiiStartParams.add(startParams[i]);
         }
         return this;
     }
@@ -181,9 +181,9 @@ public final class HeatmapOptions {
         return this;
     }
 
-    public HeatmapOptions gradient(int[] colors, float[] startParams) {
+    public HeatmapOptions gradient(int[] colors, float[] stops) {
+        m_gradientStops = stops;
         m_gradientColors = colors;
-        m_gradientStartParams = startParams;
         return this;
     }
 
@@ -209,20 +209,20 @@ public final class HeatmapOptions {
 
     public float getTextureBorderPercent() { return m_textureBorderPercent; }
 
+    public float[] getHeatmapRadiiStops() {
+        float[] stops = new float[m_heatmapRadiiStops.size()];
+        for (int i = 0; i < m_heatmapRadiiStops.size(); ++i) {
+            stops[i] = Float.valueOf(m_heatmapRadiiStops.get(i));
+        }
+        return stops;
+    }
+
     public double[] getHeatmapRadii() {
         double[] heatmapRadii = new double[m_heatmapRadii.size()];
         for (int i = 0; i < m_heatmapRadii.size(); ++i) {
             heatmapRadii[i] = Double.valueOf(m_heatmapRadii.get(i));
         }
         return heatmapRadii;
-    }
-
-    public float[] getHeatmapRadiiStartParams() {
-        float[] startParams = new float[m_heatmapRadiiStartParams.size()];
-        for (int i = 0; i < m_heatmapRadiiStartParams.size(); ++i) {
-            startParams[i] = Float.valueOf(m_heatmapRadiiStartParams.get(i));
-        }
-        return startParams;
     }
 
     public boolean getUseApproximation() { return m_useApproximation; }
@@ -243,7 +243,7 @@ public final class HeatmapOptions {
 
     public int getOccludedFeatures() { return m_occludedFeatures; }
 
-    public float[] getGradientStartParams() { return m_gradientStartParams; }
+    public float[] getGradientStops() { return m_gradientStops; }
 
     public int[] getGradientColors() { return m_gradientColors; }
 }
