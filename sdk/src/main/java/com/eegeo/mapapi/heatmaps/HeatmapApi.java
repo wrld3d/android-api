@@ -119,7 +119,7 @@ public class HeatmapApi {
             allPoints.addAll(hole);
         }
 
-        return pointsToDoubleArray(allPoints);
+        return latLngsToDoubleArray(allPoints);
     }
 
     private int getTotalVertexCount(int[] ringVertexCounts) {
@@ -140,7 +140,7 @@ public class HeatmapApi {
         return ringVertexCounts;
     }
 
-    private double[] pointsToDoubleArray(List<LatLng> points) {
+    private double[] latLngsToDoubleArray(List<LatLng> points) {
         final int pointCount = points.size();
         double[] coords = new double[pointCount * 2];
         for (int i = 0; i < pointCount; ++i) {
@@ -223,19 +223,33 @@ public class HeatmapApi {
     }
 
     @WorkerThread
-    void setIntensityBiasScale(
+    void setIntensityBias(
             int nativeHandle,
             Heatmap.AllowHandleAccess allowHandleAccess,
-            float intensityBias,
+            float intensityBias
+    ) {
+        if (allowHandleAccess == null)
+            throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
+
+        nativeIntensityBias(
+                m_jniEegeoMapApiPtr,
+                nativeHandle,
+                intensityBias
+        );
+    }
+
+    @WorkerThread
+    void setIntensityScale(
+            int nativeHandle,
+            Heatmap.AllowHandleAccess allowHandleAccess,
             float intensityScale
     ) {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
 
-        nativeIntensityBiasScale(
+        nativeIntensityScale(
                 m_jniEegeoMapApiPtr,
                 nativeHandle,
-                intensityBias,
                 intensityScale
         );
     }
@@ -424,10 +438,16 @@ public class HeatmapApi {
             double radiusBlend);
 
     @WorkerThread
-    private native void nativeIntensityBiasScale(
+    private native void nativeIntensityBias(
             long jniEegeoMapApiPtr,
             int nativeHandle,
-            float intensityBias,
+            float intensityBias
+    );
+
+    @WorkerThread
+    private native void nativeIntensityScale(
+            long jniEegeoMapApiPtr,
+            int nativeHandle,
             float intensityScale
     );
 

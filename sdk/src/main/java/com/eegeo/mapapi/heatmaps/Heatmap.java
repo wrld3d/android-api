@@ -229,12 +229,12 @@ public class Heatmap extends NativeApiObject {
 
     public void setIntensityBias(float intensityBias) {
         m_intensityBias = intensityBias;
-        updateNativeIntensityBiasScale();
+        updateNativeIntensityBias();
     }
 
     public void setIntensityScale(float intensityScale) {
         m_intensityScale = intensityScale;
-        updateNativeIntensityBiasScale();
+        updateNativeIntensityScale();
     }
 
     public void setData(List<WeightedLatLngAlt> weightedPoints, double weightMin, double weightMax) {
@@ -392,17 +392,30 @@ public class Heatmap extends NativeApiObject {
     }
 
     @UiThread
-    private void updateNativeIntensityBiasScale() {
+    private void updateNativeIntensityBias() {
         final float intensityBias = m_intensityBias;
+
+        submit(new Runnable() {
+            @WorkerThread
+            public void run() {
+                m_heatmapApi.setIntensityBias(
+                        getNativeHandle(),
+                        Heatmap.m_allowHandleAccess,
+                        intensityBias);
+            }
+        });
+    }
+
+    @UiThread
+    private void updateNativeIntensityScale() {
         final float intensityScale = m_intensityScale;
 
         submit(new Runnable() {
             @WorkerThread
             public void run() {
-                m_heatmapApi.setIntensityBiasScale(
+                m_heatmapApi.setIntensityScale(
                         getNativeHandle(),
                         Heatmap.m_allowHandleAccess,
-                        intensityBias,
                         intensityScale);
             }
         });

@@ -118,6 +118,8 @@ public final class HeatmapOptions {
         return this;
     }
 
+    // todo_heatmap rename weightMin / Max -> intensityMin / Max
+    // or density instead of intensity?
     public HeatmapOptions weightMin(double weightMin) {
         m_weightMin = weightMin;
         return this;
