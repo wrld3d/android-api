@@ -66,10 +66,11 @@ public class HeatmapApi {
         final double weightMax = heatmapOptions.getWeightMax();
         final int resolutionPixels = heatmapOptions.getResolutionPixels();
         final float textureBorderPercent = heatmapOptions.getTextureBorderPercent();
-        final float[] heatmapRadiiStops = heatmapOptions.getHeatmapRadiiStops();
+        final float[] heatmapDensityStops = heatmapOptions.getHeatmapDensityStops();
         final double[] heatmapRadiiArray = heatmapOptions.getHeatmapRadii();
+        final double[] heatmapGainsArray = heatmapOptions.getHeatmapGains();
         final boolean useApproximation = heatmapOptions.getUseApproximation();
-        final float radiusBlend = heatmapOptions.getRadiusBlend();
+        final float densityBlend = heatmapOptions.getDensityBlend();
         final float opacity = heatmapOptions.getOpacity();
         final float intensityBias = heatmapOptions.getIntensityBias();
         final float intensityScale = heatmapOptions.getIntensityScale();
@@ -94,10 +95,11 @@ public class HeatmapApi {
                 weightMax,
                 resolutionPixels,
                 textureBorderPercent,
-                heatmapRadiiStops,
+                heatmapDensityStops,
                 heatmapRadiiArray,
+                heatmapGainsArray,
                 useApproximation,
-                radiusBlend,
+                densityBlend,
                 opacity,
                 intensityBias,
                 intensityScale,
@@ -210,16 +212,16 @@ public class HeatmapApi {
     }
 
     @WorkerThread
-    void setRadiusBlend(int nativeHandle,
+    void setDensityBlend(int nativeHandle,
                         Heatmap.AllowHandleAccess allowHandleAccess,
-                        double radiusBlend) {
+                        double densityBlend) {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
 
-        nativeRadiusBlend(
+        nativeDensityBlend(
                 m_jniEegeoMapApiPtr,
                 nativeHandle,
-                radiusBlend);
+                densityBlend);
     }
 
     @WorkerThread
@@ -327,20 +329,22 @@ public class HeatmapApi {
     }
 
     @WorkerThread
-    void setRadiusExtents(
+    void setHeatmapDensities(
             int nativeHandle,
             Heatmap.AllowHandleAccess allowHandleAccess,
-            float[] heatmapRadiiStops,
-            double[] heatmapRadii
+            float[] heatmapDensityStops,
+            double[] heatmapRadii,
+            double[] heatmapGains
     ) {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
 
-        nativeRadiusExtents(
+        nativeHeatmapDensities(
                 m_jniEegeoMapApiPtr,
                 nativeHandle,
-                heatmapRadiiStops,
-                heatmapRadii
+                heatmapDensityStops,
+                heatmapRadii,
+                heatmapGains
         );
     }
 
@@ -394,10 +398,11 @@ public class HeatmapApi {
             double weightMax,
             int resolutionPixels,
             float textureBorderPercent,
-            float[] heatmapRadiiStops,
+            float[] heatmapDensityStops,
             double[] heatmapRadii,
+            double[] heatmapGains,
             boolean useApproximation,
-            float radiusBlend,
+            float densityBlend,
             float opacity,
             float intensityBias,
             float intensityScale,
@@ -432,10 +437,10 @@ public class HeatmapApi {
     );
 
     @WorkerThread
-    private native void nativeRadiusBlend(
+    private native void nativeDensityBlend(
             long jniEegeoMapApiPtr,
             int nativeHandle,
-            double radiusBlend);
+            double densityBlend);
 
     @WorkerThread
     private native void nativeIntensityBias(
@@ -484,11 +489,12 @@ public class HeatmapApi {
     );
 
     @WorkerThread
-    private native void nativeRadiusExtents(
+    private native void nativeHeatmapDensities(
             long jniEegeoMapApiPtr,
             int nativeHandle,
-            float[] heatmapRadiiStops,
-            double[] heatmapRadii
+            float[] heatmapDensityStops,
+            double[] heatmapRadii,
+            double[] heatmapGains
     );
 
     @WorkerThread

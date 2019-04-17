@@ -32,10 +32,11 @@ public class Heatmap extends NativeApiObject {
     private double m_weightMax;
     private int m_resolutionPixels;
     private float m_textureBorderPercent;
+    private float[] m_heatmapDensityStops;
     private double[] m_heatmapRadii;
-    private float[] m_heatmapRadiiStops;
+    private double[] m_heatmapGains;
     private boolean m_useApproximation;
-    private float m_radiusBlend;
+    private float m_densityBlend;
 
     private float m_intensityBias;
     private float m_intensityScale;
@@ -80,10 +81,11 @@ public class Heatmap extends NativeApiObject {
         m_weightMax = heatmapOptions.getWeightMax();
         m_resolutionPixels = heatmapOptions.getResolutionPixels();
         m_textureBorderPercent = heatmapOptions.getTextureBorderPercent();
+        m_heatmapDensityStops = heatmapOptions.getHeatmapDensityStops();
         m_heatmapRadii = heatmapOptions.getHeatmapRadii();
-        m_heatmapRadiiStops = heatmapOptions.getHeatmapRadiiStops();
+        m_heatmapGains = heatmapOptions.getHeatmapGains();
         m_useApproximation = heatmapOptions.getUseApproximation();
-        m_radiusBlend = heatmapOptions.getRadiusBlend();
+        m_densityBlend = heatmapOptions.getDensityBlend();
         m_intensityBias = heatmapOptions.getIntensityBias();
         m_intensityScale = heatmapOptions.getIntensityScale();
         m_opacity = heatmapOptions.getOpacity();
@@ -199,14 +201,15 @@ public class Heatmap extends NativeApiObject {
 
     public float getTextureBorderPercent() { return m_textureBorderPercent; }
 
-    public float getRadiusBlend() {
-        return m_radiusBlend;
+    public float getDensityBlend() {
+        return m_densityBlend;
     }
+
+    public float[] getHeatmapDensityStops() { return m_heatmapDensityStops; }
 
     public double[] getHeatmapRadii() { return m_heatmapRadii; }
 
-    public float[] getHeatmapRadiiStops() { return m_heatmapRadiiStops; }
-
+    public double[] getHeatmapGains() { return m_heatmapGains; }
 
 
     public float getIntensityBias() { return m_intensityBias; }
@@ -222,9 +225,9 @@ public class Heatmap extends NativeApiObject {
     public float getOccludedStyleBrightness()  { return m_occludedStyleBrightness; }
 
 
-    public void setRadiusBlend(float radiusBlend) {
-        m_radiusBlend = radiusBlend;
-        updateNativeRadiusBlend();
+    public void setDensityBlend(float densityBlend) {
+        m_densityBlend = densityBlend;
+        updateNativeDensityBlend();
     }
 
     public void setIntensityBias(float intensityBias) {
@@ -290,10 +293,11 @@ public class Heatmap extends NativeApiObject {
         updateNativeResolution();
     }
 
-    public void setHeatmapRadii(double[] heatmapRadii, float[] heatmapRadiiStops) {
+    public void setHeatmapDensities(float[] heatmapDensityStops, double[] heatmapRadii, double[] heatmapGains) {
+        m_heatmapDensityStops = heatmapDensityStops;
         m_heatmapRadii = heatmapRadii;
-        m_heatmapRadiiStops = heatmapRadiiStops;
-        updateNativeRadiusExtents();
+        m_heatmapGains = heatmapGains;
+        updateNativeHeatmapDensities();
     }
 
 
@@ -377,16 +381,16 @@ public class Heatmap extends NativeApiObject {
     }
 
     @UiThread
-    private void updateNativeRadiusBlend() {
-        final double radiusBlend = m_radiusBlend;
+    private void updateNativeDensityBlend() {
+        final double densityBlend = m_densityBlend;
 
         submit(new Runnable() {
             @WorkerThread
             public void run() {
-                m_heatmapApi.setRadiusBlend(
+                m_heatmapApi.setDensityBlend(
                         getNativeHandle(),
                         Heatmap.m_allowHandleAccess,
-                        radiusBlend);
+                        densityBlend);
             }
         });
     }
@@ -493,18 +497,20 @@ public class Heatmap extends NativeApiObject {
     }
 
     @UiThread
-    private void updateNativeRadiusExtents() {
-        final float[] heatmapRadiiStops = m_heatmapRadiiStops;
+    private void updateNativeHeatmapDensities() {
+        final float[] heatmapDensityStops = m_heatmapDensityStops;
         final double[] heatmapRadii = m_heatmapRadii;
+        final double[] heatmapGains = m_heatmapGains;
 
         submit(new Runnable() {
             @WorkerThread
             public void run() {
-                m_heatmapApi.setRadiusExtents(
+                m_heatmapApi.setHeatmapDensities(
                         getNativeHandle(),
                         Heatmap.m_allowHandleAccess,
-                        m_heatmapRadiiStops,
-                        m_heatmapRadii
+                        heatmapDensityStops,
+                        heatmapRadii,
+                        heatmapGains
                 );
             }
         });

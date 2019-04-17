@@ -28,10 +28,11 @@ public final class HeatmapOptions {
 
     private int m_resolutionPixels = 512;
     private float m_textureBorderPercent = 0.05f;
-    private List<Float> m_heatmapRadiiStops = new ArrayList<>();
+    private List<Float> m_heatmapDensityStops = new ArrayList<>();
     private List<Double> m_heatmapRadii = new ArrayList<>();
+    private List<Double> m_heatmapDensityValues = new ArrayList<>();
     private boolean m_useApproximation = true;
-    private float m_radiusBlend = 0.0f;
+    private float m_densityBlend = 0.0f;
     private float m_opacity = 1.f;
     private float m_intensityBias = 0.0f;
     private float m_intensityScale = 1.0f;
@@ -81,34 +82,43 @@ public final class HeatmapOptions {
     }
 
     public HeatmapOptions heatmapRadius(double heatmapRadiusMeters) {
-        m_heatmapRadiiStops.clear();
+        m_heatmapDensityStops.clear();
         m_heatmapRadii.clear();
-        m_heatmapRadiiStops.add(0.0f);
+        m_heatmapDensityValues.clear();
+        m_heatmapDensityStops.add(0.0f);
         m_heatmapRadii.add(heatmapRadiusMeters);
+        m_heatmapDensityValues.add(1.0);
         return this;
     }
 
-    public HeatmapOptions addHeatmapRadius(float stop, double heatmapRadiusMeters) {
-        m_heatmapRadiiStops.add(stop);
+    public HeatmapOptions addDensityStop(float stop, double heatmapRadiusMeters, double heatmapDensity) {
+        m_heatmapDensityStops.add(stop);
         m_heatmapRadii.add(heatmapRadiusMeters);
+        m_heatmapDensityValues.add(heatmapDensity);
         return this;
     }
 
-    public HeatmapOptions setHeatmapRadii(float[] stops, double[] heatmapRadiiMeters) {
-        m_heatmapRadiiStops.clear();
+    public HeatmapOptions setDensityStops(float[] stops, double[] heatmapRadiiMeters, double[] heatmapDensityValues) {
+        m_heatmapDensityStops.clear();
         m_heatmapRadii.clear();
+        m_heatmapDensityValues.clear();
 
-        if (heatmapRadiiMeters.length == 0) {
-            throw new InvalidParameterException("heatmapRadiiMeters must not be empty");
+        if (stops.length == 0) {
+            throw new InvalidParameterException("stops must not be empty");
         }
 
         if (heatmapRadiiMeters.length != stops.length) {
             throw new InvalidParameterException("heatmapRadiiMeters and stops must be equal length");
         }
 
-        for (int i = 0; i < heatmapRadiiMeters.length; ++i) {
-            m_heatmapRadiiStops.add(stops[i]);
+        if (heatmapDensityValues.length != stops.length) {
+            throw new InvalidParameterException("heatmapDensityValues and stops must be equal length");
+        }
+
+        for (int i = 0; i < stops.length; ++i) {
+            m_heatmapDensityStops.add(stops[i]);
             m_heatmapRadii.add(heatmapRadiiMeters[i]);
+            m_heatmapDensityValues.add(heatmapDensityValues[i]);
         }
         return this;
     }
@@ -141,8 +151,8 @@ public final class HeatmapOptions {
     }
 
 
-    public HeatmapOptions radiusBlend(float radiusBlend) {
-        m_radiusBlend = radiusBlend;
+    public HeatmapOptions densityBlend(float densityBlend) {
+        m_densityBlend = densityBlend;
         return this;
     }
 
@@ -209,10 +219,10 @@ public final class HeatmapOptions {
 
     public float getTextureBorderPercent() { return m_textureBorderPercent; }
 
-    public float[] getHeatmapRadiiStops() {
-        float[] stops = new float[m_heatmapRadiiStops.size()];
-        for (int i = 0; i < m_heatmapRadiiStops.size(); ++i) {
-            stops[i] = Float.valueOf(m_heatmapRadiiStops.get(i));
+    public float[] getHeatmapDensityStops() {
+        float[] stops = new float[m_heatmapDensityStops.size()];
+        for (int i = 0; i < m_heatmapDensityStops.size(); ++i) {
+            stops[i] = Float.valueOf(m_heatmapDensityStops.get(i));
         }
         return stops;
     }
@@ -225,9 +235,17 @@ public final class HeatmapOptions {
         return heatmapRadii;
     }
 
+    public double[] getHeatmapGains() {
+        double[] heatmapGains = new double[m_heatmapDensityValues.size()];
+        for (int i = 0; i < m_heatmapDensityValues.size(); ++i) {
+            heatmapGains[i] = Double.valueOf(m_heatmapDensityValues.get(i));
+        }
+        return heatmapGains;
+    }
+
     public boolean getUseApproximation() { return m_useApproximation; }
 
-    public float getRadiusBlend() { return m_radiusBlend; }
+    public float getDensityBlend() { return m_densityBlend; }
 
     public float getOpacity() { return m_opacity; }
 
