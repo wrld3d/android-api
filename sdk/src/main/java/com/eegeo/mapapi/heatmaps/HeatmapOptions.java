@@ -8,19 +8,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
 /**
  * Defines creation parameters for a Heatmap.
  */
 @SuppressWarnings("WeakerAccess")
 public final class HeatmapOptions {
-    public static final int OCCLUSION_NONE = 0x0;
-    public static final int OCCLUSION_GROUND = 0x1;
-    public static final int OCCLUSION_BUILDINGS = 0x2;
-    public static final int OCCLUSION_TREES = 0x4;
-    public static final int OCCLUSION_TRANSPORT = 0x8;
-
-
     private PolygonOptions m_polygonOptions = new PolygonOptions();
     private List<WeightedLatLngAlt> m_weightedPoints = new ArrayList<>();
     private double m_weightMin = 0.0;
@@ -42,7 +34,7 @@ public final class HeatmapOptions {
     private float m_occludedAlpha = 0.85f;
     private float m_occludedSaturation = 0.7f;
     private float m_occludedBrightness = 0.7f;
-    private int m_occludedFeatures = OCCLUSION_NONE;
+    private HeatmapOcclusionMapFeature[] m_occludedFeatures = {HeatmapOcclusionMapFeature.buildings, HeatmapOcclusionMapFeature.trees};
     // http://colorbrewer2.org/#type=sequential&scheme=OrRd&n=5
     // with additional ramp to transparent white below 20%
     private float[] m_gradientStops = {0.f, 0.2f, 0.4f, 0.6f, 0.8f, 1.f};
@@ -182,7 +174,7 @@ public final class HeatmapOptions {
         return this;
     }
 
-    public HeatmapOptions occludedFeatures(int occludedFeatures) {
+    public HeatmapOptions occludedFeatures(HeatmapOcclusionMapFeature[] occludedFeatures) {
         m_occludedFeatures = occludedFeatures;
         return this;
     }
@@ -276,7 +268,7 @@ public final class HeatmapOptions {
 
     public float getOccludedStyleBrightness()  { return m_occludedBrightness; }
 
-    public int getOccludedFeatures() { return m_occludedFeatures; }
+    public HeatmapOcclusionMapFeature[] getOccludedFeatures() { return m_occludedFeatures; }
 
     public float[] getGradientStops() { return m_gradientStops; }
 

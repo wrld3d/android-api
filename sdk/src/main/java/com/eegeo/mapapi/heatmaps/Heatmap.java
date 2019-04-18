@@ -48,7 +48,7 @@ public class Heatmap extends NativeApiObject {
     private float m_occludedStyleAlpha;
     private float m_occludedStyleSaturation;
     private float m_occludedStyleBrightness;
-    private int m_occludedFeatures;
+    private HeatmapOcclusionMapFeature[] m_occludedFeatures;
 
     private int[] m_gradientColors;
     private float[] m_gradientStops;
@@ -306,7 +306,7 @@ public class Heatmap extends NativeApiObject {
         updateNativeOccludedStyle();
     }
 
-    public void setOccludedFeatures(int occludedFeatures) {
+    public void setOccludedFeatures(HeatmapOcclusionMapFeature[] occludedFeatures) {
         m_occludedFeatures = occludedFeatures;
         updateNativeOccludedStyle();
     }
@@ -505,7 +505,7 @@ public class Heatmap extends NativeApiObject {
 
     @UiThread
     private void updateNativeOccludedStyle() {
-        final int occludedFeatures = m_occludedFeatures;
+        final HeatmapOcclusionMapFeature[] occludedFeatures = m_occludedFeatures;
         final float alpha = m_occludedStyleAlpha;
         final float saturation = m_occludedStyleSaturation;
         final float brightness = m_occludedStyleBrightness;

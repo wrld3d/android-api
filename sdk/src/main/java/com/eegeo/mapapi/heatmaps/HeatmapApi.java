@@ -77,7 +77,7 @@ public class HeatmapApi {
         final float opacity = heatmapOptions.getOpacity();
         final float intensityBias = heatmapOptions.getIntensityBias();
         final float intensityScale = heatmapOptions.getIntensityScale();
-        final int occludedFeatures = heatmapOptions.getOccludedFeatures();
+        final int occludedFeaturesInt = occludedMapFeaturesToInt(heatmapOptions.getOccludedFeatures());
         final float occludedAlpha = heatmapOptions.getOccludedStyleAlpha();
         final float occludedSaturation = heatmapOptions.getOccludedStyleSaturation();
         final float occludedBrightness = heatmapOptions.getOccludedStyleBrightness();
@@ -109,7 +109,7 @@ public class HeatmapApi {
                 opacity,
                 intensityBias,
                 intensityScale,
-                occludedFeatures,
+                occludedFeaturesInt,
                 occludedAlpha,
                 occludedSaturation,
                 occludedBrightness,
@@ -315,12 +315,30 @@ public class HeatmapApi {
                 gradientColors);
     }
 
+    @WorkerThread
+    private int occludedMapFeaturesToInt(HeatmapOcclusionMapFeature[] occludedMapFeatures) {
+        int occludedMapFeaturesInt = 0;
+        for (HeatmapOcclusionMapFeature occlusionFeature : occludedMapFeatures) {
+            switch (occlusionFeature) {
+                case ground:
+                    occludedMapFeaturesInt |= 0x1;
+                case buildings:
+                    occludedMapFeaturesInt |= 0x2;
+                case trees:
+                    occludedMapFeaturesInt |= 0x4;
+                case transport:
+                    occludedMapFeaturesInt |= 0x8;
+            }
+        }
+
+        return occludedMapFeaturesInt;
+    }
 
     @WorkerThread
     void setOccludedStyle(
             int nativeHandle,
             Heatmap.AllowHandleAccess allowHandleAccess,
-            int occludedFeatures,
+            HeatmapOcclusionMapFeature[] occludedFeatures,
             float occludedAlpha,
             float occludedSaturation,
             float occludedBrightness
@@ -328,10 +346,12 @@ public class HeatmapApi {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
 
+        final int occludedFeaturesInt = occludedMapFeaturesToInt(occludedFeatures);
+
         nativeOccludedStyle(
                 m_jniEegeoMapApiPtr,
                 nativeHandle,
-                occludedFeatures,
+                occludedFeaturesInt,
                 occludedAlpha,
                 occludedSaturation,
                 occludedBrightness
