@@ -33,6 +33,9 @@ public final class HeatmapOptions {
     private List<Double> m_heatmapDensityValues = new ArrayList<>();
     private boolean m_useApproximation = true;
     private float m_densityBlend = 0.0f;
+    private boolean m_interpolateDensityByZoom = false;
+    private double m_zoomMin = 15.0;
+    private double m_zoomMax = 18.0;
     private float m_opacity = 1.f;
     private float m_intensityBias = 0.0f;
     private float m_intensityScale = 1.0f;
@@ -153,6 +156,14 @@ public final class HeatmapOptions {
 
     public HeatmapOptions densityBlend(float densityBlend) {
         m_densityBlend = densityBlend;
+        m_interpolateDensityByZoom = false;
+        return this;
+    }
+
+    public HeatmapOptions interpolateDensityByZoom(double zoomMin, double zoomMax) {
+        m_interpolateDensityByZoom = true;
+        m_zoomMin = zoomMin;
+        m_zoomMax = zoomMax;
         return this;
     }
 
@@ -246,6 +257,12 @@ public final class HeatmapOptions {
     public boolean getUseApproximation() { return m_useApproximation; }
 
     public float getDensityBlend() { return m_densityBlend; }
+
+    public boolean getInterpolateDensityByZoom() { return m_interpolateDensityByZoom; }
+
+    public double getZoomMin() { return m_zoomMin; }
+
+    public double getZoomMax() { return m_zoomMax; }
 
     public float getOpacity() { return m_opacity; }
 

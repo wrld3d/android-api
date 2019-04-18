@@ -37,6 +37,9 @@ public class Heatmap extends NativeApiObject {
     private double[] m_heatmapGains;
     private boolean m_useApproximation;
     private float m_densityBlend;
+    private boolean m_interpolateDensityByZoom;
+    private double m_zoomMin;
+    private double m_zoomMax;
 
     private float m_intensityBias;
     private float m_intensityScale;
@@ -86,6 +89,10 @@ public class Heatmap extends NativeApiObject {
         m_heatmapGains = heatmapOptions.getHeatmapGains();
         m_useApproximation = heatmapOptions.getUseApproximation();
         m_densityBlend = heatmapOptions.getDensityBlend();
+        m_interpolateDensityByZoom = heatmapOptions.getInterpolateDensityByZoom();
+        m_zoomMin = heatmapOptions.getZoomMin();
+        m_zoomMax = heatmapOptions.getZoomMax();
+
         m_intensityBias = heatmapOptions.getIntensityBias();
         m_intensityScale = heatmapOptions.getIntensityScale();
         m_opacity = heatmapOptions.getOpacity();
@@ -205,6 +212,12 @@ public class Heatmap extends NativeApiObject {
         return m_densityBlend;
     }
 
+    public boolean getInterpolateDensityByZoom() { return m_interpolateDensityByZoom; }
+
+    public double getZoomMin() { return m_zoomMin; }
+
+    public double getZoomMax() { return m_zoomMax; }
+
     public float[] getHeatmapDensityStops() { return m_heatmapDensityStops; }
 
     public double[] getHeatmapRadii() { return m_heatmapRadii; }
@@ -224,10 +237,20 @@ public class Heatmap extends NativeApiObject {
 
     public float getOccludedStyleBrightness()  { return m_occludedStyleBrightness; }
 
-
     public void setDensityBlend(float densityBlend) {
         m_densityBlend = densityBlend;
         updateNativeDensityBlend();
+    }
+
+    public void setInterpolateDensityByZoom(boolean interpolateDensityByZoom) {
+        m_interpolateDensityByZoom = interpolateDensityByZoom;
+        updateNativeInterpolateDensityByZoom();
+    }
+
+    public void setZoomExtents(double zoomMin, double zoomMax) {
+        m_zoomMin = zoomMin;
+        m_zoomMax = zoomMax;
+        updateNativeInterpolateDensityByZoom();
     }
 
     public void setIntensityBias(float intensityBias) {
@@ -394,6 +417,27 @@ public class Heatmap extends NativeApiObject {
             }
         });
     }
+
+    @UiThread
+    private void updateNativeInterpolateDensityByZoom() {
+        final boolean interpolateDensityByZoom = m_interpolateDensityByZoom;
+        final double zoomMin = m_zoomMin;
+        final double zoomMax = m_zoomMax;
+
+        submit(new Runnable() {
+            @WorkerThread
+            public void run() {
+                m_heatmapApi.setInterpolateDensityByZoom(
+                        getNativeHandle(),
+                        Heatmap.m_allowHandleAccess,
+                        interpolateDensityByZoom,
+                        zoomMin,
+                        zoomMax);
+            }
+        });
+    }
+
+
 
     @UiThread
     private void updateNativeIntensityBias() {

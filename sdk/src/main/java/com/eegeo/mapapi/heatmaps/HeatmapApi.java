@@ -71,6 +71,9 @@ public class HeatmapApi {
         final double[] heatmapGainsArray = heatmapOptions.getHeatmapGains();
         final boolean useApproximation = heatmapOptions.getUseApproximation();
         final float densityBlend = heatmapOptions.getDensityBlend();
+        final boolean interpolateDensityByZoom = heatmapOptions.getInterpolateDensityByZoom();
+        final double zoomMin = heatmapOptions.getZoomMin();
+        final double zoomMax = heatmapOptions.getZoomMax();
         final float opacity = heatmapOptions.getOpacity();
         final float intensityBias = heatmapOptions.getIntensityBias();
         final float intensityScale = heatmapOptions.getIntensityScale();
@@ -100,6 +103,9 @@ public class HeatmapApi {
                 heatmapGainsArray,
                 useApproximation,
                 densityBlend,
+                interpolateDensityByZoom,
+                zoomMin,
+                zoomMax,
                 opacity,
                 intensityBias,
                 intensityScale,
@@ -223,6 +229,26 @@ public class HeatmapApi {
                 nativeHandle,
                 densityBlend);
     }
+
+    @WorkerThread
+    void setInterpolateDensityByZoom(
+            int nativeHandle,
+            Heatmap.AllowHandleAccess allowHandleAccess,
+            boolean interpolateDensityByZoom,
+            double zoomMin,
+            double zoomMax
+    ) {
+        if (allowHandleAccess == null)
+            throw new NullPointerException("Null access token. Method is intended for internal use by Heatmap");
+
+        nativeInterpolateDensityByZoom(
+                m_jniEegeoMapApiPtr,
+                nativeHandle,
+                interpolateDensityByZoom,
+                zoomMin,
+                zoomMax);
+    }
+
 
     @WorkerThread
     void setIntensityBias(
@@ -403,6 +429,9 @@ public class HeatmapApi {
             double[] heatmapGains,
             boolean useApproximation,
             float densityBlend,
+            boolean interpolateDensityByZoom,
+            double zoomMin,
+            double zoomMax,
             float opacity,
             float intensityBias,
             float intensityScale,
@@ -441,6 +470,14 @@ public class HeatmapApi {
             long jniEegeoMapApiPtr,
             int nativeHandle,
             double densityBlend);
+
+    @WorkerThread
+    private native void nativeInterpolateDensityByZoom(
+            long jniEegeoMapApiPtr,
+            int nativeHandle,
+            boolean nterpolateDensityByZoom,
+            double zoomMin,
+            double zoomMax);
 
     @WorkerThread
     private native void nativeIntensityBias(
