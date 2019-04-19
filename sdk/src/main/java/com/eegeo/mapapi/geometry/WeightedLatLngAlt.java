@@ -37,7 +37,7 @@ public class WeightedLatLngAlt {
             return false;
         }
         WeightedLatLngAlt other = (WeightedLatLngAlt)(object);
-        if (Double.compare(this.intensity, other.intensity) == 0) {
+        if (Double.compare(this.intensity, other.intensity) != 0) {
             return false;
         }
         return this.point.equals(other.point);
