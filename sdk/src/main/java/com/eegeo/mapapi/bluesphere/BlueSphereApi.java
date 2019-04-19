@@ -79,6 +79,17 @@ public class BlueSphereApi {
     }
 
     @WorkerThread
+    public void showOrientation(BlueSphere.AllowHandleAccess allowHandleAccess, boolean orientationVisible) {
+        if (allowHandleAccess == null)
+            throw new NullPointerException("Null access token. Method is intended for internal use by BlueSphere");
+
+
+        nativeShowOrientation(
+                m_jniEegeoMapApiPtr,
+                orientationVisible);
+    }
+
+    @WorkerThread
     public void setBearing(BlueSphere.AllowHandleAccess allowHandleAccess, double degreesFromNorth) {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by BlueSphere");
@@ -108,6 +119,11 @@ public class BlueSphereApi {
 
     @WorkerThread
     private native void nativeSetEnabled(
+            long jniEegeoMapApiPtr,
+            boolean enabled);
+
+    @WorkerThread
+    private native void nativeShowOrientation(
             long jniEegeoMapApiPtr,
             boolean enabled);
 
