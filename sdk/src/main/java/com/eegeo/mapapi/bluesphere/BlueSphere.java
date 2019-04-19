@@ -46,6 +46,11 @@ import java.util.concurrent.Callable;
  * <br>
  * <b>Enabled</b><br>
  * The blue sphere is disabled by default and can be set to enabled via this method.
+ * 
+ * <br>
+ * <br>
+ * <b>ShowOrientation</b><br>
+ * Enables or disables the orientation arrow on the blue sphere.  Enabled by default
  *
  * <br>
  * <br>
@@ -61,6 +66,7 @@ public class BlueSphere extends NativeApiObject {
     private double m_bearing;
     private double m_elevation;
     private boolean m_enabled;
+    private boolean m_orientationVisible;
 
     /**
      * This constructor is for internal SDK use only -- use EegeoMap.GetBlueSphere() to access the blue sphere
@@ -83,6 +89,7 @@ public class BlueSphere extends NativeApiObject {
         m_indoorMapId = null;
         m_indoorFloorId = 0;
         m_enabled = false;
+        m_orientationVisible = true;
     }
 
     /**
@@ -223,6 +230,29 @@ public class BlueSphere extends NativeApiObject {
             @WorkerThread
             public void run() {
                 m_bluesphereApi.setEnabled(BlueSphere.m_allowHandleAccess, enabled);
+            }
+        });
+    }
+
+    /**
+     * Sets the boolean that indicates whether the blue sphere displays orientation information.
+     *
+     * @param orientationVisible A boolean setting the visibility of the blue sphere orientation arrow.
+     */
+    @UiThread
+    public void showOrientation(boolean orientationVisible) {
+        m_orientationVisible = orientationVisible;
+        updateOrientation();
+    }
+
+    @UiThread
+    private void updateOrientation() {
+        final boolean showOrientation = m_orientationVisible;
+
+        submit(new Runnable() {
+            @WorkerThread
+            public void run() {
+                m_bluesphereApi.showOrientation(BlueSphere.m_allowHandleAccess, showOrientation);
             }
         });
     }
