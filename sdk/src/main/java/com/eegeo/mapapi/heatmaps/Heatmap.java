@@ -238,7 +238,7 @@ public class Heatmap extends NativeApiObject {
     public float getOccludedStyleBrightness()  { return m_occludedStyleBrightness; }
 
     public void setDensityBlend(float densityBlend) {
-        m_densityBlend = densityBlend;
+        m_densityBlend = Math.min(Math.max(densityBlend, 0.0f), 1.0f);
         updateNativeDensityBlend();
     }
 
@@ -248,18 +248,18 @@ public class Heatmap extends NativeApiObject {
     }
 
     public void setZoomExtents(double zoomMin, double zoomMax) {
-        m_zoomMin = zoomMin;
-        m_zoomMax = zoomMax;
+        m_zoomMin = Math.max(zoomMin, 0.0);
+        m_zoomMax = Math.max(zoomMax, 0.0);
         updateNativeInterpolateDensityByZoom();
     }
 
     public void setIntensityBias(float intensityBias) {
-        m_intensityBias = intensityBias;
+        m_intensityBias = Math.min(Math.max(intensityBias, 0.0f), 1.0f);;
         updateNativeIntensityBias();
     }
 
     public void setIntensityScale(float intensityScale) {
-        m_intensityScale = intensityScale;
+        m_intensityScale = Math.max(intensityScale, 0.0f);
         updateNativeIntensityScale();
     }
 
@@ -271,7 +271,7 @@ public class Heatmap extends NativeApiObject {
     }
 
     public void setOpacity(float opacity) {
-        m_opacity = opacity;
+        m_opacity = Math.min(Math.max(opacity, 0.0f), 1.0f);
         updateNativeOpacity();
     }
 
@@ -285,24 +285,24 @@ public class Heatmap extends NativeApiObject {
     }
 
     public void setOccludedStyle(float alpha, float saturation, float brightness) {
-        m_occludedStyleAlpha = alpha;
-        m_occludedStyleSaturation = saturation;
-        m_occludedStyleBrightness = brightness;
+        m_occludedStyleAlpha = Math.min(Math.max(alpha, 0.0f), 1.0f);
+        m_occludedStyleSaturation = Math.min(Math.max(saturation, 0.0f), 1.0f);
+        m_occludedStyleBrightness = Math.min(Math.max(brightness, 0.0f), 1.0f);
         updateNativeOccludedStyle();
     }
 
     public void setOccludedStyleAlpha(float alpha) {
-        m_occludedStyleAlpha = alpha;
+        m_occludedStyleAlpha = Math.min(Math.max(alpha, 0.0f), 1.0f);
         updateNativeOccludedStyle();
     }
 
     public void setOccludedStyleSaturation(float saturation) {
-        m_occludedStyleSaturation = saturation;
+        m_occludedStyleSaturation = Math.min(Math.max(saturation, 0.0f), 1.0f);
         updateNativeOccludedStyle();
     }
 
     public void setOccludedStyleBrightness(float brightness) {
-        m_occludedStyleBrightness = brightness;
+        m_occludedStyleBrightness = Math.min(Math.max(brightness, 0.0f), 1.0f);
         updateNativeOccludedStyle();
     }
 
@@ -312,17 +312,31 @@ public class Heatmap extends NativeApiObject {
     }
 
     public void setResolution(int resolutionPixels) {
-        m_resolutionPixels = resolutionPixels;
+        m_resolutionPixels = Math.min(
+            Math.max(resolutionPixels, HeatmapOptions.RESOLUTION_PIXELS_MIN),
+            HeatmapOptions.RESOLUTION_PIXELS_MAX
+        );
         updateNativeResolution();
     }
 
-    public void setHeatmapDensities(float[] heatmapDensityStops, double[] heatmapRadii, double[] heatmapGains) {
+    public void setDensityStops(float[] heatmapDensityStops, double[] heatmapRadiiMeters, double[] heatmapGains) {
+        if (heatmapDensityStops.length == 0) {
+            throw new InvalidParameterException("heatmapDensityStops must not be empty");
+        }
+
+        if (heatmapRadiiMeters.length != heatmapDensityStops.length) {
+            throw new InvalidParameterException("heatmapRadiiMeters and stops must be equal length");
+        }
+
+        if (heatmapGains.length != heatmapDensityStops.length) {
+            throw new InvalidParameterException("heatmapGains and stops must be equal length");
+        }
+
         m_heatmapDensityStops = heatmapDensityStops;
-        m_heatmapRadii = heatmapRadii;
+        m_heatmapRadii = heatmapRadiiMeters;
         m_heatmapGains = heatmapGains;
         updateNativeHeatmapDensities();
     }
-
 
     public void setUseApproximation(boolean useApproximation) {
         m_useApproximation = useApproximation;

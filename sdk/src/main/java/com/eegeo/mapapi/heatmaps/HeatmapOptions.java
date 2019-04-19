@@ -22,7 +22,7 @@ public final class HeatmapOptions {
     private float m_textureBorderPercent = 0.05f;
     private List<Float> m_heatmapDensityStops = new ArrayList<>();
     private List<Double> m_heatmapRadii = new ArrayList<>();
-    private List<Double> m_heatmapDensityValues = new ArrayList<>();
+    private List<Double> m_heatmapGains = new ArrayList<>();
     private boolean m_useApproximation = true;
     private float m_densityBlend = 0.0f;
     private boolean m_interpolateDensityByZoom = false;
@@ -39,6 +39,9 @@ public final class HeatmapOptions {
     // with additional ramp to transparent white below 20%
     private float[] m_gradientStops = {0.f, 0.2f, 0.4f, 0.6f, 0.8f, 1.f};
     private int[] m_gradientColors = {0xffffff00, 0xfef0d9ff, 0xfdcc8aff, 0xfc8d59ff, 0xe34a33ff, 0xb30000ff};
+
+    public static int RESOLUTION_PIXELS_MIN = 32;
+    public static int RESOLUTION_PIXELS_MAX = 2048;
 
     /**
      * Default constructor for heatmap creation parameters.
@@ -79,24 +82,24 @@ public final class HeatmapOptions {
     public HeatmapOptions heatmapRadius(double heatmapRadiusMeters) {
         m_heatmapDensityStops.clear();
         m_heatmapRadii.clear();
-        m_heatmapDensityValues.clear();
+        m_heatmapGains.clear();
         m_heatmapDensityStops.add(0.0f);
         m_heatmapRadii.add(heatmapRadiusMeters);
-        m_heatmapDensityValues.add(1.0);
+        m_heatmapGains.add(1.0);
         return this;
     }
 
-    public HeatmapOptions addDensityStop(float stop, double heatmapRadiusMeters, double heatmapDensity) {
+    public HeatmapOptions addDensityStop(float stop, double heatmapRadiusMeters, double heatmapGain) {
         m_heatmapDensityStops.add(stop);
         m_heatmapRadii.add(heatmapRadiusMeters);
-        m_heatmapDensityValues.add(heatmapDensity);
+        m_heatmapGains.add(heatmapGain);
         return this;
     }
 
-    public HeatmapOptions setDensityStops(float[] stops, double[] heatmapRadiiMeters, double[] heatmapDensityValues) {
+    public HeatmapOptions setDensityStops(float[] stops, double[] heatmapRadiiMeters, double[] heatmapGains) {
         m_heatmapDensityStops.clear();
         m_heatmapRadii.clear();
-        m_heatmapDensityValues.clear();
+        m_heatmapGains.clear();
 
         if (stops.length == 0) {
             throw new InvalidParameterException("stops must not be empty");
@@ -106,14 +109,14 @@ public final class HeatmapOptions {
             throw new InvalidParameterException("heatmapRadiiMeters and stops must be equal length");
         }
 
-        if (heatmapDensityValues.length != stops.length) {
-            throw new InvalidParameterException("heatmapDensityValues and stops must be equal length");
+        if (heatmapGains.length != stops.length) {
+            throw new InvalidParameterException("heatmapGains and stops must be equal length");
         }
 
         for (int i = 0; i < stops.length; ++i) {
             m_heatmapDensityStops.add(stops[i]);
             m_heatmapRadii.add(heatmapRadiiMeters[i]);
-            m_heatmapDensityValues.add(heatmapDensityValues[i]);
+            m_heatmapGains.add(heatmapGains[i]);
         }
         return this;
     }
@@ -123,8 +126,6 @@ public final class HeatmapOptions {
         return this;
     }
 
-    // todo_heatmap rename weightMin / Max -> intensityMin / Max
-    // or density instead of intensity?
     public HeatmapOptions weightMin(double weightMin) {
         m_weightMin = weightMin;
         return this;
@@ -136,41 +137,47 @@ public final class HeatmapOptions {
     }
 
     public HeatmapOptions resolution(int resolutionPixels) {
-        m_resolutionPixels = resolutionPixels;
+        m_resolutionPixels = Math.min(
+            Math.max(resolutionPixels, HeatmapOptions.RESOLUTION_PIXELS_MIN),
+            HeatmapOptions.RESOLUTION_PIXELS_MAX
+        );
         return this;
     }
 
     public HeatmapOptions textureBorder(float textureBorderPercent) {
-        m_textureBorderPercent = textureBorderPercent;
+        m_textureBorderPercent = Math.min(
+            Math.max(textureBorderPercent, 0.0f),
+            0.5f
+        );
         return this;
     }
 
 
     public HeatmapOptions densityBlend(float densityBlend) {
-        m_densityBlend = densityBlend;
+        m_densityBlend = Math.min(Math.max(densityBlend, 0.0f), 1.0f);
         m_interpolateDensityByZoom = false;
         return this;
     }
 
     public HeatmapOptions interpolateDensityByZoom(double zoomMin, double zoomMax) {
         m_interpolateDensityByZoom = true;
-        m_zoomMin = zoomMin;
-        m_zoomMax = zoomMax;
+        m_zoomMin = Math.max(zoomMin, 0.0);
+        m_zoomMax = Math.max(zoomMax, 0.0);
         return this;
     }
 
     public HeatmapOptions opacity(float opacity) {
-        m_opacity = opacity;
+        m_opacity = Math.min(Math.max(opacity, 0.0f), 1.0f);
         return this;
     }
 
     public HeatmapOptions intensityBias(float intensityBias) {
-        m_intensityBias = intensityBias;
+        m_intensityBias = Math.min(Math.max(intensityBias, 0.0f), 1.0f);;
         return this;
     }
 
     public HeatmapOptions intensityScale(float intensityScale) {
-        m_intensityScale = intensityScale;
+        m_intensityScale = Math.max(intensityScale, 0.0f);
         return this;
     }
 
@@ -180,21 +187,24 @@ public final class HeatmapOptions {
     }
 
     public HeatmapOptions occludedStyleAlpha(float occludedAlpha) {
-        m_occludedAlpha = occludedAlpha;
+        m_occludedAlpha = Math.min(Math.max(occludedAlpha, 0.0f), 1.0f);
         return this;
     }
 
     public HeatmapOptions occludedStyleSaturation(float occludedSaturation) {
-        m_occludedSaturation = occludedSaturation;
+        m_occludedSaturation = Math.min(Math.max(occludedSaturation, 0.0f), 1.0f);;
         return this;
     }
 
     public HeatmapOptions occludedStyleBrightness(float occludedBrightness) {
-        m_occludedBrightness = occludedBrightness;
+        m_occludedBrightness = Math.min(Math.max(occludedBrightness, 0.0f), 1.0f);;
         return this;
     }
 
     public HeatmapOptions gradient(float[] stops, int[] colors) {
+        if (stops.length != colors.length) {
+            throw new InvalidParameterException("gradient stops and colors arrays must be equal length");
+        }
         m_gradientStops = stops;
         m_gradientColors = colors;
         return this;
@@ -239,9 +249,9 @@ public final class HeatmapOptions {
     }
 
     public double[] getHeatmapGains() {
-        double[] heatmapGains = new double[m_heatmapDensityValues.size()];
-        for (int i = 0; i < m_heatmapDensityValues.size(); ++i) {
-            heatmapGains[i] = Double.valueOf(m_heatmapDensityValues.get(i));
+        double[] heatmapGains = new double[m_heatmapGains.size()];
+        for (int i = 0; i < m_heatmapGains.size(); ++i) {
+            heatmapGains[i] = Double.valueOf(m_heatmapGains.get(i));
         }
         return heatmapGains;
     }
