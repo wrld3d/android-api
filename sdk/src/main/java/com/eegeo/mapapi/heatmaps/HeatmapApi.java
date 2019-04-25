@@ -77,7 +77,7 @@ public class HeatmapApi {
         final float opacity = heatmapOptions.getOpacity();
         final float intensityBias = heatmapOptions.getIntensityBias();
         final float intensityScale = heatmapOptions.getIntensityScale();
-        final int occludedFeaturesInt = occludedMapFeaturesToInt(heatmapOptions.getOccludedFeatures());
+        final int occludedFeaturesInt = occludedMapFeaturesToInt(heatmapOptions.getOccludedMapFeatures());
         final float occludedAlpha = heatmapOptions.getOccludedStyleAlpha();
         final float occludedSaturation = heatmapOptions.getOccludedStyleSaturation();
         final float occludedBrightness = heatmapOptions.getOccludedStyleBrightness();
