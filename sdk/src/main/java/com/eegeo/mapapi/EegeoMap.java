@@ -318,6 +318,22 @@ public final class EegeoMap {
     }
 
     /**
+     * Enable or Disable the camera restriction when viewing Indoor Maps. When enabled,
+     * the camera is unable to move outside the bounds of the Indoor Map.
+     * @param indoorCameraRestriction Whether the restriction is enabled or disabled.
+     */
+    @UiThread
+    public void setIndoorCameraRestriction(final Boolean indoorCameraRestriction) {
+        m_nativeRunner.runOnNativeThread(new Runnable() {
+            @WorkerThread
+            @Override
+            public void run() {
+                m_cameraApi.setIndoorCameraRestriction(indoorCameraRestriction);
+            }
+        });
+    }
+
+    /**
      * Called from the SDK when the screen has been tapped.
      *
      * @param point Screen coordinates of the tapped point.
@@ -639,6 +655,17 @@ public final class EegeoMap {
         m_nativeRunner.runOnNativeThread(new Runnable() {
             public void run() {
                 IndoorsApiJniCalls.floorSelectionDragged(m_eegeoMapApiPtr, dragParameter);
+            }
+        });
+    }
+
+    @UiThread
+    public void setExitIndoorWhenTooFarAway(final Boolean exitWhenFarAway) {
+        m_nativeRunner.runOnNativeThread(new Runnable() {
+            @WorkerThread
+            @Override
+            public void run() {
+                IndoorsApiJniCalls.setExitIndoorWhenTooFarAway(m_eegeoMapApiPtr, exitWhenFarAway);
             }
         });
     }

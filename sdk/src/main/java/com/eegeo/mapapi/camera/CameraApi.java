@@ -55,6 +55,10 @@ public class CameraApi {
         }
     }
 
+    @WorkerThread
+    public void setIndoorCameraRestriction(final Boolean indoorCameraRestriction) {
+        nativeSetIndoorCameraRestriction(m_jniEegeoMapApiPtr, indoorCameraRestriction);
+    }
 
     @WorkerThread
     private void performMoveCamera(@NonNull final CameraUpdateFactory.IdentityCameraPositionUpdate cameraPositionUpdate) {
@@ -80,6 +84,7 @@ public class CameraApi {
         nativeAnimateCameraLatLongBoundsCameraPositionUpdate(m_jniEegeoMapApiPtr, latLngBounds, animationOptions);
     }
 
+
     @WorkerThread
     private static native void nativeMoveCameraIdentityCameraPositionUpdate(long jniEegeoMapApiPtr, CameraPosition cameraPostion);
 
@@ -94,5 +99,8 @@ public class CameraApi {
 
     @WorkerThread
     private static native void nativeCancelAnimation(long jniEegeoMapApiPtr);
+
+    @WorkerThread
+    private static native void nativeSetIndoorCameraRestriction(long jniEegeoMapApiPtr, boolean indoorCameraRestriction);
 
 }

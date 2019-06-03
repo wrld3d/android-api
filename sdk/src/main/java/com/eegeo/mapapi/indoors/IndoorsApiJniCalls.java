@@ -20,4 +20,7 @@ public class IndoorsApiJniCalls {
 
     @WorkerThread
     public static native void enterIndoorMap(long jniEegeoMapApiPtr, String mapId);
+
+    @WorkerThread
+    public static native void setExitIndoorWhenTooFarAway(long jniEegeoMapApiPtr, boolean exitWhenFarAway);
 }
