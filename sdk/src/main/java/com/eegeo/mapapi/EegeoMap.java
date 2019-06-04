@@ -28,6 +28,7 @@ import com.eegeo.mapapi.indoors.ExpandFloorsJniCalls;
 import com.eegeo.mapapi.indoors.IndoorMap;
 import com.eegeo.mapapi.indoors.IndoorsApiJniCalls;
 import com.eegeo.mapapi.indoors.OnFloorChangedListener;
+import com.eegeo.mapapi.indoors.OnIndoorEnterFailedListener;
 import com.eegeo.mapapi.indoors.OnIndoorEnteredListener;
 import com.eegeo.mapapi.indoors.OnIndoorExitedListener;
 import com.eegeo.mapapi.indoors.OnIndoorMapLoadedListener;
@@ -84,7 +85,9 @@ import com.eegeo.mapapi.util.Ready;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Main class representing a map. This class is the entry point for methods which change the camera, manage markers,
@@ -103,6 +106,7 @@ public final class EegeoMap {
     private List<OnMapClickListener> m_onMapClickedListeners = new ArrayList<>();
     private List<OnIndoorEnteredListener> m_onIndoorEnteredListeners = new ArrayList<>();
     private List<OnIndoorExitedListener> m_onIndoorExitedListeners = new ArrayList<>();
+    private List<OnIndoorEnterFailedListener> m_onIndoorEnterFailedListeners = new ArrayList<>();
     private List<OnIndoorMapLoadedListener> m_onIndoorMapLoadedListeners = new ArrayList<>();
     private List<OnIndoorMapUnloadedListener> m_onIndoorMapUnloadedListeners = new ArrayList<>();
     private List<OnFloorChangedListener> m_onIndoorFloorChangedListeners = new ArrayList<>();
@@ -110,6 +114,8 @@ public final class EegeoMap {
     private CameraPosition m_cameraPosition = null;
     private IndoorMap m_indoorMap = null;
     private int m_currentIndoorFloor = -1;
+    private Map<String, LatLngAlt> m_indoorMapEntryMarkerLocations = new HashMap<>();
+    private boolean m_transitioningToIndoorMap = false;
     private Projection m_projection;
     private CameraApi m_cameraApi;
     private MarkerApi m_markerApi;
@@ -452,6 +458,7 @@ public final class EegeoMap {
             public void run() {
                 m_indoorMap = indoorMap;
                 m_currentIndoorFloor = currentIndoorFloor;
+                m_transitioningToIndoorMap = false;
                 for (OnIndoorEnteredListener listener : m_onIndoorEnteredListeners) {
                     listener.onIndoorEntered();
                 }
@@ -477,6 +484,26 @@ public final class EegeoMap {
     @UiThread
     public void removeOnIndoorExitedListener(@NonNull OnIndoorExitedListener listener) {
         m_onIndoorExitedListeners.remove(listener);
+    }
+
+    /**
+     * Registers a listener for indoor map enter failed events.
+     *
+     * @param listener The listener to be notified when the user fails to enter an indoor map.
+     */
+    @UiThread
+    public void addOnIndoorEnterFailedListener(@NonNull OnIndoorEnterFailedListener listener) {
+        m_onIndoorEnterFailedListeners.add(listener);
+    }
+
+    /**
+     * Unregisters a listener for indoor map failed events.
+     *
+     * @param listener The listener to be removed.
+     */
+    @UiThread
+    public void removeOnIndoorEnterFailedListener(@NonNull OnIndoorEnterFailedListener listener) {
+        m_onIndoorEnterFailedListeners.remove(listener);
     }
 
     /**
@@ -549,15 +576,28 @@ public final class EegeoMap {
      * @param indoorMapId The id of the indoor map to enter
      */
     @UiThread
-    public void enterIndoorMap(final String indoorMapId) {
-        m_nativeRunner.runOnNativeThread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                IndoorsApiJniCalls.enterIndoorMap(m_eegeoMapApiPtr, indoorMapId);
-            }
-        });
+    public boolean enterIndoorMap(final String indoorMapId) {
+        if (getActiveIndoorMap() != null || m_transitioningToIndoorMap) {
+            return false;
+        }
+
+        if (!m_indoorMapEntryMarkerLocations.containsKey(indoorMapId)) {
+            return false;
+        }
+
+        m_transitioningToIndoorMap = true;
+        LatLngAlt location = m_indoorMapEntryMarkerLocations.get(indoorMapId);
+
+        CameraPosition position = new CameraPosition.Builder()
+                .target(location.latitude,  location.longitude)
+                .indoor(indoorMapId)
+                .zoom(19)
+                .build();
+        CameraAnimationOptions animationOptions = new CameraAnimationOptions.Builder()
+                .interruptByGestureAllowed(false)
+                .build();
+        animateCamera(CameraUpdateFactory.newCameraPosition(position), animationOptions);
+        return true;
     }
 
     @WorkerThread
@@ -574,11 +614,15 @@ public final class EegeoMap {
     }
 
     @WorkerThread
-    private void jniOnIndoorEnterFailed() {
+    private void jniOnIndoorEnterFailed(final String indoorMapId) {
         m_uiRunner.runOnUiThread(new Runnable() {
             public void run() {
                 m_indoorMap = null;
                 m_currentIndoorFloor = -1;
+                m_transitioningToIndoorMap = false;
+                for (OnIndoorEnterFailedListener listener : m_onIndoorEnterFailedListeners) {
+                    listener.OnIndoorEnterFailed(indoorMapId);
+                }
             }
         });
     }
@@ -1204,6 +1248,24 @@ public final class EegeoMap {
                 for (OnIndoorMapUnloadedListener listener : m_onIndoorMapUnloadedListeners) {
                     listener.onIndoorMapUnloaded(indoorMapId);
                 }
+            }
+        });
+    }
+
+    @WorkerThread
+    private void jniOnIndoorEntryMarkerAdded(final String indoorMapId, final LatLngAlt location) {
+        m_uiRunner.runOnUiThread(new Runnable() {
+            public void run() {
+                m_indoorMapEntryMarkerLocations.put(indoorMapId, location);
+            }
+        });
+    }
+
+    @WorkerThread
+    private void jniOnIndoorEntryMarkerRemoved(final String indoorMapId) {
+        m_uiRunner.runOnUiThread(new Runnable() {
+            public void run() {
+                m_indoorMapEntryMarkerLocations.remove(indoorMapId);
             }
         });
     }

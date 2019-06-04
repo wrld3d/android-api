@@ -43,6 +43,11 @@ public final class CameraPosition {
     public final int targetIndoorMapFloorId;
 
     /**
+     * For a camera with interest point on an indoor map, whether to target the default floor or not.
+     */
+    public final boolean targetIndoorMapDefaultFloor;
+
+    /**
      * The zoom level, in the range 0 to 26.
      */
     public final double zoom;
@@ -76,6 +81,7 @@ public final class CameraPosition {
         this.targetElevationMode = ElevationMode.HeightAboveGround;
         this.targetIndoorMapId = "";
         this.targetIndoorMapFloorId = 0;
+        this.targetIndoorMapDefaultFloor = false;
 
         this.zoom = zoom;
         this.tilt = tilt;
@@ -92,6 +98,7 @@ public final class CameraPosition {
                            ElevationMode targetElevationMode,
                            String targetIndoorMapId,
                            int targetIndoorMapFloorId,
+                           boolean targetIndoorMapDefaultFloor,
                            double zoom,
                            double tilt,
                            double bearing) {
@@ -103,6 +110,7 @@ public final class CameraPosition {
         this.targetElevationMode = targetElevationMode;
         this.targetIndoorMapId = targetIndoorMapId;
         this.targetIndoorMapFloorId = targetIndoorMapFloorId;
+        this.targetIndoorMapDefaultFloor = targetIndoorMapDefaultFloor;
 
         this.zoom = zoom;
         this.tilt = tilt;
@@ -149,6 +157,7 @@ public final class CameraPosition {
         private ElevationMode m_targetElevationMode = ElevationMode.HeightAboveGround;
         private String m_targetIndoorMapId = "";
         private int m_targetIndoorMapFloorId = 0;
+        private boolean m_targetIndoorMapDefaultFloor = false;
 
         private double m_zoom = ms_defaultZoom;
         private double m_tilt = ms_defaultTilt;
@@ -170,6 +179,7 @@ public final class CameraPosition {
             this.m_targetElevationMode = previous.targetElevationMode;
             this.m_targetIndoorMapId = previous.targetIndoorMapId;
             this.m_targetIndoorMapFloorId = previous.targetIndoorMapFloorId;
+            this.m_targetIndoorMapDefaultFloor = previous.targetIndoorMapDefaultFloor;
             this.m_zoom = previous.zoom;
             this.m_tilt = previous.tilt;
             this.m_bearing = previous.bearing;
@@ -339,12 +349,26 @@ public final class CameraPosition {
          * the builder is initialised to create a CameraPosition with its interest point on an outdoor map.
          *
          * @param indoorMapId The identifier of the indoor map of the camera target interest point.
+         * @return Updated CameraPosition.Builder object.
+         */
+        public Builder indoor(String indoorMapId) {
+            this.m_targetIndoorMapId = indoorMapId;
+            this.m_targetIndoorMapDefaultFloor = true;
+            return this;
+        }
+
+        /**
+         * Sets the indoor map properties for the CameraPosition target. If this method is not called,
+         * the builder is initialised to create a CameraPosition with its interest point on an outdoor map.
+         *
+         * @param indoorMapId The identifier of the indoor map of the camera target interest point.
          * @param indoorMapFloorId The identifier of the indoor map floor of the camera target interest point.
          * @return Updated CameraPosition.Builder object.
          */
         public Builder indoor(String indoorMapId, int indoorMapFloorId) {
             this.m_targetIndoorMapId = indoorMapId;
             this.m_targetIndoorMapFloorId = indoorMapFloorId;
+            this.m_targetIndoorMapDefaultFloor = false;
             return this;
         }
 
@@ -412,6 +436,7 @@ public final class CameraPosition {
                     m_targetElevationMode,
                     m_targetIndoorMapId,
                     m_targetIndoorMapFloorId,
+                    m_targetIndoorMapDefaultFloor,
                     m_zoom,
                     m_tilt,
                     m_bearing
