@@ -340,6 +340,38 @@ public final class EegeoMap {
     }
 
     /**
+     * Set the camera to focus on a particular screen coordinate, so it will rotate and zoom
+     * around this point on screen.
+     * @param point The screen space point, in units of pixels with the origin at the top left
+     *              corner of the screen.
+     */
+    @UiThread
+    public void setCameraScreenSpaceOffset(@NonNull final Point point) {
+        m_nativeRunner.runOnNativeThread(new Runnable() {
+            @WorkerThread
+            @Override
+            public void run() {
+                m_cameraApi.setCameraScreenSpaceOffset(point.x, point.y);
+            }
+        });
+    }
+
+    /**
+     * Disable any previously set screen space offset set by setCameraScreenSpaceOffset amd
+     * resume the default behavior.
+     */
+    @UiThread
+    public void disableCameraScreenSpaceOffset() {
+        m_nativeRunner.runOnNativeThread(new Runnable() {
+            @WorkerThread
+            @Override
+            public void run() {
+                m_cameraApi.disableCameraScreenSpaceOffset();
+            }
+        });
+    }
+
+    /**
      * Called from the SDK when the screen has been tapped.
      *
      * @param point Screen coordinates of the tapped point.

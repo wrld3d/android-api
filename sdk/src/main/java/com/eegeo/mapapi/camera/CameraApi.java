@@ -61,6 +61,16 @@ public class CameraApi {
     }
 
     @WorkerThread
+    public void setCameraScreenSpaceOffset(final float screenX, final float screenY) {
+        nativeSetCameraScreenSpaceOffset(m_jniEegeoMapApiPtr, screenX, screenY);
+    }
+
+    @WorkerThread
+    public void disableCameraScreenSpaceOffset() {
+        nativeDisableCameraScreenSpaceOffset(m_jniEegeoMapApiPtr);
+    }
+
+    @WorkerThread
     private void performMoveCamera(@NonNull final CameraUpdateFactory.IdentityCameraPositionUpdate cameraPositionUpdate) {
         final CameraPosition cameraPosition = cameraPositionUpdate.getCameraPosition();
         nativeMoveCameraIdentityCameraPositionUpdate(m_jniEegeoMapApiPtr, cameraPosition);
@@ -102,5 +112,11 @@ public class CameraApi {
 
     @WorkerThread
     private static native void nativeSetIndoorCameraRestriction(long jniEegeoMapApiPtr, boolean indoorCameraRestriction);
+
+    @WorkerThread
+    private static native void nativeSetCameraScreenSpaceOffset(long jniEegeoMapApiPtr, float screenX, float screenY);
+
+    @WorkerThread
+    private static native void nativeDisableCameraScreenSpaceOffset(long jniEegeoMapApiPtr);
 
 }
