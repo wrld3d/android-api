@@ -24,6 +24,9 @@ import com.eegeo.mapapi.indoorentities.IndoorMapEntityInformationApi;
 import com.eegeo.mapapi.indoorentities.IndoorEntityPickedMessage;
 import com.eegeo.mapapi.indoorentities.OnIndoorEntityPickedListener;
 import com.eegeo.mapapi.indoorentities.OnIndoorMapEntityInformationChangedListener;
+import com.eegeo.mapapi.indooroutlines.IndoorFloorOutlineInformation;
+import com.eegeo.mapapi.indooroutlines.IndoorFloorOutlineInformationApi;
+import com.eegeo.mapapi.indooroutlines.OnIndoorFloorOutlineInformationLoadedListener;
 import com.eegeo.mapapi.indoors.ExpandFloorsJniCalls;
 import com.eegeo.mapapi.indoors.IndoorMap;
 import com.eegeo.mapapi.indoors.IndoorsApiJniCalls;
@@ -138,6 +141,7 @@ public final class EegeoMap {
     private PrecacheApi m_precacheApi;
     private IndoorEntityApi m_indoorEntityApi;
     private IndoorMapEntityInformationApi m_indoorMapEntityInformationApi;
+    private IndoorFloorOutlineInformationApi m_indoorFloorOutlineInformationApi;
 
 
     private static final AllowApiAccess m_allowApiAccess = new AllowApiAccess();
@@ -174,6 +178,7 @@ public final class EegeoMap {
         this.m_precacheApi = new PrecacheApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_indoorEntityApi = new IndoorEntityApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_indoorMapEntityInformationApi = new IndoorMapEntityInformationApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_indoorFloorOutlineInformationApi = new IndoorFloorOutlineInformationApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
 
     @WorkerThread
@@ -1072,6 +1077,22 @@ public final class EegeoMap {
         indoorMapEntityInformation.destroy();
     }
 
+    //TODO add summary
+    public IndoorFloorOutlineInformation addIndoorFloorOutlineInformation(
+            @NonNull final String indoorMapId,
+            final int indoorMapFloorId,
+            final OnIndoorFloorOutlineInformationLoadedListener indoorFloorOutlineInformationLoadedListener
+            )
+    {
+        return new IndoorFloorOutlineInformation(m_indoorFloorOutlineInformationApi, indoorMapId, indoorMapFloorId, indoorFloorOutlineInformationLoadedListener);
+    }
+
+    //TODO add summary
+    public void removeIndoorFloorOutlineInformation(@NonNull final IndoorFloorOutlineInformation indoorFloorOutlineInformation)
+    {
+        indoorFloorOutlineInformation.destroy();
+    }
+
     /**
      * Creates and returns a PoiService for this map.
      *
@@ -1260,6 +1281,11 @@ public final class EegeoMap {
     @WorkerThread
     private void jniOnIndoorMapEntityInformationChanged(final int indoorMapEntityInformationId) {
         m_indoorMapEntityInformationApi.notifyIndoorMapEntityInformationChanged(indoorMapEntityInformationId);
+    }
+
+    @WorkerThread
+    private void jniOnIndoorFloorOutlineInformationLoaded(final int indoorMapFloorOutlineInformationId) {
+        m_indoorFloorOutlineInformationApi.notifyIndoorFloorOutlineInformationLoaded(indoorMapFloorOutlineInformationId);
     }
 
     @WorkerThread

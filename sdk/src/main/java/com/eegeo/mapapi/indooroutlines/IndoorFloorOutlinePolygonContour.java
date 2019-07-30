@@ -5,6 +5,7 @@ import android.support.annotation.UiThread;
 
 import com.eegeo.mapapi.geometry.LatLng;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class IndoorFloorOutlinePolygonContour {
@@ -15,7 +16,7 @@ public class IndoorFloorOutlinePolygonContour {
      * @eegeo.internal
      */
     @UiThread
-    public IndoorFloorOutlinePolygonContour(@NonNull List<LatLng> contourPoints) {
-        this.contourPoints = contourPoints;
+    public IndoorFloorOutlinePolygonContour(@NonNull LatLng contourPoints[]) {
+        this.contourPoints = Arrays.asList(contourPoints);
     }
 }

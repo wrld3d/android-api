@@ -40,7 +40,6 @@ public class IndoorFloorOutlineInformationApi {
     public void register(IndoorFloorOutlineInformation indoorFloorOutlineInformation, IndoorFloorOutlineInformation.AllowHandleAccess allowHandleAccess) {
         int nativeHandle = indoorFloorOutlineInformation.getNativeHandle(allowHandleAccess);
         m_nativeHandleToIndoorFloorOutlineInformation.put(nativeHandle, indoorFloorOutlineInformation);
-        fetchIndoorFloorOutlineInformation(nativeHandle);
     }
 
     @WorkerThread

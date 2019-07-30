@@ -19,7 +19,7 @@ public class IndoorFloorOutlineInformation extends NativeApiObject {
     private final IndoorFloorOutlineInformationApi m_indoorFloorOutlineInformationApi;
     private final String m_indoorMapId;
     private final int m_indoorMapFloorId;
-    public List<IndoorFloorOutlinePolygon> m_outlinePolygons;
+    private List<IndoorFloorOutlinePolygon> m_outlinePolygons;
     private boolean m_isLoaded;
     private OnIndoorFloorOutlineInformationLoadedListener m_onIndoorFloorOutlineInformationLoadedListener;
 
@@ -102,9 +102,9 @@ public class IndoorFloorOutlineInformation extends NativeApiObject {
     }
 
     @UiThread
-    void updateFromNative(IndoorFloorOutlinePolygon indoorMapEntities[])
+    void updateFromNative(IndoorFloorOutlinePolygon indoorFloorOutlinePolygons[])
     {
-        m_outlinePolygons = Arrays.asList(indoorMapEntities);
+        m_outlinePolygons = Arrays.asList(indoorFloorOutlinePolygons);
         m_isLoaded = true;
         if (m_onIndoorFloorOutlineInformationLoadedListener != null) {
             m_onIndoorFloorOutlineInformationLoadedListener.onIndoorMapEntityInformationLoaded(this);

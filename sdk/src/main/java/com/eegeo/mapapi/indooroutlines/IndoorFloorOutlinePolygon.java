@@ -3,6 +3,7 @@ package com.eegeo.mapapi.indooroutlines;
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class IndoorFloorOutlinePolygon {
@@ -15,9 +16,9 @@ public class IndoorFloorOutlinePolygon {
     @UiThread
     public IndoorFloorOutlinePolygon(
             @NonNull IndoorFloorOutlinePolygonContour outerContour,
-            @NonNull List<IndoorFloorOutlinePolygonContour> innerContours
+            @NonNull IndoorFloorOutlinePolygonContour innerContours[]
     ) {
         this.outerContour = outerContour;
-        this.innerContours = innerContours;
+        this.innerContours = Arrays.asList(innerContours);
     }
 }
