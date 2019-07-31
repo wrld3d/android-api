@@ -1078,6 +1078,7 @@ public final class EegeoMap {
     }
 
     //TODO add summary
+    @UiThread
     public IndoorFloorOutlineInformation addIndoorFloorOutlineInformation(
             @NonNull final String indoorMapId,
             final int indoorMapFloorId,
@@ -1088,6 +1089,7 @@ public final class EegeoMap {
     }
 
     //TODO add summary
+    @UiThread
     public void removeIndoorFloorOutlineInformation(@NonNull final IndoorFloorOutlineInformation indoorFloorOutlineInformation)
     {
         indoorFloorOutlineInformation.destroy();
