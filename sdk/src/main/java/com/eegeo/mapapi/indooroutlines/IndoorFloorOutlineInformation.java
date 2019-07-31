@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
- *  TODO: add summary
+ *  Maintains information about indoor map floor outline belonging to an indoor map floor with specified id.
+ *  Outline information is updated as map tiles stream in. Change notification is available via
+ *  the supplied OnIndoorFloorOutlineInformationLoadedListener.
  */
 public class IndoorFloorOutlineInformation extends NativeApiObject {
     private static final IndoorFloorOutlineInformation.AllowHandleAccess m_allowHandleAccess = new IndoorFloorOutlineInformation.AllowHandleAccess();

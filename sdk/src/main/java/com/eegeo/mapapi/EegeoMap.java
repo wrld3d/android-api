@@ -1077,7 +1077,16 @@ public final class EegeoMap {
         indoorMapEntityInformation.destroy();
     }
 
-    //TODO add summary
+    /**
+     * Adds an IndoorFloorOutlineInformation object, that will become populated with the outline
+     * of the specified indoor map floor as map tiles stream in.
+     * @param indoorMapId The id of the indoor map.
+     * @param indoorMapFloorId The id of the indoor map floor to obtain outline information for.
+     * @param indoorFloorOutlineInformationLoadedListener A listener object to obtain notification
+     *                                                  when the IndoorFloorOutlineInformation has been
+     *                                                  updated with outline.
+     * @return The IndoorFloorOutlineInformation instance.
+     */
     @UiThread
     public IndoorFloorOutlineInformation addIndoorFloorOutlineInformation(
             @NonNull final String indoorMapId,
@@ -1088,7 +1097,10 @@ public final class EegeoMap {
         return new IndoorFloorOutlineInformation(m_indoorFloorOutlineInformationApi, indoorMapId, indoorMapFloorId, indoorFloorOutlineInformationLoadedListener);
     }
 
-    //TODO add summary
+    /**
+     * Remove an IndoorFloorOutlineInformation object, previously added via addIndoorFloorOutlineInformation.
+     * @param indoorFloorOutlineInformation The IndoorFloorOutlineInformation instance to remove.
+     */
     @UiThread
     public void removeIndoorFloorOutlineInformation(@NonNull final IndoorFloorOutlineInformation indoorFloorOutlineInformation)
     {
