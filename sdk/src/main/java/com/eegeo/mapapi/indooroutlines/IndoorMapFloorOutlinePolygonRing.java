@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Represents the points that make up a polygon ring.
  */
-public class IndoorFloorOutlinePolygonRing {
+public class IndoorMapFloorOutlinePolygonRing {
 
     /**
      * A list of point that represent the ring of a polygon.
@@ -22,7 +22,7 @@ public class IndoorFloorOutlinePolygonRing {
      * @eegeo.internal
      */
     @UiThread
-    public IndoorFloorOutlinePolygonRing(@NonNull LatLng latLngPoints[]) {
+    public IndoorMapFloorOutlinePolygonRing(@NonNull LatLng latLngPoints[]) {
         this.latLngPoints = Arrays.asList(latLngPoints);
     }
 }

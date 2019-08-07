@@ -24,9 +24,9 @@ import com.eegeo.mapapi.indoorentities.IndoorMapEntityInformationApi;
 import com.eegeo.mapapi.indoorentities.IndoorEntityPickedMessage;
 import com.eegeo.mapapi.indoorentities.OnIndoorEntityPickedListener;
 import com.eegeo.mapapi.indoorentities.OnIndoorMapEntityInformationChangedListener;
-import com.eegeo.mapapi.indooroutlines.IndoorFloorOutlineInformation;
-import com.eegeo.mapapi.indooroutlines.IndoorFloorOutlineInformationApi;
-import com.eegeo.mapapi.indooroutlines.OnIndoorFloorOutlineInformationLoadedListener;
+import com.eegeo.mapapi.indooroutlines.IndoorMapFloorOutlineInformation;
+import com.eegeo.mapapi.indooroutlines.IndoorMapFloorOutlineInformationApi;
+import com.eegeo.mapapi.indooroutlines.OnIndoorMapFloorOutlineInformationLoadedListener;
 import com.eegeo.mapapi.indoors.ExpandFloorsJniCalls;
 import com.eegeo.mapapi.indoors.IndoorMap;
 import com.eegeo.mapapi.indoors.IndoorsApiJniCalls;
@@ -141,7 +141,7 @@ public final class EegeoMap {
     private PrecacheApi m_precacheApi;
     private IndoorEntityApi m_indoorEntityApi;
     private IndoorMapEntityInformationApi m_indoorMapEntityInformationApi;
-    private IndoorFloorOutlineInformationApi m_indoorFloorOutlineInformationApi;
+    private IndoorMapFloorOutlineInformationApi m_indoorMapFloorOutlineInformationApi;
 
 
     private static final AllowApiAccess m_allowApiAccess = new AllowApiAccess();
@@ -178,7 +178,7 @@ public final class EegeoMap {
         this.m_precacheApi = new PrecacheApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_indoorEntityApi = new IndoorEntityApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_indoorMapEntityInformationApi = new IndoorMapEntityInformationApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
-        this.m_indoorFloorOutlineInformationApi = new IndoorFloorOutlineInformationApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_indoorMapFloorOutlineInformationApi = new IndoorMapFloorOutlineInformationApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
 
     @WorkerThread
@@ -1078,33 +1078,33 @@ public final class EegeoMap {
     }
 
     /**
-     * Adds an IndoorFloorOutlineInformation object, that will become populated with the outline
+     * Adds an IndoorMapFloorOutlineInformation object, that will become populated with the outline
      * of the specified indoor map floor as map tiles stream in.
      * @param indoorMapId The id of the indoor map.
      * @param indoorMapFloorId The id of the indoor map floor to obtain outline information for.
-     * @param indoorFloorOutlineInformationLoadedListener A listener object to obtain notification
-     *                                                  when the IndoorFloorOutlineInformation has been
+     * @param indoorMapFloorOutlineInformationLoadedListener A listener object to obtain notification
+     *                                                  when the IndoorMapFloorOutlineInformation has been
      *                                                  updated with outline.
-     * @return The IndoorFloorOutlineInformation instance.
+     * @return The IndoorMapFloorOutlineInformation instance.
      */
     @UiThread
-    public IndoorFloorOutlineInformation addIndoorFloorOutlineInformation(
+    public IndoorMapFloorOutlineInformation addIndoorMapFloorOutlineInformation(
             @NonNull final String indoorMapId,
             final int indoorMapFloorId,
-            final OnIndoorFloorOutlineInformationLoadedListener indoorFloorOutlineInformationLoadedListener
+            final OnIndoorMapFloorOutlineInformationLoadedListener indoorMapFloorOutlineInformationLoadedListener
             )
     {
-        return new IndoorFloorOutlineInformation(m_indoorFloorOutlineInformationApi, indoorMapId, indoorMapFloorId, indoorFloorOutlineInformationLoadedListener);
+        return new IndoorMapFloorOutlineInformation(m_indoorMapFloorOutlineInformationApi, indoorMapId, indoorMapFloorId, indoorMapFloorOutlineInformationLoadedListener);
     }
 
     /**
-     * Remove an IndoorFloorOutlineInformation object, previously added via addIndoorFloorOutlineInformation.
-     * @param indoorFloorOutlineInformation The IndoorFloorOutlineInformation instance to remove.
+     * Remove an IndoorMapFloorOutlineInformation object, previously added via addIndoorMapFloorOutlineInformation.
+     * @param indoorMapFloorOutlineInformation The IndoorMapFloorOutlineInformation instance to remove.
      */
     @UiThread
-    public void removeIndoorFloorOutlineInformation(@NonNull final IndoorFloorOutlineInformation indoorFloorOutlineInformation)
+    public void removeIndoorMapFloorOutlineInformation(@NonNull final IndoorMapFloorOutlineInformation indoorMapFloorOutlineInformation)
     {
-        indoorFloorOutlineInformation.destroy();
+        indoorMapFloorOutlineInformation.destroy();
     }
 
     /**
@@ -1298,8 +1298,8 @@ public final class EegeoMap {
     }
 
     @WorkerThread
-    private void jniOnIndoorFloorOutlineInformationLoaded(final int indoorMapFloorOutlineInformationId) {
-        m_indoorFloorOutlineInformationApi.notifyIndoorFloorOutlineInformationLoaded(indoorMapFloorOutlineInformationId);
+    private void jniOnIndoorMapFloorOutlineInformationLoaded(final int indoorMapFloorOutlineInformationId) {
+        m_indoorMapFloorOutlineInformationApi.notifyIndoorMapFloorOutlineInformationLoaded(indoorMapFloorOutlineInformationId);
     }
 
     @WorkerThread

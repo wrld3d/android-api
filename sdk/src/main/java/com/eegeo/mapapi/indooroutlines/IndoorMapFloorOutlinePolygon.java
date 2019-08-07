@@ -11,25 +11,25 @@ import java.util.List;
  * This correspond to outline within a level GeoJSON in an indoor map submission via the WRLD Indoor Map REST API.
  * See [https://github.com/wrld3d/wrld-indoor-maps-api/blob/master/FORMAT.md](https://github.com/wrld3d/wrld-indoor-maps-api/blob/master/FORMAT.md)
  */
-public class IndoorFloorOutlinePolygon {
+public class IndoorMapFloorOutlinePolygon {
     /**
      * The outer ring of this polygon.
      * This is a list of points that make up the outer perimeter of a polygon.
      */
-    public final IndoorFloorOutlinePolygonRing outerRing;
+    public final IndoorMapFloorOutlinePolygonRing outerRing;
     /**
      * The inner rings of this polygon.
      * These are the list of points that make up the holes within a polygon.
      */
-    public final List<IndoorFloorOutlinePolygonRing> innerRings;
+    public final List<IndoorMapFloorOutlinePolygonRing> innerRings;
 
     /**
      * @eegeo.internal
      */
     @UiThread
-    public IndoorFloorOutlinePolygon(
-            @NonNull IndoorFloorOutlinePolygonRing outerRing,
-            @NonNull IndoorFloorOutlinePolygonRing innerRings[]
+    public IndoorMapFloorOutlinePolygon(
+            @NonNull IndoorMapFloorOutlinePolygonRing outerRing,
+            @NonNull IndoorMapFloorOutlinePolygonRing innerRings[]
     ) {
         this.outerRing = outerRing;
         this.innerRings = Arrays.asList(innerRings);
