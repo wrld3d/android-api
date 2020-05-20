@@ -54,6 +54,11 @@ public class RouteStep {
      */
     public final double distance;
 
+    /**
+     * If available, the name of the location this step is on.
+     */
+    public final String stepName;
+
     RouteStep(
             final List<LatLng> path,
             final RouteDirections directions,
@@ -63,7 +68,8 @@ public class RouteStep {
             final int indoorFloorId,
             final boolean isMultiFloor,
             final double duration,
-            final double distance)
+            final double distance,
+            final String stepName)
     {
         this.path = path;
         this.directions = directions;
@@ -74,6 +80,7 @@ public class RouteStep {
         this.isMultiFloor = isMultiFloor;
         this.duration = duration;
         this.distance = distance;
+        this.stepName = stepName;
     }
 }
 
