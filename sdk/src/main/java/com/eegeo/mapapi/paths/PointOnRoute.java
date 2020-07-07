@@ -63,8 +63,8 @@ public final class PointOnRoute {
                      double fractionAlongRouteStep,
                      double fractionAlongRouteSection,
                      double fractionAlongRoute,
-                     int routeStepIndex,
                      int routeSectionIndex,
+                     int routeStepIndex,
                      boolean validResult
     ) {
         this.resultPoint = resultPoint;
@@ -73,8 +73,8 @@ public final class PointOnRoute {
         this.fractionAlongRouteStep = fractionAlongRouteStep;
         this.fractionAlongRouteSection = fractionAlongRouteSection;
         this.fractionAlongRoute = fractionAlongRoute;
-        this.routeStepIndex = routeStepIndex;
         this.routeSectionIndex = routeSectionIndex;
+        this.routeStepIndex = routeStepIndex;
         this.validResult = validResult;
     }
 }
