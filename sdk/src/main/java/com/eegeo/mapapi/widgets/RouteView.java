@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.ArrayList;
 
 import android.graphics.Color;
-import android.location.Location;
 import android.support.annotation.UiThread;
 
 import com.eegeo.mapapi.EegeoMap;
@@ -71,7 +70,7 @@ public class RouteView {
                     RouteStep stepBefore = steps.get(i-1);
                     RouteStep stepAfter = steps.get(i+1);
 
-                    addLinesForFloorTransition(step, stepBefore, stepAfter);
+                    addLinesForFloorTransition(step, stepBefore, stepAfter, false);
                 }
                 else {
                     addLinesForRouteStep(step);
@@ -89,12 +88,15 @@ public class RouteView {
             .miterLimit(m_miterLimit);
     }
 
-    private Polyline makeVerticalLine(RouteStep step, int floor, double height) {
+    private Polyline makeVerticalLine(RouteStep step, int floor, double height, boolean isActiveStep) {
         PolylineOptions options = basePolylineOptions()
             .indoor(step.indoorId, floor)
             .add(step.path.get(0), 0.0)
             .add(step.path.get(1), height);
 
+        if (isActiveStep) {
+            options.color(m_activeColorARGB);
+        }
         return m_map.addPolyline(options);
     }
 
@@ -113,13 +115,13 @@ public class RouteView {
         m_polylines.add(routeLine);
     }
 
-    private void addLinesForFloorTransition(RouteStep step, RouteStep stepBefore, RouteStep stepAfter) {
+    private void addLinesForFloorTransition(RouteStep step, RouteStep stepBefore, RouteStep stepAfter, boolean isActiveStep) {
         int floorBefore = stepBefore.indoorFloorId;
         int floorAfter = stepAfter.indoorFloorId;
         double lineHeight = (floorAfter > floorBefore) ? VERTICAL_LINE_HEIGHT : -VERTICAL_LINE_HEIGHT;
 
-        m_polylines.add(makeVerticalLine(step, floorBefore, lineHeight));
-        m_polylines.add(makeVerticalLine(step, floorAfter, -lineHeight));
+        m_polylines.add(makeVerticalLine(step, floorBefore, lineHeight, isActiveStep));
+        m_polylines.add(makeVerticalLine(step, floorAfter, -lineHeight, isActiveStep));
     }
 
     /**
@@ -136,6 +138,8 @@ public class RouteView {
 
             for (int i=0; i<steps.size(); ++i) {
                 RouteStep step = steps.get(i);
+                boolean isActiveStep = sectionIndex == x && stepIndex == i;
+
                 if (step.path.size() < 2) {
                     continue;
                 }
@@ -146,12 +150,11 @@ public class RouteView {
                     }
                     RouteStep stepBefore = steps.get(i-1);
                     RouteStep stepAfter = steps.get(i+1);
-                    addLinesForFloorTransition(step, stepBefore, stepAfter);
+                    addLinesForFloorTransition(step, stepBefore, stepAfter, isActiveStep);
                 }
                 else {
-                    boolean isActiveStep = sectionIndex == x && stepIndex == i;
                     if(isActiveStep) {
-                        addLinesForActiveRouteStep(step, indexOfPathSegmentStartVertex, closestPointOnPath);
+                        calculateProgressForActiveRouteStep(step, indexOfPathSegmentStartVertex, closestPointOnPath);
                     } else {
                         addLinesForRouteStep(step);
                     }
@@ -160,82 +163,42 @@ public class RouteView {
         }
     }
 
-    private PolylineOptions activePolylineOptions() {
-        return new PolylineOptions()
-                .color(m_activeColorARGB)
-                .width(m_width)
-                .miterLimit(m_miterLimit);
-    }
+    private void calculateProgressForActiveRouteStep(RouteStep step, int splitIndex, LatLng closestPointOnPath) {
+        List<LatLng> backPathArray = new ArrayList<>(step.path.subList(0, splitIndex+1));
+        backPathArray.add(closestPointOnPath);
+        backPathArray = RouteViewProgressHelper.removeCoincidentPoints(backPathArray);
 
-    private void addLinesForActiveRouteStep(RouteStep step, int splitIndex, LatLng closestPointOnPath) {
-        List<LatLng> backArray = new ArrayList<>();
-        for(int i=0; i <=splitIndex; i++) {
-            LatLng point = step.path.get(i);
-            backArray.add(point);
-        }
-        backArray.add(closestPointOnPath);
-        backArray = removeCoincidentPoints(backArray);
+        List<LatLng> forwardPathArray = new ArrayList<>();
+        forwardPathArray.add(closestPointOnPath);
+        forwardPathArray.addAll(step.path.subList(splitIndex+1, step.path.size()));
+        forwardPathArray = RouteViewProgressHelper.removeCoincidentPoints(forwardPathArray);
 
-        if(backArray.size() >= 2) {
+        if (backPathArray.size() >= 2) {
             PolylineOptions basePolylineOptions = basePolylineOptions();
             if (step.isIndoors) {
                 basePolylineOptions.indoor(step.indoorId, step.indoorFloorId);
             }
-            for(int i=0; i < backArray.size(); i++) {
-                LatLng point = backArray.get(i);
-                basePolylineOptions.add(point);
-            }
-            Polyline routeLine = m_map.addPolyline(basePolylineOptions);
-            m_polylines.add(routeLine);
+            addPolyLinesForActiveStep(backPathArray, basePolylineOptions);
         }
 
-        List<LatLng> forwardArray = new ArrayList<>();
-        forwardArray.add(closestPointOnPath);
-        for (int x=splitIndex+1; x < step.path.size(); x++) {
-            LatLng point = step.path.get(x);
-            forwardArray.add(point);
-        }
-        forwardArray = removeCoincidentPoints(forwardArray);
-
-        if (forwardArray.size() >= 2) {
-            PolylineOptions activePolylineOptions = activePolylineOptions();
+        if (forwardPathArray.size() >= 2) {
+            PolylineOptions activePolylineOptions = basePolylineOptions();
+            activePolylineOptions.color(m_activeColorARGB);
             if (step.isIndoors) {
                 activePolylineOptions.indoor(step.indoorId, step.indoorFloorId);
             }
-            for(int i=0; i < forwardArray.size(); i++) {
-                LatLng point = forwardArray.get(i);
-                activePolylineOptions.add(point);
-            }
-            Polyline routeLineActive = m_map.addPolyline(activePolylineOptions);
-            m_polylines.add(routeLineActive);
+            addPolyLinesForActiveStep(forwardPathArray, activePolylineOptions);
         }
     }
 
-    private List<LatLng> removeCoincidentPoints(List<LatLng> coordinates) {
-        List<LatLng> uniqueCoordinates = new ArrayList<>();
-
-        for(int i=0; i<coordinates.size(); i++) {
-            LatLng firstLocation = coordinates.get(i);
-            boolean isUnique = true;
-            for(int j=i+1; j<coordinates.size(); j++) {
-                LatLng secondLocation = coordinates.get(j);
-                if (areApproximatelyEqual(firstLocation, secondLocation)) {
-                    isUnique = false;
-                }
-            }
-            if (isUnique) {
-                uniqueCoordinates.add(firstLocation);
-            }
+    private void addPolyLinesForActiveStep(List<LatLng> inputArray, PolylineOptions polylineOptions) {
+        for(LatLng point: inputArray) {
+            polylineOptions.add(point);
         }
-        return uniqueCoordinates;
+        Polyline routeLine = m_map.addPolyline(polylineOptions);
+        m_polylines.add(routeLine);
     }
 
-    private boolean areApproximatelyEqual(LatLng firstLocation, LatLng secondLocation) {
-        final double epsilonSq = 1e-6;
-        float[] results = new float[1];
-        Location.distanceBetween(firstLocation.latitude, firstLocation.longitude, secondLocation.latitude, secondLocation.longitude, results);
-        return results[0] <= epsilonSq;
-    }
     /**
      * Remove this RouteView from the map.
      */
