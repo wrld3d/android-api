@@ -232,15 +232,9 @@ public class RouteView {
 
     private boolean areApproximatelyEqual(LatLng firstLocation, LatLng secondLocation) {
         final double epsilonSq = 1e-6;
-        Location first = new Location("");
-        first.setLatitude(firstLocation.latitude);
-        first.setLongitude(firstLocation.longitude);
-
-        Location second = new Location("");
-        second.setLatitude(secondLocation.latitude);
-        second.setLongitude(secondLocation.longitude);
-
-        return first.distanceTo(second) <= epsilonSq;
+        float[] results = new float[1];
+        Location.distanceBetween(firstLocation.latitude, firstLocation.longitude, secondLocation.latitude, secondLocation.longitude, results);
+        return results[0] <= epsilonSq;
     }
     /**
      * Remove this RouteView from the map.
