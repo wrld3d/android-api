@@ -8,7 +8,7 @@ public final class RouteViewOptions {
 
     private float m_width = 10.f;
     private int m_colorARGB = 0xff000000;
-    private int m_colorActiveARGB = 0xffff0000;
+    private int m_forwardPathColorARGB = 0xffff0000;
     private float m_miterLimit = 10.f;
 
 
@@ -39,13 +39,13 @@ public final class RouteViewOptions {
     }
 
     /**
-     * Sets the current step color of the RouteView's polylines as a 32-bit ARGB color. The default value is opaque red (0xff000000).
+     * Sets the forward path color of the RouteView's polylines as a 32-bit ARGB color. The default value is opaque red (0xff000000).
      *
      * @param color The color to use.
      * @return The RouteViewOptions object on which the method was called, with the new color set.
      */
-    public RouteViewOptions activeColor(int color) {
-        m_colorActiveARGB = color;
+    public RouteViewOptions forwardPathColor(int color) {
+        m_forwardPathColorARGB = color;
         return this;
     }
 
@@ -69,7 +69,7 @@ public final class RouteViewOptions {
         return m_colorARGB;
     }
 
-    int getActiveColor() { return m_colorActiveARGB; }
+    int getForwardPathColor() { return m_forwardPathColorARGB; }
 
     float getMiterLimit() {
         return m_miterLimit;

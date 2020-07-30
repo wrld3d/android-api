@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class RouteViewProgressHelper {
+public class RouteViewHelper {
     public static List<LatLng> removeCoincidentPoints(List<LatLng> coordinates) {
         List<LatLng> uniqueCoordinates = new ArrayList<>();
 

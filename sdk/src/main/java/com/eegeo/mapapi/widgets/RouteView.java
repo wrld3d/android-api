@@ -24,7 +24,7 @@ public class RouteView {
 
     private float m_width;
     private int m_colorARGB;
-    private int m_activeColorARGB;
+    private int m_forwardPathColorARGB;
     private float m_miterLimit;
 
 
@@ -40,7 +40,7 @@ public class RouteView {
         this.m_route = route;
         this.m_width = options.getWidth();
         this.m_colorARGB = options.getColor();
-        this.m_activeColorARGB = options.getActiveColor();
+        this.m_forwardPathColorARGB = options.getActiveColor();
         this.m_miterLimit = options.getMiterLimit();
         addToMap();
     }
@@ -95,7 +95,7 @@ public class RouteView {
             .add(step.path.get(1), height);
 
         if (isActiveStep) {
-            options.color(m_activeColorARGB);
+            options.color(m_forwardPathColorARGB);
         }
         return m_map.addPolyline(options);
     }
@@ -154,7 +154,7 @@ public class RouteView {
                 }
                 else {
                     if(isActiveStep) {
-                        calculateProgressForActiveRouteStep(step, indexOfPathSegmentStartVertex, closestPointOnPath);
+                        addLinesForRouteStep(step, indexOfPathSegmentStartVertex, closestPointOnPath);
                     } else {
                         addLinesForRouteStep(step);
                     }
@@ -163,15 +163,15 @@ public class RouteView {
         }
     }
 
-    private void calculateProgressForActiveRouteStep(RouteStep step, int splitIndex, LatLng closestPointOnPath) {
+    private void addLinesForRouteStep(RouteStep step, int splitIndex, LatLng closestPointOnPath) {
         List<LatLng> backPathArray = new ArrayList<>(step.path.subList(0, splitIndex+1));
         backPathArray.add(closestPointOnPath);
-        backPathArray = RouteViewProgressHelper.removeCoincidentPoints(backPathArray);
+        backPathArray = RouteViewHelper.removeCoincidentPoints(backPathArray);
 
         List<LatLng> forwardPathArray = new ArrayList<>();
         forwardPathArray.add(closestPointOnPath);
         forwardPathArray.addAll(step.path.subList(splitIndex+1, step.path.size()));
-        forwardPathArray = RouteViewProgressHelper.removeCoincidentPoints(forwardPathArray);
+        forwardPathArray = RouteViewHelper.removeCoincidentPoints(forwardPathArray);
 
         if (backPathArray.size() >= 2) {
             PolylineOptions basePolylineOptions = basePolylineOptions();
@@ -183,7 +183,7 @@ public class RouteView {
 
         if (forwardPathArray.size() >= 2) {
             PolylineOptions activePolylineOptions = basePolylineOptions();
-            activePolylineOptions.color(m_activeColorARGB);
+            activePolylineOptions.color(m_forwardPathColorARGB);
             if (step.isIndoors) {
                 activePolylineOptions.indoor(step.indoorId, step.indoorFloorId);
             }
