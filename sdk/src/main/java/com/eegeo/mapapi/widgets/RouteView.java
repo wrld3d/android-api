@@ -40,7 +40,7 @@ public class RouteView {
         this.m_route = route;
         this.m_width = options.getWidth();
         this.m_colorARGB = options.getColor();
-        this.m_forwardPathColorARGB = options.getActiveColor();
+        this.m_forwardPathColorARGB = options.getForwardPathColor();
         this.m_miterLimit = options.getMiterLimit();
         addToMap();
     }
