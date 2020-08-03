@@ -53,6 +53,11 @@ public final class PointOnRoute {
     public final boolean validResult;
 
     /**
+     * Vertex index where the path segment starts for the projected point. Can be used to separate traversed path.
+     */
+    public final int pathSegmentStartVertexIndex;
+
+    /**
      * @eegeo.internal
      */
     @UiThread
@@ -65,7 +70,8 @@ public final class PointOnRoute {
                      double fractionAlongRoute,
                      int routeSectionIndex,
                      int routeStepIndex,
-                     boolean validResult
+                     boolean validResult,
+                     int pathSegmentStartVertexIndex
     ) {
         this.resultPoint = resultPoint;
         this.inputPoint = inputPoint;
@@ -76,5 +82,6 @@ public final class PointOnRoute {
         this.routeSectionIndex = routeSectionIndex;
         this.routeStepIndex = routeStepIndex;
         this.validResult = validResult;
+        this.pathSegmentStartVertexIndex = pathSegmentStartVertexIndex;
     }
 }
