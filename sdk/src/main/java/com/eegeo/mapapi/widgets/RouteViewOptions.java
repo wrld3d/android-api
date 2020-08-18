@@ -7,8 +7,8 @@ package com.eegeo.mapapi.widgets;
 public final class RouteViewOptions {
 
     private float m_width = 10.f;
-    private int m_colorARGB = 0xff000000;
-    private int m_forwardPathColorARGB = 0xffff0000;
+    private int m_colorARGB = 0xff0096ff;
+    private int m_forwardPathColorARGB = 0xff00ff96;
     private float m_miterLimit = 10.f;
 
 
