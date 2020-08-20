@@ -126,6 +126,11 @@ public class RouteView {
 
     /**
      * Update the progress of turn by turn navigation on route.
+     *
+     * @param sectionIndex The current index of RouteSection.
+     * @param stepIndex The current index of RouteStep.
+     * @param closestPointOnPath Closest point on the path of RouteStep.
+     * @param indexOfPathSegmentStartVertex Index of path segment start vertex in RouteStep.
      */
 
     public void updateRouteProgress(int sectionIndex, int stepIndex, LatLng closestPointOnPath, int indexOfPathSegmentStartVertex) {
