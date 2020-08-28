@@ -175,7 +175,6 @@ public class RouteView {
         backPathArray.add(closestPointOnPath);
         addLinesForActiveStepSegment(step, backPathArray, false);
 
-
         List<LatLng> forwardPathArray = new ArrayList<>();
         forwardPathArray.add(closestPointOnPath);
         forwardPathArray.addAll(step.path.subList(splitIndex+1, step.path.size()));
@@ -183,7 +182,6 @@ public class RouteView {
     }
 
     private void addLinesForActiveStepSegment(RouteStep step, List<LatLng> pathSegment, boolean isForward) {
-
         List<LatLng> filteredPathSegment = RouteViewHelper.removeCoincidentPoints(pathSegment);
         if(filteredPathSegment.size() >= 2) {
             PolylineOptions basePolylineOptions = basePolylineOptions(step);
