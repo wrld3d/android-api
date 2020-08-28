@@ -81,31 +81,21 @@ public class RouteView {
         m_currentlyOnMap = true;
     }
 
-    private PolylineOptions basePolylineOptions() {
-        return new PolylineOptions()
+    private PolylineOptions basePolylineOptions(RouteStep step) {
+        PolylineOptions options = new PolylineOptions()
             .color(m_colorARGB)
             .width(m_width)
             .miterLimit(m_miterLimit);
-    }
-
-    private Polyline makeVerticalLine(RouteStep step, int floor, double height, boolean isActiveStep) {
-        PolylineOptions options = basePolylineOptions()
-            .indoor(step.indoorId, floor)
-            .add(step.path.get(0), 0.0)
-            .add(step.path.get(1), height);
-
-        if (isActiveStep) {
-            options.color(m_forwardPathColorARGB);
-        }
-        return m_map.addPolyline(options);
-    }
-
-    private void addLinesForRouteStep(RouteStep step) {
-        PolylineOptions options = basePolylineOptions();
 
         if (step.isIndoors) {
             options.indoor(step.indoorId, step.indoorFloorId);
         }
+
+        return options;
+    }
+
+    private void addLinesForRouteStep(RouteStep step) {
+        PolylineOptions options = basePolylineOptions(step);
 
         for (LatLng point: step.path) {
             options.add(point);
@@ -122,6 +112,18 @@ public class RouteView {
 
         m_polylines.add(makeVerticalLine(step, floorBefore, lineHeight, isActiveStep));
         m_polylines.add(makeVerticalLine(step, floorAfter, -lineHeight, isActiveStep));
+    }
+
+    private Polyline makeVerticalLine(RouteStep step, int floor, double height, boolean isActiveStep) {
+        PolylineOptions options = basePolylineOptions(step)
+                .indoor(step.indoorId, floor)
+                .add(step.path.get(0), 0.0)
+                .add(step.path.get(1), height);
+
+        if (isActiveStep) {
+            options.color(m_forwardPathColorARGB);
+        }
+        return m_map.addPolyline(options);
     }
 
     /**
@@ -171,37 +173,30 @@ public class RouteView {
     private void addLinesForRouteStep(RouteStep step, int splitIndex, LatLng closestPointOnPath) {
         List<LatLng> backPathArray = new ArrayList<>(step.path.subList(0, splitIndex+1));
         backPathArray.add(closestPointOnPath);
-        backPathArray = RouteViewHelper.removeCoincidentPoints(backPathArray);
+        addLinesForActiveStepSegment(step, backPathArray, false);
+
 
         List<LatLng> forwardPathArray = new ArrayList<>();
         forwardPathArray.add(closestPointOnPath);
         forwardPathArray.addAll(step.path.subList(splitIndex+1, step.path.size()));
-        forwardPathArray = RouteViewHelper.removeCoincidentPoints(forwardPathArray);
-
-        if (backPathArray.size() >= 2) {
-            PolylineOptions basePolylineOptions = basePolylineOptions();
-            if (step.isIndoors) {
-                basePolylineOptions.indoor(step.indoorId, step.indoorFloorId);
-            }
-            addPolyLinesForActiveStep(backPathArray, basePolylineOptions);
-        }
-
-        if (forwardPathArray.size() >= 2) {
-            PolylineOptions activePolylineOptions = basePolylineOptions();
-            activePolylineOptions.color(m_forwardPathColorARGB);
-            if (step.isIndoors) {
-                activePolylineOptions.indoor(step.indoorId, step.indoorFloorId);
-            }
-            addPolyLinesForActiveStep(forwardPathArray, activePolylineOptions);
-        }
+        addLinesForActiveStepSegment(step, forwardPathArray, true);
     }
 
-    private void addPolyLinesForActiveStep(List<LatLng> inputArray, PolylineOptions polylineOptions) {
-        for(LatLng point: inputArray) {
-            polylineOptions.add(point);
+    private void addLinesForActiveStepSegment(RouteStep step, List<LatLng> pathSegment, boolean isForward) {
+
+        List<LatLng> filteredPathSegment = RouteViewHelper.removeCoincidentPoints(pathSegment);
+        if(filteredPathSegment.size() >= 2) {
+            PolylineOptions basePolylineOptions = basePolylineOptions(step);
+            if(isForward)
+            {
+                basePolylineOptions.color(m_forwardPathColorARGB);
+            }
+            for (LatLng point : filteredPathSegment) {
+                basePolylineOptions.add(point);
+            }
+            Polyline routeLine = m_map.addPolyline(basePolylineOptions);
+            m_polylines.add(routeLine);
         }
-        Polyline routeLine = m_map.addPolyline(polylineOptions);
-        m_polylines.add(routeLine);
     }
 
     /**
