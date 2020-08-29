@@ -129,13 +129,13 @@ public class RouteView {
     /**
      * Update the progress of turn by turn navigation on route.
      *
-     * @param sectionIndex The current index of RouteSection.
-     * @param stepIndex The current index of RouteStep.
-     * @param closestPointOnPath Closest point on the path of RouteStep.
-     * @param indexOfPathSegmentStartVertex Index of path segment start vertex in RouteStep.
+     * @param sectionIndex The index of current RouteSection.
+     * @param stepIndex The index of current RouteStep.
+     * @param closestPointOnRoute Closest point on the route in PointOnRoute.
+     * @param indexOfPathSegmentStartVertex Vertex index where the path segment starts for the projected point. Can be used to separate traversed path.
      */
 
-    public void updateRouteProgress(int sectionIndex, int stepIndex, LatLng closestPointOnPath, int indexOfPathSegmentStartVertex) {
+    public void updateRouteProgress(int sectionIndex, int stepIndex, LatLng closestPointOnRoute, int indexOfPathSegmentStartVertex) {
         for (Polyline polyline: m_polylines) {
             m_map.removePolyline(polyline);
         }
@@ -161,7 +161,7 @@ public class RouteView {
                 }
                 else {
                     if(isActiveStep) {
-                        addLinesForRouteStep(step, indexOfPathSegmentStartVertex, closestPointOnPath);
+                        addLinesForRouteStep(step, indexOfPathSegmentStartVertex, closestPointOnRoute);
                     } else {
                         addLinesForRouteStep(step);
                     }
