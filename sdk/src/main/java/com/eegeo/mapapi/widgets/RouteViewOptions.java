@@ -28,7 +28,7 @@ public final class RouteViewOptions {
     }
 
     /**
-     * Sets the color of the RouteView's polylines as a 32-bit ARGB color. The default value is opaque black (0xff000000).
+     * Sets the color of the RouteView's polylines as a 32-bit ARGB color. The default value is opaque blue (0xff0096ff).
      *
      * @param color The color to use.
      * @return The RouteViewOptions object on which the method was called, with the new color set.
@@ -39,7 +39,7 @@ public final class RouteViewOptions {
     }
 
     /**
-     * Sets the forward path color of the RouteView's polylines as a 32-bit ARGB color. The default value is opaque red (0xff000000).
+     * Sets the forward path color of the RouteView's polylines as a 32-bit ARGB color. The default value is opaque green (0xff00ff96).
      *
      * @param color The color to use.
      * @return The RouteViewOptions object on which the method was called, with the new color set.
