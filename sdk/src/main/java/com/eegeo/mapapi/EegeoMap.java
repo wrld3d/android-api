@@ -1029,8 +1029,16 @@ public final class EegeoMap {
      */
     public void setIndoorEntityHighlights(final String indoorMapId, final Collection<String> indoorEntityIds, final int highlightColorARGB)
     {
+        setIndoorEntityHighlights(indoorMapId, indoorEntityIds, highlightColorARGB, 0.5f);
+    }
+
+    /**
+     * Sets highlights on a list of indoor map entities to the specified ARGB color and border thickness.
+     */
+    public void setIndoorEntityHighlights(final String indoorMapId, final Collection<String> indoorEntityIds, final int highlightColorARGB, final float borderThickness)
+    {
         List<String> indoorEntityIdsList = new ArrayList<String>(indoorEntityIds);
-        m_indoorEntityApi.setIndoorEntityHighlights(indoorMapId, indoorEntityIdsList, highlightColorARGB);
+        m_indoorEntityApi.setIndoorEntityHighlights(indoorMapId, indoorEntityIdsList, highlightColorARGB, borderThickness);
     }
 
     /**
