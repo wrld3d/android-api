@@ -1026,6 +1026,10 @@ public final class EegeoMap {
 
     /**
      * Sets highlights on a list of indoor map entities to the specified ARGB color.
+     *
+     * @param indoorMapId ID for the indoor map the entities are in.
+     * @param indoorEntityIds List of indoor map entities to highlight.
+     * @param highlightColorARGB ARGB color for the highlight
      */
     public void setIndoorEntityHighlights(final String indoorMapId, final Collection<String> indoorEntityIds, final int highlightColorARGB)
     {
@@ -1034,6 +1038,12 @@ public final class EegeoMap {
 
     /**
      * Sets highlights on a list of indoor map entities to the specified ARGB color and border thickness.
+     * Note: Border thickness only applies to area highlights.
+     *
+     * @param indoorMapId ID for the indoor map the entities are in.
+     * @param indoorEntityIds List of indoor map entities to highlight.
+     * @param highlightColorARGB ARGB color for the highlight
+     * @param borderThickness A value between 0.0f and 1.0f that describes how thick the border should be. Defaults to 0.5f.
      */
     public void setIndoorEntityHighlights(final String indoorMapId, final Collection<String> indoorEntityIds, final int highlightColorARGB, final float borderThickness)
     {
