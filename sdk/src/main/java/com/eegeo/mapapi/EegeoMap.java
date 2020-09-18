@@ -1043,12 +1043,12 @@ public final class EegeoMap {
      * @param indoorMapId ID for the indoor map the entities are in.
      * @param indoorEntityIds List of indoor map entities to highlight.
      * @param highlightColorARGB ARGB color for the highlight
-     * @param borderThickness A value between 0.0f and 1.0f that describes how thick the border should be. Defaults to 0.5f.
+     * @param highlightBorderThickness A value between 0.0f and 1.0f that describes how thick the border should be. Defaults to 0.5f.
      */
-    public void setIndoorEntityHighlights(final String indoorMapId, final Collection<String> indoorEntityIds, final int highlightColorARGB, final float borderThickness)
+    public void setIndoorEntityHighlights(final String indoorMapId, final Collection<String> indoorEntityIds, final int highlightColorARGB, final float highlightBorderThickness)
     {
         List<String> indoorEntityIdsList = new ArrayList<String>(indoorEntityIds);
-        m_indoorEntityApi.setIndoorEntityHighlights(indoorMapId, indoorEntityIdsList, highlightColorARGB, borderThickness);
+        m_indoorEntityApi.setIndoorEntityHighlights(indoorMapId, indoorEntityIdsList, highlightColorARGB, highlightBorderThickness);
     }
 
     /**
