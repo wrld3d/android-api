@@ -1,9 +1,10 @@
 package com.eegeo.mapapi.widgets;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
-import android.graphics.Color;
 import android.support.annotation.UiThread;
 
 import com.eegeo.mapapi.EegeoMap;
@@ -15,8 +16,6 @@ import com.eegeo.mapapi.services.routing.*;
 
 public class RouteView {
 
-    private static double VERTICAL_LINE_HEIGHT = 5.0;
-
     private EegeoMap m_map = null;
     private Route m_route = null;
     private List<Polyline> m_polylines = new ArrayList();
@@ -27,6 +26,7 @@ public class RouteView {
     private int m_forwardPathColorARGB;
     private float m_miterLimit;
 
+    private Map<Integer, List<RoutingPolylineCreateParams>> m_routeStepToPolylineCreateParams = new HashMap<>();
 
     /**
      * Create a new RouteView for the given route and options, and add it to the map.
@@ -50,6 +50,7 @@ public class RouteView {
      * Add this RouteView back on to the map, if it has been removed.
      */
     public void addToMap() {
+        int flattenedStepIndex = 0;
         for (RouteSection section: m_route.sections) {
             List<RouteStep> steps = section.steps;
 
@@ -70,60 +71,55 @@ public class RouteView {
                     RouteStep stepBefore = steps.get(i-1);
                     RouteStep stepAfter = steps.get(i+1);
 
-                    addLinesForFloorTransition(step, stepBefore, stepAfter, false);
+                    addLineCreationParamsForStep(step, stepBefore.indoorFloorId, stepAfter.indoorFloorId, flattenedStepIndex, m_colorARGB);
+                } else {
+                    addLineCreationParamsForStep(step, flattenedStepIndex);
                 }
-                else {
-                    addLinesForRouteStep(step);
-                }
+                flattenedStepIndex++;
             }
         }
 
+        refreshPolylines();
+        
         m_currentlyOnMap = true;
     }
 
-    private PolylineOptions basePolylineOptions(RouteStep step) {
-        PolylineOptions options = new PolylineOptions()
-            .color(m_colorARGB)
-            .width(m_width)
-            .miterLimit(m_miterLimit);
-
-        if (step.isIndoors) {
-            options.indoor(step.indoorId, step.indoorFloorId);
+    private void addLineCreationParamsForStep(RouteStep routeStep, int flattenedStepIndex) {
+        if(routeStep.path.size() < 2) {
+            return;
         }
-
-        return options;
+        m_routeStepToPolylineCreateParams.put(flattenedStepIndex, RouteViewHelper.createLinesForRouteDirection(routeStep, m_colorARGB));
     }
 
-    private void addLinesForRouteStep(RouteStep step) {
-        PolylineOptions options = basePolylineOptions(step);
-
-        for (LatLng point: step.path) {
-            options.add(point);
+    private void addLineCreationParamsForStep(RouteStep routeStep, int stepBefore, int stepAfter, int flattenedStepIndex, int color) {
+        if(routeStep.path.size() < 2) {
+            return;
         }
-
-        Polyline routeLine = m_map.addPolyline(options);
-        m_polylines.add(routeLine);
+        m_routeStepToPolylineCreateParams.put(flattenedStepIndex, RouteViewHelper.createLinesForFloorTransition(routeStep, stepBefore, stepAfter, color));
     }
 
-    private void addLinesForFloorTransition(RouteStep step, RouteStep stepBefore, RouteStep stepAfter, boolean isActiveStep) {
-        int floorBefore = stepBefore.indoorFloorId;
-        int floorAfter = stepAfter.indoorFloorId;
-        double lineHeight = (floorAfter > floorBefore) ? VERTICAL_LINE_HEIGHT : -VERTICAL_LINE_HEIGHT;
-
-        m_polylines.add(makeVerticalLine(step, floorBefore, lineHeight, isActiveStep));
-        m_polylines.add(makeVerticalLine(step, floorAfter, -lineHeight, isActiveStep));
+    private void addLineCreationParamsForStep(RouteStep routeStep, int stepIndex, LatLng closestPointOnPath, int splitIndex) {
+        if(routeStep.path.size() < 2) {
+            return;
+        }
+        m_routeStepToPolylineCreateParams.put(stepIndex, RouteViewHelper.createLinesForRouteDirection(routeStep, m_forwardPathColorARGB ,m_colorARGB, splitIndex, closestPointOnPath));
     }
 
-    private Polyline makeVerticalLine(RouteStep step, int floor, double height, boolean isActiveStep) {
-        PolylineOptions options = basePolylineOptions(step)
-                .indoor(step.indoorId, floor)
-                .add(step.path.get(0), 0.0)
-                .add(step.path.get(1), height);
+    private void refreshPolylines() {
+        removeFromMap();
 
-        if (isActiveStep) {
-            options.color(m_forwardPathColorARGB);
+        List<RoutingPolylineCreateParams> allPolylineCreateParams = new ArrayList<>();
+
+        for(int i=0; i< m_routeStepToPolylineCreateParams.size(); i++) {
+            allPolylineCreateParams.addAll(m_routeStepToPolylineCreateParams.get(i));
         }
-        return m_map.addPolyline(options);
+
+        List<PolylineOptions> polyLineOptionsList = RouteViewAmalgamationHelper.createPolylines(allPolylineCreateParams, m_width, m_miterLimit);
+
+        for(PolylineOptions polyLineOption: polyLineOptionsList) {
+            Polyline routeLine = m_map.addPolyline(polyLineOption);
+            m_polylines.add(routeLine);
+        }
     }
 
     /**
@@ -136,10 +132,8 @@ public class RouteView {
      */
 
     public void updateRouteProgress(int sectionIndex, int stepIndex, LatLng closestPointOnRoute, int indexOfPathSegmentStartVertex) {
-        for (Polyline polyline: m_polylines) {
-            m_map.removePolyline(polyline);
-        }
-
+        removeFromMap();
+        int flattenedStepIndex = 0;
         for (int x=0; x<m_route.sections.size(); ++x) {
             List<RouteStep> steps = m_route.sections.get(x).steps;
 
@@ -157,44 +151,25 @@ public class RouteView {
                     }
                     RouteStep stepBefore = steps.get(i-1);
                     RouteStep stepAfter = steps.get(i+1);
-                    addLinesForFloorTransition(step, stepBefore, stepAfter, isActiveStep);
-                }
-                else {
+
                     if(isActiveStep) {
-                        addLinesForRouteStep(step, indexOfPathSegmentStartVertex, closestPointOnRoute);
+                        boolean hasReachedEnd = indexOfPathSegmentStartVertex == (step.path.size()-1);
+                        addLineCreationParamsForStep(step, stepBefore.indoorFloorId, stepAfter.indoorFloorId, flattenedStepIndex, (hasReachedEnd ? m_colorARGB : m_forwardPathColorARGB));
+
                     } else {
-                        addLinesForRouteStep(step);
+                        addLineCreationParamsForStep(step, stepBefore.indoorFloorId, stepAfter.indoorFloorId, flattenedStepIndex, m_colorARGB);
+                    }
+                } else {
+                    if(isActiveStep) {
+                        addLineCreationParamsForStep(step, flattenedStepIndex, closestPointOnRoute, indexOfPathSegmentStartVertex);
+                    } else {
+                        addLineCreationParamsForStep(step, flattenedStepIndex);
                     }
                 }
+                flattenedStepIndex++;
             }
         }
-    }
-
-    private void addLinesForRouteStep(RouteStep step, int splitIndex, LatLng closestPointOnPath) {
-        List<LatLng> backPathArray = new ArrayList<>(step.path.subList(0, splitIndex+1));
-        backPathArray.add(closestPointOnPath);
-        addLinesForActiveStepSegment(step, backPathArray, false);
-
-        List<LatLng> forwardPathArray = new ArrayList<>();
-        forwardPathArray.add(closestPointOnPath);
-        forwardPathArray.addAll(step.path.subList(splitIndex+1, step.path.size()));
-        addLinesForActiveStepSegment(step, forwardPathArray, true);
-    }
-
-    private void addLinesForActiveStepSegment(RouteStep step, List<LatLng> pathSegment, boolean isForward) {
-        List<LatLng> filteredPathSegment = RouteViewHelper.removeCoincidentPoints(pathSegment);
-        if(filteredPathSegment.size() >= 2) {
-            PolylineOptions basePolylineOptions = basePolylineOptions(step);
-            if(isForward)
-            {
-                basePolylineOptions.color(m_forwardPathColorARGB);
-            }
-            for (LatLng point : filteredPathSegment) {
-                basePolylineOptions.add(point);
-            }
-            Polyline routeLine = m_map.addPolyline(basePolylineOptions);
-            m_polylines.add(routeLine);
-        }
+        refreshPolylines();
     }
 
     /**
@@ -204,7 +179,7 @@ public class RouteView {
         for (Polyline polyline: m_polylines) {
             m_map.removePolyline(polyline);
         }
-
+        m_polylines.clear();
         m_currentlyOnMap = false;
     }
 
