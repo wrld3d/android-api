@@ -71,7 +71,7 @@ class RouteViewAmalgamationHelper {
     }
 
 
-    public static boolean createAmalgamatedPolylineForRange(List<RoutingPolylineCreateParams> polylineCreateParams, Integer rangeStartIndex, Integer rangeEndIndex, PolylineOptions polylineOption) {
+    public static boolean createAmalgamatedPolylineForRange(List<RoutingPolylineCreateParams> polylineCreateParams, Integer rangeStartIndex, Integer rangeEndIndex, PolylineOptions out_polylineOption) {
         List<LatLng> joinedCoordinates = new ArrayList<>();
         List<Double> joinedPerPointElevations = new ArrayList<>();
 
@@ -111,10 +111,10 @@ class RouteViewAmalgamationHelper {
 
         if (joinedCoordinates.size() > 1) {
             RoutingPolylineCreateParams param = polylineCreateParams.get(rangeStartIndex);
-            polylineOption.color(param.color);
+            out_polylineOption.color(param.color);
 
             if (param.isIndoor) {
-                polylineOption.indoor(param.indoorMapId, param.indoorFloorId);
+                out_polylineOption.indoor(param.indoorMapId, param.indoorFloorId);
             }
 
             for(int i=0; i<joinedCoordinates.size(); i++) {
@@ -122,9 +122,9 @@ class RouteViewAmalgamationHelper {
 
                 if(anyPerPointElevations) {
                     Double elevation = joinedPerPointElevations.get(i);
-                    polylineOption.add(point, elevation);
+                    out_polylineOption.add(point, elevation);
                 } else {
-                    polylineOption.add(point);
+                    out_polylineOption.add(point);
                 }
             }
             return true;

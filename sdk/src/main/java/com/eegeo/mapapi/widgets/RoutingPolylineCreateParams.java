@@ -4,7 +4,7 @@ import com.eegeo.mapapi.geometry.LatLng;
 
 import java.util.List;
 
-public class RoutingPolylineCreateParams {
+class RoutingPolylineCreateParams {
 
   public List<LatLng> path;
 
@@ -23,8 +23,7 @@ public class RoutingPolylineCreateParams {
           int color,
           String indoorMapId,
           int indoorFloorId,
-          List<Double> perPointElevations)
-  {
+          List<Double> perPointElevations) {
       this.path = path;
       this.color = color;
       this.indoorMapId = indoorMapId;
@@ -32,5 +31,4 @@ public class RoutingPolylineCreateParams {
       this.perPointElevations = perPointElevations;
       this.isIndoor = !indoorMapId.isEmpty();
   }
-
 }

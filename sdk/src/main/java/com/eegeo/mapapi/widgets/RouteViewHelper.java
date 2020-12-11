@@ -1,8 +1,6 @@
 package com.eegeo.mapapi.widgets;
 
 import android.location.Location;
-import android.util.Pair;
-
 import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.services.routing.RouteStep;
 
@@ -13,6 +11,8 @@ import java.util.List;
 
 class RouteViewHelper {
 
+    final private static double VERTICAL_LINE_HEIGHT = 5.0;
+
     public static boolean areApproximatelyEqual(LatLng firstLocation, LatLng secondLocation) {
         final double epsilonSq = 1e-6;
         float[] results = new float[1];
@@ -20,14 +20,13 @@ class RouteViewHelper {
         return results[0] <= epsilonSq;
     }
 
-    public static boolean areCoordinateElevationPairApproximatelyEqual(Pair<LatLng, Double> a, Pair<LatLng, Double> b) {
+    public static boolean areCoordinateElevationPairApproximatelyEqual(LatLng latLngA, LatLng latLngB, Double perPointElevationA, Double perPointElevationB) {
         final double elevationEpsilon = 1e-3;
 
-        if(!areApproximatelyEqual(a.first, b.first)) {
+        if(!areApproximatelyEqual(latLngA, latLngB)) {
             return false;
         }
-
-        return Math.abs(a.second - b.second) < elevationEpsilon;
+        return Math.abs(perPointElevationA - perPointElevationB) < elevationEpsilon;
     }
 
     public static void removeCoincidentPoints(List<LatLng> coordinates) {
@@ -48,26 +47,21 @@ class RouteViewHelper {
     }
 
     public static void removeCoincidentPointsWithElevations(List<LatLng> coordinates, List<Double> perPointElevations) {
-        List<Pair<LatLng, Double>> pairsList = new ArrayList<>(coordinates.size());
+        Iterator<LatLng> coordinatesIt = coordinates.iterator();
+        Iterator<Double> perPointIt = perPointElevations.iterator();
+        LatLng prevLatLng = null;
+        LatLng currentLatLng = coordinatesIt.next();
+        Double prevPerPoint = null;
+        Double currentPerPoint = perPointIt.next();
+        while (coordinatesIt.hasNext() && perPointIt.hasNext()) {
+            prevLatLng = currentLatLng;
+            currentLatLng = coordinatesIt.next();
+            prevPerPoint = currentPerPoint;
+            currentPerPoint = perPointIt.next();
 
-        for(int i=0; i<coordinates.size(); i++) {
-            LatLng coordinate = coordinates.get(i);
-            Double elevation = perPointElevations.get(i);
-
-            pairsList.add(new Pair<>(coordinate, elevation));
-        }
-
-        int i = 1;
-        while (i < pairsList.size()) {
-            Pair<LatLng, Double> prev = pairsList.get(i-1);
-            Pair<LatLng, Double> current = pairsList.get(i);
-
-            if (areCoordinateElevationPairApproximatelyEqual(current, prev)) {
-               pairsList.remove(i-1);
-               coordinates.remove(i-1);
-               perPointElevations.remove(i-1);
-            } else {
-                i++;
+            if (areCoordinateElevationPairApproximatelyEqual(currentLatLng, prevLatLng, currentPerPoint, prevPerPoint)) {
+                coordinatesIt.remove();
+                perPointIt.remove();
             }
         }
     }
@@ -76,16 +70,18 @@ class RouteViewHelper {
         return new RoutingPolylineCreateParams(coordinates, color, indoorId, indoorFloorId, null);
     }
 
-    public static RoutingPolylineCreateParams  makeNavRoutingPolylineCreateParams(List<LatLng> coordinates, int color, String indoorId, int indoorFloorId, float heightStart, float heightEnd) {
-        return new RoutingPolylineCreateParams(coordinates, color, indoorId, indoorFloorId, Arrays.asList(Double.valueOf(heightStart), Double.valueOf(heightEnd)));
+    public static RoutingPolylineCreateParams  makeNavRoutingPolylineCreateParams(List<LatLng> coordinates, int color, String indoorId, int indoorFloorId, double heightStart, double heightEnd) {
+        return new RoutingPolylineCreateParams(coordinates, color, indoorId, indoorFloorId, Arrays.asList(heightStart, heightEnd));
     }
 
     public static List<RoutingPolylineCreateParams> createLinesForRouteDirection(RouteStep routeStep, int color) {
         List<RoutingPolylineCreateParams> results = new ArrayList<>();
 
-        RouteViewHelper.removeCoincidentPoints(routeStep.path);
+        List<LatLng> pathCoordinates = new ArrayList<>();
+        pathCoordinates.addAll(routeStep.path);
+        RouteViewHelper.removeCoincidentPoints(pathCoordinates);
         if(routeStep.path.size() > 1) {
-            RoutingPolylineCreateParams polylineCreateParams = makeNavRoutingPolylineCreateParams(routeStep.path, color, routeStep.indoorId, routeStep.indoorFloorId);
+            RoutingPolylineCreateParams polylineCreateParams = makeNavRoutingPolylineCreateParams(pathCoordinates, color, routeStep.indoorId, routeStep.indoorFloorId);
             results.add(polylineCreateParams);
         }
 
@@ -137,8 +133,7 @@ class RouteViewHelper {
     }
 
     public static List<RoutingPolylineCreateParams> createLinesForFloorTransition(RouteStep routeStep, int floorBefore, int floorAfter, int color) {
-        float verticalLineHeight = 5.0f;
-        float lineHeight = (floorAfter > floorBefore) ? verticalLineHeight : -verticalLineHeight;
+        double lineHeight = (floorAfter > floorBefore) ? VERTICAL_LINE_HEIGHT : -VERTICAL_LINE_HEIGHT;
 
         int coordinateCount = routeStep.path.size();
 
@@ -151,8 +146,8 @@ class RouteViewHelper {
         endCoords.add(routeStep.path.get(coordinateCount-1));
 
         List<RoutingPolylineCreateParams> results = new ArrayList<>(2);
-        results.add(makeNavRoutingPolylineCreateParams(startCoords, color, routeStep.indoorId, floorBefore, 0.0f, lineHeight));
-        results.add(makeNavRoutingPolylineCreateParams(endCoords, color, routeStep.indoorId, floorAfter, -lineHeight, 0.0f));
+        results.add(makeNavRoutingPolylineCreateParams(startCoords, color, routeStep.indoorId, floorBefore, 0.0, lineHeight));
+        results.add(makeNavRoutingPolylineCreateParams(endCoords, color, routeStep.indoorId, floorAfter, -lineHeight, 0.0));
 
         return results;
     }
