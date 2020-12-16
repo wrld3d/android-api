@@ -66,34 +66,34 @@ class RouteViewHelper {
         }
     }
 
-    public static RoutingPolylineCreateParams  makeNavRoutingPolylineCreateParams(List<LatLng> coordinates, int color, String indoorId, int indoorFloorId) {
-        return new RoutingPolylineCreateParams(coordinates, color, indoorId, indoorFloorId, null);
+    public static RoutingPolylineCreateParams  makeNavRoutingPolylineCreateParams(List<LatLng> coordinates, boolean isForwardColor, String indoorId, int indoorFloorId) {
+        return new RoutingPolylineCreateParams(coordinates, isForwardColor, indoorId, indoorFloorId, null);
     }
 
-    public static RoutingPolylineCreateParams  makeNavRoutingPolylineCreateParams(List<LatLng> coordinates, int color, String indoorId, int indoorFloorId, double heightStart, double heightEnd) {
-        return new RoutingPolylineCreateParams(coordinates, color, indoorId, indoorFloorId, Arrays.asList(heightStart, heightEnd));
+    public static RoutingPolylineCreateParams  makeNavRoutingPolylineCreateParams(List<LatLng> coordinates, boolean isForwardColor, String indoorId, int indoorFloorId, double heightStart, double heightEnd) {
+        return new RoutingPolylineCreateParams(coordinates, isForwardColor, indoorId, indoorFloorId, Arrays.asList(heightStart, heightEnd));
     }
 
-    public static List<RoutingPolylineCreateParams> createLinesForRouteDirection(RouteStep routeStep, int color) {
+    public static List<RoutingPolylineCreateParams> createLinesForRouteDirection(RouteStep routeStep, boolean isForwardColor) {
         List<RoutingPolylineCreateParams> results = new ArrayList<>();
 
         List<LatLng> pathCoordinates = new ArrayList<>();
         pathCoordinates.addAll(routeStep.path);
         RouteViewHelper.removeCoincidentPoints(pathCoordinates);
         if(routeStep.path.size() > 1) {
-            RoutingPolylineCreateParams polylineCreateParams = makeNavRoutingPolylineCreateParams(pathCoordinates, color, routeStep.indoorId, routeStep.indoorFloorId);
+            RoutingPolylineCreateParams polylineCreateParams = makeNavRoutingPolylineCreateParams(pathCoordinates, isForwardColor, routeStep.indoorId, routeStep.indoorFloorId);
             results.add(polylineCreateParams);
         }
 
         return results;
     }
 
-    public static List<RoutingPolylineCreateParams> createLinesForRouteDirection(RouteStep routeStep, int forwardColor, int backwardColor, int splitIndex, LatLng closestPointOnPath) {
+    public static List<RoutingPolylineCreateParams> createLinesForRouteDirection(RouteStep routeStep, int splitIndex, LatLng closestPointOnPath) {
         int coordinatesSize = routeStep.path.size();
         boolean hasReachedEnd = splitIndex == (routeStep.path.size()-1);
 
         if (hasReachedEnd) {
-            return createLinesForRouteDirection(routeStep, backwardColor);
+            return createLinesForRouteDirection(routeStep, false);
         } else {
             List<RoutingPolylineCreateParams> results = new ArrayList<>();
 
@@ -121,18 +121,18 @@ class RouteViewHelper {
             removeCoincidentPoints(forwardPath);
 
             if(backwardPath.size() > 1) {
-                results.add(makeNavRoutingPolylineCreateParams(backwardPath, backwardColor, routeStep.indoorId, routeStep.indoorFloorId));
+                results.add(makeNavRoutingPolylineCreateParams(backwardPath, false, routeStep.indoorId, routeStep.indoorFloorId));
             }
 
             if(forwardPath.size() > 1) {
-                results.add(makeNavRoutingPolylineCreateParams(forwardPath, forwardColor, routeStep.indoorId, routeStep.indoorFloorId));
+                results.add(makeNavRoutingPolylineCreateParams(forwardPath, true, routeStep.indoorId, routeStep.indoorFloorId));
             }
 
             return results;
         }
     }
 
-    public static List<RoutingPolylineCreateParams> createLinesForFloorTransition(RouteStep routeStep, int floorBefore, int floorAfter, int color) {
+    public static List<RoutingPolylineCreateParams> createLinesForFloorTransition(RouteStep routeStep, int floorBefore, int floorAfter, boolean isForwardColor) {
         double lineHeight = (floorAfter > floorBefore) ? VERTICAL_LINE_HEIGHT : -VERTICAL_LINE_HEIGHT;
 
         int coordinateCount = routeStep.path.size();
@@ -146,8 +146,8 @@ class RouteViewHelper {
         endCoords.add(routeStep.path.get(coordinateCount-1));
 
         List<RoutingPolylineCreateParams> results = new ArrayList<>(2);
-        results.add(makeNavRoutingPolylineCreateParams(startCoords, color, routeStep.indoorId, floorBefore, 0.0, lineHeight));
-        results.add(makeNavRoutingPolylineCreateParams(endCoords, color, routeStep.indoorId, floorAfter, -lineHeight, 0.0));
+        results.add(makeNavRoutingPolylineCreateParams(startCoords, isForwardColor, routeStep.indoorId, floorBefore, 0.0, lineHeight));
+        results.add(makeNavRoutingPolylineCreateParams(endCoords, isForwardColor, routeStep.indoorId, floorAfter, -lineHeight, 0.0));
 
         return results;
     }

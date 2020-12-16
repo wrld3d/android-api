@@ -18,7 +18,9 @@ public class RouteView {
 
     private EegeoMap m_map = null;
     private Route m_route = null;
-    private List<Polyline> m_polylines = new ArrayList();
+    private List<Polyline> m_polylinesForward = new ArrayList();
+    private List<Polyline> m_polylinesBackward = new ArrayList();
+
     private boolean m_currentlyOnMap = false;
 
     private float m_width;
@@ -71,7 +73,7 @@ public class RouteView {
                     RouteStep stepBefore = steps.get(i-1);
                     RouteStep stepAfter = steps.get(i+1);
 
-                    addLineCreationParamsForStep(step, stepBefore.indoorFloorId, stepAfter.indoorFloorId, flattenedStepIndex, m_colorARGB);
+                    addLineCreationParamsForStep(step, stepBefore.indoorFloorId, stepAfter.indoorFloorId, flattenedStepIndex, false);
                 } else {
                     addLineCreationParamsForStep(step, flattenedStepIndex);
                 }
@@ -88,21 +90,21 @@ public class RouteView {
         if(routeStep.path.size() < 2) {
             return;
         }
-        m_routeStepToPolylineCreateParams.put(flattenedStepIndex, RouteViewHelper.createLinesForRouteDirection(routeStep, m_colorARGB));
+        m_routeStepToPolylineCreateParams.put(flattenedStepIndex, RouteViewHelper.createLinesForRouteDirection(routeStep, false));
     }
 
-    private void addLineCreationParamsForStep(RouteStep routeStep, int stepBefore, int stepAfter, int flattenedStepIndex, int color) {
+    private void addLineCreationParamsForStep(RouteStep routeStep, int stepBefore, int stepAfter, int flattenedStepIndex, boolean isForwardColor) {
         if(routeStep.path.size() < 2) {
             return;
         }
-        m_routeStepToPolylineCreateParams.put(flattenedStepIndex, RouteViewHelper.createLinesForFloorTransition(routeStep, stepBefore, stepAfter, color));
+        m_routeStepToPolylineCreateParams.put(flattenedStepIndex, RouteViewHelper.createLinesForFloorTransition(routeStep, stepBefore, stepAfter, isForwardColor));
     }
 
     private void addLineCreationParamsForStep(RouteStep routeStep, int stepIndex, LatLng closestPointOnPath, int splitIndex) {
         if(routeStep.path.size() < 2) {
             return;
         }
-        m_routeStepToPolylineCreateParams.put(stepIndex, RouteViewHelper.createLinesForRouteDirection(routeStep, m_forwardPathColorARGB ,m_colorARGB, splitIndex, closestPointOnPath));
+        m_routeStepToPolylineCreateParams.put(stepIndex, RouteViewHelper.createLinesForRouteDirection(routeStep, splitIndex, closestPointOnPath));
     }
 
     private void refreshPolylines() {
@@ -113,12 +115,21 @@ public class RouteView {
         for(int i=0; i< m_routeStepToPolylineCreateParams.size(); i++) {
             allPolylineCreateParams.addAll(m_routeStepToPolylineCreateParams.get(i));
         }
+        List<PolylineOptions> backwardPolyLineOptionsList = new ArrayList<>();
+        List<PolylineOptions> forwardPolyLineOptionsList = new ArrayList<>();
 
-        List<PolylineOptions> polyLineOptionsList = RouteViewAmalgamationHelper.createPolylines(allPolylineCreateParams, m_width, m_miterLimit);
+        RouteViewAmalgamationHelper.createPolylines(allPolylineCreateParams, m_width, m_miterLimit, backwardPolyLineOptionsList, forwardPolyLineOptionsList);
 
-        for(PolylineOptions polyLineOption: polyLineOptionsList) {
+        for(PolylineOptions polyLineOption : backwardPolyLineOptionsList) {
+            polyLineOption.color(m_colorARGB);
             Polyline routeLine = m_map.addPolyline(polyLineOption);
-            m_polylines.add(routeLine);
+            m_polylinesBackward.add(routeLine);
+        }
+
+        for(PolylineOptions polyLineOption : forwardPolyLineOptionsList) {
+            polyLineOption.color(m_forwardPathColorARGB);
+            Polyline routeLine = m_map.addPolyline(polyLineOption);
+            m_polylinesForward.add(routeLine);
         }
     }
 
@@ -154,10 +165,10 @@ public class RouteView {
 
                     if(isActiveStep) {
                         boolean hasReachedEnd = indexOfPathSegmentStartVertex == (step.path.size()-1);
-                        addLineCreationParamsForStep(step, stepBefore.indoorFloorId, stepAfter.indoorFloorId, flattenedStepIndex, (hasReachedEnd ? m_colorARGB : m_forwardPathColorARGB));
+                        addLineCreationParamsForStep(step, stepBefore.indoorFloorId, stepAfter.indoorFloorId, flattenedStepIndex, !hasReachedEnd);
 
                     } else {
-                        addLineCreationParamsForStep(step, stepBefore.indoorFloorId, stepAfter.indoorFloorId, flattenedStepIndex, m_colorARGB);
+                        addLineCreationParamsForStep(step, stepBefore.indoorFloorId, stepAfter.indoorFloorId, flattenedStepIndex, false);
                     }
                 } else {
                     if(isActiveStep) {
@@ -176,10 +187,15 @@ public class RouteView {
      * Remove this RouteView from the map.
      */
     public void removeFromMap() {
-        for (Polyline polyline: m_polylines) {
+        for (Polyline polyline: m_polylinesBackward) {
             m_map.removePolyline(polyline);
         }
-        m_polylines.clear();
+        m_polylinesBackward.clear();
+
+        for (Polyline polyline: m_polylinesForward) {
+            m_map.removePolyline(polyline);
+        }
+        m_polylinesForward.clear();
         m_currentlyOnMap = false;
     }
 
@@ -192,7 +208,11 @@ public class RouteView {
     @UiThread
     public void setWidth(float width) {
         m_width = width;
-        for (Polyline polyline: m_polylines) {
+        for (Polyline polyline: m_polylinesBackward) {
+            polyline.setWidth(m_width);
+        }
+
+        for (Polyline polyline: m_polylinesForward) {
             polyline.setWidth(m_width);
         }
     }
@@ -205,10 +225,25 @@ public class RouteView {
     @UiThread
     public void setColor(int color) {
         m_colorARGB = color;
-        for (Polyline polyline: m_polylines) {
+        for (Polyline polyline: m_polylinesBackward) {
             polyline.setColor(m_colorARGB);
         }
     }
+
+    /**
+     * Sets the Forward color for this RouteView's polylines.
+     *
+     * @param color The color of the polyline as a 32-bit ARGB color.
+     */
+    @UiThread
+    public void setForwardColor(int color) {
+        m_forwardPathColorARGB = color;
+        for (Polyline polyline: m_polylinesForward) {
+            polyline.setColor(m_forwardPathColorARGB);
+        }
+    }
+
+
 
     /**
      * Sets the miter limit of this RouteView's polylines.
@@ -219,7 +254,11 @@ public class RouteView {
     @UiThread
     public void setMiterLimit(float miterLimit) {
         m_miterLimit = miterLimit;
-        for (Polyline polyline: m_polylines) {
+        for (Polyline polyline: m_polylinesBackward) {
+            polyline.setMiterLimit(m_miterLimit);
+        }
+
+        for (Polyline polyline: m_polylinesForward) {
             polyline.setMiterLimit(m_miterLimit);
         }
     }

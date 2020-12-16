@@ -8,7 +8,7 @@ class RoutingPolylineCreateParams {
 
   public List<LatLng> path;
 
-  public int color;
+  public boolean isForwardColor;
 
   public String indoorMapId;
 
@@ -20,12 +20,12 @@ class RoutingPolylineCreateParams {
 
   RoutingPolylineCreateParams(
           List<LatLng> path,
-          int color,
+          boolean isForwardColor,
           String indoorMapId,
           int indoorFloorId,
           List<Double> perPointElevations) {
       this.path = path;
-      this.color = color;
+      this.isForwardColor = isForwardColor;
       this.indoorMapId = indoorMapId;
       this.indoorFloorId = indoorFloorId;
       this.perPointElevations = perPointElevations;

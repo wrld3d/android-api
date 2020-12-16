@@ -10,8 +10,7 @@ import java.util.List;
 
 class RouteViewAmalgamationHelper {
 
-    public static List<PolylineOptions> createPolylines(List<RoutingPolylineCreateParams> params, float width, float miterLimit) {
-        List<PolylineOptions> result = new ArrayList<>();
+    public static void createPolylines(List<RoutingPolylineCreateParams> params, float width, float miterLimit, List<PolylineOptions> outBackwardPolylinesOptions, List<PolylineOptions> outForwardPolylinesOptions) {
         List<Pair<Integer, Integer>> ranges = RouteViewAmalgamationHelper.buildAmalgamationRanges(params);
 
         for (Pair<Integer, Integer> range : ranges) {
@@ -20,10 +19,13 @@ class RouteViewAmalgamationHelper {
                     .miterLimit(miterLimit);
             boolean isLineCreated = RouteViewAmalgamationHelper.createAmalgamatedPolylineForRange(params, range.first, range.second, polylineOption);
             if (isLineCreated) {
-                result.add(polylineOption);
+                if(params.get(range.first).isForwardColor) {
+                    outForwardPolylinesOptions.add(polylineOption);
+                } else {
+                    outBackwardPolylinesOptions.add(polylineOption);
+                }
             }
         }
-        return result;
     }
 
 
@@ -63,7 +65,7 @@ class RouteViewAmalgamationHelper {
             return false;
         }
 
-        if (a.color != b.color) {
+        if (a.isForwardColor != b.isForwardColor) {
             return false;
         }
 
@@ -111,7 +113,6 @@ class RouteViewAmalgamationHelper {
 
         if (joinedCoordinates.size() > 1) {
             RoutingPolylineCreateParams param = polylineCreateParams.get(rangeStartIndex);
-            out_polylineOption.color(param.color);
 
             if (param.isIndoor) {
                 out_polylineOption.indoor(param.indoorMapId, param.indoorFloorId);
