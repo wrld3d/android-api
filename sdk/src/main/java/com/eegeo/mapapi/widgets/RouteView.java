@@ -120,13 +120,13 @@ public class RouteView {
 
         RouteViewAmalgamationHelper.createPolylines(allPolylineCreateParams, m_width, m_miterLimit, backwardPolyLineOptionsList, forwardPolyLineOptionsList);
 
-        for(PolylineOptions polyLineOption : backwardPolyLineOptionsList) {
+        for(PolylineOptions polyLineOption: backwardPolyLineOptionsList) {
             polyLineOption.color(m_colorARGB);
             Polyline routeLine = m_map.addPolyline(polyLineOption);
             m_polylinesBackward.add(routeLine);
         }
 
-        for(PolylineOptions polyLineOption : forwardPolyLineOptionsList) {
+        for(PolylineOptions polyLineOption: forwardPolyLineOptionsList) {
             polyLineOption.color(m_forwardPathColorARGB);
             Polyline routeLine = m_map.addPolyline(polyLineOption);
             m_polylinesForward.add(routeLine);
@@ -242,8 +242,6 @@ public class RouteView {
             polyline.setColor(m_forwardPathColorARGB);
         }
     }
-
-
 
     /**
      * Sets the miter limit of this RouteView's polylines.

@@ -10,24 +10,23 @@ import java.util.List;
 
 class RouteViewAmalgamationHelper {
 
-    public static void createPolylines(List<RoutingPolylineCreateParams> params, float width, float miterLimit, List<PolylineOptions> outBackwardPolylinesOptions, List<PolylineOptions> outForwardPolylinesOptions) {
+    public static void createPolylines(List<RoutingPolylineCreateParams> params, float width, float miterLimit, List<PolylineOptions> out_backwardPolylinesOptions, List<PolylineOptions> out_forwardPolylinesOptions) {
         List<Pair<Integer, Integer>> ranges = RouteViewAmalgamationHelper.buildAmalgamationRanges(params);
 
-        for (Pair<Integer, Integer> range : ranges) {
+        for (Pair<Integer, Integer> range: ranges) {
             PolylineOptions polylineOption = new PolylineOptions()
                     .width(width)
                     .miterLimit(miterLimit);
             boolean isLineCreated = RouteViewAmalgamationHelper.createAmalgamatedPolylineForRange(params, range.first, range.second, polylineOption);
             if (isLineCreated) {
                 if(params.get(range.first).isForwardColor) {
-                    outForwardPolylinesOptions.add(polylineOption);
+                    out_forwardPolylinesOptions.add(polylineOption);
                 } else {
-                    outBackwardPolylinesOptions.add(polylineOption);
+                    out_backwardPolylinesOptions.add(polylineOption);
                 }
             }
         }
     }
-
 
     public static List<Pair<Integer, Integer>> buildAmalgamationRanges(List<RoutingPolylineCreateParams> polylineCreateParams) {
         List<Pair<Integer, Integer>> ranges = new ArrayList<>();
@@ -49,7 +48,6 @@ class RouteViewAmalgamationHelper {
         ranges.add(new Pair<>(rangeStart, polylineCreateParams.size()));
 
         return ranges;
-
     }
 
     public static boolean canAmalgamate(RoutingPolylineCreateParams a, RoutingPolylineCreateParams b) {
@@ -96,7 +94,7 @@ class RouteViewAmalgamationHelper {
                 List<Double> perPointElevations = params.perPointElevations;
 
                 if(perPointElevations == null) {
-                    for(int x = 0; x < params.path.size(); x++) {
+                    for(int x=0; x<params.path.size(); x++) {
                         joinedPerPointElevations.add(0.0);
                     }
 
