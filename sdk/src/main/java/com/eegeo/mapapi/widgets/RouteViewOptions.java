@@ -1,6 +1,5 @@
 package com.eegeo.mapapi.widgets;
 
-
 /**
  * Defines creation parameters for a RouteView. The styling options match with those of the PolylineOptions class.
  */
@@ -10,7 +9,6 @@ public final class RouteViewOptions {
     private int m_colorARGB = 0xff0096ff;
     private int m_forwardPathColorARGB = 0xff00ff96;
     private float m_miterLimit = 10.f;
-
 
     public RouteViewOptions() {
 
@@ -69,7 +67,9 @@ public final class RouteViewOptions {
         return m_colorARGB;
     }
 
-    int getForwardPathColor() { return m_forwardPathColorARGB; }
+    int getForwardPathColor() {
+        return m_forwardPathColorARGB;
+    }
 
     float getMiterLimit() {
         return m_miterLimit;
