@@ -66,6 +66,8 @@ public class BlueSphere extends NativeApiObject {
     private double m_bearing;
     private double m_elevation;
     private boolean m_enabled;
+    private boolean m_accuracyRingEnabled;
+    private float m_accuracyInMeters;
     private boolean m_orientationVisible;
 
     /**
@@ -89,6 +91,8 @@ public class BlueSphere extends NativeApiObject {
         m_indoorMapId = null;
         m_indoorFloorId = 0;
         m_enabled = false;
+        m_accuracyRingEnabled = false;
+        m_accuracyInMeters = 0.0f;
         m_orientationVisible = true;
     }
 
@@ -230,6 +234,73 @@ public class BlueSphere extends NativeApiObject {
             @WorkerThread
             public void run() {
                 m_bluesphereApi.setEnabled(BlueSphere.m_allowHandleAccess, enabled);
+            }
+        });
+    }
+
+    /**
+     * Gets the boolean which indicates if the accuracy ring is enabled.
+     *
+     * @return A boolean that enables the accuracy ring.
+     */
+    @UiThread
+    public boolean getAccuracyRingEnabled() {
+        return m_accuracyRingEnabled;
+    }
+
+    /**
+     * Sets the boolean which enables the accuracy ring to display.
+     *
+     * @param accuracyRingEnabled A boolean that enables the accuracy ring.
+     */
+    @UiThread
+    public void setAccuracyRingEnabled(boolean accuracyRingEnabled) {
+        m_accuracyRingEnabled = accuracyRingEnabled;
+        updateAccuracyRingEnabled();
+    }
+
+    @UiThread
+    private void updateAccuracyRingEnabled() {
+        final boolean accuracyRingEnabled = m_accuracyRingEnabled;
+
+        submit(new Runnable() {
+            @WorkerThread
+            public void run() {
+                m_bluesphereApi.setAccuracyRingEnabled(BlueSphere.m_allowHandleAccess, accuracyRingEnabled);
+            }
+        });
+    }
+
+
+    /**
+     * Gets the float which indicates current location accuracy in meters.
+     *
+     * @return A float representing the current location accuracy in meters.
+     */
+    @UiThread
+    public float getCurrentLocationAccuracy() {
+        return m_accuracyInMeters;
+    }
+
+    /**
+     * Sets the current location accuracy of blue sphere.
+     *
+     * @param accuracyInMeters A float representing current location accuracy in meters.
+     */
+    @UiThread
+    public void setCurrentLocationAccuracy(float accuracyInMeters) {
+        m_accuracyInMeters = accuracyInMeters;
+        updateCurrentLocationAccuracy();
+    }
+
+    @UiThread
+    private void updateCurrentLocationAccuracy() {
+        final float accuracyInMeter = m_accuracyInMeters;
+
+        submit(new Runnable() {
+            @WorkerThread
+            public void run() {
+                m_bluesphereApi.setCurrentLocationAccuracy(BlueSphere.m_allowHandleAccess, accuracyInMeter);
             }
         });
     }
