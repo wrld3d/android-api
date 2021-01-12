@@ -151,7 +151,7 @@ public class BlueSphereApi {
     @WorkerThread
     private native void nativeSetCurrentLocationAccuracy(
             long jniEegeoMapApiPtr,
-            float accuracyInMeter);
+            float accuracyInMeters);
 
     @WorkerThread
     private native void nativeShowOrientation(

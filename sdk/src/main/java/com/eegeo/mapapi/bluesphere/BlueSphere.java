@@ -295,12 +295,12 @@ public class BlueSphere extends NativeApiObject {
 
     @UiThread
     private void updateCurrentLocationAccuracy() {
-        final float accuracyInMeter = m_accuracyInMeters;
+        final float accuracyInMeters = m_accuracyInMeters;
 
         submit(new Runnable() {
             @WorkerThread
             public void run() {
-                m_bluesphereApi.setCurrentLocationAccuracy(BlueSphere.m_allowHandleAccess, accuracyInMeter);
+                m_bluesphereApi.setCurrentLocationAccuracy(BlueSphere.m_allowHandleAccess, accuracyInMeters);
             }
         });
     }
