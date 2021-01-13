@@ -79,6 +79,27 @@ public class BlueSphereApi {
     }
 
     @WorkerThread
+    public void setAccuracyRingEnabled(BlueSphere.AllowHandleAccess allowHandleAccess, boolean accuracyRingEnabled) {
+        if (allowHandleAccess == null)
+            throw new NullPointerException("Null access token. Method is intended for internal use by BlueSphere");
+
+
+        nativeSetAccuracyRingEnabled(
+                m_jniEegeoMapApiPtr,
+                accuracyRingEnabled);
+    }
+
+    @WorkerThread
+    public void setCurrentLocationAccuracy(BlueSphere.AllowHandleAccess allowHandleAccess, float accuracyInMeters) {
+        if (allowHandleAccess == null)
+            throw new NullPointerException("Null access token. Method is intended for internal use by BlueSphere");
+
+        nativeSetCurrentLocationAccuracy(
+                m_jniEegeoMapApiPtr,
+                accuracyInMeters);
+    }
+
+    @WorkerThread
     public void showOrientation(BlueSphere.AllowHandleAccess allowHandleAccess, boolean orientationVisible) {
         if (allowHandleAccess == null)
             throw new NullPointerException("Null access token. Method is intended for internal use by BlueSphere");
@@ -121,6 +142,16 @@ public class BlueSphereApi {
     private native void nativeSetEnabled(
             long jniEegeoMapApiPtr,
             boolean enabled);
+
+    @WorkerThread
+    private native void nativeSetAccuracyRingEnabled(
+            long jniEegeoMapApiPtr,
+            boolean enabled);
+
+    @WorkerThread
+    private native void nativeSetCurrentLocationAccuracy(
+            long jniEegeoMapApiPtr,
+            float accuracyInMeters);
 
     @WorkerThread
     private native void nativeShowOrientation(
