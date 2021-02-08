@@ -64,7 +64,8 @@ public class EegeoMapOptions {
     }
 
     /**
-     * Defines the coverage tree manifest url for the map
+     * Defines the coverage tree manifest url for the map.  By default, the map will load the latest
+     * public manifest which is updated regularly.
      *
      * @param coverageTreeManifest A String, specifying the coverage tree manifest url for the map.
      * @return this EegeoMapOptions object updated with the specified coverage tree manifest.
@@ -75,7 +76,8 @@ public class EegeoMapOptions {
     }
 
     /**
-     * Defines the environment themes manifest url for the map
+     * Defines the environment themes manifest url for the map. By default, the map will load the latest
+     * themes manifest which is updated regularly.
      *
      * @param environmentThemesManifest A String, specifying the environment themes manifest url for the map.
      * @return this EegeoMapOptions object updated with the specified environment themes manifest.
