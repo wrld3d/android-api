@@ -10,6 +10,7 @@
         android:scaleType="centerCrop"
         android:text="@string/eegeo_map_placeholder"
         android:textAlignment="center"
+        android:layout_gravity="center_horizontal"
         android:textSize="24sp"
         android:textStyle="bold"/>
 
