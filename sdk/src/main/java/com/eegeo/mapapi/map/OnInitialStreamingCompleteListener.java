@@ -1,6 +1,6 @@
 package com.eegeo.mapapi.map;
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 
 /**
  * Defines the signature for a method that is called when the eeGeo map has completed streaming

@@ -1,6 +1,6 @@
 package com.eegeo.mapapi.indoors;
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 
 /**
  * Encapsulates a set of immutable properties pertaining to an indoor map.  These properties are

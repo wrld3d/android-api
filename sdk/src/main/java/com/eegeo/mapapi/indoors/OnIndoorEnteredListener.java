@@ -1,6 +1,6 @@
 package com.eegeo.mapapi.indoors;
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 
 /**
  * Interface for objects which act when the user enters an indoor map.

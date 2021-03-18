@@ -1,6 +1,6 @@
 package com.eegeo.mapapi.widgets;
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 
 import com.eegeo.mapapi.EegeoMap;
 import com.eegeo.mapapi.geometry.LatLng;

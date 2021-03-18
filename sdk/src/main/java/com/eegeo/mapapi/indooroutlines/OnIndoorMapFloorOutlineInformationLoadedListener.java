@@ -1,7 +1,7 @@
 package com.eegeo.mapapi.indooroutlines;
 
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 
 /**
  * Defines the signature for a method that is called when an IndoorMapFloorOutlineInformation object has

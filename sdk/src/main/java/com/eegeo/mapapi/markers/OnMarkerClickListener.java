@@ -1,6 +1,6 @@
 package com.eegeo.mapapi.markers;
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 
 /**
  * Defines the signature for a method that is called when a marker is tapped or clicked.

@@ -1,7 +1,7 @@
 package com.eegeo.mapapi.services.mapscene;
 
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 
 /**
  * The data defining the source manifest files to load for a given Mapscene.  This defines what

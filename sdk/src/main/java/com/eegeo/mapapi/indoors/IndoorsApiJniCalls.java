@@ -1,6 +1,6 @@
 package com.eegeo.mapapi.indoors;
 
-import android.support.annotation.WorkerThread;
+import androidx.annotation.WorkerThread;
 
 public class IndoorsApiJniCalls {
     @WorkerThread

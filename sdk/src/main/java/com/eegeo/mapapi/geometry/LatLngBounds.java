@@ -1,6 +1,6 @@
 package com.eegeo.mapapi.geometry;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * An immutable class representing an area of the earth's surface with a latitude/longitude aligned rectangle.

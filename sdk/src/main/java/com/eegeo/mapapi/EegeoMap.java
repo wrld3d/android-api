@@ -1,9 +1,9 @@
 package com.eegeo.mapapi;
 
 import android.graphics.Point;
-import android.support.annotation.NonNull;
-import android.support.annotation.UiThread;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
+import androidx.annotation.WorkerThread;
 
 import com.eegeo.mapapi.bluesphere.BlueSphere;
 import com.eegeo.mapapi.bluesphere.BlueSphereApi;

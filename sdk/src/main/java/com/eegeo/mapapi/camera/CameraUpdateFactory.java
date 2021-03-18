@@ -1,6 +1,6 @@
 package com.eegeo.mapapi.camera;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.eegeo.mapapi.geometry.LatLng;
 import com.eegeo.mapapi.geometry.LatLngBounds;

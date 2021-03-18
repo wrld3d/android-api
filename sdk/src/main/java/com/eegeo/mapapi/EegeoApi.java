@@ -1,7 +1,7 @@
 package com.eegeo.mapapi;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Singleton container for the eeGeo API key and application context.

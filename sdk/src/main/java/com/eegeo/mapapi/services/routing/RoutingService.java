@@ -1,9 +1,6 @@
 package com.eegeo.mapapi.services.routing;
 
-import android.support.annotation.UiThread;
-import android.support.annotation.WorkerThread;
-
-import com.eegeo.mapapi.INativeMessageRunner;
+import androidx.annotation.UiThread;
 
 
 /**
