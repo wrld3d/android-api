@@ -1,7 +1,7 @@
 package com.eegeo.mapapi.camera;
 
 import android.graphics.Point;
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 
 import com.eegeo.mapapi.INativeMessageRunner;
 import com.eegeo.mapapi.IUiMessageRunner;

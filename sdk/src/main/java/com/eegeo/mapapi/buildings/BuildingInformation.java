@@ -1,6 +1,6 @@
 package com.eegeo.mapapi.buildings;
-import android.support.annotation.NonNull;
-import android.support.annotation.UiThread;
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 
 /**
  * Information about a building on the map, obtained by adding a BuildingHighlight object and

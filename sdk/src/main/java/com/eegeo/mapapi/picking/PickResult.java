@@ -1,7 +1,7 @@
 package com.eegeo.mapapi.picking;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.UiThread;
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 
 import com.eegeo.mapapi.geometry.LatLngAlt;
 import com.eegeo.mapapi.geometry.MapFeatureType;

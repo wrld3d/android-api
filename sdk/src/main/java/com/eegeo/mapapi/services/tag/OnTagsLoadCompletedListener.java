@@ -1,6 +1,6 @@
 package com.eegeo.mapapi.services.tag;
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 
 /**
  * A listener interface for receiving the results of a Load Tags request

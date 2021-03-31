@@ -1,6 +1,6 @@
 package com.eegeo.mapapi;
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 
 public interface INativeMessageRunner {
     @UiThread

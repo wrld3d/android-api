@@ -1,6 +1,6 @@
 package com.eegeo.mapapi.precaching;
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 
 /**
  * Defines the signature for a method that is called when a precache operation is completed or

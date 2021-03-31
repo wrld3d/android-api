@@ -1,6 +1,6 @@
 package com.eegeo.mapapi.precaching;
 
-import android.support.annotation.WorkerThread;
+import androidx.annotation.WorkerThread;
 
 class PrecacheApiJniCalls {
     @WorkerThread

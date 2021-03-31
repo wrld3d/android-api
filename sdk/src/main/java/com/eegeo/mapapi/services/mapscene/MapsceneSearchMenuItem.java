@@ -1,6 +1,6 @@
 package com.eegeo.mapapi.services.mapscene;
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 
 /**
  * The data for a custom search menu option.  Used to define custom search terms for Mapscenes.

@@ -2,8 +2,8 @@ package com.eegeo.mapapi.services.poi;
 
 import java.util.concurrent.Callable;
 
-import android.support.annotation.UiThread;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.UiThread;
+import androidx.annotation.WorkerThread;
 
 import com.eegeo.mapapi.util.NativeApiObject;
 

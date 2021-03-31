@@ -1,7 +1,7 @@
 package com.eegeo.mapapi.camera;
 
 import android.content.res.TypedArray;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.eegeo.mapapi.R;
 import com.eegeo.mapapi.geometry.ElevationMode;

@@ -6,10 +6,9 @@ This repository contains source code for the Java library, intended for develope
 
 If you want to use the library in your Android application, then see our [documentation](https://docs.wrld3d.com/android/latest/docs/api/) for guidance on how to add WRLD maps to your Android app. Our [samples github repository](https://github.com/wrld3d/android-api-samples) contains example apps to help get you started.
 
-The library is available as a Maven package on [Bintray](https://bintray.com/wrld/maven/wrld-android-sdk).
+The library is available as a Maven package on [Maven Central](https://search.maven.org/artifact/com.wrld3d/wrld-android-sdk).
 
-[ ![Download](https://api.bintray.com/packages/wrld/maven/wrld-android-sdk/images/download.svg) ](https://bintray.com/wrld/maven/wrld-android-sdk/_latestVersion)
-![Powered by Bintray](http://cdn1.eegeo.com/bintray-attribution/Powered-by-Bintray_Banner_16-6-16-grey.png)
+[ ![Download](https://maven-badges.herokuapp.com/maven-central/com.wrld3d/wrld-android-sdk/badge.svg)](https://search.maven.org/artifact/com.wrld3d/wrld-android-sdk)
 
 ## Status
 This library is currently in alpha, and is undergoing active development. We plan to add further features in the near future. Got something you want to do in your app? Let us know via the [issues](https://github.com/wrld3d/android-api/issues) page.

@@ -2,8 +2,8 @@
 
 package com.eegeo.ui.util;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.UiThread;
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 import android.view.View;
 import android.graphics.Point;
 import android.graphics.PointF;

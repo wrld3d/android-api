@@ -1,7 +1,7 @@
 package com.eegeo.mapapi.services.mapscene;
 
-import android.support.annotation.UiThread;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.UiThread;
+import androidx.annotation.WorkerThread;
 
 import com.eegeo.mapapi.util.NativeApiObject;
 

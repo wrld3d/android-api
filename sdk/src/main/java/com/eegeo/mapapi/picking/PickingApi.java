@@ -2,9 +2,9 @@ package com.eegeo.mapapi.picking;
 
 
 import android.graphics.Point;
-import android.support.annotation.NonNull;
-import android.support.annotation.UiThread;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
+import androidx.annotation.WorkerThread;
 
 import com.eegeo.mapapi.INativeMessageRunner;
 import com.eegeo.mapapi.IUiMessageRunner;

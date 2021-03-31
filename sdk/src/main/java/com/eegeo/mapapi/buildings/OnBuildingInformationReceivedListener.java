@@ -1,6 +1,6 @@
 package com.eegeo.mapapi.buildings;
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 
 /**
  * An interface that may be implemented and supplied to BuildingHighlightOptions in order to

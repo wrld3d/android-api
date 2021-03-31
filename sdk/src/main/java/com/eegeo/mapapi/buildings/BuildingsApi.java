@@ -1,8 +1,8 @@
 package com.eegeo.mapapi.buildings;
 
 import android.graphics.Point;
-import android.support.annotation.UiThread;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.UiThread;
+import androidx.annotation.WorkerThread;
 import android.util.SparseArray;
 
 import com.eegeo.mapapi.INativeMessageRunner;

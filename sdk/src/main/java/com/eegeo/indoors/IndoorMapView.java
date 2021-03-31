@@ -2,7 +2,7 @@ package com.eegeo.indoors;
 
 import android.graphics.Color;
 import android.os.Handler;
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;

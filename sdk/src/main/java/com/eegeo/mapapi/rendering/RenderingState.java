@@ -1,7 +1,7 @@
 package com.eegeo.mapapi.rendering;
 
-import android.support.annotation.UiThread;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.UiThread;
+import androidx.annotation.WorkerThread;
 
 import com.eegeo.mapapi.EegeoMap;
 import com.eegeo.mapapi.bluesphere.BlueSphere;

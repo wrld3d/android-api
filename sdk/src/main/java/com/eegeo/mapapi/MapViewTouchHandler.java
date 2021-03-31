@@ -1,7 +1,7 @@
 package com.eegeo.mapapi;
 
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 import android.view.MotionEvent;
 
 final class MapViewTouchHandler {

@@ -1,6 +1,6 @@
 package com.eegeo.mapapi.precaching;
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 
 /**
  * A result of a precache operation.

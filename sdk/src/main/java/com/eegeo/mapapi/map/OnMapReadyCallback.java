@@ -1,6 +1,6 @@
 package com.eegeo.mapapi.map;
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 
 import com.eegeo.mapapi.EegeoMap;
 
