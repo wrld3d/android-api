@@ -169,6 +169,7 @@ nexusStaging {
     username = System.getenv("OSSRH_USERNAME")
     password = System.getenv("OSSRH_PASSWORD")
     stagingProfileId = System.getenv("OSSRH_STAGING_PROFILE_ID")
+    delayBetweenRetriesInMillis = System.getenv("OSSRH_REQUEST_RETRY_DELAY_MILLISECONDS")
 }
 
 def buildAwsCredentials = {
