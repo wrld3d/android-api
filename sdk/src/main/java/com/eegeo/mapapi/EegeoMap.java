@@ -36,6 +36,7 @@ import com.eegeo.mapapi.indoors.OnIndoorEnteredListener;
 import com.eegeo.mapapi.indoors.OnIndoorExitedListener;
 import com.eegeo.mapapi.indoors.OnIndoorMapLoadedListener;
 import com.eegeo.mapapi.indoors.OnIndoorMapUnloadedListener;
+import com.eegeo.mapapi.labels.LabelApi;
 import com.eegeo.mapapi.map.EegeoMapOptions;
 import com.eegeo.mapapi.map.OnInitialStreamingCompleteListener;
 import com.eegeo.mapapi.markers.Marker;
@@ -142,6 +143,7 @@ public final class EegeoMap {
     private IndoorEntityApi m_indoorEntityApi;
     private IndoorMapEntityInformationApi m_indoorMapEntityInformationApi;
     private IndoorMapFloorOutlineInformationApi m_indoorMapFloorOutlineInformationApi;
+    private LabelApi m_labelApi;
 
 
     private static final AllowApiAccess m_allowApiAccess = new AllowApiAccess();
@@ -179,6 +181,7 @@ public final class EegeoMap {
         this.m_indoorEntityApi = new IndoorEntityApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_indoorMapEntityInformationApi = new IndoorMapEntityInformationApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_indoorMapFloorOutlineInformationApi = new IndoorMapFloorOutlineInformationApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_labelApi = new LabelApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
 
     @WorkerThread
@@ -1448,6 +1451,18 @@ public final class EegeoMap {
     public Promise<PointOnPath> getPointOnPath(LatLng point, List<LatLng> path)
     {
         return m_pathApi.getPointOnPath(point, path);
+    }
+
+
+    /**
+     * Make labels visible or invisible.
+     *
+     * @param enabled Whether labels should be visible.
+     */
+    @WorkerThread
+    public void setLabelsEnabled(boolean enabled)
+    {
+        m_labelApi.setLabelsEnabled(enabled);
     }
 
 
