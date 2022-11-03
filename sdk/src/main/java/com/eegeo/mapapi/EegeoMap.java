@@ -1459,7 +1459,6 @@ public final class EegeoMap {
      *
      * @param enabled Whether labels should be visible.
      */
-    @WorkerThread
     public void setLabelsEnabled(boolean enabled)
     {
         m_labelApi.setLabelsEnabled(enabled);
