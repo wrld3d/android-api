@@ -83,6 +83,8 @@ import com.eegeo.mapapi.services.tag.TagService;
 import com.eegeo.mapapi.services.routing.RoutingQueryResponse;
 import com.eegeo.mapapi.services.routing.RoutingApi;
 import com.eegeo.mapapi.services.routing.RoutingService;
+import com.eegeo.mapapi.streaming.OnStreamingCompleteListener;
+import com.eegeo.mapapi.streaming.StreamingApi;
 import com.eegeo.mapapi.util.Callbacks;
 import com.eegeo.mapapi.util.Promise;
 import com.eegeo.mapapi.util.Ready;
@@ -144,6 +146,7 @@ public final class EegeoMap {
     private IndoorMapEntityInformationApi m_indoorMapEntityInformationApi;
     private IndoorMapFloorOutlineInformationApi m_indoorMapFloorOutlineInformationApi;
     private LabelApi m_labelApi;
+    private StreamingApi m_streamingApi;
 
 
     private static final AllowApiAccess m_allowApiAccess = new AllowApiAccess();
@@ -182,6 +185,7 @@ public final class EegeoMap {
         this.m_indoorMapEntityInformationApi = new IndoorMapEntityInformationApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_indoorMapFloorOutlineInformationApi = new IndoorMapFloorOutlineInformationApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
         this.m_labelApi = new LabelApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
+        this.m_streamingApi = new StreamingApi(m_nativeRunner, m_uiRunner, m_eegeoMapApiPtr);
     }
 
     @WorkerThread
@@ -1231,6 +1235,27 @@ public final class EegeoMap {
     }
 
     /**
+     * Registers a listener of a streaming complete event
+     *
+     * @param listener The listener to be removed.
+     */
+    @UiThread
+    public void addOnStreamingCompleteListener(@NonNull OnStreamingCompleteListener listener) {
+        m_streamingApi.addStreamingCompleteListener(listener);
+    }
+
+    /**
+     * Unregisters a listener of a streaming complete event
+     *
+     * @param listener The listener to be removed.
+     */
+    @UiThread
+    public void removeOnStreamingCompleteListener(@NonNull OnStreamingCompleteListener listener) {
+        m_streamingApi.removeStreamingCompleteListener(listener);
+    }
+
+
+    /**
      * Begin an operation to precache a spherical area of the map. This allows that area to load
      * faster in future.
      *
@@ -1393,6 +1418,17 @@ public final class EegeoMap {
                 for (OnInitialStreamingCompleteListener listener : m_onInitialStreamingCompleteListeners) {
                     listener.onInitialStreamingComplete();
                 }
+            }
+        });
+    }
+
+    @WorkerThread
+    private void jniNotifyStreamingComplete() {
+        m_uiRunner.runOnUiThread(new Runnable() {
+            @UiThread
+            @Override
+            public void run() {
+                m_streamingApi.notifyStreamingCompleteReceived();
             }
         });
     }
